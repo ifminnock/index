@@ -1,0 +1,2946 @@
+<!DOCTYPE html> 
+
+ 
+
+<html lang="en"> 
+
+<head> 
+
+<meta charset="UTF-8"> 
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+<title>References — Alaska DOT Geotechnical Field Reference</title> 
+
+<style> 
+
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap'); 
+
+ 
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } 
+
+ 
+
+:root { 
+
+–bg:      #0c0e14; 
+
+–bg2:     #13151e; 
+
+–bg3:     #1a1d28; 
+
+–bg4:     #20243200; 
+
+–border:  #252836; 
+
+–border2: #30354a; 
+
+–text:    #dde0ee; 
+
+–muted:   #666d88; 
+
+–dim:     #3a3f55; 
+
+–accent:  #f0a500; 
+
+–teal:    #2ec4b6; 
+
+–blue:    #4a9eff; 
+
+–green:   #3dba7e; 
+
+–red:     #e05a2b; 
+
+–purple:  #9b72cf; 
+
+–mono: ‘IBM Plex Mono’, monospace; 
+
+–sans: ‘IBM Plex Sans’, sans-serif; 
+
+ 
+
+``` 
+
+/* App identity colors */ 
+
+--col-soil:   #2ec4b6; 
+
+--col-pave:   #f0a500; 
+
+--col-design: #4a9eff; 
+
+--col-refs:   #9b72cf; 
+
+``` 
+
+ 
+
+} 
+
+ 
+
+html { scroll-behavior: smooth; } 
+
+ 
+
+body { 
+
+background: var(–bg); 
+
+color: var(–text); 
+
+font-family: var(–sans); 
+
+min-height: 100vh; 
+
+} 
+
+ 
+
+/* ── GRID TEXTURE ── */ 
+
+body::before { 
+
+content: ‘’; 
+
+position: fixed; 
+
+inset: 0; 
+
+background-image: 
+
+repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.018) 39px, rgba(255,255,255,0.018) 40px), 
+
+repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.018) 39px, rgba(255,255,255,0.018) 40px); 
+
+pointer-events: none; 
+
+z-index: 0; 
+
+} 
+
+ 
+
+/* ── TOP BAR ── */ 
+
+.topbar { 
+
+position: sticky; 
+
+top: 0; 
+
+z-index: 100; 
+
+background: var(–bg2); 
+
+border-bottom: 1px solid var(–border); 
+
+padding: 0 40px; 
+
+display: flex; 
+
+align-items: center; 
+
+justify-content: space-between; 
+
+height: 52px; 
+
+} 
+
+ 
+
+.topbar-left { 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 20px; 
+
+} 
+
+ 
+
+.dot-cluster { display: flex; gap: 5px; align-items: center; } 
+
+.dot { width: 8px; height: 8px; border-radius: 50%; } 
+
+.dot-1 { background: var(–red); } 
+
+.dot-2 { background: var(–accent); } 
+
+.dot-3 { background: var(–green); } 
+
+ 
+
+.topbar-title { 
+
+font-family: var(–mono); 
+
+font-size: 11px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.14em; 
+
+text-transform: uppercase; 
+
+color: var(–muted); 
+
+} 
+
+ 
+
+.home-link { 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 8px; 
+
+text-decoration: none; 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+font-weight: 500; 
+
+letter-spacing: 0.1em; 
+
+text-transform: uppercase; 
+
+color: var(–muted); 
+
+border: 1px solid var(–border2); 
+
+border-radius: 2px; 
+
+padding: 5px 12px; 
+
+transition: color 0.2s, border-color 0.2s; 
+
+} 
+
+ 
+
+.home-link:hover { 
+
+color: var(–accent); 
+
+border-color: var(–accent); 
+
+} 
+
+ 
+
+.home-link::before { 
+
+content: ‘←’; 
+
+font-size: 12px; 
+
+} 
+
+ 
+
+/* ── LAYOUT ── */ 
+
+.page { 
+
+position: relative; 
+
+z-index: 1; 
+
+display: grid; 
+
+grid-template-columns: 240px 1fr; 
+
+min-height: calc(100vh - 52px); 
+
+max-width: 1200px; 
+
+margin: 0 auto; 
+
+} 
+
+ 
+
+@media (max-width: 800px) { 
+
+.page { grid-template-columns: 1fr; } 
+
+.sidebar { display: none; } 
+
+.topbar { padding: 0 20px; } 
+
+.main { padding: 32px 20px 60px; } 
+
+} 
+
+ 
+
+/* ── SIDEBAR ── */ 
+
+.sidebar { 
+
+position: sticky; 
+
+top: 52px; 
+
+height: calc(100vh - 52px); 
+
+overflow-y: auto; 
+
+background: var(–bg2); 
+
+border-right: 1px solid var(–border); 
+
+padding: 32px 0 40px; 
+
+} 
+
+ 
+
+.sidebar::-webkit-scrollbar { width: 3px; } 
+
+.sidebar::-webkit-scrollbar-track { background: transparent; } 
+
+.sidebar::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 2px; } 
+
+ 
+
+.sidebar-section { 
+
+padding: 0 20px; 
+
+margin-bottom: 28px; 
+
+} 
+
+ 
+
+.sidebar-label { 
+
+font-family: var(–mono); 
+
+font-size: 9px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.18em; 
+
+text-transform: uppercase; 
+
+color: var(–dim); 
+
+margin-bottom: 10px; 
+
+padding: 0 4px; 
+
+} 
+
+ 
+
+.nav-group { 
+
+margin-bottom: 4px; 
+
+} 
+
+ 
+
+.nav-group-header { 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 8px; 
+
+padding: 6px 8px; 
+
+border-radius: 2px; 
+
+cursor: pointer; 
+
+text-decoration: none; 
+
+} 
+
+ 
+
+.nav-group-header:hover { background: var(–bg3); } 
+
+ 
+
+.nav-color-dot { 
+
+width: 6px; height: 6px; 
+
+border-radius: 50%; 
+
+flex-shrink: 0; 
+
+} 
+
+ 
+
+.nav-group-title { 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.06em; 
+
+color: var(–muted); 
+
+transition: color 0.15s; 
+
+} 
+
+ 
+
+.nav-group-header:hover .nav-group-title { color: var(–text); } 
+
+ 
+
+.nav-sub { 
+
+padding-left: 22px; 
+
+margin-top: 2px; 
+
+} 
+
+ 
+
+.nav-sub a { 
+
+display: block; 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+color: var(–dim); 
+
+text-decoration: none; 
+
+padding: 4px 8px; 
+
+border-radius: 2px; 
+
+letter-spacing: 0.04em; 
+
+transition: color 0.15s, background 0.15s; 
+
+line-height: 1.4; 
+
+} 
+
+ 
+
+.nav-sub a:hover { 
+
+color: var(–text); 
+
+background: var(–bg3); 
+
+} 
+
+ 
+
+.nav-divider { 
+
+height: 1px; 
+
+background: var(–border); 
+
+margin: 16px 20px; 
+
+} 
+
+ 
+
+/* ── MAIN CONTENT ── */ 
+
+.main { 
+
+padding: 48px 48px 80px; 
+
+max-width: 820px; 
+
+} 
+
+ 
+
+/* ── HERO ── */ 
+
+.page-hero { 
+
+margin-bottom: 56px; 
+
+animation: fadeUp 0.4s ease both; 
+
+} 
+
+ 
+
+.page-tag { 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.22em; 
+
+text-transform: uppercase; 
+
+color: var(–purple); 
+
+margin-bottom: 16px; 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 10px; 
+
+} 
+
+ 
+
+.page-tag::before { 
+
+content: ‘’; 
+
+display: inline-block; 
+
+width: 24px; height: 1px; 
+
+background: var(–purple); 
+
+} 
+
+ 
+
+.page-title { 
+
+font-family: var(–mono); 
+
+font-size: clamp(24px, 3vw, 36px); 
+
+font-weight: 700; 
+
+letter-spacing: -0.02em; 
+
+color: var(–text); 
+
+margin-bottom: 16px; 
+
+line-height: 1.1; 
+
+} 
+
+ 
+
+.page-desc { 
+
+font-family: var(–sans); 
+
+font-size: 13px; 
+
+font-weight: 300; 
+
+color: var(–muted); 
+
+line-height: 1.75; 
+
+max-width: 520px; 
+
+} 
+
+ 
+
+@keyframes fadeUp { 
+
+from { opacity: 0; transform: translateY(12px); } 
+
+to   { opacity: 1; transform: translateY(0); } 
+
+} 
+
+ 
+
+/* ── SECTION BLOCKS ── */ 
+
+.ref-section { 
+
+margin-bottom: 60px; 
+
+animation: fadeUp 0.5s ease both; 
+
+} 
+
+ 
+
+.ref-section:nth-child(2) { animation-delay: 0.06s; } 
+
+.ref-section:nth-child(3) { animation-delay: 0.10s; } 
+
+.ref-section:nth-child(4) { animation-delay: 0.14s; } 
+
+.ref-section:nth-child(5) { animation-delay: 0.18s; } 
+
+ 
+
+.section-header { 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 14px; 
+
+margin-bottom: 24px; 
+
+padding-bottom: 14px; 
+
+border-bottom: 1px solid var(–border); 
+
+} 
+
+ 
+
+.section-color-bar { 
+
+width: 3px; 
+
+height: 36px; 
+
+border-radius: 2px; 
+
+flex-shrink: 0; 
+
+} 
+
+ 
+
+.section-meta { 
+
+flex: 1; 
+
+} 
+
+ 
+
+.section-num { 
+
+font-family: var(–mono); 
+
+font-size: 9px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.18em; 
+
+text-transform: uppercase; 
+
+margin-bottom: 4px; 
+
+} 
+
+ 
+
+.section-title { 
+
+font-family: var(–mono); 
+
+font-size: 15px; 
+
+font-weight: 700; 
+
+letter-spacing: 0.01em; 
+
+color: var(–text); 
+
+} 
+
+ 
+
+.section-app-link { 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 6px; 
+
+text-decoration: none; 
+
+font-family: var(–mono); 
+
+font-size: 9px; 
+
+font-weight: 500; 
+
+letter-spacing: 0.12em; 
+
+text-transform: uppercase; 
+
+padding: 5px 10px; 
+
+border-radius: 2px; 
+
+border: 1px solid; 
+
+transition: background 0.15s, opacity 0.15s; 
+
+opacity: 0.7; 
+
+white-space: nowrap; 
+
+} 
+
+ 
+
+.section-app-link:hover { opacity: 1; background: rgba(255,255,255,0.04); } 
+
+ 
+
+/* ── SUBSECTION ── */ 
+
+.subsection { 
+
+margin-bottom: 32px; 
+
+scroll-margin-top: 72px; 
+
+} 
+
+ 
+
+.subsection-title { 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.16em; 
+
+text-transform: uppercase; 
+
+color: var(–muted); 
+
+margin-bottom: 14px; 
+
+display: flex; 
+
+align-items: center; 
+
+gap: 10px; 
+
+} 
+
+ 
+
+.subsection-title::after { 
+
+content: ‘’; 
+
+flex: 1; 
+
+height: 1px; 
+
+background: var(–border); 
+
+} 
+
+ 
+
+/* ── REFERENCE ENTRY ── */ 
+
+.ref-entry { 
+
+display: grid; 
+
+grid-template-columns: 3px 1fr; 
+
+gap: 0 16px; 
+
+margin-bottom: 16px; 
+
+scroll-margin-top: 72px; 
+
+} 
+
+ 
+
+.ref-stripe { 
+
+border-radius: 2px; 
+
+background: var(–border2); 
+
+transition: background 0.2s; 
+
+} 
+
+ 
+
+.ref-entry:hover .ref-stripe { 
+
+background: var(–entry-color, var(–muted)); 
+
+} 
+
+ 
+
+.ref-body { 
+
+background: var(–bg2); 
+
+border: 1px solid var(–border); 
+
+border-radius: 2px; 
+
+padding: 14px 18px; 
+
+transition: border-color 0.2s; 
+
+} 
+
+ 
+
+.ref-entry:hover .ref-body { 
+
+border-color: var(–border2); 
+
+} 
+
+ 
+
+.ref-authors { 
+
+font-family: var(–mono); 
+
+font-size: 11px; 
+
+font-weight: 600; 
+
+color: var(–text); 
+
+letter-spacing: 0.01em; 
+
+margin-bottom: 4px; 
+
+} 
+
+ 
+
+.ref-title { 
+
+font-family: var(–sans); 
+
+font-size: 13px; 
+
+font-style: italic; 
+
+font-weight: 300; 
+
+color: var(–text); 
+
+line-height: 1.5; 
+
+margin-bottom: 5px; 
+
+} 
+
+ 
+
+.ref-pub { 
+
+font-family: var(–sans); 
+
+font-size: 12px; 
+
+font-weight: 400; 
+
+color: var(–muted); 
+
+line-height: 1.5; 
+
+margin-bottom: 8px; 
+
+} 
+
+ 
+
+.ref-note { 
+
+font-family: var(–sans); 
+
+font-size: 11px; 
+
+font-weight: 300; 
+
+color: var(–muted); 
+
+line-height: 1.6; 
+
+border-left: 2px solid var(–border2); 
+
+padding-left: 10px; 
+
+margin-top: 8px; 
+
+} 
+
+ 
+
+.ref-tags { 
+
+display: flex; 
+
+flex-wrap: wrap; 
+
+gap: 5px; 
+
+margin-top: 9px; 
+
+} 
+
+ 
+
+.ref-tag { 
+
+font-family: var(–mono); 
+
+font-size: 8px; 
+
+font-weight: 600; 
+
+letter-spacing: 0.12em; 
+
+text-transform: uppercase; 
+
+padding: 2px 7px; 
+
+border-radius: 2px; 
+
+border: 1px solid var(–border2); 
+
+color: var(–dim); 
+
+background: var(–bg3); 
+
+} 
+
+ 
+
+.ref-tag.primary { 
+
+border-color: var(–entry-color, var(–muted)); 
+
+color: var(–entry-color, var(–muted)); 
+
+background: transparent; 
+
+} 
+
+ 
+
+.ref-link { 
+
+display: inline-flex; 
+
+align-items: center; 
+
+gap: 5px; 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+color: var(–blue); 
+
+text-decoration: none; 
+
+margin-top: 6px; 
+
+opacity: 0.8; 
+
+transition: opacity 0.15s; 
+
+} 
+
+ 
+
+.ref-link:hover { opacity: 1; text-decoration: underline; } 
+
+ 
+
+/* Section color themes */ 
+
+.sec-soil   { –section-color: var(–col-soil); } 
+
+.sec-pave   { –section-color: var(–col-pave); } 
+
+.sec-design { –section-color: var(–col-design); } 
+
+ 
+
+/* ── ONLINE RESOURCES ── */ 
+
+.resource-grid { 
+
+display: grid; 
+
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+
+gap: 12px; 
+
+margin-top: 4px; 
+
+} 
+
+ 
+
+.resource-card { 
+
+display: block; 
+
+text-decoration: none; 
+
+background: var(–bg2); 
+
+border: 1px solid var(–border); 
+
+border-radius: 2px; 
+
+padding: 14px 16px; 
+
+transition: border-color 0.2s, transform 0.15s; 
+
+} 
+
+ 
+
+.resource-card:hover { 
+
+border-color: var(–border2); 
+
+transform: translateY(-1px); 
+
+} 
+
+ 
+
+.resource-name { 
+
+font-family: var(–mono); 
+
+font-size: 11px; 
+
+font-weight: 600; 
+
+color: var(–text); 
+
+margin-bottom: 4px; 
+
+} 
+
+ 
+
+.resource-desc { 
+
+font-family: var(–sans); 
+
+font-size: 11px; 
+
+font-weight: 300; 
+
+color: var(–muted); 
+
+line-height: 1.5; 
+
+margin-bottom: 8px; 
+
+} 
+
+ 
+
+.resource-url { 
+
+font-family: var(–mono); 
+
+font-size: 9px; 
+
+color: var(–blue); 
+
+letter-spacing: 0.04em; 
+
+opacity: 0.8; 
+
+} 
+
+ 
+
+/* ── BACK TO TOP ── */ 
+
+.back-to-top { 
+
+display: inline-flex; 
+
+align-items: center; 
+
+gap: 8px; 
+
+text-decoration: none; 
+
+font-family: var(–mono); 
+
+font-size: 10px; 
+
+letter-spacing: 0.1em; 
+
+text-transform: uppercase; 
+
+color: var(–dim); 
+
+border: 1px solid var(–border); 
+
+border-radius: 2px; 
+
+padding: 7px 14px; 
+
+transition: color 0.2s, border-color 0.2s; 
+
+margin-top: 48px; 
+
+display: inline-flex; 
+
+} 
+
+ 
+
+.back-to-top:hover { 
+
+color: var(–purple); 
+
+border-color: var(–purple); 
+
+} 
+
+</style> 
+
+ 
+
+</head> 
+
+<body> 
+
+ 
+
+<!-- TOP BAR --> 
+
+ 
+
+<div class="topbar" id="top"> 
+
+  <div class="topbar-left"> 
+
+    <div class="dot-cluster"> 
+
+      <div class="dot dot-1"></div> 
+
+      <div class="dot dot-2"></div> 
+
+      <div class="dot dot-3"></div> 
+
+    </div> 
+
+    <div class="topbar-title">References</div> 
+
+  </div> 
+
+  <a class="home-link" href="index.html">Home</a> 
+
+</div> 
+
+ 
+
+<!-- PAGE LAYOUT --> 
+
+ 
+
+<div class="page"> 
+
+ 
+
+  <!-- SIDEBAR NAV --> 
+
+ 
+
+  <nav class="sidebar"> 
+
+    <div class="sidebar-section"> 
+
+      <div class="sidebar-label">Contents</div> 
+
+ 
+
+``` 
+
+  <div class="nav-group"> 
+
+    <a class="nav-group-header" href="#soil-rock"> 
+
+      <div class="nav-color-dot" style="background:var(--col-soil)"></div> 
+
+      <span class="nav-group-title">Rock &amp; Soil ID</span> 
+
+    </a> 
+
+    <div class="nav-sub"> 
+
+      <a href="#soil-standards">Classification Standards</a> 
+
+      <a href="#soil-rock-class">Rock Classification</a> 
+
+      <a href="#soil-advisory">Advisory &amp; Engineering</a> 
+
+      <a href="#soil-sediment">Depositional / Sedimentology</a> 
+
+      <a href="#soil-alaska">Alaska Geology</a> 
+
+      <a href="#soil-clay">Clay Mineralogy</a> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="nav-divider"></div> 
+
+ 
+
+  <div class="nav-group"> 
+
+    <a class="nav-group-header" href="#pavement-distress"> 
+
+      <div class="nav-color-dot" style="background:var(--col-pave)"></div> 
+
+      <span class="nav-group-title">Pavement Distress</span> 
+
+    </a> 
+
+    <div class="nav-sub"> 
+
+      <a href="#pd-classification">Distress Classification</a> 
+
+      <a href="#pd-thermal">Binder &amp; Thermal Cracking</a> 
+
+      <a href="#pd-frost">Frost &amp; Cold Regions</a> 
+
+      <a href="#pd-subgrade">Subgrade &amp; Seasonal MR</a> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="nav-divider"></div> 
+
+ 
+
+  <div class="nav-group"> 
+
+    <a class="nav-group-header" href="#pavement-design"> 
+
+      <div class="nav-color-dot" style="background:var(--col-design)"></div> 
+
+      <span class="nav-group-title">Pavement Design</span> 
+
+    </a> 
+
+    <div class="nav-sub"> 
+
+      <a href="#pd-primary">Primary Source</a> 
+
+      <a href="#pd-frost-design">Frost Susceptibility</a> 
+
+      <a href="#pd-theory">Design Theory</a> 
+
+      <a href="#pd-alaska-docs">Alaska Documents</a> 
+
+      <a href="#pd-materials">Materials &amp; Tests</a> 
+
+      <a href="#pd-traffic">Traffic &amp; ESAL</a> 
+
+      <a href="#pd-permafrost">Permafrost</a> 
+
+      <a href="#pd-online">Online Resources</a> 
+
+    </div> 
+
+  </div> 
+
+</div> 
+
+``` 
+
+ 
+
+  </nav> 
+
+ 
+
+  <!-- MAIN --> 
+
+ 
+
+  <main class="main"> 
+
+ 
+
+``` 
+
+<!-- HERO --> 
+
+<div class="page-hero"> 
+
+  <div class="page-tag">04 — References</div> 
+
+  <h1 class="page-title">Source Documents<br>&amp; Standards</h1> 
+
+  <p class="page-desc">Authoritative references, advisory documents, and online resources cited across all tools in this system. Organized by application and subsection. Alaska DOT&amp;PF materials, AASHTO, ASTM, USACE CRREL, and peer-reviewed literature. Last updated 4-9-2026</p> 
+
+</div> 
+
+ 
+
+ 
+
+<!-- ══════════════════════════════════════════ 
+
+     SECTION 1: ROCK & SOIL ID 
+
+═══════════════════════════════════════════ --> 
+
+<div class="ref-section sec-soil" id="soil-rock"> 
+
+ 
+
+  <div class="section-header"> 
+
+    <div class="section-color-bar" style="background:var(--col-soil)"></div> 
+
+    <div class="section-meta"> 
+
+      <div class="section-num" style="color:var(--col-soil)">Tool 01</div> 
+
+      <div class="section-title">Rock &amp; Soil Identification</div> 
+
+    </div> 
+
+    <a class="section-app-link" href="soil_rock_guide.html" 
+
+       style="color:var(--col-soil);border-color:var(--col-soil)"> 
+
+      Open Tool ↗ 
+
+    </a> 
+
+  </div> 
+
+ 
+
+  <!-- Classification Standards --> 
+
+  <div class="subsection" id="soil-standards"> 
+
+    <div class="subsection-title">Classification Standards — Authoritative</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">ASTM D2487-17</div> 
+
+        <div class="ref-title">Standard Practice for Classification of Soils for Engineering Purposes (Unified Soil Classification System)</div> 
+
+        <div class="ref-pub">ASTM International, 2017.</div> 
+
+        <div class="ref-note">Laboratory classification foundation for all USCS group symbols and criteria. Defines the boundary criteria (% passing No. 200, Cu, Cc, LL, PI) that underlie every decision branch in the soil identification tool.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">USCS</span><span class="ref-tag">Lab</span><span class="ref-tag">Classification</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">ASTM D2488-17</div> 
+
+        <div class="ref-title">Standard Practice for Description and Identification of Soils (Visual-Manual Procedure)</div> 
+
+        <div class="ref-pub">ASTM International, 2017.</div> 
+
+        <div class="ref-note">Source for all field classification procedures — consistency, dry strength, dilatancy, toughness, plasticity, angularity tables, particle shape criteria, moisture descriptions, cementation, and soil structure terminology. The field counterpart to D2487.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Field</span><span class="ref-tag">Visual-Manual</span><span class="ref-tag">USCS</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">ASTM D4083-89</div> 
+
+        <div class="ref-title">Standard Practice for Description of Frozen Soils (Visual-Manual Procedure)</div> 
+
+        <div class="ref-pub">ASTM International, 1989.</div> 
+
+        <div class="ref-note">Source for the frozen soil classification system: N, V, and ICE designations, ice structure descriptions, and thaw-stability criteria. Essential for Alaska field work where frozen soil conditions are encountered in boreholes.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Frozen Soils</span><span class="ref-tag">Alaska</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">ASTM D2974</div> 
+
+        <div class="ref-title">Standard Test Methods for Moisture, Ash, and Organic Matter of Peat and Other Organic Soils</div> 
+
+        <div class="ref-pub">ASTM International.</div> 
+
+        <div class="ref-note">Referenced for organic content testing methodology used to confirm field-based organic soil classifications.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag">Organic</span><span class="ref-tag">Peat</span><span class="ref-tag">Testing</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (2003)</div> 
+
+        <div class="ref-title">Alaska Field Guide for Soil Classification</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities, 2003.</div> 
+
+        <div class="ref-note">Primary authoritative reference for this tool. Source for cobble/boulder percentage determination procedure, frozen soil chart, DOT&amp;PF-specific organic classification thresholds, and Alaska-specific field procedures.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Alaska DOT</span><span class="ref-tag">Field Guide</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (2019)</div> 
+
+        <div class="ref-title">Peat and Organic Soil Classification System Chart</div> 
+
+        <div class="ref-pub">Central Region Materials, Alaska DOT&amp;PF, March 2019.</div> 
+
+        <div class="ref-note">Supersedes the 2003 manual for organic content thresholds: 2–5% slightly organic, 5–15% organic, 15–75% highly organic, &gt;75% peat. Source for the coarse/fine-grained organic naming convention note.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Alaska DOT</span><span class="ref-tag">Organic</span><span class="ref-tag">Peat</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- Rock Classification --> 
+
+  <div class="subsection" id="soil-rock-class"> 
+
+    <div class="subsection-title">Rock Classification — Authoritative</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Travis, Russell B. (1955)</div> 
+
+        <div class="ref-title">Classification of Rocks</div> 
+
+        <div class="ref-pub">Colorado School of Mines Quarterly, Vol. 50, No. 1.</div> 
+
+        <div class="ref-note">DOT&amp;PF-recommended primary division and rock naming system. Source for the igneous/sedimentary/metamorphic primary division logic, color index concept, and the principle of naming rocks on visible features rather than inference.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Rock</span><span class="ref-tag">Alaska DOT</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">ISRM (1978)</div> 
+
+        <div class="ref-title">Suggested Methods for the Quantitative Description of Discontinuities in Rock Masses</div> 
+
+        <div class="ref-pub">International Society for Rock Mechanics. Int. J. Rock Mech. Min. Sci. &amp; Geomech. Abstr., Vol. 15.</div> 
+
+        <div class="ref-note">Source for all 13 rock mass properties (A through M): wall strength, weathering grades, discontinuity type, orientation, roughness, aperture, infilling, spacing, persistence, number of sets, block size/shape, and seepage ratings.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag">Rock Mass</span><span class="ref-tag">Discontinuities</span><span class="ref-tag">ISRM</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (2003)</div> 
+
+        <div class="ref-title">Alaska Field Rock Classification and Structural Mapping Guide</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities, 2003.</div> 
+
+        <div class="ref-note">Primary authoritative rock reference. Source for ISRM-based mapping procedures, rock strength classification table (R0–R6), weathering grade table (I–VI), aperture descriptions, roughness profiles and JRC ranges, discontinuity spacing and persistence tables, and the Rock Mass Description and Discontinuity Survey data sheets.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Alaska DOT</span><span class="ref-tag">Rock</span><span class="ref-tag">Mapping</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Le Maitre, R.W. ed. (2002)</div> 
+
+        <div class="ref-title">Igneous Rocks: A Classification and Glossary of Terms, 2nd Ed.</div> 
+
+        <div class="ref-pub">Cambridge University Press. IUGS Subcommission on the Systematics of Igneous Rocks.</div> 
+
+        <div class="ref-note">Supplementary reference for igneous nomenclature. Used where DOT&amp;PF naming system requires supplemental terminology for less common igneous rock types.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag">Igneous</span><span class="ref-tag">Nomenclature</span><span class="ref-tag">IUGS</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- Advisory & Engineering --> 
+
+  <div class="subsection" id="soil-advisory"> 
+
+    <div class="subsection-title">Advisory &amp; Engineering References</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Wyllie, D.C. (1999)</div> 
+
+        <div class="ref-title">Foundations on Rock, 2nd Ed.</div> 
+
+        <div class="ref-pub">E&amp;FN Spon.</div> 
+
+        <div class="ref-note">Source for detailed discussion of rock mass characterization categories, structural mapping illustration, and the five-category framework for rock mass description.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Rock</span><span class="ref-tag">Foundations</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Wyllie, D.C. and Mah, C.W. (1998)</div> 
+
+        <div class="ref-title">Rock Slopes</div> 
+
+        <div class="ref-pub">FHWA Report No. FHWA-HI-99-007.</div> 
+
+        <div class="ref-note">Source for kinematic failure mode analysis (planar, wedge, toppling, circular), mapping methodology levels (critical features, line, window mapping), and rockfall hazard context.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Rock Slopes</span><span class="ref-tag">FHWA</span><span class="ref-tag">Kinematic</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">FHWA (2002)</div> 
+
+        <div class="ref-title">Evaluation of Soil and Rock Properties</div> 
+
+        <div class="ref-pub">Geotechnical Engineering Circular No. 5, FHWA-IF-02-034.</div> 
+
+        <div class="ref-note">Advisory reference for general field evaluation procedures and SPT blow count to consistency correlations.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">FHWA</span><span class="ref-tag">GEC 5</span><span class="ref-tag">SPT</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Hunt, Roy E. (1984)</div> 
+
+        <div class="ref-title">Geotechnical Engineering Investigation Manual</div> 
+
+        <div class="ref-pub">McGraw-Hill.</div> 
+
+        <div class="ref-note">Advisory reference for intact vs. in-situ rock definitions and general field investigation methodology.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Investigation</span><span class="ref-tag">Field</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- Sedimentology --> 
+
+  <div class="subsection" id="soil-sediment"> 
+
+    <div class="subsection-title">Depositional Environment &amp; Sedimentology</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Boggs, Sam Jr. (2006)</div> 
+
+        <div class="ref-title">Principles of Sedimentology and Stratigraphy, 4th Ed.</div> 
+
+        <div class="ref-pub">Pearson Prentice Hall.</div> 
+
+        <div class="ref-note">Source for grain transport and rounding theory, aeolian vs. fluvial vs. marine sorting mechanisms, carbonate depositional environments, and shale fissility development.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Sedimentology</span><span class="ref-tag">Depositional</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Selley, Richard C. (2000)</div> 
+
+        <div class="ref-title">Applied Sedimentology, 2nd Ed.</div> 
+
+        <div class="ref-pub">Academic Press.</div> 
+
+        <div class="ref-note">Source for depositional energy interpretation, crossbedding as paleo-current indicator, graded bedding and turbidite sequences, beach vs. fluvial gravel shape characteristics.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Sedimentology</span><span class="ref-tag">Gravel</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Folk, R.L. (1980)</div> 
+
+        <div class="ref-title">Petrology of Sedimentary Rocks</div> 
+
+        <div class="ref-pub">Hemphill Publishing.</div> 
+
+        <div class="ref-note">Source for grain roundness and sphericity framework, textural maturity concept, and aeolian frosted grain surface descriptions.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Grain Shape</span><span class="ref-tag">Roundness</span><span class="ref-tag">Petrology</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Bates, R.L. and Jackson, J.A. eds. (1987)</div> 
+
+        <div class="ref-title">Glossary of Geology, 3rd Ed.</div> 
+
+        <div class="ref-pub">American Geological Institute.</div> 
+
+        <div class="ref-note">Source for formal definitions of depositional environment terminology used throughout the soil identification guide.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Glossary</span><span class="ref-tag">Terminology</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- Alaska Geology --> 
+
+  <div class="subsection" id="soil-alaska"> 
+
+    <div class="subsection-title">Alaska Geology &amp; Geotechnical Context</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Plafker, G., Moore, J.C., and Winkler, G.R. (1994)</div> 
+
+        <div class="ref-title">Geology of the Southern Alaska Margin</div> 
+
+        <div class="ref-pub">In Plafker and Berg eds., The Geology of Alaska. Geological Society of America, DNAG Vol. G-1.</div> 
+
+        <div class="ref-note">Source for Alaska terrane descriptions, Chugach and Prince William terrane composition, Coast Mountains batholith context, and accretionary complex rock types.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Alaska Geology</span><span class="ref-tag">Terranes</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Karlstrom, T.N.V. (1964)</div> 
+
+        <div class="ref-title">Quaternary Geology of the Kenai Lowland and Glacial History of the Cook Inlet Region, Alaska</div> 
+
+        <div class="ref-pub">USGS Professional Paper 443.</div> 
+
+        <div class="ref-note">Source for glaciofluvial, glaciolacustrine, and glaciomarine stratigraphy of the Cook Inlet basin and Kenai Peninsula — directly relevant to Sterling Highway corridor work.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Quaternary</span><span class="ref-tag">Cook Inlet</span><span class="ref-tag">Glaciomarine</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Updike, R.G. and Carpenter, P.J. (1986)</div> 
+
+        <div class="ref-title">Engineering Geology of Anchorage, Alaska</div> 
+
+        <div class="ref-pub">GSA Reviews in Engineering Geology, Vol. VI.</div> 
+
+        <div class="ref-note">Source for Bootlegger Cove Formation description, sensitivity, glaciomarine origin, and role in the 1964 Good Friday earthquake landslides. Reference for sensitive silt interpretation in field borings.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Anchorage</span><span class="ref-tag">Bootlegger Cove</span><span class="ref-tag">Sensitivity</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Péwé, T.L. (1975)</div> 
+
+        <div class="ref-title">Quaternary Geology of Alaska</div> 
+
+        <div class="ref-pub">USGS Professional Paper 835.</div> 
+
+        <div class="ref-note">Source for loess distribution in interior Alaska, permafrost zonation, and ice wedge polygon and ground ice classification. Foundational reference for any Interior Alaska site characterization.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Permafrost</span><span class="ref-tag">Loess</span><span class="ref-tag">Interior Alaska</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Ferrians, O.J. (1965)</div> 
+
+        <div class="ref-title">Permafrost Map of Alaska</div> 
+
+        <div class="ref-pub">USGS Miscellaneous Geologic Investigations Map I-445.</div> 
+
+        <div class="ref-note">Foundational reference for permafrost distribution context used in frozen soil interpretations throughout the guide.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Permafrost</span><span class="ref-tag">USGS</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Muhs, D.R. and Budahn, J.R. (2006)</div> 
+
+        <div class="ref-title">Geochemical evidence for the origin of late Quaternary loess in central Alaska</div> 
+
+        <div class="ref-pub">Canadian Journal of Earth Sciences, 43.</div> 
+
+        <div class="ref-note">Source for Tanana Valley and Interior Alaska loess origin and aeolian transport from outwash plains. Contextualizes silt-dominated soil profiles common to Interior Alaska borings.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Loess</span><span class="ref-tag">Interior Alaska</span><span class="ref-tag">Aeolian</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <!-- Clay Mineralogy --> 
+
+  <div class="subsection" id="soil-clay"> 
+
+    <div class="subsection-title">Clay Mineralogy &amp; Sensitivity</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Mitchell, James K. and Soga, Kenichi (2005)</div> 
+
+        <div class="ref-title">Fundamentals of Soil Behavior, 3rd Ed.</div> 
+
+        <div class="ref-pub">John Wiley and Sons.</div> 
+
+        <div class="ref-note">Source for clay mineral descriptions (smectite, illite, kaolinite), plasticity and clay type relationships, quick clay sensitivity mechanisms, and the effect of salt leaching on marine clay strength. Also cited in the pavement design section.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Clay Mineralogy</span><span class="ref-tag">Sensitivity</span><span class="ref-tag">Plasticity</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-soil)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Rosenqvist, I.Th. (1953)</div> 
+
+        <div class="ref-title">Considerations on the sensitivity of Norwegian quick-clays</div> 
+
+        <div class="ref-pub">Géotechnique, 3(5).</div> 
+
+        <div class="ref-note">Original framework for quick clay formation by salt leaching — applied to Alaska glaciomarine clay context, particularly Bootlegger Cove and similar Cook Inlet sediments.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Quick Clay</span><span class="ref-tag">Sensitivity</span><span class="ref-tag">Leaching</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+</div><!-- /sec-soil --> 
+
+ 
+
+ 
+
+<!-- ══════════════════════════════════════════ 
+
+     SECTION 2: PAVEMENT DISTRESS 
+
+═══════════════════════════════════════════ --> 
+
+<div class="ref-section sec-pave" id="pavement-distress"> 
+
+ 
+
+  <div class="section-header"> 
+
+    <div class="section-color-bar" style="background:var(--col-pave)"></div> 
+
+    <div class="section-meta"> 
+
+      <div class="section-num" style="color:var(--col-pave)">Tool 02</div> 
+
+      <div class="section-title">Pavement Distress Identification</div> 
+
+    </div> 
+
+    <a class="section-app-link" href="pavement-distress.html" 
+
+       style="color:var(--col-pave);border-color:var(--col-pave)"> 
+
+      Open Tool ↗ 
+
+    </a> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-classification"> 
+
+    <div class="subsection-title">Distress Classification</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Miller, J.S. and Bellinger, W.Y. (2003)</div> 
+
+        <div class="ref-title">Distress Identification Manual for the Long-Term Pavement Performance Program, 4th Revised Edition</div> 
+
+        <div class="ref-pub">FHWA-RD-03-031. Federal Highway Administration.</div> 
+
+        <div class="ref-note">Foundational document for all distress types, definitions, and severity levels in the diagnostic guide. The standard classification system underlying pavement distress identification in the United States.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">FHWA</span><span class="ref-tag">LTPP</span><span class="ref-tag">Distress Types</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-thermal"> 
+
+    <div class="subsection-title">Binder Selection &amp; Thermal Cracking</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">AASHTO (various editions)</div> 
+
+        <div class="ref-title">Superpave Mix Design Reference Manual</div> 
+
+        <div class="ref-pub">American Association of State Highway and Transportation Officials.</div> 
+
+        <div class="ref-note">Covers PG binder selection methodology. Relevant to the Alaska-specific binder grade and thermal cracking content in the distress guide — particularly low-temperature PG grade selection for interior Alaska conditions.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Superpave</span><span class="ref-tag">PG Binder</span><span class="ref-tag">Thermal Cracking</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">FHWA / LTPPBind (various)</div> 
+
+        <div class="ref-title">LTPPBind Documentation and PG Binder Selection Methodology</div> 
+
+        <div class="ref-pub">Federal Highway Administration, Long-Term Pavement Performance Program.</div> 
+
+        <div class="ref-note">Documents the performance-grade binder selection methodology and reliability factors used in the pavement distress context for thermal cracking analysis.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">LTPPBind</span><span class="ref-tag">PG Grade</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-frost"> 
+
+    <div class="subsection-title">Frost Susceptibility &amp; Cold Regions</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">USACE CRREL (1984)</div> 
+
+        <div class="ref-title">Frost Action in Soils</div> 
+
+        <div class="ref-pub">Engineer Manual EM 1110-3-138 and Technical Manual TM 5-852-4. U.S. Army Corps of Engineers, Cold Regions Research and Engineering Laboratory.</div> 
+
+        <div class="ref-note">Authoritative Alaska-relevant source for frost susceptibility and pavement frost design. Origin of the F1–F4 classification system and the Stefan equation for frost depth estimation.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">CRREL</span><span class="ref-tag">Frost</span><span class="ref-tag">F1–F4</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (internal research)</div> 
+
+        <div class="ref-title">Studded Tire Pavement Damage Research</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities.</div> 
+
+        <div class="ref-note">Agency-specific source for studded tire rutting content. Alaska DOT&amp;PF has published internal research on studded tire pavement damage specific to Alaska conditions — directly applicable to the rutting distress section of the guide.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Alaska DOT</span><span class="ref-tag">Studded Tires</span><span class="ref-tag">Rutting</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-subgrade"> 
+
+    <div class="subsection-title">Subgrade Resilient Modulus &amp; Seasonal Variation</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-pave)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">NCHRP (2004)</div> 
+
+        <div class="ref-title">Mechanistic-Empirical Pavement Design Guide — NCHRP Report 1-37A</div> 
+
+        <div class="ref-pub">National Cooperative Highway Research Program, Transportation Research Board.</div> 
+
+        <div class="ref-note">Covers seasonal M<sub>r</sub> adjustment methodology. Source for thaw weakening and spring load restriction content; the seasonal resilient modulus framework directly applies to Alaska's pronounced freeze-thaw cycles.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Resilient Modulus</span><span class="ref-tag">Seasonal</span><span class="ref-tag">Thaw Weakening</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+</div><!-- /sec-pave --> 
+
+ 
+
+ 
+
+<!-- ══════════════════════════════════════════ 
+
+     SECTION 3: PAVEMENT DESIGN 
+
+═══════════════════════════════════════════ --> 
+
+<div class="ref-section sec-design" id="pavement-design"> 
+
+ 
+
+  <div class="section-header"> 
+
+    <div class="section-color-bar" style="background:var(--col-design)"></div> 
+
+    <div class="section-meta"> 
+
+      <div class="section-num" style="color:var(--col-design)">Tool 03</div> 
+
+      <div class="section-title">Pavement Section Design &amp; Frost Susceptibility</div> 
+
+    </div> 
+
+    <a class="section-app-link" href="pavement-design.html" 
+
+       style="color:var(--col-design);border-color:var(--col-design)"> 
+
+      Open Tool ↗ 
+
+    </a> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-primary"> 
+
+    <div class="subsection-title">Primary Source</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (2020)</div> 
+
+        <div class="ref-title">Alaska Flexible Pavement Design Manual</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities. Effective July 1, 2020.</div> 
+
+        <div class="ref-note">Direct source for all calculator equations, tables, and limits. The governing design document for flexible pavement on DOT&amp;PF projects. Available at dot.alaska.gov.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Alaska DOT</span><span class="ref-tag">Design Manual</span> 
+
+        </div> 
+
+        <a class="ref-link" href="https://dot.alaska.gov/stwddes/dcsdesign/flex_pave.shtml" target="_blank">dot.alaska.gov ↗</a> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-frost-design"> 
+
+    <div class="subsection-title">Frost Susceptibility &amp; Frozen Ground</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Andersland, O.B. and Ladanyi, B. (2004)</div> 
+
+        <div class="ref-title">Frozen Ground Engineering, 2nd Ed.</div> 
+
+        <div class="ref-pub">John Wiley &amp; Sons / ASCE Press.</div> 
+
+        <div class="ref-note">Standard reference for frost action mechanics, ice lens formation, cryosuction, and F1–F4 susceptibility classification.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Frozen Ground</span><span class="ref-tag">Frost Action</span><span class="ref-tag">Cryosuction</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Casagrande, A. (1931)</div> 
+
+        <div class="ref-title">A New Theory of Frost Heaving</div> 
+
+        <div class="ref-pub">Highway Research Board Proceedings, Vol. 11, pp. 168–172.</div> 
+
+        <div class="ref-note">Original paper establishing the Casagrande criterion: &gt;3% passing 0.02 mm (10% for uniform soils, Cu &lt;5). The checker in the design tool is derived directly from this paper.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Casagrande</span><span class="ref-tag">Frost Heave</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">USACE CRREL (1984)</div> 
+
+        <div class="ref-title">Frost Action in Soils / Pavement Design in Areas of Seasonal Frost</div> 
+
+        <div class="ref-pub">EM 1110-3-138 / TM 5-852-4; also FHWA-RD-77-168 and FHWA NHI-05-037.</div> 
+
+        <div class="ref-note">Origin of F1–F4 classification and Stefan equation for frost depth. Covers the three design approaches for frost-affected subgrades and when each applies.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">CRREL</span><span class="ref-tag">Frost Depth</span><span class="ref-tag">Stefan Equation</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Péwé, T.L. (1975)</div> 
+
+        <div class="ref-title">Quaternary Geology of Alaska</div> 
+
+        <div class="ref-pub">USGS Professional Paper 835.</div> 
+
+        <div class="ref-note">Foundational reference for Alaska's surficial geology, permafrost distribution, and why freezing index values vary dramatically by region. Also cited in Soil ID section.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Permafrost</span><span class="ref-tag">Freezing Index</span><span class="ref-tag">Alaska</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-theory"> 
+
+    <div class="subsection-title">Pavement Design Theory &amp; Mechanistic Methods</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Huang, Y.H. (2004)</div> 
+
+        <div class="ref-title">Pavement Analysis and Design, 2nd Ed.</div> 
+
+        <div class="ref-pub">Pearson Prentice Hall.</div> 
+
+        <div class="ref-note">Explicitly recommended in AKFPD Chapter 4. Covers layered elastic theory, stress/strain analysis, the TAI fatigue equation, and the Ullidtz rutting equation.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Recommended</span> 
+
+          <span class="ref-tag">Layered Elastic</span><span class="ref-tag">Fatigue</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Yoder, E.J. and Witczak, M.W. (1975)</div> 
+
+        <div class="ref-title">Principles of Pavement Design, 2nd Ed.</div> 
+
+        <div class="ref-pub">John Wiley &amp; Sons.</div> 
+
+        <div class="ref-note">Cited directly in the AKFPD Manual. Classic treatment of flexible pavement theory and empirical design methods.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Cited in AKFPD</span> 
+
+          <span class="ref-tag">Empirical Design</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Ullidtz, P. (1998)</div> 
+
+        <div class="ref-title">Modelling Flexible Pavement Response and Performance</div> 
+
+        <div class="ref-pub">Polyteknisk Forlag.</div> 
+
+        <div class="ref-note">Source of the Per Ullidtz functional failure equation used in Alaska mechanistic design: N<sub>f</sub> = 3.069×10⁹ × b × (E/E₀)<sup>0.36</sup> × σ<sub>v</sub><sup>−2.82</sup>, with Alaska regional factor R = 2.75.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Ullidtz</span><span class="ref-tag">Rutting</span><span class="ref-tag">Functional Failure</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Van Cauwelaert et al. (1989)</div> 
+
+        <div class="ref-title">Pavement Analysis Using the Computer Program WESLEA</div> 
+
+        <div class="ref-pub">U.S. Army Corps of Engineers, Miscellaneous Paper GL-89-2.</div> 
+
+        <div class="ref-note">Documents the WESLEA computational engine used in AKFPD v2.0 software.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">WESLEA</span><span class="ref-tag">Software</span><span class="ref-tag">USACE</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">AASHTO (2008+)</div> 
+
+        <div class="ref-title">Mechanistic-Empirical Pavement Design Guide (MEPDG)</div> 
+
+        <div class="ref-pub">American Association of State Highway and Transportation Officials.</div> 
+
+        <div class="ref-note">National standard for advanced pavement design. Broader context for where Alaska's approach fits within the field.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">MEPDG</span><span class="ref-tag">AASHTO</span><span class="ref-tag">National Standard</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-alaska-docs"> 
+
+    <div class="subsection-title">Alaska-Specific Documents</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (current edition)</div> 
+
+        <div class="ref-title">Standard Specifications for Highway Construction — Divisions 300 &amp; 400</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities. dot.alaska.gov.</div> 
+
+        <div class="ref-note">Governs P200 limits for D-1 base, Select Material Types A/B/C, Subbase F, and asphalt mixes. Division 300 (Bases &amp; Subbases) and Division 400 (Asphalt) are the primary applicable divisions.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Governing Spec</span> 
+
+          <span class="ref-tag">D-1 Base</span><span class="ref-tag">Select Material</span><span class="ref-tag">Materials</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (2014)</div> 
+
+        <div class="ref-title">Alaska Soil Stabilization Manual</div> 
+
+        <div class="ref-pub">Report No. 60392. Alaska Department of Transportation and Public Facilities.</div> 
+
+        <div class="ref-note">Required companion to AKFPD for any project using stabilized base courses (ATB, cement, lime, fly ash).</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Stabilization</span><span class="ref-tag">ATB</span><span class="ref-tag">Alaska DOT</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">McHattie, R.L. et al. (1980–1983)</div> 
+
+        <div class="ref-title">Development of the Alaska Excess Fines Design Method</div> 
+
+        <div class="ref-pub">Alaska DOT&amp;PF Research Reports FHWA-AK-RD-80-4, 80-5, 82-2.</div> 
+
+        <div class="ref-note">Original 120-section Alaska highway research study that produced the Excess Fines method, including the empirical basis for the Pcr/Pmax curves and deflection equation.</div> 
+
+        <div class="ref-tags"> 
+
+          <span class="ref-tag primary">Primary</span> 
+
+          <span class="ref-tag">Excess Fines</span><span class="ref-tag">Alaska Research</span> 
+
+        </div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Alaska DOT&amp;PF (current edition)</div> 
+
+        <div class="ref-title">Preconstruction Manual — Sections 1180 &amp; 450</div> 
+
+        <div class="ref-pub">Alaska Department of Transportation and Public Facilities.</div> 
+
+        <div class="ref-note">Pavement selection policy, LCCA requirements, and when stabilized bases are required. Section 1180 (Pavement) and Section 450 (Design Studies).</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Policy</span><span class="ref-tag">LCCA</span><span class="ref-tag">Alaska DOT</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-materials"> 
+
+    <div class="subsection-title">Materials, Soils &amp; Test Methods</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Mitchell, J.K. and Soga, K. (2005)</div> 
+
+        <div class="ref-title">Fundamentals of Soil Behavior, 3rd Ed.</div> 
+
+        <div class="ref-pub">John Wiley &amp; Sons.</div> 
+
+        <div class="ref-note">Explains why silt (ML) is the most frost-susceptible soil type and the particle-scale physics behind the Casagrande criterion. Also cited in Rock &amp; Soil ID section.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Frost Susceptibility</span><span class="ref-tag">ML Silt</span><span class="ref-tag">Soil Behavior</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Das, B.M. and Sobhan, K. (2018)</div> 
+
+        <div class="ref-title">Principles of Geotechnical Engineering, 9th Ed.</div> 
+
+        <div class="ref-pub">Cengage Learning.</div> 
+
+        <div class="ref-note">Standard geotechnical text covering USCS classification, Atterberg limits, and resilient modulus testing in context.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Geotechnical</span><span class="ref-tag">USCS</span><span class="ref-tag">Atterberg</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Key Test Standards</div> 
+
+        <div class="ref-title">Test Methods Referenced in the Design Calculator</div> 
+
+        <div class="ref-pub">ASTM International / AASHTO.</div> 
+
+        <div class="ref-note">ASTM D2487 (USCS Classification) · ASTM D7369 (Resilient Modulus — Asphalt) · AASHTO T307 (Resilient Modulus — Soils &amp; Aggregate) · ASTM D422 / D6913 (Grain Size Analysis — P200) · ASTM D4318 (Atterberg Limits — PI)</div> 
+
+        <div class="ref-tags"><span class="ref-tag">ASTM</span><span class="ref-tag">AASHTO</span><span class="ref-tag">Test Methods</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-traffic"> 
+
+    <div class="subsection-title">Traffic &amp; ESAL Methodology</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">FHWA (current)</div> 
+
+        <div class="ref-title">Traffic Monitoring Guide</div> 
+
+        <div class="ref-pub">Federal Highway Administration. fhwa.dot.gov.</div> 
+
+        <div class="ref-note">Defines the FHWA vehicle classification scheme (Classes 1–13) that maps to DOT&amp;PF's five truck categories and explains how load factors are derived from WIM data.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Traffic</span><span class="ref-tag">Classification</span><span class="ref-tag">WIM</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">AASHTO (1993)</div> 
+
+        <div class="ref-title">Guide for Design of Pavement Structures</div> 
+
+        <div class="ref-pub">American Association of State Highway and Transportation Officials.</div> 
+
+        <div class="ref-note">Origin of the ESAL concept, the 18-kip dual-axle standard, and the load equivalency factor approach underlying the AKFPD load factors.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">ESAL</span><span class="ref-tag">AASHTO 1993</span><span class="ref-tag">Load Factors</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-permafrost"> 
+
+    <div class="subsection-title">Permafrost &amp; Arctic Engineering</div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">Johnston, G.H. ed. (1981)</div> 
+
+        <div class="ref-title">Permafrost Engineering Design and Construction</div> 
+
+        <div class="ref-pub">John Wiley &amp; Sons / National Research Council Canada.</div> 
+
+        <div class="ref-note">Comprehensive guide; Chapter 8 covers transportation facilities on permafrost. Essential when MAAT approaches 25–28°F — the threshold range flagged in the design calculator.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">Permafrost</span><span class="ref-tag">Transportation</span><span class="ref-tag">MAAT</span></div> 
+
+      </div> 
+
+    </div> 
+
+ 
+
+    <div class="ref-entry" style="--entry-color:var(--col-design)"> 
+
+      <div class="ref-stripe"></div> 
+
+      <div class="ref-body"> 
+
+        <div class="ref-authors">USACE CRREL (various)</div> 
+
+        <div class="ref-title">Design of Roads in Permafrost Regions</div> 
+
+        <div class="ref-pub">CRREL Monograph 81-4 and associated technical reports. erdc.usace.army.mil.</div> 
+
+        <div class="ref-note">Embankment thermal analysis, differential settlement, and maintenance on permafrost. Directly applicable when the design tool flags permafrost risk based on MAAT input.</div> 
+
+        <div class="ref-tags"><span class="ref-tag">CRREL</span><span class="ref-tag">Embankment</span><span class="ref-tag">Thermal</span></div> 
+
+      </div> 
+
+    </div> 
+
+  </div> 
+
+ 
+
+  <div class="subsection" id="pd-online"> 
+
+    <div class="subsection-title">Online Resources</div> 
+
+ 
+
+    <div class="resource-grid"> 
+
+
+      <a class="resource-card" href="https://www.ncei.noaa.gov" target="_blank"> 
+
+        <div class="resource-name">NOAA NCEI</div> 
+
+        <div class="resource-desc">Historical temperature records for calculating site-specific freezing index values.</div> 
+
+        <div class="resource-url">ncei.noaa.gov</div> 
+
+      </a> 
+
+ 
+
+      <a class="resource-card" href="https://snap.uaf.edu" target="_blank"> 
+
+        <div class="resource-name">UAF SNAP</div> 
+
+        <div class="resource-desc">Scenarios Network for Alaska &amp; Arctic Planning — mapped Alaska climate data and future projections for regional FI estimates.</div> 
+
+        <div class="resource-url">snap.uaf.edu</div> 
+
+      </a> 
+
+ 
+
+      <a class="resource-card" href="https://dggs.alaska.gov" target="_blank"> 
+
+        <div class="resource-name">Alaska DGGS</div> 
+
+        <div class="resource-desc">Division of Geological &amp; Geophysical Surveys — geologic maps, surficial geology, and ground hazard publications for subgrade assessment.</div> 
+
+        <div class="resource-url">dggs.alaska.gov</div> 
+
+      </a> 
+
+ 
+
+      <a class="resource-card" href="https://infopave.fhwa.dot.gov" target="_blank"> 
+
+        <div class="resource-name">FHWA LTPP InfoPave</div> 
+
+        <div class="resource-desc">Long-term pavement performance database with cold-region test sections for real-world modulus values and performance validation.</div> 
+
+        <div class="resource-url">infopave.fhwa.dot.gov</div> 
+
+      </a> 
+
+    </div> 
+
+  </div> 
+
+</div><!-- /sec-design --> 
+
+ 
+
+<!-- BACK TO TOP --> 
+
+<a class="back-to-top" href="#top">↑ &nbsp;Back to top</a> 
+
+``` 
+
+ 
+
+  </main> 
+
+</div><!-- /page --> 
+
+ 
+
+</body> 
+
+</html> 
