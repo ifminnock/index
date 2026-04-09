@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geotechnical Reference and Study Guide</title>
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+–bg:      #0c0e14;
+–bg2:     #13151e;
+–bg3:     #1a1d28;
+–bg4:     #20243200;
+–border:  #252836;
+–border2: #30354a;
+–text:    #dde0ee;
+–muted:   #666d88;
+–dim:     #3a3f55;
+–accent:  #f0a500;
+–teal:    #2ec4b6;
+–blue:    #4a9eff;
+–green:   #3dba7e;
+–red:     #e05a2b;
+–purple:  #9b72cf;
+–mono: ‘IBM Plex Mono’, monospace;
+–sans: ‘IBM Plex Sans’, sans-serif;
+}
+html, body {
+min-height: 100vh;
+background: var(–bg);
+color: var(–text);
+font-family: var(–sans);
+}
+/* ── BACKGROUND TEXTURE ── */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+repeating-linear-gradient(
+0deg,
+transparent,
+transparent 39px,
+rgba(255,255,255,0.018) 39px,
+rgba(255,255,255,0.018) 40px
+),
+repeating-linear-gradient(
+90deg,
+transparent,
+transparent 39px,
+rgba(255,255,255,0.018) 39px,
+rgba(255,255,255,0.018) 40px
+);
+pointer-events: none;
+z-index: 0;
+}
+/* ── TOP BAR ── */
+.topbar {
+position: relative;
+z-index: 10;
+background: var(–bg2);
+border-bottom: 1px solid var(–border);
+padding: 0 40px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+height: 52px;
+}
+.topbar-left {
+display: flex;
+align-items: center;
+gap: 20px;
+}
+.dot-cluster {
+display: flex;
+gap: 5px;
+align-items: center;
+}
+.dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+}
+.dot-1 { background: var(–red); }
+.dot-2 { background: var(–accent); }
+.dot-3 { background: var(–green); }
+.topbar-title {
+font-family: var(–mono);
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(–muted);
+}
+.topbar-right {
+font-family: var(–mono);
+font-size: 10px;
+color: var(–dim);
+letter-spacing: 0.06em;
+}
+/* ── MAIN WRAPPER ── */
+.wrapper {
+position: relative;
+z-index: 1;
+max-width: 960px;
+margin: 0 auto;
+padding: 72px 40px 80px;
+}
+/* ── HERO ── */
+.hero {
+margin-bottom: 64px;
+}
+.hero-tag {
+font-family: var(–mono);
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.hero-tag::before {
+content: ‘’;
+display: inline-block;
+width: 24px; height: 1px;
+background: var(–accent);
+}
+.hero-title {
+font-family: var(–mono);
+font-size: clamp(26px, 4vw, 42px);
+font-weight: 700;
+line-height: 1.1;
+color: var(–text);
+letter-spacing: -0.02em;
+margin-bottom: 20px;
+}
+.hero-title span {
+color: var(–accent);
+}
+.hero-sub {
+font-family: var(–sans);
+font-size: 14px;
+font-weight: 300;
+color: var(–muted);
+line-height: 1.7;
+max-width: 540px;
+letter-spacing: 0.01em;
+}
+/* ── DIVIDER ── */
+.divider {
+display: flex;
+align-items: center;
+gap: 16px;
+margin-bottom: 40px;
+}
+.divider-label {
+font-family: var(–mono);
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–dim);
+white-space: nowrap;
+}
+.divider-line {
+flex: 1;
+height: 1px;
+background: var(–border);
+}
+/* ── APP GRID ── */
+.app-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 16px;
+margin-bottom: 64px;
+}
+@media (max-width: 640px) {
+.app-grid { grid-template-columns: 1fr; }
+.wrapper { padding: 48px 20px 60px; }
+.topbar { padding: 0 20px; }
+}
+/* ── APP CARD ── */
+.app-card {
+display: block;
+text-decoration: none;
+background: var(–bg2);
+border: 1px solid var(–border);
+border-radius: 3px;
+padding: 28px 28px 24px;
+position: relative;
+overflow: hidden;
+cursor: pointer;
+transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+animation: fadeUp 0.5s ease both;
+}
+.app-card:nth-child(1) { animation-delay: 0.05s; }
+.app-card:nth-child(2) { animation-delay: 0.12s; }
+.app-card:nth-child(3) { animation-delay: 0.19s; }
+.app-card:nth-child(4) { animation-delay: 0.26s; }
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(14px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+/* Accent left strip */
+.app-card::before {
+content: ‘’;
+position: absolute;
+left: 0; top: 0; bottom: 0;
+width: 3px;
+background: var(–card-color);
+opacity: 0.7;
+transition: opacity 0.2s;
+}
+/* Hover glow */
+.app-card::after {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: radial-gradient(ellipse at 20% 50%, var(–card-color) 0%, transparent 70%);
+opacity: 0;
+transition: opacity 0.3s;
+pointer-events: none;
+}
+.app-card:hover {
+border-color: var(–card-color);
+transform: translateY(-2px);
+box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.app-card:hover::before { opacity: 1; }
+.app-card:hover::after { opacity: 0.06; }
+.card-num {
+font-family: var(–mono);
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.14em;
+color: var(–card-color);
+opacity: 0.8;
+margin-bottom: 16px;
+}
+.card-icon {
+font-size: 28px;
+margin-bottom: 14px;
+display: block;
+line-height: 1;
+}
+.card-title {
+font-family: var(–mono);
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 0.02em;
+color: var(–text);
+margin-bottom: 8px;
+line-height: 1.4;
+transition: color 0.2s;
+}
+.app-card:hover .card-title {
+color: var(–card-color);
+}
+.card-desc {
+font-family: var(–sans);
+font-size: 12px;
+font-weight: 300;
+color: var(–muted);
+line-height: 1.65;
+margin-bottom: 20px;
+}
+.card-tags {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+}
+.tag {
+font-family: var(–mono);
+font-size: 9px;
+font-weight: 500;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 3px 8px;
+border: 1px solid var(–border2);
+border-radius: 2px;
+color: var(–muted);
+background: var(–bg3);
+}
+.card-arrow {
+position: absolute;
+bottom: 22px;
+right: 24px;
+font-family: var(–mono);
+font-size: 16px;
+color: var(–dim);
+transition: color 0.2s, transform 0.2s;
+}
+.app-card:hover .card-arrow {
+color: var(–card-color);
+transform: translate(3px, -1px);
+}
+/* Individual card colors */
+.card-soil   { –card-color: var(–teal); }
+.card-pave   { –card-color: var(–accent); }
+.card-design { –card-color: var(–blue); }
+.card-refs   { –card-color: var(–purple); }
+/* ── FOOTER INFO ── */
+.footer-strip {
+border-top: 1px solid var(–border);
+padding-top: 32px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 16px;
+}
+.footer-left {
+font-family: var(–mono);
+font-size: 10px;
+color: var(–dim);
+letter-spacing: 0.08em;
+line-height: 1.8;
+}
+.footer-left strong {
+color: var(–muted);
+font-weight: 500;
+}
+.footer-badge {
+font-family: var(–mono);
+font-size: 9px;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+padding: 5px 12px;
+border: 1px solid var(–border2);
+border-radius: 2px;
+color: var(–dim);
+}
+/* ── STATUS INDICATOR ── */
+.status-dot {
+display: inline-block;
+width: 6px; height: 6px;
+border-radius: 50%;
+background: var(–green);
+margin-right: 6px;
+position: relative;
+top: -1px;
+box-shadow: 0 0 6px var(–green);
+animation: pulse 2.5s ease infinite;
+}
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.4; }
+}
+</style>
+</head>
+<body>
+<!-- TOP BAR -->
+<div class="topbar">
+<div class="topbar-left">
+<div class="dot-cluster">
+<div class="dot dot-1"></div>
+<div class="dot dot-2"></div>
+<div class="dot dot-3"></div>
+</div>
+<div class="topbar-title">Geotechnical Field Reference</div>
+</div>
+<div class="topbar-right">Alaska Geotechnical · Field Tools v1.0</div>
+</div>
+<!-- MAIN CONTENT -->
+<div class="wrapper">
+<!-- HERO -->
+<div class="hero">
+<div class="hero-tag">Field Reference System</div>
+<h1 class="hero-title">Alaska</span><br>Geotechnical Tools</h1>
+<p class="hero-sub">Interactive field and design reference guides for geotechnical engineering. Select a tool below to begin.</p>
+</div>
+<!-- SECTION DIVIDER -->
+<div class="divider">
+<span class="divider-label">Available Tools</span>
+<div class="divider-line"></div>
+</div>
+<!-- APP GRID -->
+<div class="app-grid">
+
+<!-- 01: Rock/Soil ID -->
+<a class="app-card card-soil" href="soil_rock_guide.html">
+<div class="card-num">01 — Identification</div>
+<span class="card-icon">🪨</span>
+<div class="card-title">Rock &amp; Soil<br>Identification</div>
+<p class="card-desc">Interactive USCS-based decision tree for soil classification and geological rock description. Field-ready with descriptive guidance for gradation, plasticity, angularity, and origin indicators.</p>
+<div class="card-tags">
+<span class="tag">USCS</span>
+<span class="tag">Soil</span>
+<span class="tag">Rock</span>
+<span class="tag">Field ID</span>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<!-- 02: Pavement Distress -->
+<a class="app-card card-pave" href="pavement_distress_flowchart.html">
+<div class="card-num">02 — Diagnostics</div>
+<span class="card-icon">🛣️</span>
+<div class="card-title">Pavement Distress<br>Identification</div>
+<p class="card-desc">Trace observed distress types to their geotechnical and structural causes. Covers rutting, cracking, frost heave, and more — with Alaska context and field notes throughout.</p>
+<div class="card-tags">
+<span class="tag">Distress</span>
+<span class="tag">Causes</span>
+<span class="tag">Field Notes</span>
+<span class="tag">Alaska</span>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<!-- 03: Pavement Design -->
+<a class="app-card card-design" href="pavement_design_calculator.html">
+<div class="card-num">03 — Design</div>
+<span class="card-icon">📐</span>
+<div class="card-title">Pavement Section Design<br>&amp; Frost Susceptibility (UNDER CONSTRUCTION)</div>
+<p class="card-desc">Flexible pavement section calculator incorporating subgrade conditions, traffic loading, and frost susceptibility. Includes Casagrande criterion checker and Alaska material specifications.</p>
+<div class="card-tags">
+<span class="tag">Section Design</span>
+<span class="tag">Frost</span>
+<span class="tag">ESAL</span>
+<span class="tag">Casagrande</span>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<!-- 04: References -->
+<a class="app-card card-refs" href="references.html">
+<div class="card-num">04 — References</div>
+<span class="card-icon">📚</span>
+<div class="card-title">References</div>
+<p class="card-desc">Source documents, standards, and manuals cited across all tools in this reference system. Alaska DOT&amp;PF specifications, AASHTO, ASTM, and geotechnical field manuals.</p>
+<div class="card-tags">
+<span class="tag">AASHTO</span>
+<span class="tag">ASTM</span>
+<span class="tag">DOT Specs</span>
+<span class="tag">Manuals</span>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+```
+</div>
+<!-- FOOTER -->
+<div class="footer-strip">
+<div class="footer-left">
+<div><strong>Usage:</strong> Open any tool above. All files work offline — no internet required.</div>
+<div><strong>Setup:</strong> Keep all HTML files in the same folder as this menu.</div>
+</div>
+<div class="footer-badge">
+<span class="status-dot"></span>4 tools loaded
+</div>
+</div>
+</div>
+</body>
+</html>
