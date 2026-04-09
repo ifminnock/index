@@ -1,0 +1,3395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soil & Rock Field Identification Guide</title>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+
+–bg:      #0d0f14;
+
+–bg2:     #13161e;
+
+–bg3:     #1a1d28;
+
+–bg4:     #20243a;
+
+–border:  #252840;
+
+–border2: #303560;
+
+–text:    #dde1f0;
+
+–muted:   #6b7099;
+
+–accent:  #e8a020;
+
+–soil:    #c87941;
+
+–rock:    #7b9ec8;
+
+–green:   #4caf82;
+
+–red:     #d95f5f;
+
+–purple:  #9d7ecf;
+
+–teal:    #3bbfb0;
+
+–mono:    ‘IBM Plex Mono’, monospace;
+
+–sans:    ‘IBM Plex Sans’, sans-serif;
+
+}
+
+body {
+
+background: var(–bg);
+
+color: var(–text);
+
+font-family: var(–sans);
+
+min-height: 100vh;
+
+overflow-x: hidden;
+
+}
+
+/* ── HEADER ── */
+
+.header {
+
+background: var(–bg2);
+
+border-bottom: 1px solid var(–border);
+
+padding: 18px 32px;
+
+display: flex;
+
+align-items: center;
+
+gap: 20px;
+
+}
+
+.header-title {
+
+font-family: var(–mono);
+
+font-size: 13px;
+
+font-weight: 600;
+
+color: var(–accent);
+
+letter-spacing: 0.1em;
+
+text-transform: uppercase;
+
+}
+
+.header-sub {
+
+font-size: 11px;
+
+color: var(–muted);
+
+font-family: var(–mono);
+
+}
+
+.header-dot { width: 6px; height: 6px; border-radius: 50%; background: var(–border2); }
+
+.index-link {
+ margin-left: auto;
+ font-family: var(--mono);
+ font-size: 10px;
+ font-weight: 600;
+ letter-spacing: 0.1em;
+ text-transform: uppercase;
+ color: var(--muted);
+ text-decoration: none;
+ border: 1px solid var(--border);
+ padding: 4px 12px;
+ border-radius: 4px;
+ transition: all 0.15s;
+}
+.index-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── MAIN LAYOUT ── */
+
+.main {
+
+display: grid;
+
+grid-template-columns: 1fr 340px;
+
+min-height: calc(100vh - 57px);
+
+gap: 0;
+
+}
+
+/* ── LEFT PANEL: Decision flow ── */
+
+.panel-left {
+
+padding: 32px;
+
+border-right: 1px solid var(–border);
+
+}
+
+/* ── RIGHT PANEL: Running description ── */
+
+.panel-right {
+
+background: var(–bg2);
+
+padding: 28px 24px;
+
+display: flex;
+
+flex-direction: column;
+
+gap: 0;
+
+}
+
+.panel-right-label {
+
+font-family: var(–mono);
+
+font-size: 10px;
+
+font-weight: 600;
+
+letter-spacing: 0.14em;
+
+text-transform: uppercase;
+
+color: var(–muted);
+
+margin-bottom: 16px;
+
+}
+
+/* ── BREADCRUMB ── */
+
+.breadcrumb {
+
+display: flex;
+
+align-items: center;
+
+gap: 6px;
+
+margin-bottom: 28px;
+
+flex-wrap: wrap;
+
+}
+
+.crumb {
+
+font-family: var(–mono);
+
+font-size: 10px;
+
+color: var(–muted);
+
+cursor: pointer;
+
+padding: 3px 8px;
+
+border-radius: 3px;
+
+border: 1px solid transparent;
+
+transition: all 0.15s;
+
+}
+
+.crumb:hover { color: var(–text); border-color: var(–border2); }
+
+.crumb.active { color: var(–accent); }
+
+.crumb-sep { color: var(–border2); font-size: 10px; }
+
+/* ── STEP BLOCK ── */
+
+.step {
+
+display: none;
+
+animation: fadeIn 0.25s ease;
+
+}
+
+.step.active { display: block; }
+
+@keyframes fadeIn {
+
+from { opacity: 0; transform: translateY(6px); }
+
+to   { opacity: 1; transform: translateY(0); }
+
+}
+
+.step-question {
+
+font-size: 18px;
+
+font-weight: 500;
+
+color: var(–text);
+
+margin-bottom: 8px;
+
+line-height: 1.4;
+
+}
+
+.step-hint {
+
+font-size: 12px;
+
+color: var(–muted);
+
+margin-bottom: 28px;
+
+line-height: 1.6;
+
+font-family: var(–mono);
+
+}
+
+/* ── CHOICE BUTTONS (large branching) ── */
+
+.choices {
+
+display: flex;
+
+flex-direction: column;
+
+gap: 10px;
+
+margin-bottom: 32px;
+
+}
+
+.choices.row { flex-direction: row; flex-wrap: wrap; }
+
+.choice-btn {
+
+background: var(–bg3);
+
+border: 1px solid var(–border2);
+
+border-radius: 8px;
+
+padding: 16px 20px;
+
+text-align: left;
+
+cursor: pointer;
+
+transition: all 0.15s;
+
+position: relative;
+
+overflow: hidden;
+
+}
+
+.choice-btn::before {
+
+content: ‘’;
+
+position: absolute;
+
+left: 0; top: 0; bottom: 0;
+
+width: 3px;
+
+background: transparent;
+
+transition: background 0.15s;
+
+}
+
+.choice-btn:hover { background: var(–bg4); border-color: var(–accent); }
+
+.choice-btn:hover::before { background: var(–accent); }
+
+.choice-btn.soil-color:hover { border-color: var(–soil); }
+
+.choice-btn.soil-color:hover::before { background: var(–soil); }
+
+.choice-btn.rock-color:hover { border-color: var(–rock); }
+
+.choice-btn.rock-color:hover::before { background: var(–rock); }
+
+.choice-title {
+
+font-size: 14px;
+
+font-weight: 600;
+
+color: var(–text);
+
+margin-bottom: 4px;
+
+}
+
+.choice-desc {
+
+font-size: 11px;
+
+color: var(–muted);
+
+line-height: 1.5;
+
+}
+
+/* ── DESCRIPTOR BUTTONS (multi-select, stack into description) ── */
+
+.descriptor-section {
+
+margin-bottom: 28px;
+
+}
+
+.descriptor-label {
+
+font-family: var(–mono);
+
+font-size: 10px;
+
+font-weight: 600;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+color: var(–muted);
+
+margin-bottom: 12px;
+
+}
+
+.descriptor-note {
+
+font-size: 11px;
+
+color: var(–muted);
+
+margin-bottom: 10px;
+
+font-style: italic;
+
+}
+
+.desc-btns {
+
+display: flex;
+
+flex-wrap: wrap;
+
+gap: 8px;
+
+margin-bottom: 10px;
+
+}
+
+.desc-btn {
+
+background: var(–bg3);
+
+border: 1px solid var(–border);
+
+border-radius: 20px;
+
+padding: 6px 14px;
+
+font-size: 12px;
+
+color: var(–muted);
+
+cursor: pointer;
+
+transition: all 0.15s;
+
+font-family: var(–mono);
+
+white-space: nowrap;
+
+}
+
+.desc-btn:hover { border-color: var(–border2); color: var(–text); }
+
+.desc-btn.selected {
+
+background: var(–bg4);
+
+border-color: var(–accent) !important;
+
+color: var(–accent) !important;
+
+box-shadow: 0 0 0 1px var(–accent);
+
+}
+
+.desc-btn.selected:hover {
+
+background: var(–bg4);
+
+border-color: var(–accent) !important;
+
+color: var(–accent) !important;
+
+}
+
+.desc-btn.single-select.selected {
+
+background: var(–bg4);
+
+border-color: var(–teal) !important;
+
+color: var(–teal) !important;
+
+box-shadow: 0 0 0 1px var(–teal);
+
+}
+
+.desc-btn.single-select.selected:hover {
+
+background: var(–bg4);
+
+border-color: var(–teal) !important;
+
+color: var(–teal) !important;
+
+}
+
+/* interpretation card under descriptor */
+
+.interp-card {
+
+display: none;
+
+background: var(–bg3);
+
+border: 1px solid var(–border2);
+
+border-left: 3px solid var(–accent);
+
+border-radius: 0 6px 6px 0;
+
+padding: 12px 14px;
+
+font-size: 11px;
+
+color: var(–text);
+
+line-height: 1.6;
+
+margin-top: 8px;
+
+}
+
+.interp-card.visible { display: block; animation: fadeIn 0.2s ease; }
+
+.interp-label {
+
+font-family: var(–mono);
+
+font-size: 9px;
+
+font-weight: 600;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+color: var(–accent);
+
+margin-bottom: 5px;
+
+}
+
+/* ── CONTINUE BUTTON ── */
+
+.continue-btn {
+
+background: transparent;
+
+border: 1px solid var(–accent);
+
+color: var(–accent);
+
+border-radius: 6px;
+
+padding: 10px 24px;
+
+font-family: var(–mono);
+
+font-size: 12px;
+
+font-weight: 600;
+
+letter-spacing: 0.08em;
+
+text-transform: uppercase;
+
+cursor: pointer;
+
+transition: all 0.15s;
+
+margin-top: 8px;
+
+}
+
+.continue-btn:hover { background: var(–accent); color: var(–bg); }
+
+.continue-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.continue-btn.soil-btn { border-color: var(–soil); color: var(–soil); }
+
+.continue-btn.soil-btn:hover { background: var(–soil); color: var(–bg); }
+
+.continue-btn.rock-btn { border-color: var(–rock); color: var(–rock); }
+
+.continue-btn.rock-btn:hover { background: var(–rock); color: var(–bg); }
+
+/* ── RESULT CARD ── */
+
+.result-card {
+
+background: var(–bg3);
+
+border: 1px solid var(–border2);
+
+border-radius: 10px;
+
+padding: 24px;
+
+margin-top: 8px;
+
+}
+
+.result-symbol {
+
+font-family: var(–mono);
+
+font-size: 32px;
+
+font-weight: 600;
+
+color: var(–accent);
+
+margin-bottom: 4px;
+
+}
+
+.result-name {
+
+font-size: 16px;
+
+font-weight: 600;
+
+color: var(–text);
+
+margin-bottom: 8px;
+
+}
+
+.result-desc {
+
+font-size: 12px;
+
+color: var(–muted);
+
+line-height: 1.7;
+
+}
+
+/* ── RESET BUTTON ── */
+
+.reset-btn {
+
+background: transparent;
+
+border: 1px solid var(–border2);
+
+color: var(–muted);
+
+border-radius: 6px;
+
+padding: 8px 18px;
+
+font-family: var(–mono);
+
+font-size: 11px;
+
+cursor: pointer;
+
+transition: all 0.15s;
+
+margin-top: 16px;
+
+}
+
+.reset-btn:hover { border-color: var(–red); color: var(–red); }
+
+/* ── RIGHT PANEL: Description builder ── */
+
+.desc-builder {
+
+flex: 1;
+
+display: flex;
+
+flex-direction: column;
+
+gap: 12px;
+
+}
+
+.desc-line {
+
+display: none;
+
+font-size: 12px;
+
+line-height: 1.6;
+
+}
+
+.desc-line.visible { display: block; animation: fadeIn 0.3s ease; }
+
+.desc-tag {
+
+font-family: var(–mono);
+
+font-size: 9px;
+
+font-weight: 600;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+color: var(–muted);
+
+display: block;
+
+margin-bottom: 3px;
+
+}
+
+.desc-value {
+
+color: var(–text);
+
+font-weight: 500;
+
+}
+
+.desc-value.soil-col { color: var(–soil); }
+
+.desc-value.rock-col { color: var(–rock); }
+
+.desc-value.accent-col { color: var(–accent); }
+
+.desc-divider {
+
+border: none;
+
+border-top: 1px solid var(–border);
+
+margin: 4px 0;
+
+}
+
+.full-desc-box {
+
+display: none;
+
+margin-top: 16px;
+
+background: var(–bg3);
+
+border: 1px solid var(–border2);
+
+border-radius: 8px;
+
+padding: 16px;
+
+}
+
+.full-desc-box.visible { display: block; animation: fadeIn 0.3s ease; }
+
+.full-desc-box-label {
+
+font-family: var(–mono);
+
+font-size: 9px;
+
+font-weight: 600;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+color: var(–accent);
+
+margin-bottom: 10px;
+
+}
+
+.full-desc-text {
+
+font-size: 12px;
+
+color: var(–text);
+
+line-height: 1.8;
+
+font-style: italic;
+
+}
+
+/* ── USCS REFERENCE TABLE ── */
+
+.ref-table {
+
+width: 100%;
+
+border-collapse: collapse;
+
+font-size: 11px;
+
+margin-top: 12px;
+
+}
+
+.ref-table th {
+
+font-family: var(–mono);
+
+font-size: 9px;
+
+font-weight: 600;
+
+letter-spacing: 0.1em;
+
+text-transform: uppercase;
+
+color: var(–muted);
+
+text-align: left;
+
+padding: 6px 10px;
+
+border-bottom: 1px solid var(–border2);
+
+}
+
+.ref-table td {
+
+padding: 8px 10px;
+
+border-bottom: 1px solid var(–border);
+
+color: var(–text);
+
+line-height: 1.5;
+
+}
+
+.ref-table td:first-child {
+
+font-family: var(–mono);
+
+color: var(–accent);
+
+font-weight: 600;
+
+}
+
+.section-header {
+
+font-family: var(–mono);
+
+font-size: 10px;
+
+font-weight: 600;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+color: var(–teal);
+
+margin: 24px 0 14px;
+
+padding-bottom: 6px;
+
+border-bottom: 1px solid var(–border);
+
+}
+
+@media (max-width: 900px) {
+
+.main { grid-template-columns: 1fr; }
+
+.panel-right { border-top: 1px solid var(–border); }
+
+.panel-left { padding: 20px; }
+
+}
+</style>
+</head>
+<body>
+<div class="header">
+<span class="header-title">Field Identification Guide</span>
+<div class="header-dot"></div>
+<span class="header-sub">Soil &amp; Rock · Alaska DOT&amp;PF · USCS / ASTM D2488</span>
+<a class="index-link" href="index.html">&#8592; Index</a>
+</div>
+<div class="main">
+<!-- ═══════════════════════════════════ LEFT PANEL ═══════════════════════════════════ -->
+<div class="panel-left">
+
+```
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb">
+<span class="crumb active" onclick="goToStep('start')">Start</span>
+</div>
+<!-- ══ STEP: START ══ -->
+<div class="step active" id="step-start">
+<div class="step-question">What material are you classifying?</div>
+<div class="step-hint">Select the primary material type to begin the identification process.</div>
+<div class="choices row">
+<div class="choice-btn soil-color" onclick="selectMaterial('soil')" style="flex:1;min-width:180px">
+<div class="choice-title">🟫 Soil</div>
+<div class="choice-desc">Unconsolidated material — gravels, sands, silts, clays, organics, frozen ground</div>
+</div>
+<div class="choice-btn rock-color" onclick="selectMaterial('rock')" style="flex:1;min-width:180px">
+<div class="choice-title">🪨 Rock</div>
+<div class="choice-desc">Consolidated bedrock or large intact fragments — igneous, sedimentary, metamorphic</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: SOIL — ORGANIC CHECK ══ -->
+<div class="step" id="step-organic">
+<div class="step-question">Does the material contain visible organic matter?</div>
+<div class="step-hint">Look for dark color, woody fibers, root material, or a noticeable organic odor. Even small amounts affect engineering behavior.</div>
+<div class="choices">
+<div class="choice-btn" onclick="setOrganic('none'); goToStep('soil-grain')">
+<div class="choice-title">No organic content — &lt;2% organics</div>
+<div class="choice-desc">No odor, no fibers, no dark staining attributable to organics. Ash content 98–100%. No significant change to soil properties or behavior. Classify under standard USCS.</div>
+</div>
+<div class="choice-btn" onclick="setOrganic('slight'); goToStep('soil-grain')">
+<div class="choice-title">Slightly organic — 2–5% organics</div>
+<div class="choice-desc">Subtle odor possible, may have fine woody particles or faint dark staining. Ash content 95–98%. Minor influence on properties — retain base USCS name with "slightly organic" modifier. Recommend wet/dry Atterberg prep if fine-grained.</div>
+</div>
+<div class="choice-btn" onclick="setOrganic('organic'); goToStep('soil-grain')">
+<div class="choice-title">Organic — 5–15% organics</div>
+<div class="choice-desc">Noticeable odor, dark color, elevated moisture. Ash content 85–95%. Engineering properties measurably affected — specify both wet and dry preparation for Atterberg limits and max density tests. Use "organic" prefix with USCS name.</div>
+</div>
+<div class="choice-btn" onclick="setOrganic('highly'); goToStep('soil-grain')">
+<div class="choice-title">Highly organic — 15–75% organics</div>
+<div class="choice-desc">Strong organic odor, very dark color, spongy or fibrous feel. Ash content 25–85%. Compressible, very low strength, high moisture content. Use "highly organic" prefix with USCS name. Strength and consolidation testing critical.</div>
+</div>
+<div class="choice-btn" onclick="setOrganic('peat'); goToStep('peat-result')">
+<div class="choice-title">Peat (Pt) — &gt;75% organics</div>
+<div class="choice-desc">&gt;75% organics, ash content &lt;25%. Dark brown to black, spongy, pronounced odor, fibrous to amorphous texture. Extremely compressible. USCS: PT. May be fibric (Hemic), hemic, or sapric depending on humification and fiber content.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: PEAT RESULT ══ -->
+<div class="step" id="step-peat-result">
+<div class="step-question">Highly organic material identified</div>
+<div class="result-card">
+<div class="result-symbol" id="peat-symbol">Pt</div>
+<div class="result-name" id="peat-name">Peat</div>
+<div class="result-desc" id="peat-desc"></div>
+</div>
+<div class="section-header">Alaska Field Notes — Organic Soils</div>
+<div style="font-size:12px;color:var(--muted);line-height:1.7">
+
+    Organic soils in Alaska are commonly associated with muskeg, tundra, and low-lying glaciolacustrine areas. 
+
+    Peat accumulates in poorly drained depressions where cool temperatures and anaerobic conditions retard decomposition. 
+
+    Alaska's peat deposits range from thin active-layer organic mats (&lt;1 ft) over permafrost to deep muskeg systems 
+
+    exceeding 10–15 ft in the Kenai Lowlands and Cook Inlet basin. 
+
+    Where organic soil deposits exceed 4 feet in thickness, increase boring frequency and consult the geotechnical 
+
+    engineer. Vane shear and consolidation testing are often critical for embankment design over organic soils. 
+
+    Always specify both wet and dry Atterberg and compaction test preparation for organic fine-grained soils.
+</div>
+<button class="reset-btn" onclick="fullReset()">↺ Start Over</button>
+</div>
+<!-- ══ STEP: SOIL — COARSE OR FINE ══ -->
+<div class="step" id="step-soil-grain">
+<div class="step-question">Estimate the fine-grained fraction</div>
+<div class="step-hint">Visually estimate the percentage of silt and clay (particles too small to see individually). &gt;50% fines = fine-grained soil.</div>
+<div class="choices">
+<div class="choice-btn soil-color" onclick="setGrainType('coarse'); goToStep('soil-coarse-dom')">
+<div class="choice-title">Coarse-grained — &lt;50% fines</div>
+<div class="choice-desc">Individual particles visible. Gravel or sand dominates. Silt/clay fraction is minor or absent.</div>
+</div>
+<div class="choice-btn soil-color" onclick="setGrainType('fine'); goToStep('soil-fine-plastic')">
+<div class="choice-title">Fine-grained — &gt;50% fines</div>
+<div class="choice-desc">Particles too small to see individually. Cohesive or silty feel. No gritty texture when rubbed.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: COARSE — SAND OR GRAVEL DOMINANT ══ -->
+<div class="step" id="step-soil-coarse-dom">
+<div class="step-question">Which coarse fraction dominates?</div>
+<div class="step-hint">Compare the percentage of gravel (retained on #4 sieve, &gt;4.75mm) versus sand (passing #4, retained on #200). The dominant fraction names the soil.</div>
+<div class="choices">
+<div class="choice-btn soil-color" onclick="setCoarseDom('gravel'); goToStep('gravel-fines')">
+<div class="choice-title">Gravel dominant</div>
+<div class="choice-desc">More gravel than sand. Particles range from 4.75mm up to 75mm (3"). USCS groups: GW, GP, GM, GC.</div>
+</div>
+<div class="choice-btn soil-color" onclick="setCoarseDom('sand'); goToStep('sand-fines')">
+<div class="choice-title">Sand dominant</div>
+<div class="choice-desc">More sand than gravel. Particles 0.075mm–4.75mm. USCS groups: SW, SP, SM, SC.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: GRAVEL — FINES CHECK ══ -->
+<div class="step" id="step-gravel-fines">
+<div class="step-question">Estimate the fines content in the gravel</div>
+<div class="step-hint">Fines are silt/clay particles. &lt;5% = "clean" gravel. 5–12% = borderline, dual symbol. &gt;12% = fines significantly affect behavior.</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesContent('clean'); goToStep('gravel-gradation')">
+<div class="choice-title">&lt;5% fines — Clean gravel</div>
+<div class="choice-desc">Minimal silt/clay. Free-draining. Gradation characteristics (Cu, Cc) determine GW or GP classification.</div>
+</div>
+<div class="choice-btn" onclick="setFinesContent('some'); goToStep('gravel-gradation')">
+<div class="choice-title">5–12% fines — Dual symbol</div>
+<div class="choice-desc">Borderline clean/with fines. Dual symbol applies (e.g. GW-GM, GP-GC). Drainage partially impaired. Frost susceptibility increases — important for Alaska subgrade evaluation.</div>
+</div>
+<div class="choice-btn" onclick="setFinesContent('fines'); goToStep('gravel-fines-type')">
+<div class="choice-title">&gt;12% fines — Silty or clayey gravel</div>
+<div class="choice-desc">Fines content controls classification (GM or GC). Significant impact on drainage, strength, frost susceptibility, and compaction behavior.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: GRAVEL GRADATION ══ -->
+<div class="step" id="step-gravel-gradation">
+<div class="step-question">Assess the gravel gradation</div>
+<div class="step-hint">Well-graded = wide range of particle sizes, good representation of sizes. Poorly graded = narrow range (uniformly-graded) or missing intermediate sizes (gap-graded).</div>
+<div class="choices">
+<div class="choice-btn" onclick="setGradation('well'); nextAfterGradation('gravel')">
+<div class="choice-title">Well-graded (GW)</div>
+<div class="choice-desc">Particles span a wide range of sizes with good representation throughout. Dense, interlocking structure. Coefficient of uniformity Cu &gt;4, coefficient of curvature Cc between 1 and 3.</div>
+</div>
+<div class="choice-btn" onclick="setGradation('poor'); nextAfterGradation('gravel')">
+<div class="choice-title">Poorly graded (GP)</div>
+<div class="choice-desc">Uniformly-graded (one size), gap-graded (missing intermediate sizes), or narrow range. More void space, less stable under load.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: GRAVEL DUAL-SYMBOL FINES TYPE ══ -->
+<div class="step" id="step-gravel-dual-fines">
+<div class="step-question">Characterize the fine fraction (5–12%)</div>
+<div class="step-hint">With 5–12% fines a dual symbol applies — gradation + fines type. Rub wet fines between fingers. Clay is sticky and plastic. Silt is floury or gritty and non-plastic.</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesType('silt'); goToStep('gravel-angularity')">
+<div class="choice-title">Silty — ML or MH fines → GW-GM or GP-GM</div>
+<div class="choice-desc">Non-plastic or low plasticity. Floury texture when dry. Cannot roll a thread. Highly frost susceptible — critical consideration for Alaska subgrade and fill evaluation.</div>
+</div>
+<div class="choice-btn" onclick="setFinesType('clay'); goToStep('gravel-angularity')">
+<div class="choice-title">Clayey — CL or CH fines → GW-GC or GP-GC</div>
+<div class="choice-desc">Plastic fines — sticky when moist, rolls into a thread. Reduces drainage, increases shrink-swell potential. Can cause significant strength loss when wet or thawed.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: GRAVEL FINES TYPE (>12%) ══ -->
+<div class="step" id="step-gravel-fines-type">
+<div class="step-question">Characterize the fine fraction</div>
+<div class="step-hint">Rub a small amount of wet fines between your fingers. Clay feels sticky and plastic. Silt feels gritty or floury and non-plastic.</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesType('silt'); goToStep('gravel-angularity')">
+<div class="choice-title">Silty — ML or MH fines (GM)</div>
+<div class="choice-desc">Non-plastic or low plasticity. Floury texture when dry. Frost susceptible — important in Alaska subgrade and fill evaluation.</div>
+</div>
+<div class="choice-btn" onclick="setFinesType('clay'); goToStep('gravel-angularity')">
+<div class="choice-title">Clayey — CL or CH fines (GC)</div>
+<div class="choice-desc">Plastic, sticky when moist. Rolls into a thread. Can cause significant strength loss when wet or frozen and thawed.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: GRAVEL ANGULARITY ══ -->
+<div class="step" id="step-gravel-angularity">
+<div class="step-question">Describe the particle angularity</div>
+<div class="step-hint">Angularity reflects the history of the material — whether it has been transported, abraded, or mechanically processed. Select all that apply to most particles.</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Gravel Size (dominant fraction)</div>
+<div class="descriptor-note">Fine gravel = 4.75–19mm (&frac34;&Prime;), Medium gravel = 19–50mm (2&Prime;), Coarse gravel = 50–75mm (3&Prime;)</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="gravelsize" data-val="fine gravel (4.75-19mm)" onclick="selectSingle(this,'gravelsize')">Fine gravel (4.75–19mm)</button>
+<button class="desc-btn single-select" data-group="gravelsize" data-val="medium gravel (19-50mm)" onclick="selectSingle(this,'gravelsize')">Medium gravel (19–50mm)</button>
+<button class="desc-btn single-select" data-group="gravelsize" data-val="coarse gravel (50-75mm)" onclick="selectSingle(this,'gravelsize')">Coarse gravel (50–75mm)</button>
+<button class="desc-btn single-select" data-group="gravelsize" data-val="mixed gravel sizes" onclick="selectSingle(this,'gravelsize')">Mixed sizes</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Angularity</div>
+<div class="descriptor-note">Select the best description for the majority of particles</div>
+<div class="desc-btns" id="angularity-btns">
+<button class="desc-btn single-select" data-group="angularity" data-val="rounded"     onclick="selectSingle(this,'angularity')">Rounded</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="subrounded"  onclick="selectSingle(this,'angularity')">Subrounded</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="subangular"  onclick="selectSingle(this,'angularity')">Subangular</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="angular"     onclick="selectSingle(this,'angularity')">Angular</button>
+</div>
+<div class="interp-card" id="interp-angularity">
+<div class="interp-label">Field Interpretation</div>
+<div id="interp-angularity-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Particle Shape (optional)</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="shape" onclick="toggleDesc(this,'shape')">Flat (W/T &gt;3)</button>
+<button class="desc-btn" data-group="shape" onclick="toggleDesc(this,'shape')">Elongated (L/W &gt;3)</button>
+<button class="desc-btn" data-group="shape" onclick="toggleDesc(this,'shape')">Flat &amp; Elongated</button>
+<button class="desc-btn" data-group="shape" onclick="toggleDesc(this,'shape')">Equidimensional</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Particle Composition (optional)</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Mixed lithology</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Predominantly granite</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Predominantly basalt</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Predominantly schist</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Predominantly quartz</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Predominantly chert</button>
+<button class="desc-btn" data-group="composition" onclick="toggleDesc(this,'composition')">Mixed metamorphic</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Cobbles / Boulders Present?</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="cobbles" onclick="toggleDesc(this,'cobbles')">Cobbles present (3"–12")</button>
+<button class="desc-btn" data-group="cobbles" onclick="toggleDesc(this,'cobbles')">Boulders present (&gt;12")</button>
+</div>
+<div class="interp-card" id="interp-cobbles" style="border-left-color:var(--soil)">
+<div class="interp-label" style="color:var(--soil)">Alaska Note</div>
+
+      Cobbles and boulders are common in glacial terrain. Their presence is a known source of earthwork claims. 
+
+      Log drilling action carefully — bouncing or slow penetration may indicate large particles even when not directly sampled. 
+
+      Use the DOT&amp;PF cobble/boulder percentage procedure (backhoe sample + spring scale) where warranted.
+</div>
+</div>
+<button class="continue-btn soil-btn" onclick="goToStep('gravel-moisture')">Continue →</button>
+</div>
+<!-- ══ STEP: GRAVEL MOISTURE / COLOR ══ -->
+<div class="step" id="step-gravel-moisture">
+<div class="step-question">Additional descriptors</div>
+<div class="step-hint">These supplementary descriptors complete the soil description for the field log.</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Moisture Condition</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="moisture" data-val="dry"   onclick="selectSingle(this,'moisture')">Dry</button>
+<button class="desc-btn single-select" data-group="moisture" data-val="moist" onclick="selectSingle(this,'moisture')">Moist</button>
+<button class="desc-btn single-select" data-group="moisture" data-val="wet"   onclick="selectSingle(this,'moisture')">Wet</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Brown</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Gray-brown</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Tan</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Orange-brown</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Dark gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Light gray</button>
+</div>
+<div class="interp-card" id="interp-color" style="border-left-color:var(--muted)">
+<div class="interp-label" style="color:var(--muted)">Color Interpretation</div>
+<div id="interp-color-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Cementation</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="cementation" onclick="selectSingle(this,'cementation')">None</button>
+<button class="desc-btn single-select" data-group="cementation" onclick="selectSingle(this,'cementation')">Weak</button>
+<button class="desc-btn single-select" data-group="cementation" onclick="selectSingle(this,'cementation')">Moderate</button>
+<button class="desc-btn single-select" data-group="cementation" onclick="selectSingle(this,'cementation')">Strong</button>
+</div>
+</div>
+<button class="continue-btn soil-btn" onclick="showGravelResult()">Build Description →</button>
+</div>
+<!-- ══ STEP: GRAVEL RESULT ══ -->
+<div class="step" id="step-gravel-result">
+<div class="step-question">Classification complete</div>
+<div class="result-card" id="gravel-result-card">
+<div class="result-symbol" id="gravel-symbol"></div>
+<div class="result-name" id="gravel-name"></div>
+<div class="result-desc" id="gravel-desc"></div>
+</div>
+<div class="section-header">USCS Gravel Group Reference</div>
+<table class="ref-table">
+<tr><th>Symbol</th><th>Name</th><th>Criteria</th></tr>
+<tr><td>GW</td><td>Well-graded gravel</td><td>Cu≥4, 1≤Cc≤3, &lt;5% fines</td></tr>
+<tr><td>GP</td><td>Poorly graded gravel</td><td>Does not meet GW criteria, &lt;5% fines</td></tr>
+<tr><td>GW-GM</td><td>Well-graded gravel w/ silt</td><td>5–12% ML/MH fines</td></tr>
+<tr><td>GW-GC</td><td>Well-graded gravel w/ clay</td><td>5–12% CL/CH fines</td></tr>
+<tr><td>GP-GM</td><td>Poorly graded gravel w/ silt</td><td>5–12% ML/MH fines</td></tr>
+<tr><td>GP-GC</td><td>Poorly graded gravel w/ clay</td><td>5–12% CL/CH fines</td></tr>
+<tr><td>GM</td><td>Silty gravel</td><td>&gt;12% ML/MH fines</td></tr>
+<tr><td>GC</td><td>Clayey gravel</td><td>&gt;12% CL/CH fines</td></tr>
+</table>
+<button class="reset-btn" onclick="fullReset()">↺ Start Over</button>
+</div>
+<!-- ══ STEP: SAND FINES ══ -->
+<div class="step" id="step-sand-fines">
+<div class="step-question">Estimate the fines content in the sand</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesContent('clean'); goToStep('sand-gradation')">
+<div class="choice-title">&lt;5% fines — Clean sand</div>
+<div class="choice-desc">Free-draining, non-cohesive. Gradation drives SW or SP classification.</div>
+</div>
+<div class="choice-btn" onclick="setFinesContent('some'); goToStep('sand-gradation')">
+<div class="choice-title">5–12% fines — Dual symbol</div>
+<div class="choice-desc">Borderline clean/with fines. Dual symbol applies (SW-SM, SP-SC, etc.). Fines begin to reduce permeability and increase frost susceptibility significantly.</div>
+</div>
+<div class="choice-btn" onclick="setFinesContent('fines'); goToStep('sand-fines-type')">
+<div class="choice-title">&gt;12% fines — Silty or clayey sand</div>
+<div class="choice-desc">Fines content dominates behavior. Characterize fine fraction (SM or SC).</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: SAND GRADATION ══ -->
+<div class="step" id="step-sand-gradation">
+<div class="step-question">Assess the sand gradation</div>
+<div class="choices">
+<div class="choice-btn" onclick="setGradation('well'); nextAfterGradation('sand')">
+<div class="choice-title">Well-graded (SW)</div>
+<div class="choice-desc">Wide range of grain sizes. Cu≥6, Cc between 1 and 3. Good structural properties when compacted.</div>
+</div>
+<div class="choice-btn" onclick="setGradation('poor'); nextAfterGradation('sand')">
+<div class="choice-title">Poorly graded (SP)</div>
+<div class="choice-desc">Uniform grain size or gap-graded. Beach sands, dune sands, and wind deposits are often uniformly-graded SP.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: SAND DUAL-SYMBOL FINES TYPE ══ -->
+<div class="step" id="step-sand-dual-fines">
+<div class="step-question">Characterize the fine fraction (5–12%)</div>
+<div class="step-hint">With 5–12% fines a dual symbol applies — gradation + fines type. Rub wet fines between fingers. Clay is sticky and plastic. Silt is floury or gritty and non-plastic.</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesType('silt'); goToStep('sand-descriptors')">
+<div class="choice-title">Silty — ML or MH fines → SW-SM or SP-SM</div>
+<div class="choice-desc">Non-plastic fines. Floury feel when dry. Cannot roll a thread. Highly frost susceptible — one of the most problematic materials in Alaska subgrades.</div>
+</div>
+<div class="choice-btn" onclick="setFinesType('clay'); goToStep('sand-descriptors')">
+<div class="choice-title">Clayey — CL or CH fines → SW-SC or SP-SC</div>
+<div class="choice-desc">Plastic fines — sticky when moist, rolls into a thread. Reduces permeability, increases cohesion. Susceptible to strength loss on thaw.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: SAND FINES TYPE (>12%) ══ -->
+<div class="step" id="step-sand-fines-type">
+<div class="step-question">Characterize the fine fraction</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFinesType('silt'); goToStep('sand-descriptors')">
+<div class="choice-title">Silty — SM</div>
+<div class="choice-desc">Non-plastic fines. Floury feel when dry. Highly frost susceptible — one of the most problematic materials in Alaska subgrades.</div>
+</div>
+<div class="choice-btn" onclick="setFinesType('clay'); goToStep('sand-descriptors')">
+<div class="choice-title">Clayey — SC</div>
+<div class="choice-desc">Plastic fines. Cohesive when moist, hard when dry. Susceptible to strength loss on thaw if ice-rich.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: SAND DESCRIPTORS ══ -->
+<div class="step" id="step-sand-descriptors">
+<div class="step-question">Describe additional sand characteristics</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Grain Size (dominant)</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="sandsize" onclick="selectSingle(this,'sandsize')">Coarse sand (2–4.75mm)</button>
+<button class="desc-btn single-select" data-group="sandsize" onclick="selectSingle(this,'sandsize')">Medium sand (0.425–2mm)</button>
+<button class="desc-btn single-select" data-group="sandsize" onclick="selectSingle(this,'sandsize')">Fine sand (0.075–0.425mm)</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Angularity</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="angularity" data-val="rounded"    onclick="selectSingle(this,'angularity')">Rounded</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="subrounded" onclick="selectSingle(this,'angularity')">Subrounded</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="subangular" onclick="selectSingle(this,'angularity')">Subangular</button>
+<button class="desc-btn single-select" data-group="angularity" data-val="angular"    onclick="selectSingle(this,'angularity')">Angular</button>
+</div>
+<div class="interp-card" id="interp-sand-angularity">
+<div class="interp-label">Field Interpretation</div>
+<div id="interp-sand-angularity-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Moisture</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Dry</button>
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Moist</button>
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Wet</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Brown</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Tan</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Light gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Dark gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Orange-brown</button>
+</div>
+</div>
+<button class="continue-btn soil-btn" onclick="showSandResult()">Build Description →</button>
+</div>
+<!-- ══ STEP: SAND RESULT ══ -->
+<div class="step" id="step-sand-result">
+<div class="step-question">Classification complete</div>
+<div class="result-card" id="sand-result-card">
+<div class="result-symbol" id="sand-symbol"></div>
+<div class="result-name" id="sand-name"></div>
+<div class="result-desc" id="sand-desc"></div>
+</div>
+<div class="section-header">USCS Sand Group Reference</div>
+<table class="ref-table">
+<tr><th>Symbol</th><th>Name</th><th>Criteria</th></tr>
+<tr><td>SW</td><td>Well-graded sand</td><td>Cu≥6, 1≤Cc≤3, &lt;5% fines</td></tr>
+<tr><td>SP</td><td>Poorly graded sand</td><td>Does not meet SW criteria, &lt;5% fines</td></tr>
+<tr><td>SW-SM</td><td>Well-graded sand w/ silt</td><td>5–12% ML/MH fines</td></tr>
+<tr><td>SW-SC</td><td>Well-graded sand w/ clay</td><td>5–12% CL/CH fines</td></tr>
+<tr><td>SP-SM</td><td>Poorly graded sand w/ silt</td><td>5–12% ML/MH fines</td></tr>
+<tr><td>SP-SC</td><td>Poorly graded sand w/ clay</td><td>5–12% CL/CH fines</td></tr>
+<tr><td>SM</td><td>Silty sand</td><td>&gt;12% ML/MH fines</td></tr>
+<tr><td>SC</td><td>Clayey sand</td><td>&gt;12% CL/CH fines</td></tr>
+</table>
+<button class="reset-btn" onclick="fullReset()">↺ Start Over</button>
+</div>
+<!-- ══ STEP: FINE-GRAINED PLASTICITY ══ -->
+<div class="step" id="step-soil-fine-plastic">
+<div class="step-question">Assess the plasticity of the fine-grained soil</div>
+<div class="step-hint">
+
+    Roll a small moist sample into a 1/8" thread. Nonplastic soils crumble immediately. 
+
+    Highly plastic soils roll easily and re-roll after reaching the plastic limit. 
+
+    Silt (ML/MH) feels floury or gritty; clay (CL/CH) feels smooth and sticky.
+</div>
+<div class="choices">
+<div class="choice-btn" onclick="setPlasticity('NP'); goToStep('fine-descriptors')">
+<div class="choice-title">Nonplastic — Silt (ML or MH)</div>
+<div class="choice-desc">Cannot be rolled into a thread at any moisture content. Floury or gritty feel. Dilatancy rapid. No strength when dry. USCS: ML (low plasticity) or MH (elastic silt).</div>
+</div>
+<div class="choice-btn" onclick="setPlasticity('low'); goToStep('fine-descriptors')">
+<div class="choice-title">Low plasticity</div>
+<div class="choice-desc">Thread barely rolls, lump cannot be formed when dry. Falls in lower portion of plasticity chart. May be lean clay (CL) or silty with some plasticity (ML).</div>
+</div>
+<div class="choice-btn" onclick="setPlasticity('medium'); goToStep('fine-descriptors')">
+<div class="choice-title">Medium plasticity</div>
+<div class="choice-desc">Thread rolls easily, cannot be re-rolled after plastic limit. Lump crumbles when dry. Lean clay (CL) range.</div>
+</div>
+<div class="choice-btn" onclick="setPlasticity('high'); goToStep('fine-descriptors')">
+<div class="choice-title">High plasticity — Fat clay (CH)</div>
+<div class="choice-desc">Considerable effort to roll. Thread re-rolls several times. Lump forms without crumbling when dry. Very high dry strength. Highly compressible, significant swell potential.</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: FINE-GRAINED DESCRIPTORS ══ -->
+<div class="step" id="step-fine-descriptors">
+<div class="step-question">Describe the fine-grained soil</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Consistency (intact sample)</div>
+<div class="descriptor-note">Use thumb pressure test on undisturbed sample</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="consistency" data-val="very soft" onclick="selectSingle(this,'consistency')">Very soft</button>
+<button class="desc-btn single-select" data-group="consistency" data-val="soft"       onclick="selectSingle(this,'consistency')">Soft</button>
+<button class="desc-btn single-select" data-group="consistency" data-val="firm"       onclick="selectSingle(this,'consistency')">Firm</button>
+<button class="desc-btn single-select" data-group="consistency" data-val="hard"       onclick="selectSingle(this,'consistency')">Hard</button>
+<button class="desc-btn single-select" data-group="consistency" data-val="very hard"  onclick="selectSingle(this,'consistency')">Very hard</button>
+</div>
+<div class="interp-card" id="interp-consistency">
+<div class="interp-label">SPT Blow Count Equivalent</div>
+<div id="interp-consistency-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Moisture</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Dry</button>
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Moist</button>
+<button class="desc-btn single-select" data-group="moisture" onclick="selectSingle(this,'moisture')">Wet</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Brown</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Blue-gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Tan</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Dark gray</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Olive</button>
+<button class="desc-btn single-select" data-group="color" onclick="selectSingle(this,'color')">Black</button>
+</div>
+<div class="interp-card" id="interp-fine-color" style="border-left-color:var(--muted)">
+<div class="interp-label" style="color:var(--muted)">Color Note</div>
+<div id="interp-fine-color-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Soil Structure</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Homogeneous</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Stratified</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Laminated</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Fissured</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Varved</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Blocky</button>
+<button class="desc-btn" data-group="structure" onclick="toggleDesc(this,'structure')">Lensed</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Frozen?</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="frozen" data-val="no"  onclick="selectSingle(this,'frozen')">Not frozen</button>
+<button class="desc-btn single-select" data-group="frozen" data-val="yes" onclick="frozenSelected(this)">Frozen</button>
+</div>
+</div>
+<button class="continue-btn soil-btn" onclick="showFineResult()">Build Description →</button>
+</div>
+<!-- ══ STEP: FROZEN SOIL DETAIL ══ -->
+<div class="step" id="step-frozen-detail">
+<div class="step-question">Classify the frozen soil condition</div>
+<div class="step-hint">Per ASTM D4083. Describe the ice content and structure. Do not use blow counts to determine density in frozen soil.</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Ice Content / Bonding</div>
+<div class="choices">
+<div class="choice-btn" onclick="setFrozenType('Nf'); continueFrozen()">
+<div class="choice-title">Nf — Poorly bonded or friable</div>
+<div class="choice-desc">No excess ice. Soil particles weakly held by ice. Easily chipped or broken. Usually thaw-stable. Density similar to unfrozen state.</div>
+</div>
+<div class="choice-btn" onclick="setFrozenType('Nb'); continueFrozen()">
+<div class="choice-title">Nb — Well bonded</div>
+<div class="choice-desc">No excess ice. Particles strongly held. High resistance to chipping. Usually thaw-stable.</div>
+</div>
+<div class="choice-btn" onclick="setFrozenType('Vx'); continueFrozen()">
+<div class="choice-title">Vx — Individual ice crystals / coatings</div>
+<div class="choice-desc">Excess ice visible as individual crystals or coatings on particles. May be thaw-unstable.</div>
+</div>
+<div class="choice-btn" onclick="setFrozenType('Vc'); continueFrozen()">
+<div class="choice-title">Vc — Random ice formations</div>
+<div class="choice-desc">Irregular or randomly oriented ice bodies. Thaw-unstable — expect settlement and strength loss on thaw.</div>
+</div>
+<div class="choice-btn" onclick="setFrozenType('Vs'); continueFrozen()">
+<div class="choice-title">Vs — Stratified / oriented ice</div>
+<div class="choice-desc">Ice lenses, layers, or veins with distinct orientation. Thaw-unstable. Significant settlement potential.</div>
+</div>
+<div class="choice-btn" onclick="setFrozenType('ICE'); continueFrozen()">
+<div class="choice-title">ICE — Substantial ice strata (&gt;1 inch)</div>
+<div class="choice-desc">Dominant ice mass with soil inclusions. Severely thaw-unstable. Foundation and embankment design critical.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ══ STEP: FINE RESULT ══ -->
+<div class="step" id="step-fine-result">
+<div class="step-question">Classification complete</div>
+<div class="result-card" id="fine-result-card">
+<div class="result-symbol" id="fine-symbol"></div>
+<div class="result-name" id="fine-name"></div>
+<div class="result-desc" id="fine-desc"></div>
+</div>
+<div class="section-header">USCS Fine-Grained Reference</div>
+<table class="ref-table">
+<tr><th>Symbol</th><th>Name</th><th>Key Characteristics</th></tr>
+<tr><td>ML</td><td>Silt</td><td>Low plasticity, rapid dilatancy, low dry strength</td></tr>
+<tr><td>MH</td><td>Elastic silt</td><td>Medium plasticity, slow dilatancy, medium dry strength</td></tr>
+<tr><td>CL</td><td>Lean clay</td><td>Medium plasticity, no dilatancy, medium-high dry strength</td></tr>
+<tr><td>CH</td><td>Fat clay</td><td>High plasticity, no dilatancy, very high dry strength</td></tr>
+<tr><td>OL</td><td>Organic silt/clay</td><td>Low plasticity with organics, odor present</td></tr>
+<tr><td>OH</td><td>Organic clay</td><td>Medium-high plasticity with organics</td></tr>
+</table>
+<button class="reset-btn" onclick="fullReset()">↺ Start Over</button>
+</div>
+<!-- ══════════════════ ROCK PATH ══════════════════ -->
+<!-- ══ STEP: ROCK TYPE ══ -->
+<div class="step" id="step-rock-type">
+<div class="step-question">Identify the primary rock genesis</div>
+<div class="step-hint">
+
+    Check texture first: phaneritic (grains visible) vs. aphanitic (grains not visible). 
+
+    Check for directional structure (foliation, banding). 
+
+    Check grain hardness with pocketknife (most rock-forming minerals &gt;5.5).
+</div>
+<div class="choices">
+<div class="choice-btn rock-color" onclick="setRockType('igneous'); goToStep('rock-igneous-texture')">
+<div class="choice-title">Igneous</div>
+<div class="choice-desc">Formed from cooling molten rock. Crystalline texture, no foliation, no layering. May be intrusive (coarse-grained) or extrusive (fine-grained or glassy).</div>
+</div>
+<div class="choice-btn rock-color" onclick="setRockType('sedimentary'); goToStep('rock-sed-texture')">
+<div class="choice-title">Sedimentary</div>
+<div class="choice-desc">Layered or bedded. Clastic (fragmental grains) or chemical (crystalline or amorphous precipitate). May effervesce in HCl if carbonate.</div>
+</div>
+<div class="choice-btn rock-color" onclick="setRockType('metamorphic'); goToStep('rock-meta-structure')">
+<div class="choice-title">Metamorphic</div>
+<div class="choice-desc">Altered by heat, pressure, or fluid. Foliated (schistose, slaty, gneissose) or non-foliated (marble, quartzite, hornfels).</div>
+</div>
+</div>
+</div>
+<!-- ══ ROCK: IGNEOUS TEXTURE ══ -->
+<div class="step" id="step-rock-igneous-texture">
+<div class="step-question">Igneous rock texture</div>
+<div class="step-hint">Can you see individual mineral grains with the naked eye?</div>
+<div class="choices">
+<div class="choice-btn" onclick="setRockTexture('phaneritic'); goToStep('rock-igneous-color')">
+<div class="choice-title">Phaneritic — grains visible</div>
+<div class="choice-desc">Coarse (&gt;5mm), medium (1–5mm), or fine (&lt;1mm) but distinguishable. Intrusive origin — cooled slowly deep underground. Examples: granite, diorite, gabbro.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('aphanitic'); goToStep('rock-igneous-color')">
+<div class="choice-title">Aphanitic — grains not visible</div>
+<div class="choice-desc">Microcrystalline or glassy groundmass. Extrusive origin — rapid cooling at surface. Examples: basalt, rhyolite, andesite.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('porphyritic'); goToStep('rock-igneous-color')">
+<div class="choice-title">Porphyritic — mixed grain sizes</div>
+<div class="choice-desc">Large crystals (phenocrysts) set in finer groundmass. Two-stage cooling history. Examples: granite porphyry, rhyolite porphyry.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('glassy'); goToStep('rock-igneous-color')">
+<div class="choice-title">Glassy / vesicular</div>
+<div class="choice-desc">No crystalline structure. May have gas bubbles (vesicular) or be entirely glass (obsidian). Pumice is highly vesicular and lightweight.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('pyroclastic'); goToStep('rock-igneous-color')">
+<div class="choice-title">Pyroclastic — fragmental volcanic</div>
+<div class="choice-desc">Ash, lapilli, blocks, or bombs cemented together. Tuff (&lt;2mm), lapillistone (2–64mm), volcanic breccia (&gt;64mm).</div>
+</div>
+</div>
+</div>
+<!-- ══ ROCK: IGNEOUS COLOR / MINERALS ══ -->
+<div class="step" id="step-rock-igneous-color">
+<div class="step-question">Describe the igneous rock</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color Index (% dark minerals)</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="colorindex" data-val="leucocratic" onclick="selectSingle(this,'colorindex')">Light (felsite / &lt;20% dark)</button>
+<button class="desc-btn single-select" data-group="colorindex" data-val="mesocratic"  onclick="selectSingle(this,'colorindex')">Intermediate (20–60% dark)</button>
+<button class="desc-btn single-select" data-group="colorindex" data-val="melanocratic" onclick="selectSingle(this,'colorindex')">Dark (trap / &gt;60% dark)</button>
+</div>
+<div class="interp-card" id="interp-colorindex">
+<div class="interp-label">Likely Rock Type</div>
+<div id="interp-colorindex-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Chromatic Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Pink / red</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Light gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Medium gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Dark gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Green-gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Black</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Tan / buff</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Alteration / Weathering</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="weathering" data-val="I"   onclick="selectSingle(this,'weathering')">I — Fresh</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="II"  onclick="selectSingle(this,'weathering')">II — Slightly weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="III" onclick="selectSingle(this,'weathering')">III — Moderately weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="IV"  onclick="selectSingle(this,'weathering')">IV — Highly weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="V"   onclick="selectSingle(this,'weathering')">V — Completely weathered</button>
+</div>
+<div class="interp-card" id="interp-weathering">
+<div class="interp-label">Engineering Significance</div>
+<div id="interp-weathering-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Special Features (optional)</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="rockfeature" onclick="toggleDesc(this,'rockfeature')">Vesicular</button>
+<button class="desc-btn" data-group="rockfeature" onclick="toggleDesc(this,'rockfeature')">Amygdaloidal</button>
+<button class="desc-btn" data-group="rockfeature" onclick="toggleDesc(this,'rockfeature')">Jointed</button>
+<button class="desc-btn" data-group="rockfeature" onclick="toggleDesc(this,'rockfeature')">Fractured</button>
+<button class="desc-btn" data-group="rockfeature" onclick="toggleDesc(this,'rockfeature')">Altered</button>
+</div>
+</div>
+<button class="continue-btn rock-btn" onclick="goToStep('rock-strength')">Continue →</button>
+</div>
+<!-- ══ ROCK: SEDIMENTARY TEXTURE ══ -->
+<div class="step" id="step-rock-sed-texture">
+<div class="step-question">Sedimentary rock grain size / texture</div>
+<div class="choices">
+<div class="choice-btn" onclick="setRockTexture('conglomerate'); goToStep('rock-sed-desc')">
+<div class="choice-title">Coarse clastic — Conglomerate / Breccia</div>
+<div class="choice-desc">Rounded fragments (conglomerate) or angular fragments (breccia) &gt;2mm. Cemented by silica, calcite, or iron oxide matrix.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('sandstone'); goToStep('rock-sed-desc')">
+<div class="choice-title">Medium clastic — Sandstone / Graywacke</div>
+<div class="choice-desc">0.0625–2mm grains. Predominantly quartz. Graywacke is indurated impure sandstone with clayey matrix.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('fine-clastic'); goToStep('rock-sed-desc')">
+<div class="choice-title">Fine clastic — Siltstone / Shale / Mudstone</div>
+<div class="choice-desc">Siltstone: similar to sandstone, finer, thin beds. Shale: fissile, predominantly &lt;0.002mm. Mudstone/claystone: no fissility.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('carbonate'); goToStep('rock-sed-desc')">
+<div class="choice-title">Chemical / Carbonate — Limestone / Dolomite</div>
+<div class="choice-desc">Effervesces in HCl (limestone strongly, dolomite weakly or when powdered). Many varieties — precipitated or detrital origin.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('chert-coal'); goToStep('rock-sed-desc')">
+<div class="choice-title">Other chemical — Chert / Coal / Evaporite</div>
+<div class="choice-desc">Chert: silica, conchoidal fracture, very hard. Coal: altered plant material, black, soft to hard. Evaporites: halite, gypsum, anhydrite.</div>
+</div>
+</div>
+</div>
+<!-- ══ ROCK: SEDIMENTARY DESCRIPTORS ══ -->
+<div class="step" id="step-rock-sed-desc">
+<div class="step-question">Describe the sedimentary rock</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Bedding / Structure</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Massive (no bedding)</button>
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Thick-bedded (&gt;2ft)</button>
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Thin-bedded (2"–2ft)</button>
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Very thin-bedded / Fissile</button>
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Cross-bedded</button>
+<button class="desc-btn" data-group="bedding" onclick="toggleDesc(this,'bedding')">Graded bedding</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Induration / Hardness</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="induration" onclick="selectSingle(this,'induration')">Friable (easily crumbled)</button>
+<button class="desc-btn single-select" data-group="induration" onclick="selectSingle(this,'induration')">Weakly indurated</button>
+<button class="desc-btn single-select" data-group="induration" onclick="selectSingle(this,'induration')">Moderately indurated</button>
+<button class="desc-btn single-select" data-group="induration" onclick="selectSingle(this,'induration')">Strongly indurated</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Weathering Grade</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="weathering" data-val="I"   onclick="selectSingle(this,'weathering')">I — Fresh</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="II"  onclick="selectSingle(this,'weathering')">II — Slightly weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="III" onclick="selectSingle(this,'weathering')">III — Moderately weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="IV"  onclick="selectSingle(this,'weathering')">IV — Highly weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="V"   onclick="selectSingle(this,'weathering')">V — Completely weathered</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Light gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Dark gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Brown</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Red-brown</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Tan / buff</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Black</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">White / cream</button>
+</div>
+</div>
+<button class="continue-btn rock-btn" onclick="goToStep('rock-strength')">Continue →</button>
+</div>
+ 
+<!-- ══ ROCK: METAMORPHIC STRUCTURE ══ -->
+<div class="step" id="step-rock-meta-structure">
+<div class="step-question">Metamorphic rock structure</div>
+<div class="step-hint">Structure is the primary basis for naming metamorphic rock. Is there a directional fabric?</div>
+<div class="choices">
+<div class="choice-btn" onclick="setRockTexture('slaty'); goToStep('rock-meta-desc')">
+<div class="choice-title">Slaty — very fine-grained, splits into thin sheets</div>
+<div class="choice-desc">Aphanitic. Well-developed planar cleavage. Hard, brittle. Rock name: Slate.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('phyllitic'); goToStep('rock-meta-desc')">
+<div class="choice-title">Phyllitic — silky/satin sheen on foliation surfaces</div>
+<div class="choice-desc">Intermediate between slaty and schistose. Aphanitic but with visible micaceous sheen from chlorite or sericite. Rock name: Phyllite.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('schistose'); goToStep('rock-meta-desc')">
+<div class="choice-title">Schistose — visible platy minerals, well-developed foliation</div>
+<div class="choice-desc">Phaneritic. Parallel orientation of mica, chlorite, or talc. Rock name: Schist. Note dominant mineral (e.g., biotite schist, chlorite schist).</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('gneissose'); goToStep('rock-meta-desc')">
+<div class="choice-title">Gneissose — alternating light/dark bands</div>
+<div class="choice-desc">Coarse-grained, imperfect foliation from alternating quartz/feldspar and dark mineral bands. Rock name: Gneiss. May grade into schist.</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('non-foliated'); goToStep('rock-meta-desc')">
+<div class="choice-title">Non-foliated — granular or hornfelsic</div>
+<div class="choice-desc">No directional structure. Examples: Quartzite (metamorphosed sandstone, very hard), Marble (recrystallized limestone), Hornfels (fine-grained contact metamorphic).</div>
+</div>
+<div class="choice-btn" onclick="setRockTexture('mylonitic'); goToStep('rock-meta-desc')">
+<div class="choice-title">Mylonitic — foliated, fine-grained, crushed fabric</div>
+<div class="choice-desc">Cataclastic structure from intense mechanical metamorphism. Streaked and banded. May indicate fault zone. Can cause unstable slope conditions.</div>
+</div>
+</div>
+</div>
+<!-- ══ ROCK: METAMORPHIC DESCRIPTORS ══ -->
+<div class="step" id="step-rock-meta-desc">
+<div class="step-question">Describe the metamorphic rock</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Grain Size</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="grainsize" onclick="selectSingle(this,'grainsize')">Aphanitic (fine)</button>
+<button class="desc-btn single-select" data-group="grainsize" onclick="selectSingle(this,'grainsize')">Fine-grained</button>
+<button class="desc-btn single-select" data-group="grainsize" onclick="selectSingle(this,'grainsize')">Medium-grained</button>
+<button class="desc-btn single-select" data-group="grainsize" onclick="selectSingle(this,'grainsize')">Coarse-grained</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Dominant Minerals (optional)</div>
+<div class="desc-btns">
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Quartz</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Feldspar</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Biotite mica</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Muscovite mica</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Chlorite</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Garnet</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Calcite</button>
+<button class="desc-btn" data-group="minerals" onclick="toggleDesc(this,'minerals')">Hornblende</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Color</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Light gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Dark gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Silver-gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Green-gray</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Pink</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">White</button>
+<button class="desc-btn single-select" data-group="rockcolor" onclick="selectSingle(this,'rockcolor')">Black</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Weathering Grade</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="weathering" data-val="I"   onclick="selectSingle(this,'weathering')">I — Fresh</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="II"  onclick="selectSingle(this,'weathering')">II — Slightly weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="III" onclick="selectSingle(this,'weathering')">III — Moderately weathered</button>
+<button class="desc-btn single-select" data-group="weathering" data-val="IV"  onclick="selectSingle(this,'weathering')">IV — Highly weathered</button>
+</div>
+</div>
+<button class="continue-btn rock-btn" onclick="goToStep('rock-strength')">Continue →</button>
+</div>
+<!-- ══ ROCK: STRENGTH ══ -->
+<div class="step" id="step-rock-strength">
+<div class="step-question">Assess rock material strength</div>
+<div class="step-hint">Use a geological hammer and pocketknife. This is wall rock strength per ISRM classification (Table 2-2 in the rock guide).</div>
+<div class="choices">
+<div class="choice-btn" onclick="setRockStrength('R6'); goToStep('rock-mass-desc')">
+<div class="choice-title">R6 — Extremely Strong (&gt;36,000 psi)</div>
+<div class="choice-desc">Can only be chipped with geological hammer. Fresh granite, quartzite, chert.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R5'); goToStep('rock-mass-desc')">
+<div class="choice-title">R5 — Very Strong (15,000–36,000 psi)</div>
+<div class="choice-desc">Requires many blows to fracture. Most fresh igneous and metamorphic rocks.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R4'); goToStep('rock-mass-desc')">
+<div class="choice-title">R4 — Strong (7,000–15,000 psi)</div>
+<div class="choice-desc">More than one blow to fracture. Many sandstones, limestones, schists.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R3'); goToStep('rock-mass-desc')">
+<div class="choice-title">R3 — Medium Weak (3,500–7,000 psi)</div>
+<div class="choice-desc">Cannot scrape with pocketknife; one firm hammer blow to fracture. Some shales, weathered rock.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R2'); goToStep('rock-mass-desc')">
+<div class="choice-title">R2 — Weak (725–3,500 psi)</div>
+<div class="choice-desc">Can peel with pocketknife. Shallow indentations from hammer point. Soft shales, heavily weathered rock.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R1'); goToStep('rock-mass-desc')">
+<div class="choice-title">R1 — Very Weak (150–725 psi)</div>
+<div class="choice-desc">Crumbles under firm hammer blows. Can peel with pocketknife. Extremely weathered or decomposed rock.</div>
+</div>
+<div class="choice-btn" onclick="setRockStrength('R0'); goToStep('rock-mass-desc')">
+<div class="choice-title">R0 — Extremely Weak (35–150 psi)</div>
+<div class="choice-desc">Indented by thumbnail. Borderline rock/soil. Chalk, very soft shale.</div>
+</div>
+</div>
+</div>
+<!-- ══ ROCK: MASS DESCRIPTION ══ -->
+<div class="step" id="step-rock-mass-desc">
+<div class="step-question">Rock mass description</div>
+<div class="step-hint">Describe the in-situ character of the rock mass — discontinuities control engineering behavior more than intact rock properties in most slope and foundation applications.</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Discontinuity Spacing</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Extremely close (&lt;0.8")</button>
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Very close (0.8"–2.5")</button>
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Close (2.5"–8")</button>
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Moderate (8"–24")</button>
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Wide (24"–79")</button>
+<button class="desc-btn single-select" data-group="spacing" onclick="selectSingle(this,'spacing')">Very wide (&gt;79")</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Block Shape</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Massive (few joints)</button>
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Blocky (equidimensional)</button>
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Tabular</button>
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Columnar</button>
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Irregular</button>
+<button class="desc-btn single-select" data-group="blockshape" onclick="selectSingle(this,'blockshape')">Crushed (heavily jointed)</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Roughness of Discontinuity Surfaces</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Rough stepped</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Smooth stepped</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Rough undulating</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Smooth undulating</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Rough planar</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Smooth planar</button>
+<button class="desc-btn single-select" data-group="roughness" onclick="selectSingle(this,'roughness')">Slickensided</button>
+</div>
+<div class="interp-card" id="interp-roughness">
+<div class="interp-label">Shear Strength Implication</div>
+<div id="interp-roughness-text"></div>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Infilling</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="infilling" onclick="selectSingle(this,'infilling')">None / clean</button>
+<button class="desc-btn single-select" data-group="infilling" onclick="selectSingle(this,'infilling')">Surface staining</button>
+<button class="desc-btn single-select" data-group="infilling" onclick="selectSingle(this,'infilling')">Calcite / chlorite</button>
+<button class="desc-btn single-select" data-group="infilling" onclick="selectSingle(this,'infilling')">Clay gouge</button>
+<button class="desc-btn single-select" data-group="infilling" onclick="selectSingle(this,'infilling')">Crushed rock / breccia</button>
+</div>
+</div>
+<div class="descriptor-section">
+<div class="descriptor-label">Seepage</div>
+<div class="desc-btns">
+<button class="desc-btn single-select" data-group="seepage" onclick="selectSingle(this,'seepage')">Dry</button>
+<button class="desc-btn single-select" data-group="seepage" onclick="selectSingle(this,'seepage')">Damp</button>
+<button class="desc-btn single-select" data-group="seepage" onclick="selectSingle(this,'seepage')">Seeping (drops)</button>
+<button class="desc-btn single-select" data-group="seepage" onclick="selectSingle(this,'seepage')">Flowing</button>
+</div>
+</div>
+<button class="continue-btn rock-btn" onclick="showRockResult()">Build Description →</button>
+</div>
+<!-- ══ ROCK RESULT ══ -->
+<div class="step" id="step-rock-result">
+<div class="step-question">Rock description complete</div>
+<div class="result-card" id="rock-result-card">
+<div class="result-symbol" id="rock-symbol"></div>
+<div class="result-name" id="rock-name"></div>
+<div class="result-desc" id="rock-desc"></div>
+</div>
+<div class="section-header">Common Alaska Rock Types Reference</div>
+<table class="ref-table">
+<tr><th>Rock</th><th>Type</th><th>Common Context</th></tr>
+<tr><td>Granite</td><td>Igneous</td><td>Batholith cores, mountain ranges; strong, good foundation rock</td></tr>
+<tr><td>Basalt</td><td>Igneous</td><td>Volcanic terranes; vesicular zones can be weak</td></tr>
+<tr><td>Schist</td><td>Metamorphic</td><td>Very common in SE and SC Alaska; foliation planes are failure surfaces</td></tr>
+<tr><td>Gneiss</td><td>Metamorphic</td><td>Widespread; generally strong but foliation can control stability</td></tr>
+<tr><td>Greywacke</td><td>Sedimentary</td><td>Common in accretionary terranes; variable quality</td></tr>
+<tr><td>Limestone</td><td>Sedimentary</td><td>Karst risk; check for dissolution features</td></tr>
+<tr><td>Shale</td><td>Sedimentary</td><td>Weak, often closely jointed; slope stability concern</td></tr>
+<tr><td>Mylonite</td><td>Metamorphic</td><td>Fault zone indicator; can cause unstable slope conditions</td></tr>
+</table>
+<button class="reset-btn" onclick="fullReset()">↺ Start Over</button>
+</div>
+
+```
+</div><!-- end panel-left -->
+<!-- ═══════════════════════════════════ RIGHT PANEL ═══════════════════════════════════ -->
+<div class="panel-right">
+<div class="panel-right-label">▸ Description Builder</div>
+
+```
+<div class="desc-builder" id="desc-builder">
+<div class="desc-line" id="dl-material">
+<span class="desc-tag">Material</span>
+<span class="desc-value" id="dv-material"></span>
+</div>
+<div class="desc-line" id="dl-organic">
+<span class="desc-tag">Organic Content</span>
+<span class="desc-value" id="dv-organic"></span>
+</div>
+<hr class="desc-divider" id="dd-1" style="display:none">
+<div class="desc-line" id="dl-grain">
+<span class="desc-tag">Grain Type</span>
+<span class="desc-value" id="dv-grain"></span>
+</div>
+<div class="desc-line" id="dl-gradation">
+<span class="desc-tag">Gradation</span>
+<span class="desc-value" id="dv-gradation"></span>
+</div>
+<div class="desc-line" id="dl-fines">
+<span class="desc-tag">Fines</span>
+<span class="desc-value" id="dv-fines"></span>
+</div>
+<div class="desc-line" id="dl-plasticity">
+<span class="desc-tag">Plasticity</span>
+<span class="desc-value" id="dv-plasticity"></span>
+</div>
+<hr class="desc-divider" id="dd-2" style="display:none">
+<div class="desc-line" id="dl-angularity">
+<span class="desc-tag">Angularity</span>
+<span class="desc-value" id="dv-angularity"></span>
+</div>
+<div class="desc-line" id="dl-gravelsize">
+<span class="desc-tag">Gravel Size</span>
+<span class="desc-value" id="dv-gravelsize"></span>
+</div>
+<div class="desc-line" id="dl-sandsize">
+<span class="desc-tag">Sand Size</span>
+<span class="desc-value" id="dv-sandsize"></span>
+</div>
+<div class="desc-line" id="dl-moisture">
+<span class="desc-tag">Moisture</span>
+<span class="desc-value" id="dv-moisture"></span>
+</div>
+<div class="desc-line" id="dl-color">
+<span class="desc-tag">Color</span>
+<span class="desc-value" id="dv-color"></span>
+</div>
+<div class="desc-line" id="dl-consistency">
+<span class="desc-tag">Consistency</span>
+<span class="desc-value" id="dv-consistency"></span>
+</div>
+<div class="desc-line" id="dl-structure">
+<span class="desc-tag">Structure</span>
+<span class="desc-value" id="dv-structure"></span>
+</div>
+<div class="desc-line" id="dl-frozen">
+<span class="desc-tag">Frozen Condition</span>
+<span class="desc-value" id="dv-frozen"></span>
+</div>
+<hr class="desc-divider" id="dd-3" style="display:none">
+<!-- Rock descriptors -->
+<div class="desc-line" id="dl-rocktype">
+<span class="desc-tag">Rock Genesis</span>
+<span class="desc-value rock-col" id="dv-rocktype"></span>
+</div>
+<div class="desc-line" id="dl-rocktexture">
+<span class="desc-tag">Texture / Structure</span>
+<span class="desc-value" id="dv-rocktexture"></span>
+</div>
+<div class="desc-line" id="dl-rockstrength">
+<span class="desc-tag">Strength Grade</span>
+<span class="desc-value" id="dv-rockstrength"></span>
+</div>
+<div class="desc-line" id="dl-rockweathering">
+<span class="desc-tag">Weathering</span>
+<span class="desc-value" id="dv-rockweathering"></span>
+</div>
+<div class="desc-line" id="dl-rockspacing">
+<span class="desc-tag">Discontinuity Spacing</span>
+<span class="desc-value" id="dv-rockspacing"></span>
+</div>
+<div class="desc-line" id="dl-rockblock">
+<span class="desc-tag">Block Shape</span>
+<span class="desc-value" id="dv-rockblock"></span>
+</div>
+<div class="desc-line" id="dl-rockroughness">
+<span class="desc-tag">Roughness</span>
+<span class="desc-value" id="dv-rockroughness"></span>
+</div>
+</div><!-- end desc-builder -->
+<!-- FULL DESCRIPTION OUTPUT -->
+<div class="full-desc-box" id="full-desc-box">
+<div class="full-desc-box-label">▸ Log Entry Description</div>
+<div class="full-desc-text" id="full-desc-text"></div>
+</div>
+
+```
+</div><!-- end panel-right -->
+</div><!-- end main -->
+<script>
+
+// ═══════════════════════════════════════════
+
+// STATE
+
+// ═══════════════════════════════════════════
+
+const state = {
+
+  material: null,
+
+  organic: null,
+
+  grainType: null,
+
+  coarseDom: null,
+
+  finesContent: null,
+
+  finesType: null,
+
+  gradation: null,
+
+  plasticity: null,
+
+  frozen: null,
+
+  frozenType: null,
+
+  rockType: null,
+
+  rockTexture: null,
+
+  rockStrength: null,
+
+  descriptors: {}
+
+};
+
+// ═══════════════════════════════════════════
+
+// NAVIGATION
+
+// ═══════════════════════════════════════════
+
+function goToStep(id) {
+
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+  const el = document.getElementById('step-' + id);
+
+  if (el) el.classList.add('active');
+
+  updateBreadcrumb(id);
+
+}
+
+const breadcrumbMap = {
+
+  'start':             [],
+
+  'organic':           ['Soil'],
+
+  'peat-result':       ['Soil', 'Organic'],
+
+  'soil-grain':        ['Soil'],
+
+  'soil-coarse-dom':   ['Soil', 'Coarse-grained'],
+
+  'gravel-fines':      ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-dual-fines': ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-gradation':  ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-fines-type': ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-angularity': ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-moisture':   ['Soil', 'Coarse', 'Gravel'],
+
+  'gravel-result':     ['Soil', 'Coarse', 'Gravel'],
+
+  'sand-fines':        ['Soil', 'Coarse', 'Sand'],
+
+  'sand-dual-fines':   ['Soil', 'Coarse', 'Sand'],
+
+  'sand-gradation':    ['Soil', 'Coarse', 'Sand'],
+
+  'sand-fines-type':   ['Soil', 'Coarse', 'Sand'],
+
+  'sand-descriptors':  ['Soil', 'Coarse', 'Sand'],
+
+  'sand-result':       ['Soil', 'Coarse', 'Sand'],
+
+  'soil-fine-plastic': ['Soil', 'Fine-grained'],
+
+  'fine-descriptors':  ['Soil', 'Fine-grained'],
+
+  'frozen-detail':     ['Soil', 'Fine-grained', 'Frozen'],
+
+  'fine-result':       ['Soil', 'Fine-grained'],
+
+  'rock-type':         ['Rock'],
+
+  'rock-igneous-texture': ['Rock', 'Igneous'],
+
+  'rock-igneous-color':   ['Rock', 'Igneous'],
+
+  'rock-sed-texture':     ['Rock', 'Sedimentary'],
+
+  'rock-sed-desc':        ['Rock', 'Sedimentary'],
+
+  'rock-meta-structure':  ['Rock', 'Metamorphic'],
+
+  'rock-meta-desc':       ['Rock', 'Metamorphic'],
+
+  'rock-strength':        ['Rock'],
+
+  'rock-mass-desc':       ['Rock'],
+
+  'rock-result':          ['Rock'],
+
+};
+
+function updateBreadcrumb(id) {
+
+  const crumbs = breadcrumbMap[id] || [];
+
+  const bc = document.getElementById('breadcrumb');
+
+  bc.innerHTML = `<span class="crumb" onclick="fullReset()">Start</span>`;
+
+  crumbs.forEach(c => {
+
+    bc.innerHTML += `<span class="crumb-sep">›</span><span class="crumb">${c}</span>`;
+
+  });
+
+}
+
+// ═══════════════════════════════════════════
+
+// STATE SETTERS
+
+// ═══════════════════════════════════════════
+
+function selectMaterial(m) {
+
+  state.material = m;
+
+  setDescLine('material', m === 'soil' ? 'Soil' : 'Rock', m === 'soil' ? 'soil-col' : 'rock-col');
+
+  if (m === 'soil') goToStep('organic');
+
+  else goToStep('rock-type');
+
+}
+
+function setOrganic(val) {
+
+  state.organic = val;
+
+  const labels = {
+
+    none:   'None (\x3C2%)',
+
+    slight: 'Slightly organic (2–5%) — modifier applied',
+
+    organic:'Organic (5–15%) — OL/OH or organic prefix',
+
+    highly: 'Highly organic (15–75%) — highly organic prefix',
+
+    peat:   'Peat (\x3E75%) — PT'
+
+  };
+
+  if (val !== 'none') setDescLine('organic', labels[val], 'accent-col');
+
+  if (val === 'peat') {
+
+    document.getElementById('peat-symbol').textContent = 'PT';
+
+    document.getElementById('peat-name').textContent = 'Peat';
+
+    document.getElementById('peat-desc').textContent = '\x3E75% organics by weight. Ash content \x3C25%. Dark brown to black, spongy, pronounced organic odor, fibrous to amorphous texture. Extremely compressible — not suitable as foundation or fill material without special treatment. Requires ignition test, wet sieving for fiber content, humification assessment, and vane shear/consolidation testing for design.';
+
+  }
+
+  updateFullDesc();
+
+}
+
+function nextAfterGradation(type) {
+
+  // If 5-12% fines (dual symbol), ask silt vs clay before continuing
+
+  if (state.finesContent === 'some') {
+
+    goToStep(type === 'gravel' ? 'gravel-dual-fines' : 'sand-dual-fines');
+
+  } else {
+
+    goToStep(type === 'gravel' ? 'gravel-angularity' : 'sand-descriptors');
+
+  }
+
+}
+
+function setGrainType(t) {
+
+  state.grainType = t;
+
+  setDescLine('grain', t === 'coarse' ? 'Coarse-grained (\x3C50% fines)' : 'Fine-grained (\x3E50% fines)');
+
+  document.getElementById('dd-1').style.display = 'block';
+
+  updateFullDesc();
+
+}
+
+function setCoarseDom(d) {
+
+  state.coarseDom = d;
+
+  setDescLine('gradation', d === 'gravel' ? 'Gravel dominant' : 'Sand dominant');
+
+  updateFullDesc();
+
+}
+
+function setFinesContent(f) {
+
+  state.finesContent = f;
+
+  const labels = { clean:'\x3C5% fines (clean)', some:'5–12% fines (dual symbol)', fines:'\x3E12% fines' };
+
+  setDescLine('fines', labels[f]);
+
+  updateFullDesc();
+
+}
+
+function setFinesType(t) {
+
+  state.finesType = t;
+
+  setDescLine('fines', (state.finesContent === 'fines' ? '\x3E12% ' : '') + (t === 'silt' ? 'silty fines (ML/MH)' : 'clayey fines (CL/CH)'));
+
+  updateFullDesc();
+
+}
+
+function setGradation(g) {
+
+  state.gradation = g;
+
+  const base = state.coarseDom === 'gravel' ? 'Gravel' : 'Sand';
+
+  setDescLine('gradation', (g === 'well' ? 'Well-graded ' : 'Poorly-graded ') + base);
+
+  updateFullDesc();
+
+}
+
+function setPlasticity(p) {
+
+  state.plasticity = p;
+
+  const labels = {
+
+    NP: 'Nonplastic — Silt (ML/MH)',
+
+    low: 'Low plasticity (ML/CL range)',
+
+    medium: 'Medium plasticity (CL)',
+
+    high: 'High plasticity — Fat clay (CH)'
+
+  };
+
+  setDescLine('plasticity', labels[p]);
+
+  updateFullDesc();
+
+}
+
+function frozenSelected(btn) {
+
+  selectSingle(btn, 'frozen');
+
+  goToStep('frozen-detail');
+
+}
+
+function setFrozenType(t) {
+
+  state.frozenType = t;
+
+  const labels = {
+
+    Nf: 'Nf — Poorly bonded, no excess ice (thaw-stable)',
+
+    Nb: 'Nb — Well bonded, no excess ice (thaw-stable)',
+
+    Vx: 'Vx — Individual ice crystals/coatings',
+
+    Vc: 'Vc — Random ice formations (thaw-unstable)',
+
+    Vs: 'Vs — Stratified ice lenses (thaw-unstable)',
+
+    ICE: 'ICE — Substantial ice strata (severely thaw-unstable)'
+
+  };
+
+  setDescLine('frozen', labels[t], 'accent-col');
+
+  updateFullDesc();
+
+}
+
+function continueFrozen() {
+
+  goToStep('fine-result');
+
+  showFineResult();
+
+}
+
+function setRockType(t) {
+
+  state.rockType = t;
+
+  setDescLine('rocktype', t.charAt(0).toUpperCase() + t.slice(1), 'rock-col');
+
+  document.getElementById('dd-3').style.display = 'block';
+
+  updateFullDesc();
+
+}
+
+function setRockTexture(t) {
+
+  state.rockTexture = t;
+
+  setDescLine('rocktexture', t.charAt(0).toUpperCase() + t.slice(1).replace(/-/g,' '));
+
+  updateFullDesc();
+
+}
+
+function setRockStrength(s) {
+
+  state.rockStrength = s;
+
+  const labels = {
+
+    R6:'R6 — Extremely Strong (\x3E36,000 psi)',
+
+    R5:'R5 — Very Strong (15,000–36,000 psi)',
+
+    R4:'R4 — Strong (7,000–15,000 psi)',
+
+    R3:'R3 — Medium Weak (3,500–7,000 psi)',
+
+    R2:'R2 — Weak (725–3,500 psi)',
+
+    R1:'R1 — Very Weak (150–725 psi)',
+
+    R0:'R0 — Extremely Weak (35–150 psi)'
+
+  };
+
+  setDescLine('rockstrength', labels[s]);
+
+  updateFullDesc();
+
+}
+
+// ═══════════════════════════════════════════
+
+// DESCRIPTOR BUTTONS
+
+// ═══════════════════════════════════════════
+
+function selectSingle(btn, group) {
+
+  document.querySelectorAll(`.desc-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+
+  btn.classList.add('selected');
+
+  const val = btn.dataset.val || btn.textContent.trim();
+
+  state.descriptors[group] = val;
+
+  const groupToLine = {
+
+    moisture: 'moisture', color: 'color', angularity: 'angularity',
+
+    consistency: 'consistency', weathering: 'rockweathering',
+
+    spacing: 'rockspacing', blockshape: 'rockblock', roughness: 'rockroughness',
+
+    gravelsize: 'gravelsize', sandsize: 'sandsize'
+
+  };
+
+  if (groupToLine[group]) setDescLine(groupToLine[group], val);
+
+  showInterpretation(group, val);
+
+  document.getElementById('dd-2').style.display = 'block';
+
+  updateFullDesc();
+
+}
+
+function toggleDesc(btn, group) {
+
+  btn.classList.toggle('selected');
+
+  const selected = [...document.querySelectorAll(`.desc-btn[data-group="${group}"].selected`)]
+
+    .map(b => b.textContent.trim());
+
+  state.descriptors[group] = selected;
+
+  if (group === 'cobbles' && selected.length > 0) {
+
+    document.getElementById('interp-cobbles').classList.add('visible');
+
+  } else if (group === 'cobbles') {
+
+    document.getElementById('interp-cobbles').classList.remove('visible');
+
+  }
+
+  if (group === 'structure') setDescLine('structure', selected.join(', '));
+
+  updateFullDesc();
+
+}
+
+// ═══════════════════════════════════════════
+
+// INTERPRETATIONS
+
+// ═══════════════════════════════════════════
+
+function showInterpretation(group, val) {
+
+  const angInterp = {
+
+    rounded:    'Rounded particles record a long abrasion history — extended fluvial transport (typically hundreds of km), wave action on a beach, or prolonged glaciofluvial reworking in outwash systems. High sphericity often indicates multiple erosion cycles. In Alaska this is characteristic of major river systems (Susitna, Copper, Kenai), wave-worked beach and barrier island systems along Cook Inlet and the Gulf coast, and distal glacial outwash fans. Friction angle is somewhat lower than angular material of the same gradation.',
+
+    subrounded: 'Subrounded particles suggest moderate transport distances or mixed transport mechanisms — alluvial fan systems, glaciofluvial outwash at intermediate distances from the ice margin, or colluvial material with some fluvial reworking. Common in Alaska river terrace deposits and re-worked glacial sediments. The presence of some rounding but retained edges suggests the material has not reached textural maturity.',
+
+    subangular: 'Subangular particles indicate limited transport, a proximal source, or mixed colluvial and fluvial contributions. Could represent glacial till (most common in Alaska), alluvial fan deposits close to the range front, landslide or talus reworked by minor fluvial action, or residual lag material. Subangular till gravels are ubiquitous throughout southcentral Alaska glaciated terrain. Watch for clay coatings on particles — diagnostic of glacial till where fines were plastered on during ice transport.',
+
+    angular:    'Angular particles record minimal abrasion — this material has not traveled far or has been mechanically broken. In a natural in-situ deposit: fresh talus or rockfall, residual colluvium, proximal alluvial fan, blasted or disturbed rock, or glacial till derived directly from local bedrock. In a road corridor: strong indicator of placed crushed aggregate or engineered fill. In Alaska, angular cobbles and gravels in till directly reflect the local bedrock lithology and can help identify source terrain. High internal friction angle — good structural properties when compacted.'
+
+  };
+
+  const consistencyInterp = {
+
+    'very soft': 'Equivalent SPT: \x3C2 blows/ft. Very low undrained shear strength (Su \x3C0.25 tsf). Likely normally consolidated or recently deposited. May be sensitive clay — strength can drop dramatically on remolding. Quick clays and glaciomarine silts in Alaska (Bootlegger Cove and similar formations) can be in this range and are notorious for flow failures.',
+
+    'soft':      'Equivalent SPT: 2–4 blows/ft. Low shear strength (Su ~0.25–0.5 tsf). May be lightly overconsolidated or subject to thaw weakening. Avoid sampling disturbance. Embankment design over soft fine-grained soils requires settlement and stability analysis.',
+
+    'firm':      'Equivalent SPT: 5–8 blows/ft. Moderate shear strength (Su ~0.5–1.0 tsf). Adequate for light foundations with analysis. Represents lightly overconsolidated material in many Alaska lowland settings.',
+
+    'hard':      'Equivalent SPT: 9–30 blows/ft. High shear strength (Su ~1.0–2.0 tsf). Good bearing capacity. May reflect overconsolidation from past ice loading — common in areas that were beneath late Pleistocene ice sheets.',
+
+    'very hard':  'Equivalent SPT: \x3E30 blows/ft. Very high shear strength (Su \x3E2.0 tsf). Possible overconsolidated, partially cemented, or dessicated soil. In Alaska, hard clays near surface may reflect preconsolidation from former ice loading (glacial isostatic compression) or desiccation during past permafrost conditions.'
+
+  };
+
+  const weatheringInterp = {
+
+    I:   'Fresh rock — full intact strength. Wall strength equals core strength. Discontinuity surfaces may show minor discoloration only.',
+
+    II:  'Slightly weathered — minor strength reduction at discontinuity surfaces. Rock mass is generally adequate but joints may have reduced friction. Common in Alaska where glacial scour removed the most weathered surface rock relatively recently.',
+
+    III: 'Moderately weathered — significant zone of reduced strength. Less than half the material decomposed. Foundations and slopes require careful analysis. Wall strength noticeably lower than core strength.',
+
+    IV:  'Highly weathered — engineering behavior approaches soil-like in places. More than half decomposed. Shear strength significantly reduced. Relic structure may remain but particles are weakened.',
+
+    V:   'Completely weathered — residual soil fabric, original structure intact. Treat as soil for engineering purposes. Rock mass strength irrelevant — use soil classification and testing.'
+
+  };
+
+  const roughnessInterp = {
+
+    'Rough stepped':    'JRC ~14–20. Very high shear strength along this surface. Stepped geometry creates mechanical interlocking that resists sliding even at low normal stress. Most favorable discontinuity condition for slope stability.',
+
+    'Smooth stepped':   'JRC ~10–14. Good shear resistance despite smooth surface — step geometry prevents sliding unless blocks can rotate. Favorable but requires kinematic assessment.',
+
+    'Rough undulating': 'JRC ~8–12. Good shear resistance for undisplaced joints. Asperities will be sheared at higher displacements, reducing strength toward residual values. Common in many fresh rock joints.',
+
+    'Smooth undulating':'JRC ~4–8. Moderate shear strength. Most common condition in field mapping. At large displacements, strength approaches friction angle of wall rock minerals.',
+
+    'Rough planar':     'JRC ~4–8. Shear strength from small-scale asperities only — no geometric interlocking. Potentially critical failure surface if orientation is unfavorable.',
+
+    'Smooth planar':    'JRC ~0–4. Low shear strength approaching basic friction angle. Potentially critical failure surface. Requires close attention to orientation relative to slope.',
+
+    'Slickensided':     'JRC ≈0. Very low residual shear strength — may approach 15–20° for clay-coated surfaces. Indicates past tectonic or gravitational displacement. Critical for slope stability assessment. Polished surface may indicate active or recent movement.'
+
+  };
+
+  const colorIndexInterp = {
+
+    leucocratic: 'Light-colored (felsic / felsite): dominated by quartz, alkali feldspar, and plagioclase. Likely granite, granodiorite, rhyolite, dacite, or related intrusive/extrusive equivalents. Common in Alaska batholith complexes (Coast Mountains, Alaska Range granites).',
+
+    mesocratic:  'Intermediate composition: roughly equal light and dark minerals. Likely diorite, tonalite, andesite, or intermediate volcanic arc rocks. Common in Alaska\'s subduction-related volcanic arc terranes.',
+
+    melanocratic: 'Dark-colored (mafic / trap): dominated by pyroxene, amphibole, olivine, with minor plagioclase. Likely basalt, gabbro, diabase, or peridotite. In Alaska, mafic rocks are common in oceanic terrane assemblages (accreted ophiolites) and Quaternary volcanic fields.'
+
+  };
+
+  const fineColorInterp = {
+
+    Black:       'Black fine-grained soil: high probability of significant organic content. Test for organics (ASTM D2974). If not organic, may indicate strongly reduced (anaerobic) depositional environment — deep lacustrine, estuarine, or tidal flat. Sulfide minerals (pyrite) can cause black coloration in marine sediments and may create corrosion risk for buried metals.',
+
+    'Dark gray':  'Dark gray in fine-grained soil often indicates reducing conditions (poor drainage, anaerobic), organic influence, or glaciomarine/glaciolacustrine origin. Cook Inlet glaciomarine clays (Bootlegger Cove Formation) are characteristically dark gray and sensitive.',
+
+    'Blue-gray':  'Blue-gray coloration is a strong indicator of reduced (anaerobic, waterlogged) conditions — the iron in the soil is in the ferrous (Fe²⁺) state rather than oxidized ferric (Fe³⁺). Common in saturated tidal flats, estuarine muds, and below the water table in fine-grained marine or lacustrine sequences. In Alaska, blue-gray silts and clays are often associated with glaciomarine deposition.',
+
+    Olive:        'Olive to olive-gray coloration typically indicates gleying — waterlogged anaerobic conditions with partial iron reduction. Common in poorly drained lacustrine, marsh, or tidal environments. May indicate proximity to seasonally or permanently high water table.',
+
+    Brown:        'Brown indicates oxidized, aerobic conditions — the iron is in ferric (Fe³⁺) form. Likely deposited or altered under well-drained conditions. May indicate a soil horizon (B horizon) or oxidized alluvial deposit above the water table.',
+
+    Gray:         'Gray coloration is common in glacially derived silts and clays (rock flour from grinding of varied lithologies). Diagnostic context matters most — gray glacial lake silts, gray glaciomarine clay, and gray alluvial silt can look similar in the field but have very different engineering properties.',
+
+    Tan:          'Tan to light brown: common in loess (windblown silt) deposits in Alaska, particularly in the Tanana Valley and Interior basins. Loess has a characteristic open structure with near-vertical cleavage that can collapse dramatically when wetted — assess for collapse potential if loess is suspected. Also common in oxidized river terrace silts.'
+
+  };
+
+  if (group === 'angularity') {
+
+    ['interp-angularity','interp-sand-angularity'].forEach(id => {
+
+      const card = document.getElementById(id);
+
+      const text = document.getElementById(id + '-text');
+
+      if (card && text) { text.textContent = angInterp[val] || ''; card.classList.add('visible'); }
+
+    });
+
+  }
+
+  if (group === 'consistency' && consistencyInterp[val]) {
+
+    document.getElementById('interp-consistency-text').textContent = consistencyInterp[val];
+
+    document.getElementById('interp-consistency').classList.add('visible');
+
+  }
+
+  if (group === 'weathering' && weatheringInterp[val]) {
+
+    const el = document.getElementById('interp-weathering');
+
+    const txt = document.getElementById('interp-weathering-text');
+
+    if (el && txt) { txt.textContent = weatheringInterp[val]; el.classList.add('visible'); }
+
+  }
+
+  if (group === 'roughness' && roughnessInterp[val]) {
+
+    document.getElementById('interp-roughness-text').textContent = roughnessInterp[val];
+
+    document.getElementById('interp-roughness').classList.add('visible');
+
+  }
+
+  if (group === 'colorindex' && colorIndexInterp[val]) {
+
+    document.getElementById('interp-colorindex-text').textContent = colorIndexInterp[val];
+
+    document.getElementById('interp-colorindex').classList.add('visible');
+
+  }
+
+  if (group === 'color') {
+
+    const colorInterpMap = {
+
+      'Orange-brown': 'Iron oxide (limonite/goiethite) staining — indicates oxidized conditions and possible cyclic wetting and drying above a fluctuating water table. Common in well-drained alluvial gravels and terrace deposits. May also indicate a relict soil horizon.',
+
+      'Gray':   'Gray gravel/sand is characteristic of glaciofluvial outwash or river gravel derived from mixed lithologies. No strong standalone diagnostic.',
+
+      'Brown':  'Brown oxidized gravel — deposited or exposed under aerobic conditions. Common in active river bars and terraces above the water table.',
+
+      'Dark gray': 'Dark gray coloration in coarse material may suggest organic staining (check for odor), dark lithology dominance (basalt, gabbro, dark schist), or reducing conditions in a low-lying depositional environment.'
+
+    };
+
+    const colorCard = document.getElementById('interp-color');
+
+    const colorText = document.getElementById('interp-color-text');
+
+    if (colorCard && colorText && colorInterpMap[val]) {
+
+      colorText.textContent = colorInterpMap[val];
+
+      colorCard.classList.add('visible');
+
+    }
+
+    const fineCard = document.getElementById('interp-fine-color');
+
+    const fineText = document.getElementById('interp-fine-color-text');
+
+    if (fineCard && fineText && fineColorInterp[val]) {
+
+      fineText.textContent = fineColorInterp[val];
+
+      fineCard.classList.add('visible');
+
+    }
+
+  }
+
+}
+
+// ═══════════════════════════════════════════
+
+// DEPOSITIONAL ENVIRONMENT ENGINE
+
+// ═══════════════════════════════════════════
+
+function inferDepositionalEnvironment() {
+
+  const ang     = state.descriptors['angularity'] || '';
+
+  const grad    = state.gradation || '';
+
+  const fines   = state.finesContent || '';
+
+  const ftype   = state.finesType || '';
+
+  const plas    = state.plasticity || '';
+
+  const coarse  = state.coarseDom || '';
+
+  const grain   = state.grainType || '';
+
+  const color   = state.descriptors['color'] || '';
+
+  const shape   = Array.isArray(state.descriptors['shape']) ? state.descriptors['shape'] : [];
+
+  const struct  = Array.isArray(state.descriptors['structure']) ? state.descriptors['structure'] : [];
+
+  const cobbles = Array.isArray(state.descriptors['cobbles']) ? state.descriptors['cobbles'] : [];
+
+  const org     = state.organic || 'none';
+
+  const frozen  = state.frozenType;
+
+  let env = [];
+
+  let energy = '';
+
+  let alaska = '';
+
+  // ── COARSE GRAVEL ──
+
+  if (grain === 'coarse' && coarse === 'gravel') {
+
+    if (ang === 'rounded' || ang === 'subrounded') {
+
+      if (grad === 'well') {
+
+        env.push('Glaciofluvial outwash or high-energy braided river system');
+
+        energy = 'High energy — fast-moving, sediment-laden meltwater or braided river capable of transporting and sorting cobble-to-gravel fractions. Well-graded signature reflects multiple flood pulses depositing a range of particle sizes.';
+
+        alaska = 'Classic outwash gravel is the dominant construction aggregate in southcentral Alaska. Kenai Peninsula glaciofluvial systems (Kenai River, Russian River terraces), Matanuska-Susitna Valley outwash plains, and Copper River delta gravels are representative. These deposits are typically ice-contact to proglacial in origin, deposited as glaciers retreated.';
+
+      } else {
+
+        env.push('Beach, wave-dominated shoreline, or single-event flood deposit');
+
+        energy = 'Moderate to high energy — wave action on a gravel beach produces excellent rounding but poor sorting (beach gravels are often gap-graded or uniformly graded). Alternatively, a single high-energy flood event can deposit poorly sorted rounded gravel as a lag or bar deposit.';
+
+        alaska = 'Rounded, poorly graded gravels are common along Cook Inlet shorelines, Kachemak Bay beaches, and Gulf of Alaska coastal barriers. Also present as river bar lag gravels on major rivers. Elongated flat clasts on beaches reflect the platy abrasion pattern of wave swash — flat pebbles are hydrodynamically stable lying flat on the beach face.';
+
+        if (shape.some(s => s.includes('Flat') || s.includes('Elongated'))) {
+
+          env.push('Beach / high-energy wave shoreline strongly indicated — flat/elongated particle shape is diagnostic of wave swash abrasion');
+
+        }
+
+      }
+
+    } else if (ang === 'subangular' || ang === 'angular') {
+
+      if (cobbles.length > 0) {
+
+        env.push('Glacial till, proximal outwash, or colluvial deposit');
+
+        energy = 'Variable to high energy deposition. Angular to subangular cobbles and gravels with till matrix indicate direct glacial deposition (lodgment till) or very proximal meltwater. Colluvial origin possible if material is on or near a steep slope.';
+
+        alaska = 'Glacial till underlies much of the glaciated terrain in Alaska. Till in southcentral Alaska often contains angular to subangular clasts derived directly from the local bedrock — granite, schist, greywacke, or volcanic rock depending on the source terrane. Till matrix typically includes a silty-to-clayey fraction (rock flour) that is frost susceptible and can be problematic for drainage. Clay coatings or striations on gravel surfaces are diagnostic of glacial transport.';
+
+      } else {
+
+        env.push('Alluvial fan, colluvium, or glacial till without large clasts');
+
+        energy = 'Moderate to high energy proximal deposition or mass movement. Angular particles suggest short transport distance or mechanical breakage. No far-traveled fluvial abrasion has occurred.';
+
+        alaska = 'Alluvial fans at mountain range fronts throughout Alaska commonly contain angular gravel from talus, rockfall, and debris flow processes. Distinguish from till by the absence of clay matrix and from talus by the presence of some sorting and stratification.';
+
+      }
+
+    }
+
+  }
+
+  // ── COARSE SAND ──
+
+  if (grain === 'coarse' && coarse === 'sand') {
+
+    if (ang === 'rounded' || ang === 'subrounded') {
+
+      if (grad === 'poor') {
+
+        env.push('Aeolian (wind-blown) dune, beach sand, or glaciolacustrine nearshore');
+
+        energy = 'Moderate, highly selective energy — wind sorting produces exceptionally well-rounded, uniformly sized grains with frosted or matte surfaces. Water-worked beach sands are rounded but may show slightly better sorting. Poorly graded uniformly-sized sand is a hallmark of wind or wave sorting.';
+
+        alaska = 'Aeolian sand deposits are present in interior Alaska river valleys (Tanana, Kuskokwim) where glacial outwash plains provided a sand source during deglaciation. Coastal dune fields exist along the Bristol Bay and Bering Sea coasts. Frosted grain surfaces (visible under hand lens) distinguish aeolian from water-worked sand.';
+
+      } else {
+
+        env.push('Fluvial point bar, river channel, or glaciofluvial outwash sand');
+
+        energy = 'Moderate to high energy fluvial or meltwater environment. Well-graded rounded sands are deposited by rivers with sustained flow capable of sorting and transporting a range of sand sizes. Crossbedding is common in these deposits.';
+
+        alaska = 'River channel and point bar sands are common throughout Alaska lowland river systems. Glaciofluvial outwash sands interbedded with gravels are characteristic of outwash aprons in front of retreating glaciers.';
+
+      }
+
+    } else {
+
+      if (fines === 'fines' && ftype === 'silt') {
+
+        env.push('Glaciolacustrine nearshore, glaciomarine proximal, or glaciofluvial fine fraction');
+
+        energy = 'Moderate to low energy — silty sands with angular to subangular grains suggest glacial rock flour mixed with sand, characteristic of proglacial lake or marine environments near an ice margin.';
+
+        alaska = 'Silty sands (SM) with subangular grains are very common in southcentral Alaska where glacial meltwaters carried rock flour into proglacial lakes and the marine environment. The Kenai Lowlands and Cook Inlet basin contain extensive sequences of glaciolacustrine and glaciomarine silty sands. These materials are typically frost susceptible and may be sensitive to disturbance when saturated.';
+
+      }
+
+    }
+
+  }
+
+  // ── FINE-GRAINED ──
+
+  if (grain === 'fine') {
+
+    if (plas === 'NP' || plas === 'low') {
+
+      // Silt / ML
+
+      if (color === 'Tan' || color === 'Light gray') {
+
+        env.push('Aeolian loess or glaciolacustrine silt (rock flour)');
+
+        energy = 'Very low energy — wind or still water deposition. Loess is carried by wind from glacial outwash plains and settles in vegetated upland areas. It has a characteristic open, unstable structure that can collapse (hydrocompact) when wetted. Glacial lake silts (rock flour) are deposited from suspension in still proglacial water.';
+
+        alaska = 'Loess is widespread in the Tanana Valley, Alaska Range foothills, and parts of the Kenai Peninsula. It is characteristically light tan to buff, massive (no bedding), and has near-vertical natural slopes due to root reinforcement and structural cohesion — but this cohesion is false and collapses when saturated. Glaciolacustrine silts (gray rock flour) fill many former proglacial lake basins throughout southcentral Alaska and are problematic for foundations due to low strength and high frost susceptibility.';
+
+      } else if (struct.includes('Varved')) {
+
+        env.push('Glaciolacustrine — annual varve couplets from proglacial lake');
+
+        energy = 'Very low energy — seasonal suspension settling in a glacially dammed lake. Summer meltwater brings coarser silt that settles first; winter produces a finer clay-rich lamina. Each couplet represents one year. Varves indicate a stable, enclosed water body adjacent to an active or recently active glacier.';
+
+        alaska = 'Varved silts and clays are present in many former proglacial lake basins in southcentral Alaska — notably in the Matanuska-Susitna Valley, Copper River basin, and around Cook Inlet margins. They are weak, highly compressible, and often sensitive. Rates of deposition can sometimes be estimated by counting varves.';
+
+      } else {
+
+        env.push('Glaciofluvial fine fraction, glaciomarine, or floodplain overbank silt');
+
+        energy = 'Low energy — silt-sized particles settle from slow-moving or still water. Floodplain overbank silts are deposited when rivers overtop their banks and velocity drops sharply. Glaciomarine silts are deposited from suspension in a marine environment receiving glacial sediment input.';
+
+        alaska = 'Overbank silts are common in major Alaska river floodplains. Glaciomarine silts and clays are widespread in the Cook Inlet lowlands, deposited when the inlet was partially or fully ice-covered during late Pleistocene. These materials (including the Bootlegger Cove Clay / Glaciomarine sequence) can be sensitive, with high collapse potential upon disturbance.';
+
+      }
+
+    } else if (plas === 'medium' || plas === 'high') {
+
+      // Clay / CL or CH
+
+      if (plas === 'high') {
+
+        env.push('Deep marine, estuarine, or glaciomarine clay — very low energy depositional environment');
+
+        energy = 'Very low to zero energy — clay-sized particles (\x3C 2 microns) only settle from true suspension in still or very slow-moving water, typically in deep marine, estuarine, tidal flat, or lacustrine environments. High plasticity (CH) indicates abundant smectite, illite, or mixed-layer clays that formed in a chemically active environment (seawater, volcanic, or deeply weathered source).';
+
+        alaska = 'Fat clays (CH) in Alaska are most commonly associated with glaciomarine sequences in the Cook Inlet basin and the Bootlegger Cove Formation — a late Pleistocene glaciomarine clay notorious for its sensitivity and role in the 1964 earthquake landslides. Estuarine clays also occur in the Susitna Flats, Copper River delta, and Yukon-Kuskokwim lowlands. These materials can be quick clays — their salinity-stabilized structure collapses when salt is leached by fresh groundwater, causing catastrophic loss of strength.';
+
+      } else {
+
+        env.push('Lacustrine, low-energy floodplain, or coastal plain fine-grained deposit');
+
+        energy = 'Low energy — lean clay (CL) reflects deposition in calm water or slow-flowing floodplain environments. Less clay mineral development than fat clay, more variable in composition. May include illite-dominated or kaolinite clays from moderate weathering.';
+
+        alaska = 'Lean clays (CL) are widespread in Alaska lowland settings — glaciolacustrine lake bottoms, floodplain backswamp deposits, and coastal plain settings. They are generally less problematic than CH but still require careful evaluation for consolidation, frost susceptibility, and strength in embankment and foundation design.';
+
+      }
+
+    }
+
+  }
+
+  // ── ORGANIC MODIFIER ──
+
+  if (org === 'slight' || org === 'organic' || org === 'highly') {
+
+    env.push('Low-energy, poorly-drained environment with organic accumulation — wetland, marsh, backswamp, or shallow lake margin');
+
+    alaska += ' Organic content in Alaska soils is strongly associated with muskeg, tundra, and seasonally or permanently waterlogged terrain. Even 2–5% organic content can render gravels difficult to work with in the presence of water and can cause compaction and Atterberg limit test anomalies if not properly addressed.';
+
+  }
+
+  // ── FROZEN ──
+
+  if (frozen && frozen !== 'no') {
+
+    const frozenEnvs = {
+
+      Nf:  'Currently frozen, likely seasonal frost or shallow permafrost — thaw-stable. No engineering concern beyond normal thaw-season monitoring.',
+
+      Nb:  'Currently frozen, well-bonded — likely in permafrost zone. Thaw-stable but monitor for thaw settlement if thermal regime changes.',
+
+      Vx:  'Frozen with individual ice crystal development — early-stage segregated ice. Thaw-unstable. Indicates material has been subject to freeze-thaw cycling and ice lens initiation.',
+
+      Vc:  'Random ice body formation — moderate thaw-instability. Expect settlement and significant strength loss on thaw. Design must account for thaw-induced consolidation.',
+
+      Vs:  'Stratified ice lenses — classic segregated ice permafrost. High thaw-settlement potential. This material has experienced sustained one-directional freezing (downward from surface or upward from permafrost table). Heave and settlement are both concerns.',
+
+      ICE: 'Massive ice present — severely thaw-unstable. Ground ice in this quantity likely represents buried glacier ice, ice-wedge complex, or intrusive ice body. Catastrophic thaw settlement possible. Do not disturb without full permafrost engineering assessment.'
+
+    };
+
+    if (frozenEnvs[frozen]) env.push(frozenEnvs[frozen]);
+
+  }
+
+  if (env.length === 0) {
+
+    return null;
+
+  }
+
+  return { environments: env, energy, alaska };
+
+}
+
+function inferRockGeology() {
+
+  const rt    = state.rockType || '';
+
+  const tex   = state.rockTexture || '';
+
+  const str   = state.rockStrength || '';
+
+  const weath = state.descriptors['weathering'] || '';
+
+  const color = state.descriptors['rockcolor'] || '';
+
+  const ci    = state.descriptors['colorindex'] || '';
+
+  const rough = state.descriptors['roughness'] || '';
+
+  const inf   = state.descriptors['infilling'] || '';
+
+  const min   = Array.isArray(state.descriptors['minerals']) ? state.descriptors['minerals'] : [];
+
+  let story = '';
+
+  let alaska = '';
+
+  if (rt === 'igneous') {
+
+    if (tex === 'phaneritic') {
+
+      story = 'Phaneritic igneous rocks crystallized slowly at depth — cooling rates of millions of years at 5–30 km below the surface allow individual mineral crystals to grow to visible size. The depth of emplacement and composition reflect the tectonic setting: granites and granodiorites are characteristic of subduction zone magmatic arcs; gabbros and peridotites occur in oceanic crust and mantle sequences.';
+
+      alaska = 'Intrusive igneous rocks form the cores of Alaska\'s major mountain ranges. The Coast Mountains and Wrangell-St. Elias region contain large granitic batholiths emplaced during Mesozoic and Cenozoic subduction. The Alaska Range batholith complex includes granodiorites and tonalites associated with the subduction of the Pacific Plate. These rocks are generally strong (R4–R6) and make excellent foundation rock when fresh, but can weather significantly along joint surfaces.';
+
+    } else if (tex === 'aphanitic') {
+
+      story = 'Aphanitic igneous rocks cooled quickly at or near the surface — erupted as lava flows or shallow intrusions where rapid heat loss prevented large crystal growth. The fine-grained groundmass records this rapid quench. Composition mirrors deep intrusive equivalents: basalt = gabbro equivalent, rhyolite = granite equivalent, andesite = diorite equivalent.';
+
+      alaska = 'Volcanic rocks are widespread in Alaska owing to the active subduction system and the Aleutian volcanic arc. The Wrangell volcanic field contains thick sequences of andesite and basalt flows. The Aleutian chain is built entirely on arc volcanics. Vesicular zones in old lava flows can be significantly weaker than the massive portions and require careful characterization in slope and foundation investigations.';
+
+    } else if (tex === 'pyroclastic') {
+
+      story = 'Pyroclastic rocks record explosive volcanic eruptions — material was ejected from the vent and deposited as airfall or pyroclastic flow deposits. Grain size reflects distance from the vent and eruption style. Welded tuffs (where hot ash particles fused on deposition) can be surprisingly strong, while unwelded tuffs are often weak and highly variable.';
+
+      alaska = 'Tuff and volcanic breccia are present in several Alaska volcanic terranes. Ash-fall deposits from the 1912 Novarupta eruption (Valley of Ten Thousand Smokes) remain exposed in the Katmai area. Older tuffs are incorporated into the sedimentary record in many Alaska basins. Engineering properties are highly variable — always test tuff rather than relying on analogy.';
+
+    }
+
+  } else if (rt === 'sedimentary') {
+
+    if (tex === 'sandstone') {
+
+      story = 'Sandstone records a depositional environment where sand-sized grains were transported and deposited by water or wind, then lithified by cementation. The degree of sorting, rounding, and cement type (silica = strong, calcite = moderate, iron oxide = variable, clay = weak) controls engineering properties. Crossbedding reveals paleo-current directions; graded bedding indicates turbidity current or flood pulse deposition.';
+
+      alaska = 'Sandstone and interbedded siltstones are common in Alaska\'s sedimentary basins — Cook Inlet basin, North Slope, and the Yukon-Kuskokwim region. The Tyonek and Beluga formations in the Cook Inlet basin contain interbedded sandstone and coal-bearing sequences that are encountered in many foundation investigations around the Kenai Peninsula and Anchorage area. These rocks are often fractured and may contain significant groundwater.';
+
+    } else if (tex === 'fine-clastic') {
+
+      story = 'Fine-clastic rocks (shale, siltstone, mudstone) record low-energy depositional environments — deep marine basins, tidal flats, river floodplains, or lake bottoms where clay and silt-sized particles settled from suspension. Shale is characterized by its fissility (splitting along bedding planes) which is controlled by the alignment of platy clay minerals during burial and diagenesis. Shale is often the weakest and most problematic rock in engineering applications — it can slake rapidly on exposure to air and water.';
+
+      alaska = 'Shale and argillite are present throughout Alaska in accretionary terrane assemblages and sedimentary basin sequences. Argillite (hard, indurated shale without fissility) is common in metamorphosed terrane packages. Fine-clastic rocks frequently control slope stability in road cuts and require careful characterization of bedding orientation relative to slope. Slaking behavior should be assessed for any shale to be used as fill or exposed in cut slopes.';
+
+    } else if (tex === 'carbonate') {
+
+      story = 'Carbonate rocks (limestone and dolomite) record deposition in warm, shallow, marine environments where calcium carbonate precipitated biologically or chemically. Limestone effervesces strongly in HCl; dolomite reacts weakly or only when powdered. The critical engineering concern in carbonates is dissolution — groundwater can create karst features (caves, sinkholes, solution pipes) that are invisible from the surface and can cause catastrophic foundation failures.';
+
+      alaska = 'Limestone and dolomite are present in several Alaska terranes, particularly in the Alexander Terrane of southeastern Alaska and scattered carbonate sequences in interior and northern Alaska. Karst is known in southeastern Alaska (Prince of Wales Island) and should be assessed as a risk wherever carbonates are encountered in foundation investigations.';
+
+    }
+
+  } else if (rt === 'metamorphic') {
+
+    if (tex === 'schistose' || tex === 'phyllitic') {
+
+      const mins = min.join(', ');
+
+      story = `Schist and phyllite record metamorphism of fine-grained protolith (typically shale, volcanic tuff, or volcanic rock) under moderate temperature and pressure conditions — typically greenschist to amphibolite facies (200–600°C, 3–12 kbar). The foliation is the dominant engineering feature: it is a plane of weakness that can dip at any angle and may be the dominant control on slope stability. ${mins ? 'Dominant minerals identified: ' + mins + '. ' : ''}Chlorite schist tends toward green-gray color and lower grade metamorphism; biotite schist indicates higher grade; garnet indicates amphibolite facies or higher.`;
+
+      alaska = 'Schist is arguably the most common bedrock in southcentral and southeastern Alaska. The Chugach and Prince William terranes contain extensive schist sequences (greenschist to blueschist facies) derived from accreted oceanic sediments and volcanics. Foliation in these rocks generally dips steeply and parallels the terrane boundary structures (NE–SW). Rock cut slopes in schist require careful structural mapping — planar failures along foliation are the dominant failure mode and can be triggered by freeze-thaw or water infiltration.';
+
+    } else if (tex === 'gneissose') {
+
+      story = 'Gneiss records high-grade metamorphism (amphibolite to granulite facies, \x3E600°C) of either sedimentary or igneous protolith. The alternating felsic (quartz-feldspar) and mafic (hornblende, biotite) bands develop by segregation of minerals during ductile flow. Gneiss is generally strong but foliation banding can create anisotropy — strength and stiffness vary with loading direction relative to foliation.';
+
+      alaska = 'Gneiss and orthogneiss (metamorphosed igneous rock) are common in the deeply exhumed core zones of Alaska mountain ranges and in Precambrian basement blocks. The Yukon Crystalline Terrane contains ancient gneiss sequences. Generally good foundation rock when fresh, but foliation must be assessed for slope stability applications.';
+
+    } else if (tex === 'mylonitic') {
+
+      story = 'Mylonite records intense ductile shear — this rock was formed in a fault or shear zone at depth where temperature was high enough for plastic flow rather than brittle fracture. The strongly laminated, fine-grained fabric with streaked mineral lineation is diagnostic. Mylonite zones can extend for kilometers and represent zones of dramatically reduced rock mass strength. In surface exposures, mylonite often appears as a dark, finely banded, almost porcelain-like rock.';
+
+      alaska = 'Mylonite and proto-mylonite are associated with major tectonic structures throughout Alaska — the Border Ranges fault, Denali fault, and other terrane-bounding fault systems. Encountering mylonite in a rock investigation is significant: it indicates a major structural boundary, and the rock mass strength in these zones is far lower than the surrounding rock. Slope stability failures are common where road cuts intersect mylonite zones.';
+
+    } else if (tex === 'non-foliated') {
+
+      story = 'Non-foliated metamorphic rocks (quartzite, marble, hornfels) lack directional structure because either the protolith lacked platy minerals (quartzite from sandstone, marble from limestone) or metamorphism occurred under high temperature but low differential stress (hornfels from contact metamorphism). Quartzite is among the hardest and most durable rock types; marble, while hard, is soluble in acidic water and presents karst risk; hornfels is fine-grained and hard but can be intensely jointed near intrusive contacts.';
+
+      alaska = 'Quartzite is present in several Alaska terranes as a resistant ridge-former. Marble occurs in the Alexander Terrane of southeastern Alaska. Contact metamorphic aureoles (hornfels) surround granitic intrusions throughout the Alaska Range and Coast Mountains — these zones can be a few meters to several kilometers wide depending on intrusion size.';
+
+    }
+
+  }
+
+  return story ? { story, alaska } : null;
+
+}
+
+// ═══════════════════════════════════════════
+
+// RESULT BUILDERS
+
+// ═══════════════════════════════════════════
+
+function showGravelResult() {
+
+  const grad  = state.gradation;
+
+  const fines = state.finesContent;
+
+  const ftype = state.finesType;
+
+  let sym;
+
+  if (fines === 'fines')       { sym = ftype === 'silt' ? 'GM' : 'GC'; }
+
+  else if (fines === 'clean')  { sym = grad === 'well' ? 'GW' : 'GP'; }
+
+  else { sym = (grad === 'well' ? 'GW' : 'GP') + '-' + (ftype === 'silt' ? 'GM' : 'GC'); }
+
+  const ang   = state.descriptors['angularity'] || '';
+
+  const org   = state.organic && state.organic !== 'none' ? orgLabel(state.organic) : '';
+
+  const color = state.descriptors['color'] || '';
+
+  const moist = state.descriptors['moisture'] || '';
+
+  const shape = Array.isArray(state.descriptors['shape']) ? state.descriptors['shape'].join(', ').toLowerCase() : '';
+
+  const cobbs = Array.isArray(state.descriptors['cobbles']) ? state.descriptors['cobbles'].join(', ') : '';
+
+  const comp  = Array.isArray(state.descriptors['composition']) ? state.descriptors['composition'].join(', ') : '';
+
+  const cem   = state.descriptors['cementation'] && state.descriptors['cementation'] !== 'None'
+
+                  ? state.descriptors['cementation'].toLowerCase() + ' cementation' : '';
+
+  document.getElementById('gravel-symbol').textContent = sym;
+
+  document.getElementById('gravel-name').textContent   = symbolToName(sym);
+
+  let descParts = [color, moist, symbolToName(sym)].filter(Boolean);
+
+  if (ang)  descParts.push(ang + ' particles');
+
+  if (shape) descParts.push(shape);
+
+  if (comp)  descParts.push(comp);
+
+  if (cobbs) descParts.push(cobbs);
+
+  if (cem)   descParts.push(cem);
+
+  if (org)   descParts.push('[' + org + ']');
+
+  document.getElementById('gravel-desc').textContent = descParts.join(', ') + '.';
+
+  buildFullDescCoarse(sym);
+
+  goToStep('gravel-result');
+
+}
+
+function showSandResult() {
+
+  const grad  = state.gradation;
+
+  const fines = state.finesContent;
+
+  const ftype = state.finesType;
+
+  let sym;
+
+  if (fines === 'fines')       { sym = ftype === 'silt' ? 'SM' : 'SC'; }
+
+  else if (fines === 'clean')  { sym = grad === 'well' ? 'SW' : 'SP'; }
+
+  else { sym = (grad === 'well' ? 'SW' : 'SP') + '-' + (ftype === 'silt' ? 'SM' : 'SC'); }
+
+  const ang   = state.descriptors['angularity'] || '';
+
+  const size  = state.descriptors['sandsize'] || '';
+
+  const color = state.descriptors['color'] || '';
+
+  const moist = state.descriptors['moisture'] || '';
+
+  const org   = state.organic && state.organic !== 'none' ? orgLabel(state.organic) : '';
+
+  document.getElementById('sand-symbol').textContent = sym;
+
+  document.getElementById('sand-name').textContent   = symbolToName(sym);
+
+  let parts = [color, moist, symbolToName(sym)].filter(Boolean);
+
+  if (ang)  parts.push(ang + ' grains');
+
+  if (size) parts.push(size.toLowerCase());
+
+  if (org)  parts.push('[' + org + ']');
+
+  document.getElementById('sand-desc').textContent = parts.join(', ') + '.';
+
+  buildFullDescCoarse(sym);
+
+  goToStep('sand-result');
+
+}
+
+function showFineResult() {
+
+  const p   = state.plasticity;
+
+  const org = state.organic;
+
+  let sym, name;
+
+  if (org && org !== 'none' && (org === 'organic' || org === 'highly')) {
+
+    sym  = (p === 'NP' || p === 'low') ? 'OL' : 'OH';
+
+    name = sym === 'OL' ? 'Organic Silt / Organic Clay (low plasticity)' : 'Organic Clay (high plasticity)';
+
+  } else {
+
+    if (p === 'NP')          { sym = 'ML'; name = 'Silt'; }
+
+    else if (p === 'low')    { sym = 'ML'; name = 'Silt / Lean Clay (low plasticity)'; }
+
+    else if (p === 'medium') { sym = 'CL'; name = 'Lean Clay'; }
+
+    else                     { sym = 'CH'; name = 'Fat Clay'; }
+
+  }
+
+  if (state.frozenType) { name += ' (Frozen \u2014 ' + state.frozenType + ')'; }
+
+  document.getElementById('fine-symbol').textContent = sym;
+
+  document.getElementById('fine-name').textContent   = name;
+
+  document.getElementById('fine-desc').textContent   =
+
+    (state.descriptors['color'] || '') + ' ' + (state.descriptors['moisture'] || '') + ' ' + name + '. ' +
+
+    'Consistency: ' + (state.descriptors['consistency'] || 'not assessed') + '. ' +
+
+    (state.frozenType ? 'Frozen condition: ' + state.frozenType + '.' : '');
+
+  buildFullDescFine(sym, name);
+
+  goToStep('fine-result');
+
+}
+
+function showRockResult() {
+
+  const rockNames = {
+
+    phaneritic:'Phaneritic Igneous Rock', aphanitic:'Aphanitic Igneous Rock',
+
+    porphyritic:'Porphyritic Igneous Rock', glassy:'Glassy / Vesicular Volcanic Rock',
+
+    pyroclastic:'Pyroclastic Rock', conglomerate:'Conglomerate / Breccia',
+
+    sandstone:'Sandstone / Graywacke', 'fine-clastic':'Siltstone / Shale / Mudstone',
+
+    carbonate:'Limestone / Dolomite', 'chert-coal':'Chert / Coal / Chemical Sedimentary',
+
+    slaty:'Slate', phyllitic:'Phyllite', schistose:'Schist',
+
+    gneissose:'Gneiss', 'non-foliated':'Quartzite / Marble / Hornfels', mylonitic:'Mylonite'
+
+  };
+
+  const color = state.descriptors['rockcolor'] || '';
+
+  const weath = state.descriptors['weathering'] || '';
+
+  const name  = rockNames[state.rockTexture] || 'Rock';
+
+  const rt    = state.rockType || '';
+
+  const str   = state.rockStrength || '';
+
+  document.getElementById('rock-symbol').textContent = str || '\u2014';
+
+  document.getElementById('rock-name').textContent   = [color, name].filter(Boolean).join(' ');
+
+  document.getElementById('rock-desc').textContent   =
+
+    (rt ? rt.charAt(0).toUpperCase() + rt.slice(1) : '') + ' rock, ' + (state.rockTexture || '') + ' texture. ' +
+
+    'Strength grade ' + str + '. Weathering grade ' + (weath || 'not assessed') + '. ' +
+
+    'Spacing: ' + (state.descriptors['spacing'] || 'not assessed') + '. Block shape: ' + (state.descriptors['blockshape'] || 'not assessed') + '.';
+
+  buildRockFullDesc(name, color, weath, str);
+
+  goToStep('rock-result');
+
+}
+
+// ═══════════════════════════════════════════
+
+// FULL DESCRIPTION + GEOLOGICAL STORY
+
+// ═══════════════════════════════════════════
+
+function buildFullDescCoarse(sym) {
+
+  const org    = state.organic && state.organic !== 'none' ? ' [' + orgLabel(state.organic) + ']' : '';
+
+  const color  = state.descriptors['color'] || '';
+
+  const moist  = state.descriptors['moisture'] || '';
+
+  const ang    = state.descriptors['angularity'] || '';
+
+  const gsize  = state.descriptors['gravelsize'] || '';
+
+  const ssize  = state.descriptors['sandsize'] || '';
+
+  const shape  = Array.isArray(state.descriptors['shape'])  ? state.descriptors['shape'].join(', ').toLowerCase() : '';
+
+  const struct = Array.isArray(state.descriptors['structure']) ? state.descriptors['structure'].join(', ') : '';
+
+  const cem    = state.descriptors['cementation'] && state.descriptors['cementation'] !== 'None'
+
+                   ? ', ' + state.descriptors['cementation'].toLowerCase() + ' cementation' : '';
+
+  const cobbs  = Array.isArray(state.descriptors['cobbles']) ? state.descriptors['cobbles'].join(', ') : '';
+
+  const fines  = state.finesContent === 'clean' ? '\x3C5% fines'
+
+               : state.finesContent === 'some'  ? '5-12% fines'
+
+               : '\x3E12% fines';
+
+  let parts = [color, moist, (gsize || ssize), ang ? ang + ' particles' : '', symbolToName(sym)].filter(Boolean);
+
+  if (shape)  parts.push(shape);
+
+  if (struct) parts.push(struct);
+
+  if (cobbs)  parts.push(cobbs);
+
+  parts.push(fines);
+
+  if (cem)    parts[parts.length - 1] += cem;
+
+  if (org)    parts.push(org.trim());
+
+  let logEntry = parts.join(', ') + '.';
+
+  const dep = inferDepositionalEnvironment();
+
+  if (dep) {
+
+    logEntry += '\n\n\u25b8 DEPOSITIONAL INTERPRETATION\n';
+
+    logEntry += dep.environments.join('; ') + '.\n';
+
+    if (dep.energy) logEntry += '\nEnergy regime: ' + dep.energy;
+
+    if (dep.alaska) logEntry += '\n\nAlaska context: ' + dep.alaska;
+
+  }
+
+  document.getElementById('full-desc-text').textContent = logEntry;
+
+  document.getElementById('full-desc-box').classList.add('visible');
+
+}
+
+function buildFullDescFine(sym, name) {
+
+  const color  = state.descriptors['color'] || '';
+
+  const moist  = state.descriptors['moisture'] || '';
+
+  const cons   = state.descriptors['consistency'] || 'not assessed';
+
+  const struct = Array.isArray(state.descriptors['structure']) ? state.descriptors['structure'].join(', ') : '';
+
+  const frozen = state.frozenType ? 'frozen (' + state.frozenType + ')' : '';
+
+  const org    = state.organic && state.organic !== 'none' ? ' [' + orgLabel(state.organic) + ']' : '';
+
+  let parts = [color, moist, name].filter(Boolean);
+
+  if (struct && struct.length) parts.push(struct);
+
+  if (cons !== 'not assessed') parts.push(cons);
+
+  if (frozen) parts.push(frozen);
+
+  if (org)    parts.push(org.trim());
+
+  let logEntry = parts.join(', ') + '.';
+
+  const dep = inferDepositionalEnvironment();
+
+  if (dep) {
+
+    logEntry += '\n\n\u25b8 DEPOSITIONAL INTERPRETATION\n';
+
+    logEntry += dep.environments.join('; ') + '.\n';
+
+    if (dep.energy) logEntry += '\nEnergy regime: ' + dep.energy;
+
+    if (dep.alaska) logEntry += '\n\nAlaska context: ' + dep.alaska;
+
+  }
+
+  document.getElementById('full-desc-text').textContent = logEntry;
+
+  document.getElementById('full-desc-box').classList.add('visible');
+
+}
+
+function buildRockFullDesc(name, color, weath, str) {
+
+  const rockNames = {
+
+    phaneritic:'phaneritic igneous rock', aphanitic:'aphanitic igneous rock',
+
+    porphyritic:'porphyritic igneous rock', glassy:'glassy volcanic rock',
+
+    pyroclastic:'pyroclastic rock', conglomerate:'conglomerate/breccia',
+
+    sandstone:'sandstone', 'fine-clastic':'fine-clastic sedimentary rock',
+
+    carbonate:'carbonate rock', 'chert-coal':'chemical sedimentary rock',
+
+    slaty:'slate', phyllitic:'phyllite', schistose:'schist',
+
+    gneissose:'gneiss', 'non-foliated':'non-foliated metamorphic rock', mylonitic:'mylonite'
+
+  };
+
+  const spacing   = state.descriptors['spacing']   || '';
+
+  const roughness = state.descriptors['roughness'] || '';
+
+  const infilling = state.descriptors['infilling'] || '';
+
+  const seepage   = state.descriptors['seepage']   || '';
+
+  const block     = state.descriptors['blockshape'] || '';
+
+  const rname     = rockNames[state.rockTexture] || 'rock';
+
+  let parts = [color, weath ? 'Grade ' + weath + ' weathered' : '', rname].filter(Boolean);
+
+  if (str)     parts.push('strength ' + str);
+
+  if (spacing) parts.push(spacing + ' discontinuity spacing');
+
+  if (block)   parts.push(block + ' block shape');
+
+  if (roughness) parts.push(roughness + ' surfaces');
+
+  if (infilling && infilling !== 'None / clean') parts.push(infilling + ' infilling');
+
+  if (seepage && seepage !== 'Dry') parts.push(seepage + ' seepage');
+
+  let logEntry = parts.join(', ') + '.';
+
+  const geo = inferRockGeology();
+
+  if (geo) {
+
+    logEntry += '\n\n\u25b8 GEOLOGICAL INTERPRETATION\n' + geo.story;
+
+    if (geo.alaska) logEntry += '\n\nAlaska context: ' + geo.alaska;
+
+  }
+
+  document.getElementById('full-desc-text').textContent = logEntry;
+
+  document.getElementById('full-desc-box').classList.add('visible');
+
+}
+
+// ═══════════════════════════════════════════
+
+// HELPERS
+
+// ═══════════════════════════════════════════
+
+function orgLabel(o) {
+
+  const map = {
+
+    slight: 'slightly organic, 2-5%',
+
+    organic:'organic, 5-15%',
+
+    highly: 'highly organic, 15-75%',
+
+    peat:   'peat, \x3E75%'
+
+  };
+
+  return map[o] || '';
+
+}
+
+function symbolToName(sym) {
+
+  const names = {
+
+    GW:'Well-graded gravel', GP:'Poorly graded gravel',
+
+    GM:'Silty gravel', GC:'Clayey gravel',
+
+    'GW-GM':'Well-graded gravel with silt', 'GW-GC':'Well-graded gravel with clay',
+
+    'GP-GM':'Poorly graded gravel with silt', 'GP-GC':'Poorly graded gravel with clay',
+
+    SW:'Well-graded sand', SP:'Poorly graded sand',
+
+    SM:'Silty sand', SC:'Clayey sand',
+
+    'SW-SM':'Well-graded sand with silt', 'SW-SC':'Well-graded sand with clay',
+
+    'SP-SM':'Poorly graded sand with silt', 'SP-SC':'Poorly graded sand with clay',
+
+    ML:'Silt', MH:'Elastic silt', CL:'Lean clay', CH:'Fat clay',
+
+    OL:'Organic silt/clay', OH:'Organic clay', PT:'Peat'
+
+  };
+
+  return names[sym] || sym;
+
+}
+
+function setDescLine(id, value, colorClass) {
+
+  const line = document.getElementById('dl-' + id);
+
+  const val  = document.getElementById('dv-' + id);
+
+  if (!line || !val) return;
+
+  val.textContent = value;
+
+  val.className   = 'desc-value' + (colorClass ? ' ' + colorClass : '');
+
+  line.classList.add('visible');
+
+}
+
+function updateFullDesc() { /* placeholder — fires on result build */ }
+
+// ═══════════════════════════════════════════
+
+// RESET
+
+// ═══════════════════════════════════════════
+
+function fullReset() {
+
+  Object.keys(state).forEach(k => { state[k] = null; });
+
+  state.descriptors = {};
+
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+  document.getElementById('step-start').classList.add('active');
+
+  document.querySelectorAll('.desc-btn').forEach(b => b.classList.remove('selected'));
+
+  document.querySelectorAll('.interp-card').forEach(c => c.classList.remove('visible'));
+
+  document.querySelectorAll('.desc-line').forEach(l => l.classList.remove('visible'));
+
+  document.querySelectorAll('.desc-divider').forEach(d => d.style.display = 'none');
+
+  document.getElementById('full-desc-box').classList.remove('visible');
+
+  document.getElementById('breadcrumb').innerHTML = '\x3Cspan class="crumb active"\x3EStart\x3C/span\x3E';
+
+}
+</script>
+</body>
+</html>
+ 
