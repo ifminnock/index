@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CFD // Thaw Consolidation Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg:        #0e0f11;
+  --surface:   #14161a;
+  --border:    #2a2d34;
+  --accent:    #c8873a;
+  --accent2:   #4a8fa8;
+  --dim:       #4a4f5c;
+  --muted:     #7a8090;
+  --text:      #d4d8e0;
+  --text-hi:   #eef0f4;
+  --frost:     #7ab8cc;
+  --thaw:      #c8873a;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--surface);
+}
+
+.back-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--dim);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.header-divider {
+  width: 1px;
+  height: 1.2rem;
+  background: var(--border);
+}
+
+.header-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 5rem 2.5rem 3rem;
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.module-id {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.module-id::before {
+  content: '';
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 1.0;
+  color: var(--text-hi);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.4rem;
+}
+
+h1 span {
+  color: var(--accent);
+}
+
+.subtitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 2.5rem;
+}
+
+/* ── COMING SOON BADGE ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.status-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0.06;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* ── DESCRIPTION ── */
+.description {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 680px;
+  margin-bottom: 3.5rem;
+  border-left: 2px solid var(--border);
+  padding-left: 1.5rem;
+}
+
+.description strong {
+  color: var(--text-hi);
+  font-weight: 400;
+}
+
+/* ── CANVAS PLACEHOLDER ── */
+.canvas-zone {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  height: 320px;
+  margin-bottom: 3rem;
+  overflow: hidden;
+}
+
+.canvas-zone canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  pointer-events: none;
+}
+
+.canvas-overlay-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.canvas-overlay-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* corner ticks */
+.canvas-zone::before,
+.canvas-zone::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--accent);
+  border-style: solid;
+  z-index: 2;
+}
+.canvas-zone::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.canvas-zone::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+/* ── PLANNED CONTROLS ── */
+.controls-section {
+  margin-bottom: 3.5rem;
+}
+
+.section-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.control-card {
+  background: var(--surface);
+  padding: 1.2rem 1.4rem;
+  opacity: 0.45;
+  position: relative;
+}
+
+.control-card-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.control-card-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-hi);
+  margin-bottom: 0.25rem;
+}
+
+.control-card-desc {
+  font-size: 0.78rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.control-card-mock {
+  margin-top: 0.8rem;
+  height: 6px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-card-mock::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 45%;
+  background: var(--dim);
+  border-radius: 1px;
+}
+
+/* ── PHASES ── */
+.phases {
+  margin-bottom: 3.5rem;
+}
+
+.phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.phase-item {
+  background: var(--surface);
+  padding: 1.2rem 1.4rem;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.phase-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  padding-top: 0.15rem;
+}
+
+.phase-content-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-hi);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+}
+
+.phase-content-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.phase-item.active .phase-num { color: var(--accent); }
+.phase-item.pending .phase-num { color: var(--dim); }
+.phase-item.pending .phase-content-title { color: var(--muted); }
+
+.phase-tag {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+.phase-tag.in-progress {
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: rgba(200,135,58,0.07);
+}
+.phase-tag.deferred {
+  color: var(--dim);
+  border: 1px solid var(--border);
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+}
+
+.footer-left {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footer-right {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* ── ANIMATED SOIL COLUMN ── */
+/* handled in JS on canvas */
+```
+
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="../index/" class="back-link">← Index</a>
+  <div class="header-divider"></div>
+  <span class="header-label">Module 05 &nbsp;/&nbsp; CFD Model</span>
+</header>
+
+<main>
+  <div class="hero">
+
+```
+<div class="module-id">Computational Fluid Dynamics</div>
+
+<h1>Thaw<br><span>Consolidation</span></h1>
+<div class="subtitle">1D Heat Diffusion &amp; Settlement Model — Permafrost Terrain</div>
+
+<div class="status-badge">
+  <span class="pulse-dot"></span>
+  In Development — Graduate Math Certificate Capstone
+</div>
+
+<p class="description">
+  This module will simulate <strong>thaw front advance</strong> through frozen soil using finite difference methods applied to the 1D heat equation, coupled with <strong>Terzaghi consolidation</strong> to predict ice-rich soil settlement over time. Developed in parallel with a graduate mathematics course. User inputs will include surface temperature, elapsed time, and key soil parameters including <strong>P200 fines content</strong> as a frost susceptibility proxy.
+</p>
+
+<!-- ANIMATED CANVAS -->
+<div class="canvas-zone">
+  <canvas id="soilCanvas"></canvas>
+  <div class="canvas-overlay">
+    <div class="canvas-overlay-label">Visualization Preview</div>
+    <div class="canvas-overlay-title">Soil Column // Thaw Front Animation</div>
+  </div>
+</div>
+
+<!-- PLANNED CONTROLS -->
+<div class="controls-section">
+  <div class="section-label">Planned Input Controls</div>
+  <div class="controls-grid">
+
+    <div class="control-card">
+      <div class="control-card-label">Parameter 01</div>
+      <div class="control-card-name">Surface Temperature</div>
+      <div class="control-card-desc">Mean annual or seasonal temp above freezing (°C)</div>
+      <div class="control-card-mock"></div>
+    </div>
+
+    <div class="control-card">
+      <div class="control-card-label">Parameter 02</div>
+      <div class="control-card-name">Elapsed Time</div>
+      <div class="control-card-desc">Simulation duration in days or thaw seasons</div>
+      <div class="control-card-mock"></div>
+    </div>
+
+    <div class="control-card">
+      <div class="control-card-label">Parameter 03</div>
+      <div class="control-card-name">P200 Fines Content</div>
+      <div class="control-card-desc">% passing #200 sieve — frost susceptibility index</div>
+      <div class="control-card-mock"></div>
+    </div>
+
+    <div class="control-card">
+      <div class="control-card-label">Parameter 04</div>
+      <div class="control-card-name">Moisture Content</div>
+      <div class="control-card-desc">Initial water/ice content — controls latent heat load</div>
+      <div class="control-card-mock"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DEVELOPMENT PHASES -->
+<div class="phases">
+  <div class="section-label">Development Phases</div>
+  <div class="phase-list">
+
+    <div class="phase-item active">
+      <div class="phase-num">01</div>
+      <div class="phase-content">
+        <div class="phase-content-title">
+          Walking Skeleton
+          <span class="phase-tag in-progress">In Progress</span>
+        </div>
+        <div class="phase-content-desc">
+          1D finite difference heat equation solver. Animated soil column showing temperature profile and thaw front depth over time. Interactive controls for surface temperature, elapsed time, and soil parameters.
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-item pending">
+      <div class="phase-num">02</div>
+      <div class="phase-content">
+        <div class="phase-content-title">
+          Consolidation Coupling
+          <span class="phase-tag deferred">Deferred</span>
+        </div>
+        <div class="phase-content-desc">
+          Link thaw front depth to Terzaghi 1D consolidation. Display pore pressure dissipation and cumulative settlement alongside thermal output.
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-item pending">
+      <div class="phase-num">03</div>
+      <div class="phase-content">
+        <div class="phase-content-title">
+          Full Capstone Model
+          <span class="phase-tag deferred">Deferred</span>
+        </div>
+        <div class="phase-content-desc">
+          Enthalpy method for phase change, 2D cross-section geometry, unfrozen water content curve for fine-grained soils. Parameterized for Alaska soil types.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+```
+
+  </div><!-- /hero -->
+</main>
+
+<footer>
+  <div class="footer-left">I.F. Minnock &nbsp;//&nbsp; Geotechnical Engineering</div>
+  <div class="footer-right">Module 05 &nbsp;—&nbsp; CFD // Thaw Consolidation</div>
+</footer>
+
+<script>
+  // ── Animated soil column preview on canvas ──
+  const canvas = document.getElementById('soilCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Soil column parameters
+  const NODES = 40;
+  let thawFront = 0.05; // fraction of column depth (0–1)
+  const THAW_SPEED = 0.0008;
+  let direction = 1;
+
+  function draw(ts) {
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Advance thaw front — ping-pong for demo
+    thawFront += THAW_SPEED * direction;
+    if (thawFront > 0.72) direction = -1;
+    if (thawFront < 0.05) direction = 1;
+
+    const colX  = W * 0.12;
+    const colW  = W * 0.22;
+    const colH  = H * 0.82;
+    const colY  = H * 0.09;
+
+    // Draw each node cell
+    for (let i = 0; i < NODES; i++) {
+      const frac   = i / NODES;
+      const cellH  = colH / NODES;
+      const cellY  = colY + frac * colH;
+      const frozen = frac > thawFront;
+
+      // Color: thawed = warm brown gradient, frozen = blue-grey
+      if (frozen) {
+        const blend = (frac - thawFront) / (1 - thawFront);
+        const r = Math.round(30  + blend * 20);
+        const g = Math.round(60  + blend * 30);
+        const b = Math.round(100 + blend * 60);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+      } else {
+        const blend = frac / thawFront;
+        const r = Math.round(80  + blend * 60);
+        const g = Math.round(55  + blend * 30);
+        const b = Math.round(25  + blend * 10);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+      }
+
+      ctx.fillRect(colX, cellY, colW, cellH - 1);
+    }
+
+    // Column border
+    ctx.strokeStyle = '#2a2d34';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(colX, colY, colW, colH);
+
+    // Thaw front line
+    const frontY = colY + thawFront * colH;
+    ctx.beginPath();
+    ctx.moveTo(colX - 4, frontY);
+    ctx.lineTo(colX + colW + 4, frontY);
+    ctx.strokeStyle = '#c8873a';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Thaw front label
+    ctx.font = "10px 'Share Tech Mono', monospace";
+    ctx.fillStyle = '#c8873a';
+    ctx.fillText('THAW FRONT', colX + colW + 12, frontY + 4);
+
+    // Depth axis ticks
+    ctx.font = "9px 'Share Tech Mono', monospace";
+    ctx.fillStyle = '#4a4f5c';
+    const depths = [0, 1, 2, 3, 4, 5];
+    depths.forEach(d => {
+      const tickY = colY + (d / 5) * colH;
+      ctx.fillText(`${d}m`, colX - 28, tickY + 4);
+      ctx.beginPath();
+      ctx.moveTo(colX - 4, tickY);
+      ctx.lineTo(colX, tickY);
+      ctx.strokeStyle = '#2a2d34';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Surface label
+    ctx.fillStyle = '#4a8fa8';
+    ctx.font = "9px 'Share Tech Mono', monospace";
+    ctx.fillText('SURFACE', colX, colY - 8);
+
+    // Temperature profile (schematic curve)
+    const profX = colX + colW + 80;
+    const profW = W * 0.22;
+    ctx.font = "9px 'Share Tech Mono', monospace";
+    ctx.fillStyle = '#4a4f5c';
+    ctx.fillText('TEMP PROFILE', profX, colY - 8);
+
+    ctx.beginPath();
+    for (let i = 0; i <= NODES; i++) {
+      const frac = i / NODES;
+      const frozen = frac > thawFront;
+      // Schematic: warm at surface, crosses 0°C at thaw front, cold below
+      let T;
+      if (!frozen) {
+        T = 6 * (1 - frac / thawFront); // 6°C at surface → 0 at front
+      } else {
+        T = -8 * (frac - thawFront) / (1 - thawFront); // 0 → -8°C at base
+      }
+      const tx = profX + profW * 0.5 + (T / 8) * profW * 0.45;
+      const ty = colY + frac * colH;
+      if (i === 0) ctx.moveTo(tx, ty);
+      else ctx.lineTo(tx, ty);
+    }
+    ctx.strokeStyle = '#4a8fa8';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Zero-degree line
+    const zeroX = profX + profW * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(zeroX, colY);
+    ctx.lineTo(zeroX, colY + colH);
+    ctx.strokeStyle = '#2a2d34';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#4a4f5c';
+    ctx.fillText('0°C', zeroX - 8, colY - 8);
+
+    requestAnimationFrame(draw);
+  }
+
+  requestAnimationFrame(draw);
+</script>
+
+</body>
+</html>
