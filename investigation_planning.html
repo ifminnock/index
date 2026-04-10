@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drill Rig &amp; Method Selector</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0e14;--bg2:#13151e;--bg3:#1a1d28;--bg4:#202432;
+  --border:#252836;--border2:#30354a;
+  --text:#dde0ee;--muted:#666d88;--dim:#3a3f55;
+  --accent:#f0a500;--teal:#2ec4b6;--green:#3dba7e;--red:#e05a2b;--purple:#9b72cf;--blue:#4a9eff;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans)}
+body::before{content:'';position:fixed;inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.015) 39px,rgba(255,255,255,.015) 40px),
+  repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.015) 39px,rgba(255,255,255,.015) 40px);
+  pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px 80px}
+
+/* HEADER */
+.hdr{border-bottom:1px solid var(–border2);padding:28px 0 20px;margin-bottom:36px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.hdr-eye{font-family:var(–mono);font-size:10px;letter-spacing:.2em;color:var(–muted);text-transform:uppercase;margin-bottom:4px}
+.hdr-title{font-family:var(–mono);font-size:22px;font-weight:600;letter-spacing:-.02em}
+.hdr-title span{color:var(–accent)}
+.back{font-family:var(–mono);font-size:11px;color:var(–muted);text-decoration:none;border:1px solid var(–border);padding:6px 14px;border-radius:3px;transition:all .15s;letter-spacing:.05em}
+.back:hover{color:var(–accent);border-color:var(–accent)}
+
+/* STEP CARD */
+.step{background:var(–bg2);border:1px solid var(–border);border-radius:4px;margin-bottom:20px;transition:border-color .2s}
+.step.active{border-color:var(–border2)}
+.step.complete{border-color:rgba(61,186,126,.3)}
+.step-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.step-num{font-family:var(–mono);font-size:10px;letter-spacing:.15em;color:var(–muted);flex-shrink:0}
+.step-num.done{color:var(–green)}
+.step-label{font-family:var(–mono);font-size:13px;font-weight:600;flex:1}
+.step-check{font-size:14px;margin-left:auto;color:var(–green);display:none}
+.step.complete .step-check{display:block}
+.step-summary{font-family:var(–mono);font-size:11px;color:var(–teal);margin-left:auto;display:none}
+.step.complete.collapsed .step-summary{display:block}
+.step-body{padding:0 18px 18px;border-top:1px solid var(–border)}
+.step.collapsed .step-body{display:none}
+.step.collapsed{border-color:var(–border)}
+
+/* OPTION GRID */
+.opt-grid{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px}
+.opt-grid.single .opt:hover{border-color:var(–accent)}
+.opt-grid.single .opt.sel{border-color:var(–accent)!important;color:var(–accent)!important;background:rgba(240,165,0,.08)!important;box-shadow:0 0 0 1px var(–accent)}
+
+.opt-grid.multi .opt:hover{border-color:var(–teal)}
+.opt-grid.multi .opt.sel{border-color:var(–teal)!important;color:var(–teal)!important;background:rgba(46,196,182,.08)!important;box-shadow:0 0 0 1px var(–teal)}
+
+.opt{font-family:var(–mono);font-size:12px;padding:9px 14px;border:1px solid var(–border2);border-radius:3px;color:var(–muted);cursor:pointer;transition:all .15s;user-select:none;background:var(–bg3);line-height:1.4}
+.opt-note{font-size:10px;color:var(–dim);margin-top:3px}
+
+/* RANGE SLIDER */
+.slider-wrap{padding-top:16px}
+.slider-label{font-family:var(–mono);font-size:11px;color:var(–muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.slider-val{font-size:14px;color:var(–accent);font-weight:600}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(–border2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(–accent);cursor:pointer;border:2px solid var(–bg);box-shadow:0 0 0 2px var(–accent)}
+.depth-marks{display:flex;justify-content:space-between;font-family:var(–mono);font-size:9px;color:var(–dim);margin-top:6px}
+
+/* SECTION DIVIDER */
+.sdiv{font-family:var(–mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(–dim);padding:14px 0 6px;border-top:1px solid var(–border);margin-top:10px}
+
+/* NEXT BUTTON */
+.next-btn{font-family:var(–mono);font-size:11px;letter-spacing:.08em;padding:9px 22px;border-radius:3px;cursor:pointer;transition:all .15s;border:1px solid var(–accent);background:var(–accent);color:var(–bg);margin-top:16px;font-weight:600}
+.next-btn:hover{background:#ffc233;border-color:#ffc233}
+.next-btn:disabled{background:var(–bg3);border-color:var(–border2);color:var(–dim);cursor:not-allowed}
+
+/* RESULT PANEL */
+#resultPanel{display:none;background:var(–bg2);border:1px solid var(–border2);border-radius:4px;padding:24px;margin-top:8px}
+.res-eyebrow{font-family:var(–mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(–muted);margin-bottom:16px}
+
+.res-primary{background:var(–bg3);border:1px solid rgba(240,165,0,.3);border-radius:4px;padding:18px;margin-bottom:16px}
+.res-primary-label{font-family:var(–mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(–accent);margin-bottom:10px}
+.res-rig{font-family:var(–mono);font-size:18px;font-weight:700;color:var(–text);margin-bottom:4px}
+.res-method{font-family:var(–mono);font-size:13px;color:var(–teal);margin-bottom:12px}
+.res-rationale{font-size:13px;color:var(–muted);line-height:1.7}
+
+.res-alt{background:var(–bg3);border:1px solid var(–border2);border-radius:4px;padding:14px;margin-bottom:10px}
+.res-alt:last-child{margin-bottom:0}
+.res-alt-label{font-family:var(–mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(–muted);margin-bottom:6px}
+.res-alt-rig{font-family:var(–mono);font-size:13px;font-weight:600;color:var(–text);margin-bottom:3px}
+.res-alt-method{font-family:var(–mono);font-size:11px;color:var(–teal);margin-bottom:6px}
+.res-alt-note{font-size:12px;color:var(–muted);line-height:1.6}
+
+.res-flags{margin-top:16px}
+.res-flags-label{font-family:var(–mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(–red);margin-bottom:8px}
+.flag{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(–border);font-size:12px;color:var(–muted);line-height:1.5}
+.flag:last-child{border-bottom:none}
+.flag-icon{color:var(–red);flex-shrink:0;font-size:13px}
+
+.reset-btn{font-family:var(–mono);font-size:11px;padding:8px 18px;border-radius:3px;cursor:pointer;background:transparent;border:1px solid var(–border2);color:var(–muted);margin-top:16px;transition:all .15s}
+.reset-btn:hover{border-color:var(–text);color:var(–text)}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div>
+    <div class="hdr-eye">Geotechnical Field Reference — Alaska DOT</div>
+    <div class="hdr-title">Drill Rig &amp; Method <span>Selector</span></div>
+  </div>
+  <a class="back" href="index.html">← Menu</a>
+</div>
+
+<!-- STEP 1: PURPOSE -->
+
+<div class="step active" id="s1">
+  <div class="step-hdr" onclick="toggleStep('s1')">
+    <span class="step-num" id="s1-num">01</span>
+    <span class="step-label">Project Purpose</span>
+    <span class="step-summary" id="s1-sum"></span>
+    <span class="step-check">✓</span>
+  </div>
+  <div class="step-body">
+    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Select the primary purpose. This sets baseline investigation requirements.</div>
+    <div class="opt-grid single" id="purposeGrid">
+      <div class="opt" data-id="pave" onclick="pickPurpose(this)">Pavement Preservation<div class="opt-note">Overlay, mill &amp; fill, rehab</div></div>
+      <div class="opt" data-id="newroad" onclick="pickPurpose(this)">New Road<div class="opt-note">Full corridor investigation</div></div>
+      <div class="opt" data-id="culvert" onclick="pickPurpose(this)">Culvert<div class="opt-note">Replacement or new installation</div></div>
+      <div class="opt" data-id="bridge" onclick="pickPurpose(this)">Bridge<div class="opt-note">Foundation investigation</div></div>
+      <div class="opt" data-id="runway" onclick="pickPurpose(this)">Runway / Airstrip<div class="opt-note">Airport pavement</div></div>
+      <div class="opt" data-id="lightpole" onclick="pickPurpose(this)">Light Pole / Sign<div class="opt-note">Shallow foundation</div></div>
+      <div class="opt" data-id="structfound" onclick="pickPurpose(this)">Structure Foundation<div class="opt-note">Building, wall, heavy structure</div></div>
+      <div class="opt" data-id="basin" onclick="pickPurpose(this)">Settlement Basin / Pond<div class="opt-note">Retention, infiltration</div></div>
+      <div class="opt" data-id="slope" onclick="pickPurpose(this)">Slope Stabilization<div class="opt-note">Landslide, cut/fill failure</div></div>
+      <div class="opt" data-id="utility" onclick="pickPurpose(this)">Utility Trench / Pipeline<div class="opt-note">Underground utilities</div></div>
+      <div class="opt" data-id="embankment" onclick="pickPurpose(this)">Embankment / Fill<div class="opt-note">Road fills, levees</div></div>
+      <div class="opt" data-id="village" onclick="pickPurpose(this)">Remote / Village Work<div class="opt-note">Off-road, fly-in sites</div></div>
+    </div>
+    <button class="next-btn" id="s1-next" disabled onclick="nextStep('s1','s2')">Next →</button>
+  </div>
+</div>
+
+<!-- STEP 2: ACCESS -->
+
+<div class="step collapsed" id="s2">
+  <div class="step-hdr" onclick="toggleStep('s2')">
+    <span class="step-num" id="s2-num">02</span>
+    <span class="step-label">Site Access</span>
+    <span class="step-summary" id="s2-sum"></span>
+    <span class="step-check">✓</span>
+  </div>
+  <div class="step-body">
+    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">How does equipment reach the site?</div>
+    <div class="opt-grid single" id="accessGrid">
+      <div class="opt" data-id="road" onclick="pickAccess(this)">Road Access<div class="opt-note">Site reachable by truck on maintained road</div></div>
+      <div class="opt" data-id="offroad" onclick="pickAccess(this)">Off-Road / Limited Access<div class="opt-note">Requires tracked equipment, soft terrain, steep grades, or no maintained road</div></div>
+      <div class="opt" data-id="flyin" onclick="pickAccess(this)">Fly-In Only<div class="opt-note">Remote site reachable only by fixed-wing or helicopter — weight and size are critical constraints</div></div>
+    </div>
+    <button class="next-btn" id="s2-next" disabled onclick="nextStep('s2','s3')">Next →</button>
+  </div>
+</div>
+
+<!-- STEP 3: DEPTH -->
+
+<div class="step collapsed" id="s3">
+  <div class="step-hdr" onclick="toggleStep('s3')">
+    <span class="step-num" id="s3-num">03</span>
+    <span class="step-label">Expected Investigation Depth</span>
+    <span class="step-summary" id="s3-sum"></span>
+    <span class="step-check">✓</span>
+  </div>
+  <div class="step-body">
+    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Maximum anticipated depth for any single test hole or boring.</div>
+    <div class="slider-wrap">
+      <div class="slider-label"><span>Target Depth</span><span class="slider-val" id="depthVal">20 ft</span></div>
+      <input type="range" id="depthSlider" min="1" max="150" value="20" oninput="updateDepth(this.value)">
+      <div class="depth-marks"><span>1 ft</span><span>25 ft</span><span>50 ft</span><span>100 ft</span><span>150 ft</span></div>
+    </div>
+    <div id="depthNote" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--teal);line-height:1.6"></div>
+    <button class="next-btn" id="s3-next" onclick="nextStep('s3','s4')">Next →</button>
+  </div>
+</div>
+
+<!-- STEP 4: GROUND CONDITIONS -->
+
+<div class="step collapsed" id="s4">
+  <div class="step-hdr" onclick="toggleStep('s4')">
+    <span class="step-num" id="s4-num">04</span>
+    <span class="step-label">Expected Ground Conditions</span>
+    <span class="step-summary" id="s4-sum"></span>
+    <span class="step-check">✓</span>
+  </div>
+  <div class="step-body">
+    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Select all that may apply. These are anticipated conditions — not confirmed.</div>
+    <div class="opt-grid multi" id="condGrid">
+      <div class="opt" data-id="cobbles" onclick="toggleCond(this)">Cobbles Expected<div class="opt-note">Cobble-dominated gravels (&gt;3")</div></div>
+      <div class="opt" data-id="boulders" onclick="toggleCond(this)">Boulders Possible<div class="opt-note">Individual boulders that may block advancement</div></div>
+      <div class="opt" data-id="boulder_size" onclick="toggleCond(this)">Need Boulder Size / Extent<div class="opt-note">Mapping boulders for design (e.g. excavation, pile layout)</div></div>
+      <div class="opt" data-id="bedrock" onclick="toggleCond(this)">Bedrock Anticipated<div class="opt-note">Need to determine depth or core into rock</div></div>
+      <div class="opt" data-id="core_rock" onclick="toggleCond(this)">Rock Core Required<div class="opt-note">RQD, fracture logging, lab testing of rock</div></div>
+      <div class="opt" data-id="heave" onclick="toggleCond(this)">Heaving / Caving Soils<div class="opt-note">Loose sands, silts below water table — hole won't stay open</div></div>
+      <div class="opt" data-id="gw_shallow" onclick="toggleCond(this)">Shallow Groundwater<div class="opt-note">Groundwater within the boring interval</div></div>
+      <div class="opt" data-id="permafrost" onclick="toggleCond(this)">Permafrost / Frozen Ground<div class="opt-note">Expect ice-rich or frozen materials</div></div>
+      <div class="opt" data-id="soft_soil" onclick="toggleCond(this)">Very Soft Soils<div class="opt-note">Organic, peaty, or soft fine-grained soils</div></div>
+      <div class="opt" data-id="none" onclick="toggleCond(this)">No Special Conditions<div class="opt-note">Relatively uniform, drill-friendly soils expected</div></div>
+    </div>
+    <button class="next-btn" id="s4-next" onclick="nextStep('s4','s5')">Next →</button>
+  </div>
+</div>
+
+<!-- STEP 5: SAMPLING -->
+
+<div class="step collapsed" id="s5">
+  <div class="step-hdr" onclick="toggleStep('s5')">
+    <span class="step-num" id="s5-num">05</span>
+    <span class="step-label">Sampling Requirements</span>
+    <span class="step-summary" id="s5-sum"></span>
+    <span class="step-check">✓</span>
+  </div>
+  <div class="step-body">
+    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">What sampling is required from the boring?</div>
+    <div class="opt-grid multi" id="sampGrid">
+      <div class="opt" data-id="spt" onclick="toggleSamp(this)">SPT (Standard Penetration Test)<div class="opt-note">2" split spoon, blow counts, disturbed sample</div></div>
+      <div class="opt" data-id="modcal" onclick="toggleSamp(this)">Modified California (3" Split Spoon)<div class="opt-note">Larger sample, common in Alaska — good for gravelly soils</div></div>
+      <div class="opt" data-id="shelby" onclick="toggleSamp(this)">Shelby Tube (Undisturbed)<div class="opt-note">Soft cohesive soils — needed for strength and consolidation testing</div></div>
+      <div class="opt" data-id="continuous" onclick="toggleSamp(this)">Continuous Sampling<div class="opt-note">Sample every foot — critical stratigraphy, contamination, or thin layer detection</div></div>
+      <div class="opt" data-id="rock_core" onclick="toggleSamp(this)">Rock Core (NQ/HQ/PQ)<div class="opt-note">Oriented core for RQD, fracture logging, rock strength</div></div>
+      <div class="opt" data-id="no_sample" onclick="toggleSamp(this)">No Sample Required<div class="opt-note">Depth to refusal only, water level, or probe only</div></div>
+    </div>
+    <button class="next-btn" id="s5-next" onclick="getResult()">Generate Recommendation →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+
+<div id="resultPanel">
+  <div class="res-eyebrow">Recommendation</div>
+  <div class="res-primary" id="resPrimary"></div>
+  <div id="resAlts"></div>
+  <div class="res-flags" id="resFlags" style="display:none">
+    <div class="res-flags-label">⚠ Flags &amp; Considerations</div>
+    <div id="resFlagList"></div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">↺ Start Over</button>
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+// STATE
+let state = {
+  purpose: null,
+  access: null,
+  depth: 20,
+  conditions: new Set(),
+  sampling: new Set()
+};
+
+// ── STEP LOGIC ──
+function toggleStep(id){
+  const el=document.getElementById(id);
+  if(el.classList.contains('collapsed')) el.classList.remove('collapsed');
+  else if(el.classList.contains('complete')) el.classList.add('collapsed');
+}
+
+function nextStep(current, next){
+  const cur=document.getElementById(current);
+  cur.classList.add('complete','collapsed');
+  const nxt=document.getElementById(next);
+  nxt.classList.remove('collapsed');
+  nxt.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── PURPOSE ──
+function pickPurpose(el){
+  document.querySelectorAll('#purposeGrid .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  state.purpose = el.dataset.id;
+  document.getElementById('s1-next').disabled = false;
+  document.getElementById('s1-sum').textContent = el.childNodes[0].textContent.trim();
+}
+
+// ── ACCESS ──
+function pickAccess(el){
+  document.querySelectorAll('#accessGrid .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  state.access = el.dataset.id;
+  document.getElementById('s2-next').disabled = false;
+  document.getElementById('s2-sum').textContent = el.childNodes[0].textContent.trim();
+}
+
+// ── DEPTH ──
+function updateDepth(v){
+  v = parseInt(v);
+  state.depth = v;
+  const el = document.getElementById('depthVal');
+  el.textContent = v + ' ft';
+  const note = document.getElementById('depthNote');
+  if(v <= 1) note.textContent = '→ Hand-dug test pit territory (≤1 ft). Consider whether any mechanized equipment is justified.';
+  else if(v <= 5) note.textContent = '→ Shallow range. Hand auger, soil probe, or Geoprobe may be sufficient.';
+  else if(v <= 15) note.textContent = '→ Shallow boring range. Geoprobe, Minuteman, or HSA capable.';
+  else if(v <= 40) note.textContent = '→ Standard boring depth. HSA with CME rig is the workhorse here.';
+  else if(v <= 80) note.textContent = '→ Moderate-deep boring. CME 75/85 with HSA or cased rotary. Consider drilling fluid if caving anticipated.';
+  else note.textContent = '→ Deep boring. CME 85 or equivalent required. Water wash or cased rotary likely needed. Sonic is worth considering.';
+  document.getElementById('s3-sum').textContent = v + ' ft';
+}
+
+// ── CONDITIONS ──
+function toggleCond(el){
+  const id = el.dataset.id;
+  if(id === 'none'){
+    state.conditions.clear();
+    document.querySelectorAll('#condGrid .opt').forEach(o=>o.classList.remove('sel'));
+    el.classList.add('sel');
+    state.conditions.add('none');
+  } else {
+    state.conditions.delete('none');
+    document.querySelector('#condGrid .opt[data-id="none"]').classList.remove('sel');
+    if(state.conditions.has(id)){state.conditions.delete(id);el.classList.remove('sel');}
+    else{state.conditions.add(id);el.classList.add('sel');}
+  }
+  const count = state.conditions.size;
+  document.getElementById('s4-sum').textContent = count === 0 ? '' : count + ' selected';
+}
+
+// ── SAMPLING ──
+function toggleSamp(el){
+  const id = el.dataset.id;
+  if(id === 'no_sample'){
+    state.sampling.clear();
+    document.querySelectorAll('#sampGrid .opt').forEach(o=>o.classList.remove('sel'));
+    el.classList.add('sel');
+    state.sampling.add('no_sample');
+  } else {
+    state.sampling.delete('no_sample');
+    document.querySelector('#sampGrid .opt[data-id="no_sample"]').classList.remove('sel');
+    if(state.sampling.has(id)){state.sampling.delete(id);el.classList.remove('sel');}
+    else{state.sampling.add(id);el.classList.add('sel');}
+  }
+  const count = state.sampling.size;
+  document.getElementById('s5-sum').textContent = count === 0 ? '' : count + ' selected';
+}
+
+// ── RESULT ENGINE ──
+function getResult(){
+  // Close step 5
+  const s5=document.getElementById('s5');
+  s5.classList.add('complete','collapsed');
+
+  const {purpose, access, depth, conditions, sampling} = state;
+
+  const hasCobbles = conditions.has('cobbles');
+  const hasBoulders = conditions.has('boulders');
+  const needBoulderSize = conditions.has('boulder_size');
+  const hasBedrock = conditions.has('bedrock');
+  const needRockCore = conditions.has('core_rock') || sampling.has('rock_core');
+  const hasHeave = conditions.has('heave');
+  const hasGW = conditions.has('gw_shallow');
+  const hasPermafrost = conditions.has('permafrost');
+  const hasSoft = conditions.has('soft_soil');
+  const needShelby = sampling.has('shelby');
+  const needContinuous = sampling.has('continuous');
+  const needSPT = sampling.has('spt');
+  const needModCal = sampling.has('modcal');
+
+  // ── RIG SCORING ──
+  // Rigs: cme85, cme75, cme850track, geoprobe, minuteman
+  let scores = { cme85: 0, cme75: 0, cme850track: 0, geoprobe: 0, minuteman: 0 };
+  let flags = [];
+  let method = '';
+  let methodNote = '';
+
+  // Access
+  if(access === 'road'){
+    scores.cme85 += 3; scores.cme75 += 3; scores.cme850track += 1; scores.geoprobe += 2; scores.minuteman += 1;
+  } else if(access === 'offroad'){
+    scores.cme850track += 5; scores.cme85 -= 2; scores.cme75 -= 1; scores.geoprobe += 1; scores.minuteman += 1;
+    flags.push('Off-road access — tracked equipment preferred. Confirm ground pressure tolerances for soft terrain.');
+  } else if(access === 'flyin'){
+    scores.minuteman += 6; scores.geoprobe += 2; scores.cme85 -= 10; scores.cme75 -= 10; scores.cme850track -= 3;
+    flags.push('Fly-in site — equipment weight and footprint are critical. Minuteman or Geoprobe are the primary options. Coordinate with charter operator on max payload and loading constraints.');
+  }
+
+  // Depth
+  if(depth <= 1){
+    scores.geoprobe -= 2; scores.cme75 -= 3; scores.cme85 -= 3;
+    flags.push('Depth ≤1 ft — hand-dug test pit is appropriate. Mechanized drilling likely not justified unless access or site conditions require it.');
+  } else if(depth <= 15){
+    scores.geoprobe += 3; scores.minuteman += 2;
+  } else if(depth <= 40){
+    scores.cme75 += 3; scores.cme85 += 2; scores.cme850track += 2; scores.geoprobe -= 1;
+  } else if(depth <= 80){
+    scores.cme75 += 2; scores.cme85 += 4; scores.cme850track += 2; scores.geoprobe -= 4; scores.minuteman -= 4;
+  } else {
+    scores.cme85 += 6; scores.cme75 += 1; scores.cme850track += 2; scores.geoprobe -= 8; scores.minuteman -= 8;
+    flags.push('Depth >80 ft — verify rig capacity and rod/casing string requirements. CME 85 is the preferred rig at this depth range.');
+  }
+
+  // Cobbles / boulders
+  if(hasCobbles || hasBoulders){
+    scores.geoprobe -= 5; scores.minuteman -= 3;
+    scores.cme85 += 2; scores.cme75 += 2; scores.cme850track += 2;
+    flags.push('Cobbles/boulders anticipated — HSA advancement may be difficult or refused. Have driven casing or air hammer as backup.');
+    if(hasCobbles && depth > 20) flags.push('HSA is generally not viable in cobble-dominated material at depth. Plan for water wash with driven casing or DTH hammer from the start.');
+  }
+  if(needBoulderSize){
+    flags.push('Boulder size/extent mapping required — sonic drilling is the most capable tool for continuous core through bouldery material without misrepresenting stratigraphy. DTH hammer can confirm depth to refusal but cannot extract continuous core.');
+    scores.cme85 += 1; // sonic upgrade note handled in method
+  }
+
+  // Bedrock / rock core
+  if(hasBedrock){
+    scores.cme85 += 2; scores.cme75 += 1; scores.cme850track += 1; scores.geoprobe -= 3; scores.minuteman -= 3;
+  }
+  if(needRockCore){
+    scores.cme85 += 3; scores.cme75 += 2; scores.cme850track += 2; scores.geoprobe -= 5; scores.minuteman -= 5;
+    flags.push('Rock core required — wire-line rotary coring (NQ/HQ) needed. Confirm rig has rotary coring head and appropriate core barrels on mobilization.');
+  }
+
+  // Heave / caving
+  if(hasHeave || hasGW){
+    scores.cme85 += 2; scores.cme75 += 2; scores.cme850track += 2;
+    flags.push('Heaving or caving soils / shallow groundwater — HSA may not hold borehole open. Plan for driven casing or hollow stem with drilling fluid as contingency.');
+  }
+
+  // Permafrost
+  if(hasPermafrost){
+    flags.push('Permafrost anticipated — standard HSA may be difficult to advance through ice-rich frozen ground. Rotary with air or water flush may be needed. Consider steam or hot water thaw for shallow work. Protect test holes from solar gain.');
+    scores.cme85 += 1; scores.cme850track += 2;
+  }
+
+  // Soft soils / Shelby
+  if(hasSoft || needShelby){
+    flags.push('Soft soils / undisturbed sampling required — advance HSA slowly and push Shelby tubes without rotation. Ensure sampler is clean and cutting shoe is sharp. Document any sample disturbance.');
+  }
+
+  // Sampling needs vs. Geoprobe/Minuteman
+  if(needSPT || needModCal){
+    scores.geoprobe -= 3; scores.minuteman -= 2;
+    scores.cme75 += 2; scores.cme85 += 2; scores.cme850track += 2;
+  }
+  if(needContinuous){
+    flags.push('Continuous sampling requested — increases time and cost significantly. Confirm with client/PM that this is required before mobilizing.');
+  }
+
+  // Purpose adjustments
+  if(purpose === 'bridge' || purpose === 'structfound'){
+    scores.cme85 += 2; scores.cme75 += 1;
+    flags.push('Foundation investigation — confirm boring depths reach adequate bearing material or refusal. Structural loads and settlement analysis will drive minimum boring depths.');
+  }
+  if(purpose === 'village' || purpose === 'runway'){
+    scores.minuteman += 2; scores.cme850track += 1;
+  }
+  if(purpose === 'lightpole' || purpose === 'basin'){
+    scores.geoprobe += 1; scores.minuteman += 1;
+  }
+
+  // ── DETERMINE TOP RIGS ──
+  const rigData = {
+    cme85: { name: 'CME 85 (Truck-Mounted)', short: 'CME 85', desc: 'High-capacity truck-mounted rotary rig. The workhorse for deep borings, bridge investigations, and projects requiring rock coring. Requires road access.' },
+    cme75: { name: 'CME 75 (Truck-Mounted)', short: 'CME 75', desc: 'Standard truck-mounted rig. Capable and versatile for most road-accessible geotechnical borings to moderate depth. Common DOT&PF project rig.' },
+    cme850track: { name: 'CME 850 (Track-Mounted)', short: 'CME 850 Track', desc: 'Tracked version of the CME 850 — good off-road capability while retaining full drilling capacity. Useful for soft terrain, side slopes, and limited-access sites.' },
+    geoprobe: { name: 'Geoprobe (Direct Push)', short: 'Geoprobe', desc: 'Lightweight direct-push rig. Fast and efficient in cohesive and fine-grained soils to shallow/moderate depth. Limited in coarse-grained or deep applications.' },
+    minuteman: { name: 'Minuteman (Portable)', short: 'Minuteman', desc: 'Man-portable drill rig. The only option for fly-in or extremely remote sites. Limited depth and torque — best suited for shallow borings in accessible soils.' }
+  };
+
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topRig = sorted[0][0];
+  const altRigs = sorted.slice(1,3).filter(r=>r[1]>0);
+
+  // ── DETERMINE METHOD ──
+  let methods = [];
+
+  if(needRockCore){
+    methods.push({name:'Rotary Wire-Line Coring (NQ/HQ)',note:'Advance casing to rock surface, convert to wire-line coring. Use NQ for most investigations, HQ where sample diameter is critical. Log RQD and fracture frequency on all runs.'});
+  }
+  if((hasCobbles || hasBoulders) && depth > 15){
+    methods.push({name:'Water Wash / Driven Casing',note:'Drive casing through cobbly material with spud hammer; flush cuttings with water. Retrieve disturbed samples with split spoon or Modified Cal through casing. Best method when HSA refusal is anticipated.'});
+  }
+  if(hasHeave || (hasGW && depth > 20)){
+    methods.push({name:'Hollow Stem Auger (HSA) with Driven Casing Contingency',note:'Begin with HSA. If heaving or caving encountered below water table, switch to driven casing with water flush to maintain borehole stability.'});
+  }
+  if(access === 'flyin' || topRig === 'minuteman'){
+    methods.push({name:'Continuous Flight Auger / Hand Auger',note:'Portable auger tooling. Advance with portable power head. Depth typically limited to 20–30 ft in cooperative soils. Log cuttings carefully.'});
+  }
+  if(topRig === 'geoprobe' && !needSPT && !needModCal){
+    methods.push({name:'Direct Push (Geoprobe)',note:'Push Geoprobe rods and macro-core or SRS sampler into ground. No rotation. Fast in clays and silts. Cannot advance through gravel without switching to rotary.'});
+  }
+
+  // Default: HSA with split spoon
+  if(methods.length === 0 || (!hasCobbles && !hasBoulders && !needRockCore && !hasHeave)){
+    const samplerNote = needModCal
+      ? 'Use Modified California (3") split spoon sampler — preferred for gravelly soils and standard practice in Alaska for soil characterization.'
+      : 'Use standard SPT (2") split spoon or Modified California (3") split spoon per project spec.';
+    methods.unshift({name:'Hollow Stem Auger (HSA) — ' + (needModCal?'Modified Cal Sampler':'SPT / Modified Cal Sampler'),note:samplerNote});
+  }
+
+  if(needBoulderSize && !methods.some(m=>m.name.includes('Sonic'))){
+    flags.push('Consider sonic drilling if budget allows — continuous core through bouldery material with minimal sample disturbance is a significant advantage for boulder mapping.');
+  }
+
+  // ── RENDER ──
+  const primary = rigData[topRig];
+  let primaryHTML = `
+    <div class="res-primary-label">Primary Recommendation</div>
+    <div class="res-rig">${primary.name}</div>
+    <div class="res-method">Method: ${methods[0].name}</div>
+    <div class="res-rationale">${primary.desc}<br><br>${methods[0].note}</div>`;
+  document.getElementById('resPrimary').innerHTML = primaryHTML;
+
+  // Alternates
+  let altHTML = '';
+  if(altRigs.length){
+    altHTML += `<div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Alternates / Contingencies</div>`;
+    altRigs.forEach(([rigId])=>{
+      const r = rigData[rigId];
+      const altMethod = methods[1] || methods[0];
+      altHTML += `<div class="res-alt">
+        <div class="res-alt-label">Alternate</div>
+        <div class="res-alt-rig">${r.name}</div>
+        <div class="res-alt-method">Method: ${altMethod.name}</div>
+        <div class="res-alt-note">${r.desc}</div>
+      </div>`;
+    });
+  }
+  // Extra methods
+  if(methods.length > 1){
+    altHTML += `<div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Additional Methods to Consider</div>`;
+    methods.slice(1).forEach(m=>{
+      altHTML += `<div class="res-alt"><div class="res-alt-rig">${m.name}</div><div class="res-alt-note">${m.note}</div></div>`;
+    });
+  }
+  document.getElementById('resAlts').innerHTML = altHTML;
+
+  // Flags
+  if(flags.length){
+    document.getElementById('resFlags').style.display='block';
+    document.getElementById('resFlagList').innerHTML = flags.map(f=>`<div class="flag"><span class="flag-icon">⚠</span><span>${f}</span></div>`).join('');
+  } else {
+    document.getElementById('resFlags').style.display='none';
+  }
+
+  const panel = document.getElementById('resultPanel');
+  panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetAll(){
+  state = {purpose:null, access:null, depth:20, conditions:new Set(), sampling:new Set()};
+  ['s1','s2','s3','s4','s5'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove('complete','collapsed');
+    if(id!=='s1') el.classList.add('collapsed');
+  });
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.next-btn').forEach(b=>{if(b.id==='s1-next'||b.id==='s2-next') b.disabled=true;});
+  document.getElementById('depthSlider').value=20;
+  document.getElementById('depthVal').textContent='20 ft';
+  document.getElementById('depthNote').textContent='';
+  document.getElementById('resultPanel').style.display='none';
+  ['s1-sum','s2-sum','s3-sum','s4-sum','s5-sum'].forEach(id=>document.getElementById(id).textContent='');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Set initial date hint
+updateDepth(20);
+</script>
+
+</body>
+</html>
