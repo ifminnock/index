@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alaska Pavement Section Design Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111111;
+    --paper: #deeaf5;
+    --warm-mid: #a8c4dc;
+    --accent: #1a5fa8;
+    --accent-light: #2a78cc;
+    --frost: #2a78cc;
+    --frost-light: #5599e0;
+    --frost-dark: #1a4a80;
+    --good: #1a7a1a;
+    --warn: #b86800;
+    --bad: #cc1a1a;
+    --grid: #c0d8ec;
+    --panel: #eaf3fb;
+    --panel-dark: #d4e6f5;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–paper);
+color: var(–ink);
+font-family: ‘DM Mono’, monospace;
+min-height: 100vh;
+}
+
+header {
+background: #1a3d66;
+color: #ffffff;
+padding: 20px 32px 16px;
+border-bottom: 4px solid var(–accent-light);
+position: relative;
+overflow: hidden;
+}
+header::before { content: none; }
+header::after { content: none; }
+.header-inner { max-width: 1100px; margin: 0 auto; }
+.header-badge {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 3px;
+color: #90c8f0;
+text-transform: uppercase;
+margin-bottom: 4px;
+}
+h1 {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 32px;
+font-weight: 900;
+letter-spacing: 1px;
+line-height: 1;
+color: #ffffff;
+}
+.header-sub {
+font-family: ‘Libre Baskerville’, serif;
+font-style: italic;
+font-size: 13px;
+color: rgba(255,255,255,0.7);
+margin-top: 4px;
+}
+
+.nav-tabs {
+background: #1a3d66;
+border-bottom: 3px solid var(–accent-light);
+padding: 0 32px;
+display: flex;
+gap: 0;
+max-width: 100%;
+overflow-x: auto;
+}
+.nav-tab {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+padding: 12px 20px;
+cursor: pointer;
+color: rgba(255,255,255,0.55);
+border-bottom: 3px solid transparent;
+margin-bottom: -3px;
+white-space: nowrap;
+transition: all 0.15s;
+border-top: none;
+background: none;
+outline: none;
+}
+.nav-tab:hover { color: rgba(255,255,255,0.9); }
+.nav-tab.active {
+color: #ffffff;
+border-bottom-color: #90c8f0;
+background: rgba(255,255,255,0.08);
+}
+
+.main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* CARDS */
+.card {
+background: #ffffff;
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 20px 24px;
+margin-bottom: 16px;
+}
+.card-title {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 14px;
+padding-bottom: 8px;
+border-bottom: 1px solid var(–warm-mid);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.card-title .icon { font-size: 16px; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* FORM ELEMENTS */
+.field { margin-bottom: 14px; }
+label {
+display: block;
+font-size: 11px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: #333;
+margin-bottom: 5px;
+font-weight: 500;
+}
+input[type=“number”], select {
+width: 100%;
+background: #ffffff;
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 8px 12px;
+font-family: ‘DM Mono’, monospace;
+font-size: 13px;
+color: var(–ink);
+outline: none;
+transition: border-color 0.15s;
+}
+input[type=“number”]:focus, select:focus { border-color: var(–frost); }
+input[type=“range”] {
+width: 100%;
+accent-color: var(–accent);
+margin: 4px 0;
+}
+.range-labels { display: flex; justify-content: space-between; font-size: 10px; color: #555; letter-spacing: 0.5px; }
+.field-hint { font-size: 10px; color: #444; margin-top: 4px; font-style: italic; }
+
+/* BUTTONS */
+.btn {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 14px;
+font-weight: 700;
+letter-spacing: 2px;
+text-transform: uppercase;
+padding: 11px 24px;
+border: none;
+border-radius: 2px;
+cursor: pointer;
+transition: all 0.15s;
+}
+.btn-primary { background: var(–accent); color: white; }
+.btn-primary:hover { background: var(–accent-light); }
+.btn-frost { background: var(–frost); color: white; }
+.btn-frost:hover { background: var(–frost-light); }
+.btn-outline { background: transparent; border: 1.5px solid var(–ink); color: var(–ink); }
+.btn-outline:hover { background: var(–accent); color: white; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* RESULTS */
+.result-block {
+background: #ffffff;
+color: var(–ink);
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 20px 24px;
+margin-top: 20px;
+}
+.result-title {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 13px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 16px;
+}
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(–grid); }
+.result-label { font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+.result-value { font-size: 16px; font-weight: 500; color: var(–ink); }
+.result-value.big { font-size: 28px; color: var(–accent); font-family: ‘Barlow Condensed’, sans-serif; font-weight: 700; }
+.result-value.good { color: var(–good); }
+.result-value.warn { color: var(–warn); }
+.result-value.bad { color: var(–bad); }
+
+/* PAVEMENT DIAGRAM */
+.pavement-diagram {
+background: #ffffff;
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 16px;
+margin-top: 16px;
+}
+.layer-viz {
+display: flex;
+flex-direction: column;
+gap: 0;
+margin: 8px 0;
+overflow: hidden;
+border-radius: 2px;
+}
+.layer-bar {
+display: flex;
+align-items: center;
+padding: 0 14px;
+font-size: 11px;
+letter-spacing: 0.5px;
+color: rgba(255,255,255,0.9);
+font-weight: 500;
+transition: height 0.4s ease;
+position: relative;
+overflow: hidden;
+}
+.layer-bar .layer-label { flex: 1; }
+.layer-bar .layer-thick { font-size: 13px; font-weight: 700; font-family: ‘Barlow Condensed’, sans-serif; }
+.layer-asphalt { background: linear-gradient(135deg, #2a2a2a 0%, #3d3d3d 100%); }
+.layer-base { background: linear-gradient(135deg, #8b6914 0%, #a57820 100%); }
+.layer-subbase { background: linear-gradient(135deg, #c4a030 0%, #d4b040 100%); color: rgba(0,0,0,0.7) !important; }
+.layer-select-a { background: linear-gradient(135deg, #9e6030 0%, #b87040 100%); }
+.layer-select-b { background: linear-gradient(135deg, #a07850 0%, #b89060 100%); }
+.layer-subgrade { background: linear-gradient(135deg, #6b4520 0%, #7d5030 100%); }
+.layer-frost-protection {
+background: repeating-linear-gradient(
+45deg,
+#4a7fa5,
+#4a7fa5 6px,
+#7eb3d4 6px,
+#7eb3d4 12px
+);
+}
+
+/* STATUS BADGES */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 1px;
+text-transform: uppercase;
+padding: 3px 9px;
+border-radius: 2px;
+}
+.badge-good { background: #e6f7e6; color: #146014; border: 1px solid #3a7a3a; }
+.badge-warn { background: #fff5e0; color: #7a4a00; border: 1px solid #b86800; }
+.badge-bad { background: #ffe8e8; color: #8a0000; border: 1px solid #cc1a1a; }
+.badge-frost { background: #e0f0ff; color: #1a4a80; border: 1px solid #2a78cc; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.data-table th {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 11px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+text-align: left;
+padding: 8px 12px;
+background: var(–panel-dark);
+border-bottom: 2px solid var(–warm-mid);
+color: #333;
+}
+.data-table td { padding: 8px 12px; border-bottom: 1px solid var(–grid); vertical-align: middle; color: var(–ink); }
+.data-table tr:hover td { background: #f0f7fd; }
+.data-table .mono { font-family: ‘DM Mono’, monospace; }
+
+/* INFO BOXES */
+.info-box {
+border-left: 3px solid var(–frost);
+background: #e8f4fd;
+padding: 10px 14px;
+margin-bottom: 12px;
+font-size: 12px;
+line-height: 1.6;
+color: var(–ink);
+}
+.info-box.warn-box { border-color: var(–warn); background: #fff8e8; }
+.info-box.danger-box { border-color: var(–bad); background: #ffeaea; }
+.info-box strong { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; color: var(–frost-dark); }
+.info-box.warn-box strong { color: var(–warn); }
+.info-box.danger-box strong { color: var(–bad); }
+
+/* CASAGRANDE */
+.casagrande-chart {
+background: #fff;
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 12px;
+margin: 12px 0;
+}
+
+/* SECTION HEADERS */
+.section-header {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 22px;
+font-weight: 900;
+letter-spacing: 1px;
+margin-bottom: 4px;
+}
+.section-desc {
+font-family: ‘Libre Baskerville’, serif;
+font-style: italic;
+font-size: 13px;
+color: #333;
+margin-bottom: 20px;
+}
+
+/* FROST SECTION SPECIFIC */
+.fi-zones { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.fi-zone {
+background: #ffffff;
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+padding: 10px;
+cursor: pointer;
+text-align: center;
+transition: all 0.15s;
+}
+.fi-zone:hover { border-color: var(–frost); }
+.fi-zone.selected { border-color: var(–frost); background: #daeef9; }
+.fi-zone .fi-name { font-family: ‘Barlow Condensed’, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(–ink); }
+.fi-zone .fi-range { font-size: 10px; color: #666; margin-top: 2px; }
+.fi-zone .fi-val { font-size: 18px; font-family: ‘Barlow Condensed’, sans-serif; font-weight: 900; color: var(–frost-dark); }
+
+.layer-table { width: 100%; }
+.layer-row {
+display: grid;
+grid-template-columns: 30px 180px 90px 90px 90px 90px 80px;
+gap: 6px;
+align-items: center;
+padding: 5px 0;
+border-bottom: 1px solid var(–grid);
+font-size: 12px;
+}
+.layer-row.header-row {
+font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444;
+font-weight: 600;
+padding-bottom: 6px;
+border-bottom: 2px solid var(–warm-mid);
+}
+.layer-row input[type=“number”] { padding: 5px 8px; font-size: 12px; }
+.layer-row select { padding: 5px 8px; font-size: 12px; }
+.layer-del {
+background: none; border: 1px solid var(–grid); border-radius: 2px;
+cursor: pointer; color: #555; font-size: 14px; width: 24px; height: 24px;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.15s;
+}
+.layer-del:hover { border-color: var(–bad); color: var(–bad); }
+
+.eff-highlight {
+background: var(–accent); color: white;
+padding: 3px 8px; border-radius: 2px;
+font-size: 12px;
+font-family: ‘Barlow Condensed’, sans-serif;
+font-weight: 700;
+letter-spacing: 0.5px;
+}
+
+.design-method-toggle {
+display: flex; gap: 8px; margin-bottom: 16px;
+background: var(–panel-dark);
+padding: 4px;
+border-radius: 3px;
+border: 1.5px solid var(–warm-mid);
+width: fit-content;
+}
+.method-btn {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+padding: 7px 16px;
+border: none;
+border-radius: 2px;
+cursor: pointer;
+background: transparent;
+color: #444;
+transition: all 0.15s;
+}
+.method-btn.active { background: var(–accent); color: white; }
+
+/* ESAL CALCULATOR */
+.esal-truck-row {
+display: grid;
+grid-template-columns: 1fr 100px 80px 100px 100px;
+gap: 8px;
+align-items: center;
+padding: 6px 0;
+border-bottom: 1px solid var(–grid);
+font-size: 12px;
+}
+.esal-truck-row.header { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; font-weight: 600; border-bottom: 2px solid var(–warm-mid); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(–panel); }
+::-webkit-scrollbar-thumb { background: var(–warm-mid); border-radius: 3px; }
+
+.pill {
+display: inline-block;
+background: var(–frost);
+color: white;
+border-radius: 999px;
+padding: 2px 10px;
+font-size: 10px;
+letter-spacing: 1px;
+font-weight: 600;
+text-transform: uppercase;
+vertical-align: middle;
+}
+.pill.accent { background: var(–accent); }
+
+/* FROST DEPTH VIZ */
+.frost-depth-viz {
+position: relative;
+height: 180px;
+background: linear-gradient(180deg, #87ceeb22 0%, #ddeeff44 30%, #c8a87060 60%, #8b5e2b88 100%);
+border: 1.5px solid var(–warm-mid);
+border-radius: 2px;
+overflow: hidden;
+margin: 12px 0;
+}
+.frost-line {
+position: absolute;
+left: 0; right: 0;
+height: 3px;
+background: var(–frost);
+box-shadow: 0 0 8px rgba(74,127,165,0.6);
+transition: top 0.5s ease;
+}
+.frost-label {
+position: absolute;
+right: 10px;
+background: var(–frost);
+color: white;
+font-size: 10px;
+padding: 2px 8px;
+border-radius: 2px;
+white-space: nowrap;
+transform: translateY(-50%);
+font-weight: 600;
+letter-spacing: 0.5px;
+transition: top 0.5s ease;
+}
+.pavement-layer-line {
+position: absolute;
+left: 0; right: 0;
+height: 2px;
+opacity: 0.6;
+}
+
+details summary { cursor: pointer; font-size: 11px; color: var(–frost-dark); letter-spacing: 1px; text-transform: uppercase; padding: 6px 0; font-weight: 600; }
+details summary:hover { color: var(–frost); }
+details { margin-top: 8px; }
+
+.step-num {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 22px;
+height: 22px;
+background: var(–accent);
+color: white;
+border-radius: 50%;
+font-size: 11px;
+font-weight: 700;
+font-family: ‘Barlow Condensed’, sans-serif;
+flex-shrink: 0;
+margin-right: 8px;
+}
+
+@media print {
+body { background: white; background-image: none; }
+.nav-tabs, header { display: none; }
+.section { display: block !important; }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-badge">Alaska DOT&PF — Based on AKFPD Manual 2020</div>
+    <h1>Pavement Section Design Calculator</h1>
+    <div class="header-sub">Flexible pavement design with frost susceptibility analysis · Excess Fines &amp; Mechanistic methods</div>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('tab-frost')">❄ Frost Analysis</button>
+  <button class="nav-tab" onclick="showTab('tab-esal')">🚛 ESAL Calculator</button>
+  <button class="nav-tab" onclick="showTab('tab-excess')">📐 Excess Fines Design</button>
+  <button class="nav-tab" onclick="showTab('tab-mechanistic')">⚙ Mechanistic Design</button>
+  <button class="nav-tab" onclick="showTab('tab-casagrande')">🔬 Casagrande Checker</button>
+  <button class="nav-tab" onclick="showTab('tab-reference')">📖 Reference</button>
+</div>
+
+<div class="main">
+
+<!-- ============================================================ TAB 1: FROST ANALYSIS -->
+
+<div id="tab-frost" class="section active">
+  <div class="section-header">Frost Susceptibility &amp; Frost Protection Design</div>
+  <div class="section-desc">Evaluate subgrade frost susceptibility, estimate frost depth, and determine required frost protection depth per Alaska conditions.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📍</span> Site &amp; Climate Inputs</div>
+
+```
+    <div class="field">
+      <label>Freezing Index (°F·days) — Annual Design Value</label>
+      <input type="number" id="fi-value" value="3000" min="100" max="20000" onchange="updateFrostCalc()">
+      <div class="field-hint">See zone selector below or enter directly. Interior AK: 5,000–15,000. Southcentral: 500–4,000.</div>
+    </div>
+
+    <div class="fi-zones" id="fi-zones">
+      <div class="fi-zone" onclick="setFIZone(800, this)">
+        <div class="fi-name">Coastal SE</div>
+        <div class="fi-val">~800</div>
+        <div class="fi-range">400–1,200 °F·days</div>
+      </div>
+      <div class="fi-zone selected" onclick="setFIZone(3000, this)">
+        <div class="fi-name">Southcentral</div>
+        <div class="fi-val">~3,000</div>
+        <div class="fi-range">1,000–5,000 °F·days</div>
+      </div>
+      <div class="fi-zone" onclick="setFIZone(7000, this)">
+        <div class="fi-name">Interior</div>
+        <div class="fi-val">~7,000</div>
+        <div class="fi-range">5,000–10,000 °F·days</div>
+      </div>
+      <div class="fi-zone" onclick="setFIZone(12000, this)">
+        <div class="fi-name">Far North</div>
+        <div class="fi-val">~12,000</div>
+        <div class="fi-range">8,000–18,000 °F·days</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Subgrade Soil Type</label>
+      <select id="soil-type" onchange="updateFrostCalc()">
+        <optgroup label="Non-Frost-Susceptible">
+          <option value="clean_gravel">Clean Gravel (GW, GP) — F1</option>
+          <option value="clean_sand">Clean Sand (SW, SP) — F1</option>
+        </optgroup>
+        <optgroup label="Marginally Frost-Susceptible">
+          <option value="dirty_gravel">Gravelly Soils w/ fines (GW-GM, GP-GM) — F2</option>
+        </optgroup>
+        <optgroup label="Frost-Susceptible">
+          <option value="sandy_gravel">Sandy Gravels, silty sands — F3</option>
+          <option value="fine_sand" selected>Fine Sand, Silty Sand — F3</option>
+          <option value="silt">Silt (ML) — F4 (Very High)</option>
+          <option value="silty_clay">Silty Clay (CL-ML) — F4</option>
+          <option value="clay_low">Clay Low Plasticity (CL) — F3</option>
+          <option value="clay_high">Clay High Plasticity (CH) — F2</option>
+        </optgroup>
+        <optgroup label="Organic / Problem Soils">
+          <option value="organic">Organic Soil / Peat (OL, OH, PT) — Special</option>
+          <option value="varved_clay">Varved Clay / Marine Clay — F4 (Very High)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Depth to Water Table (ft)</label>
+      <input type="number" id="water-table" value="5" min="0" max="30" step="0.5" onchange="updateFrostCalc()">
+      <div class="field-hint">Shallower water tables increase frost heave potential by providing moisture supply for ice lens growth.</div>
+    </div>
+
+    <div class="field">
+      <label>Pavement Surface Type</label>
+      <select id="surface-type" onchange="updateFrostCalc()">
+        <option value="paved">Paved (Asphalt Concrete)</option>
+        <option value="gravel">Gravel Surface</option>
+        <option value="unpaved">Unpaved / Bare Subgrade</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Annual Mean Air Temperature (°F)</label>
+      <input type="number" id="maat" value="28" min="-20" max="50" onchange="updateFrostCalc()">
+      <div class="field-hint">Interior AK: 15–28°F. Southcentral: 28–40°F. Relevance to permafrost threshold (~28°F boundary).</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📏</span> Target Design Life &amp; Traffic</div>
+    <div class="field">
+      <label>Design Life (years)</label>
+      <select id="design-life" onchange="updateFrostCalc()">
+        <option value="10">10 years (Low-volume roads)</option>
+        <option value="20" selected>20 years (Standard)</option>
+        <option value="35">35 years (High-volume / LCCA period)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Road Class</label>
+      <select id="road-class" onchange="updateFrostCalc()">
+        <option value="local">Local / Access Road (&lt;100 vpd)</option>
+        <option value="collector" selected>Collector / Regional (&lt;2,000 vpd)</option>
+        <option value="arterial">Arterial / State Highway (2,000–15,000 vpd)</option>
+        <option value="interstate">Interstate / High Volume (&gt;15,000 vpd)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">❄</span> Frost Analysis Results</div>
+    <div id="frost-results-content">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📐</span> Frost Depth Visualization</div>
+    <div class="frost-depth-viz" id="frost-viz">
+      <div class="frost-line" id="frost-line" style="top: 60%"></div>
+      <div class="frost-label" id="frost-label" style="top: 60%">Frost depth</div>
+    </div>
+    <div id="frost-section-layers" style="font-size:11px; color:#888; margin-top: 4px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗</span> Recommended Section</div>
+    <div id="frost-section-recommendation"></div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ============================================================ TAB 2: ESAL CALCULATOR -->
+
+<div id="tab-esal" class="section">
+  <div class="section-header">ESAL Calculator</div>
+  <div class="section-desc">Estimate design Equivalent Single Axle Loads using DOT&PF truck categories and the compound growth formula from Chapter 6.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚦</span> Traffic Inputs</div>
+        <div class="field">
+          <label>Base Year AADT (both directions)</label>
+          <input type="number" id="aadt" value="2000" min="10" onchange="calcESAL()">
+        </div>
+        <div class="field">
+          <label>Directional Distribution Factor</label>
+          <input type="number" id="dir-factor" value="0.5" min="0.4" max="0.6" step="0.01" onchange="calcESAL()">
+          <div class="field-hint">Typically 0.5 for two-way roads (50/50 split).</div>
+        </div>
+        <div class="field">
+          <label>Lane Distribution Factor</label>
+          <input type="number" id="lane-factor" value="1.0" min="0.5" max="1.0" step="0.05" onchange="calcESAL()">
+          <div class="field-hint">1.0 for single-lane; 0.9 for 2 lanes; 0.8 for 3+ lanes per direction.</div>
+        </div>
+        <div class="field">
+          <label>Traffic Growth Rate (% / year)</label>
+          <input type="number" id="growth-rate" value="2.0" min="0" max="10" step="0.1" onchange="calcESAL()">
+        </div>
+        <div class="field">
+          <label>Design Period (years)</label>
+          <input type="number" id="esal-period" value="20" min="5" max="50" onchange="calcESAL()">
+        </div>
+        <div class="field">
+          <label>Base Year</label>
+          <input type="number" id="base-year" value="2024" min="2000" max="2050" onchange="calcESAL()">
+        </div>
+      </div>
+    </div>
+
+```
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🚛</span> Truck Mix (% of AADT)</div>
+    <div class="info-box">
+      <strong>Load Factors (per AKFPD Table 6-1)</strong>
+      2-axle: 0.50 · 3-axle: 0.85 · 4-axle: 1.20 · 5-axle: 1.55 · 6+-axle: 2.24
+    </div>
+    <div style="overflow-x: auto;">
+    <div class="esal-truck-row header">
+      <div>Truck Category</div><div>FHWA Class</div><div>Load Factor</div><div>% of AADT</div><div>Truck ESAL/day</div>
+    </div>
+    <div class="esal-truck-row">
+      <div>2-axle</div><div style="color:#888">Class 5</div><div class="pill">0.50</div>
+      <div><input type="number" id="t2" value="3" min="0" max="30" step="0.5" onchange="calcESAL()" style="width:70px;padding:4px 6px;font-size:12px"></div>
+      <div id="esal-t2" class="mono">—</div>
+    </div>
+    <div class="esal-truck-row">
+      <div>3-axle</div><div style="color:#888">Class 6,8</div><div class="pill">0.85</div>
+      <div><input type="number" id="t3" value="4" min="0" max="30" step="0.5" onchange="calcESAL()" style="width:70px;padding:4px 6px;font-size:12px"></div>
+      <div id="esal-t3" class="mono">—</div>
+    </div>
+    <div class="esal-truck-row">
+      <div>4-axle</div><div style="color:#888">Class 7,8</div><div class="pill">1.20</div>
+      <div><input type="number" id="t4" value="2" min="0" max="30" step="0.5" onchange="calcESAL()" style="width:70px;padding:4px 6px;font-size:12px"></div>
+      <div id="esal-t4" class="mono">—</div>
+    </div>
+    <div class="esal-truck-row">
+      <div>5-axle</div><div style="color:#888">Class 9,11</div><div class="pill">1.55</div>
+      <div><input type="number" id="t5" value="2" min="0" max="30" step="0.5" onchange="calcESAL()" style="width:70px;padding:4px 6px;font-size:12px"></div>
+      <div id="esal-t5" class="mono">—</div>
+    </div>
+    <div class="esal-truck-row">
+      <div>6+-axle</div><div style="color:#888">Class 10,12,13</div><div class="pill">2.24</div>
+      <div><input type="number" id="t6" value="1" min="0" max="30" step="0.5" onchange="calcESAL()" style="width:70px;padding:4px 6px;font-size:12px"></div>
+      <div id="esal-t6" class="mono">—</div>
+    </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="result-block">
+    <div class="result-title">ESAL Design Summary</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
+      <div>
+        <div class="result-label">Construction Year AADT</div>
+        <div class="result-value" id="esal-cy-aadt">—</div>
+      </div>
+      <div>
+        <div class="result-label">Trucks/Day (Design Lane)</div>
+        <div class="result-value" id="esal-trucks-day">—</div>
+      </div>
+      <div>
+        <div class="result-label">ESALs/Day</div>
+        <div class="result-value" id="esal-per-day">—</div>
+      </div>
+      <div>
+        <div class="result-label">Design ESALs</div>
+        <div class="result-value big" id="esal-design">—</div>
+      </div>
+      <div>
+        <div class="result-label">Recommended Method</div>
+        <div class="result-value" id="esal-method" style="font-size:13px">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 3: EXCESS FINES -->
+
+<div id="tab-excess" class="section">
+  <div class="section-header">Excess Fines Design Method</div>
+  <div class="section-desc">Based on AKFPD Chapter 3. Empirical method for new highway pavements with ESALs &lt; 1.0 million. Calculates required AC thickness from P200 content of aggregate layers.</div>
+
+  <div class="info-box">
+    <strong>Method Applicability</strong>
+    Use this method only when design ESALs &lt; 1.0 million AND materials are standard asphalt concrete with P200 contents within allowable limits. For ESALs &gt; 1.0 million, use Mechanistic Design.
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚛</span> Traffic</div>
+        <div class="field">
+          <label>Design ESALs</label>
+          <input type="number" id="ef-esals" value="500000" min="1000" max="1000000" onchange="calcExcessFines()">
+          <div class="field-hint">From ESAL Calculator tab, or enter directly.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="importESAL()">← Import from ESAL Calculator</button>
+      </div>
+
+```
+  <div class="card">
+    <div class="card-title"><span class="icon">🪨</span> Aggregate Layers (define to 40" below AC)</div>
+    <div class="info-box">
+      <strong>Instruction</strong>
+      Define each aggregate layer with P200 content. Include base, subbase, and select material down to 40" below the bottom of the AC layer. The method automatically subdivides into 1" sublayers.
+    </div>
+    
+    <div style="overflow-x: auto;">
+    <div class="layer-row header-row">
+      <div>#</div>
+      <div>Material</div>
+      <div>Top (in)</div>
+      <div>Bot (in)</div>
+      <div>P200 (%)</div>
+      <div>Status</div>
+      <div></div>
+    </div>
+    <div id="ef-layers-container"></div>
+    </div>
+    <br>
+    <button class="btn btn-outline btn-sm" onclick="addEFLayer()">+ Add Layer</button>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Calculation Results</div>
+    <div id="ef-results"></div>
+  </div>
+
+  <div class="pavement-diagram">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;">Pavement Section Diagram</div>
+    <div class="layer-viz" id="ef-diagram"></div>
+    <div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center;">Diagram proportional to layer thicknesses</div>
+  </div>
+
+  <div class="card" id="ef-stabilized-card" style="display:none">
+    <div class="card-title" style="color:var(--frost-dark)"><span class="icon">🔧</span> Stabilized Base Alternative</div>
+    <div id="ef-stabilized-content"></div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ============================================================ TAB 4: MECHANISTIC -->
+
+<div id="tab-mechanistic" class="section">
+  <div class="section-header">Mechanistic Design</div>
+  <div class="section-desc">Based on AKFPD Chapter 4. Elastic layered analysis for any traffic level. Calculates stresses, strains, and applies Miner's Law fatigue/functional failure prediction.</div>
+
+  <div class="info-box">
+    <strong>About This Calculator</strong>
+    This implements the Alaska mechanistic design equations: TAI fatigue equation for asphalt layers (horizontal tensile strain) and Per Ullidtz functional failure equation for unbound layers (vertical compressive stress). Seasonal moduli from Table 5-1 are applied per AKFPD.
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚛</span> Traffic</div>
+        <div class="field">
+          <label>Design ESALs</label>
+          <input type="number" id="mech-esals" value="2000000" min="100000" onchange="calcMechanistic()">
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="importESALMech()">← Import from ESAL Calculator</button>
+      </div>
+
+```
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗</span> Pavement Structure — Layer Properties</div>
+    <div class="info-box">
+      <strong>Seasonal Moduli (Table 5-1)</strong>
+      Spring (thaw-weakened) · Summer/Fall (warm-season) · Winter (frozen)<br>
+      Design is controlled by Spring (weakest) season per Alaska practice.
+    </div>
+    
+    <div id="mech-layers-ui"></div>
+    <br>
+    <button class="btn btn-outline btn-sm" onclick="addMechLayer()">+ Add Layer</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔧</span> AC Mix Properties (for fatigue)</div>
+    <div class="grid-2" style="gap:10px">
+      <div class="field">
+        <label>Air Voids Vv (%)</label>
+        <input type="number" id="vv" value="4.0" min="2" max="8" step="0.5" onchange="calcMechanistic()">
+      </div>
+      <div class="field">
+        <label>Binder Volume Vb (%)</label>
+        <input type="number" id="vb" value="11.5" min="8" max="16" step="0.5" onchange="calcMechanistic()">
+      </div>
+    </div>
+    <div class="field-hint">Typical HMA: Vv ≈ 4%, Vb ≈ 11–13%. These affect the C coefficient in TAI fatigue equation.</div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⚙</span> Mechanistic Analysis Results</div>
+    <div id="mech-results"></div>
+  </div>
+
+  <div class="pavement-diagram">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;">Layer Damage Summary</div>
+    <div id="mech-damage-bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📐</span> Proposed Section Diagram</div>
+    <div class="layer-viz" id="mech-diagram"></div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ============================================================ TAB 5: CASAGRANDE -->
+
+<div id="tab-casagrande" class="section">
+  <div class="section-header">Casagrande Frost Susceptibility Checker</div>
+  <div class="section-desc">Apply the Casagrande criterion and USCS-based frost susceptibility classification to determine if materials meet pavement structural requirements.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔬</span> Grain Size Analysis Input</div>
+        <div class="info-box">
+          <strong>Casagrande Criterion (1931)</strong>
+          A soil is frost susceptible if &gt;3% of grains by weight are finer than 0.02 mm (20 μm) AND the capillary rise is sufficient to supply water during freezing. In uniform soils (Cu &lt; 5), the threshold is 10% passing 0.02 mm.
+        </div>
+
+```
+    <div class="field">
+      <label>Material Name / Description</label>
+      <input type="text" id="cas-name" value="D-1 Base Course Sample" placeholder="e.g. Base course aggregate">
+    </div>
+
+    <div class="field">
+      <label>% Passing 0.075 mm (#200 sieve) — P200</label>
+      <input type="number" id="cas-p200" value="5.0" min="0" max="100" step="0.1" onchange="casagrande()">
+    </div>
+
+    <div class="field">
+      <label>% Passing 0.02 mm (estimated) — P0.02</label>
+      <input type="number" id="cas-p002" value="2.0" min="0" max="100" step="0.1" onchange="casagrande()">
+      <div class="field-hint">If not measured directly, estimate as ≈ 35–50% of P200 for silt-dominated fines, or 10–20% for clay-dominated fines.</div>
+    </div>
+
+    <div class="field">
+      <label>Coefficient of Uniformity (Cu = D60/D10)</label>
+      <input type="number" id="cas-cu" value="8" min="1" max="1000" onchange="casagrande()">
+    </div>
+
+    <div class="field">
+      <label>% Passing 4.75 mm (#4 sieve)</label>
+      <input type="number" id="cas-p4" value="42" min="0" max="100" step="1" onchange="casagrande()">
+    </div>
+
+    <div class="field">
+      <label>USCS Classification</label>
+      <select id="cas-uscs" onchange="casagrande()">
+        <optgroup label="Coarse-Grained">
+          <option value="GW">GW — Well-graded gravel</option>
+          <option value="GP">GP — Poorly-graded gravel</option>
+          <option value="GM">GM — Silty gravel</option>
+          <option value="GC">GC — Clayey gravel</option>
+          <option value="SW">SW — Well-graded sand</option>
+          <option value="SP">SP — Poorly-graded sand</option>
+          <option value="SM" selected>SM — Silty sand</option>
+          <option value="SC">SC — Clayey sand</option>
+        </optgroup>
+        <optgroup label="Fine-Grained">
+          <option value="ML">ML — Silt of low plasticity</option>
+          <option value="CL">CL — Clay of low plasticity</option>
+          <option value="OL">OL — Organic silt/clay low PI</option>
+          <option value="MH">MH — Silt of high plasticity</option>
+          <option value="CH">CH — Clay of high plasticity</option>
+          <option value="OH">OH — Organic silt/clay high PI</option>
+        </optgroup>
+        <optgroup label="Organic">
+          <option value="PT">PT — Peat</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Plasticity Index (PI) — if fine-grained</label>
+      <input type="number" id="cas-pi" value="0" min="0" max="100" step="1" onchange="casagrande()">
+    </div>
+
+    <div class="field">
+      <label>Depth of Layer in Pavement Section (in, below AC bottom)</label>
+      <input type="number" id="cas-depth" value="3" min="0" max="40" step="1" onchange="casagrande()">
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Frost Susceptibility Assessment</div>
+    <div id="casagrande-results"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> P200 vs. Allowable Limits by Depth</div>
+    <div class="casagrande-chart">
+      <canvas id="pcr-chart" height="220"></canvas>
+    </div>
+    <div style="font-size:10px;color:#888;margin-top:4px">Shows Pcr (critical fines) and Pmax lines from AKFPD Figure 3-4, with your material plotted.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📖</span> AKFPD Classification Guide</div>
+    <table class="data-table" style="font-size:11px">
+      <thead>
+        <tr><th>FS Class</th><th>P &lt; 0.02mm</th><th>Typical Soils</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge badge-good">F1</span></td><td>&lt; 1%</td><td>Clean GW, GP, SW, SP</td><td>Non-susceptible. No restriction.</td></tr>
+        <tr><td><span class="badge badge-good">F2</span></td><td>1–3%</td><td>CH, GW-GM, GP-GM</td><td>Negligible. Usually acceptable.</td></tr>
+        <tr><td><span class="badge badge-warn">F3</span></td><td>3–10%</td><td>GC, SC, CL, GM, SM</td><td>Moderate. Restrict depth from AC.</td></tr>
+        <tr><td><span class="badge badge-bad">F4</span></td><td>&gt; 10%</td><td>ML, MH, OL, varved clays</td><td>Very high. Exclude from upper section.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ============================================================ TAB 6: REFERENCE -->
+
+<div id="tab-reference" class="section">
+  <div class="section-header">Design Reference &amp; Notes</div>
+  <div class="section-desc">Key values, equations, and Alaska-specific guidance extracted from the AKFPD Manual (Alaska DOT&PF, July 2020).</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📐</span> Presumptive Resilient Moduli — Table 5-1</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Material</th><th>P200</th><th>Spring (ksi)</th><th>Sum/Fall (ksi)</th><th>Winter (ksi)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>AC (Modified)</td><td>—</td><td class="mono">450</td><td class="mono">400</td><td class="mono">1,200</td></tr>
+            <tr><td>AC (Unmodified)</td><td>—</td><td class="mono">350</td><td class="mono">300</td><td class="mono">1,200</td></tr>
+            <tr><td>D-1 Aggregate Base</td><td>&lt;6%</td><td class="mono">40</td><td class="mono">50</td><td class="mono">100</td></tr>
+            <tr><td>Select Material Type A</td><td>&lt;6%</td><td class="mono">35</td><td class="mono">40</td><td class="mono">90</td></tr>
+            <tr><td>Subbase F</td><td>&lt;6%</td><td class="mono">35</td><td class="mono">40</td><td class="mono">90</td></tr>
+            <tr><td>Select Material Type B</td><td>&lt;10%</td><td class="mono">20</td><td class="mono">30</td><td class="mono">50</td></tr>
+            <tr><td>Select Material Type C / Subgrade</td><td>&lt;30%</td><td class="mono">10</td><td class="mono">10</td><td class="mono">10</td></tr>
+          </tbody>
+        </table>
+        <br>
+        <table class="data-table" style="font-size:11px">
+          <thead><tr><th colspan="5">With Excess Fines (Table 5-2)</th></tr>
+            <tr><th>Material</th><th>P200</th><th>Spring</th><th>Sum/Fall</th><th>Winter</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Agg. Base (excess fines)</td><td>&lt;10%</td><td class="mono">20</td><td class="mono">30</td><td class="mono">50</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+```
+  <div class="card">
+    <div class="card-title"><span class="icon">🚛</span> Load Factors &amp; Axle Equivalents — Table 6-1,2</div>
+    <table class="data-table">
+      <thead><tr><th>DOT&PF Category</th><th>FHWA</th><th>Load Factor</th></tr></thead>
+      <tbody>
+        <tr><td>2-axle</td><td>Class 5</td><td class="mono">0.50</td></tr>
+        <tr><td>3-axle</td><td>Class 6, 8</td><td class="mono">0.85</td></tr>
+        <tr><td>4-axle</td><td>Class 7, 8</td><td class="mono">1.20</td></tr>
+        <tr><td>5-axle</td><td>Class 9, 11</td><td class="mono">1.55</td></tr>
+        <tr><td>6+-axle</td><td>Class 10, 12, 13</td><td class="mono">2.24</td></tr>
+      </tbody>
+    </table>
+    <br>
+    <table class="data-table" style="font-size:11px">
+      <thead><tr><th>Axle Type</th><th>1 ESAL equiv. (kips)</th></tr></thead>
+      <tbody>
+        <tr><td>Single tire, single axle</td><td class="mono">12</td></tr>
+        <tr><td>Dual tire axle</td><td class="mono">18</td></tr>
+        <tr><td>Tandem axle group</td><td class="mono">32</td></tr>
+        <tr><td>Tridem axle group</td><td class="mono">48</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⚗</span> Key Equations</div>
+    <div class="info-box">
+      <strong>Excess Fines — Predicted Deflection (Chapter 3)</strong>
+      EFF<sub>i</sub> = ΔSRF × (P200 − Pcr)<sup>0.8</sup><br>
+      EFF<sub>t</sub> = Σ EFF<sub>i</sub><br>
+      If EFF<sub>t</sub> = 0: D<sub>p</sub> = 0.034<br>
+      If EFF<sub>t</sub> &gt; 0: D<sub>p</sub> = 0.056 + 0.0035 × EFF<sub>t</sub>
+    </div>
+    <div class="info-box">
+      <strong>SRF Equation (Figure 3-5)</strong>
+      SRF = −7.6477e−7·y⁴ + 9.7898e−5·y³ − 0.004624·y² + 0.10298·y − 0.034613<br>
+      (y = depth in inches; if negative, set SRF = 0)
+    </div>
+    <div class="info-box">
+      <strong>TAI Fatigue Equation (Chapter 4)</strong>
+      N<sub>f</sub> = C × 0.07958 × ε<sub>t</sub><sup>−3.291</sup> × |E*|<sup>0.854</sup><br>
+      C = 10<sup>M</sup> ; M = 4.84 × (Vb/(Vv+Vb) − 0.69)
+    </div>
+    <div class="info-box">
+      <strong>Per Ullidtz Functional Failure (Chapter 4)</strong>
+      N<sub>f</sub> = 3.069×10<sup>9</sup> × b × (E/E₀)<sup>0.36</sup> × σ<sub>v</sub><sup>−2.82</sup><br>
+      R = 2.75 (Alaska regional factor); E₀ = 23,000 psi
+    </div>
+    <div class="info-box">
+      <strong>ESAL Growth Formula</strong>
+      ESALs = ESAL<sub>day</sub> × 365 × [(1+g)<sup>n</sup> − 1] / g<br>
+      g = growth rate; n = design period years
+    </div>
+    <div class="info-box">
+      <strong>Frost Depth Estimate (Stefan equation)</strong>
+      z = C<sub>f</sub> × √FI<br>
+      C<sub>f</sub> = material coefficient (≈ 1.3–1.8 for typical subgrades)
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Design Method Selection Policy (Ch. 2)</div>
+    <table class="data-table" style="font-size:11px">
+      <thead><tr><th>Condition</th><th>Method</th></tr></thead>
+      <tbody>
+        <tr><td>New highway, ESALs &lt; 1M, standard materials</td><td><span class="badge badge-good">Excess Fines</span></td></tr>
+        <tr><td>New highway, ESALs &gt; 1M</td><td><span class="badge badge-frost">Mechanistic</span></td></tr>
+        <tr><td>Overlay on existing pavement</td><td><span class="badge badge-frost">Mechanistic</span></td></tr>
+        <tr><td>Stabilized base courses</td><td><span class="badge badge-frost">Mechanistic</span></td></tr>
+        <tr><td>Non-highway (parking, paths)</td><td>Either method or approved other</td></tr>
+      </tbody>
+    </table>
+    <br>
+    <div class="info-box">
+      <strong>Minimum AC Thicknesses (GP-10, GP-11)</strong>
+      New arterial/interstate pavement: 2.0" minimum AC<br>
+      New overlay on existing AC: 1.5" minimum OR 2× max aggregate size
+    </div>
+    <div class="info-box warn-box">
+      <strong>Pmax Limit — Upper 18 inches</strong>
+      P200 must not exceed Pmax in any layer within the upper 18" below AC (see Figure 3-4). Typical Pmax ≈ 9–12% depending on depth.
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<script>
+// ================================================================
+// FROST ANALYSIS
+// ================================================================
+
+const SOIL_FS = {
+  clean_gravel: {fs:'F1', desc:'Non-frost-susceptible', heave:'Negligible', sensitivity:0.2, cf:1.3},
+  clean_sand: {fs:'F1', desc:'Non-frost-susceptible', heave:'Negligible', sensitivity:0.3, cf:1.35},
+  dirty_gravel: {fs:'F2', desc:'Marginally frost-susceptible', heave:'Low', sensitivity:0.4, cf:1.45},
+  sandy_gravel: {fs:'F3', desc:'Frost-susceptible', heave:'Moderate', sensitivity:0.6, cf:1.55},
+  fine_sand: {fs:'F3', desc:'Frost-susceptible', heave:'Moderate–High', sensitivity:0.7, cf:1.6},
+  silt: {fs:'F4', desc:'Very high frost susceptibility', heave:'Very High', sensitivity:1.0, cf:1.8},
+  silty_clay: {fs:'F4', desc:'High frost susceptibility', heave:'High–Very High', sensitivity:0.9, cf:1.75},
+  clay_low: {fs:'F3', desc:'Moderately frost-susceptible', heave:'Moderate', sensitivity:0.65, cf:1.58},
+  clay_high: {fs:'F2', desc:'Low–Moderate frost susceptibility', heave:'Low', sensitivity:0.45, cf:1.48},
+  organic: {fs:'F4', desc:'Special — organic soils compress and heave unpredictably', heave:'Highly Variable', sensitivity:1.0, cf:1.9},
+  varved_clay: {fs:'F4', desc:'Very high — interbedded silt layers create preferential ice lens zones', heave:'Very High', sensitivity:1.0, cf:1.85},
+};
+
+const SURFACE_FACTOR = { paved: 1.0, gravel: 1.08, unpaved: 1.15 };
+
+function setFIZone(val, el) {
+  document.getElementById('fi-value').value = val;
+  document.querySelectorAll('.fi-zone').forEach(z => z.classList.remove('selected'));
+  el.classList.add('selected');
+  updateFrostCalc();
+}
+
+function updateFrostCalc() {
+  const FI = parseFloat(document.getElementById('fi-value').value) || 3000;
+  const soilKey = document.getElementById('soil-type').value;
+  const wt = parseFloat(document.getElementById('water-table').value) || 5;
+  const surface = document.getElementById('surface-type').value;
+  const maat = parseFloat(document.getElementById('maat').value) || 28;
+  const roadClass = document.getElementById('road-class').value;
+
+  const soil = SOIL_FS[soilKey];
+  const sf = SURFACE_FACTOR[surface];
+
+  // Stefan equation: z = Cf * sqrt(FI)
+  const frostDepth = soil.cf * sf * Math.sqrt(FI); // inches
+  const frostDepthFt = frostDepth / 12;
+
+  // Frost protection depth needed
+  // Non-FS: no protection needed
+  // F3: protect to frost depth * sensitivity factor
+  // F4: protect full frost depth + margin
+  let fpd = 0; // frost protection depth (inches)
+  let fpNote = '';
+  if (soil.fs === 'F1') {
+    fpd = 0;
+    fpNote = 'No frost protection layer required — material is non-frost-susceptible.';
+  } else if (soil.fs === 'F2') {
+    fpd = frostDepth * 0.3;
+    fpNote = 'Minimal protection. Consider depth based on heave tolerance and traffic.';
+  } else if (soil.fs === 'F3') {
+    fpd = frostDepth * 0.6 * soil.sensitivity;
+    fpNote = 'Moderate protection depth required. Use non-frost-susceptible fill (F1 or F2 material) in upper section.';
+  } else { // F4
+    fpd = frostDepth * 0.85;
+    fpNote = 'Substantial frost protection required. Full-depth replacement with F1 material may be needed on high-traffic roads.';
+  }
+
+  // Water table modifier
+  const wtMod = wt < 3 ? 1.15 : wt < 6 ? 1.05 : 1.0;
+  fpd *= wtMod;
+  fpd = Math.round(fpd);
+
+  // MAAT check for permafrost
+  const permafrostRisk = maat < 28;
+  const permafrostLikely = maat < 25;
+
+  // Road class AC/base minimums
+  const minAC = {local:2, collector:3, arterial:4, interstate:5}[roadClass];
+  const minBase = {local:8, collector:10, arterial:12, interstate:14}[roadClass];
+  const recSection = buildFrostSection(fpd, minAC, minBase, soil);
+
+  // Update results
+  const fsColor = {'F1':'good','F2':'good','F3':'warn','F4':'bad'}[soil.fs];
+  document.getElementById('frost-results-content').innerHTML = `
+    <div class="result-row"><span class="result-label">Frost Susceptibility Class</span>
+      <span class="result-value"><span class="badge badge-${fsColor}">${soil.fs}</span></span></div>
+    <div class="result-row"><span class="result-label">FS Description</span>
+      <span class="result-value" style="font-size:12px">${soil.desc}</span></div>
+    <div class="result-row"><span class="result-label">Estimated Heave Potential</span>
+      <span class="result-value" style="font-size:12px;color:var(--${fsColor})">${soil.heave}</span></div>
+    <div class="result-row"><span class="result-label">Calculated Frost Depth</span>
+      <span class="result-value big">${frostDepth.toFixed(0)}"</span></div>
+    <div class="result-row"><span class="result-label">Frost Depth (ft)</span>
+      <span class="result-value">${frostDepthFt.toFixed(1)} ft</span></div>
+    <div class="result-row"><span class="result-label">Frost Protection Depth (FPD)</span>
+      <span class="result-value big" style="color:var(--frost)">${fpd}"</span></div>
+    <div class="result-row"><span class="result-label">Water Table Modifier</span>
+      <span class="result-value">${wtMod > 1 ? '<span class="badge badge-warn">+' + Math.round((wtMod-1)*100) + '%</span>' : '<span class="badge badge-good">None</span>'}</span></div>
+    ${permafrostLikely ? '<div class="info-box danger-box"><strong>Permafrost Warning</strong>MAAT ≈ '+maat+'°F — Active permafrost likely. Consult permafrost engineer. Thermal analysis required. Standard frost design may be inadequate.</div>' :
+      permafrostRisk ? '<div class="info-box warn-box"><strong>Permafrost Possible</strong>MAAT near 28°F freezing threshold. Permafrost may be present in shaded or north-facing slopes. Investigate before design.</div>' : ''}
+    <div class="info-box"><strong>Protection Strategy</strong>${fpNote}</div>
+  `;
+
+  // Diagram
+  updateFrostViz(frostDepth, recSection);
+  document.getElementById('frost-section-recommendation').innerHTML = renderSectionRec(recSection, fpd, soil);
+}
+
+function buildFrostSection(fpd, minAC, minBase, soil) {
+  const ac = Math.max(minAC, 3);
+  const base = Math.max(minBase, 8);
+  let layers = [
+    {name:'Asphalt Concrete', thick: ac, type:'asphalt'},
+    {name:'D-1 Aggregate Base', thick: base, type:'base'},
+  ];
+  if (fpd > base + 4) {
+    layers.push({name:'Select Material Type A (Frost Protection)', thick: Math.max(8, fpd - base), type:'frost-protection'});
+  } else if (fpd > 4) {
+    layers.push({name:'Select Material Type A / Subbase', thick: Math.max(6, fpd - base), type:'select-a'});
+  }
+  layers.push({name:'Native Subgrade', thick: 24, type:'subgrade'});
+  return layers;
+}
+
+function updateFrostViz(frostDepthIn, layers) {
+  const totalViz = 180;
+  const scale = Math.min(3, totalViz / (frostDepthIn * 1.3));
+  const frostPct = Math.min(90, (frostDepthIn * scale) / totalViz * 100);
+  document.getElementById('frost-line').style.top = frostPct + '%';
+  document.getElementById('frost-label').style.top = frostPct + '%';
+  document.getElementById('frost-label').textContent = `Frost depth: ${frostDepthIn.toFixed(0)}"`;
+
+  // draw layer lines
+  let acc = 0;
+  let html = '';
+  layers.slice(0,-1).forEach(l => {
+    acc += l.thick;
+    const pct = Math.min(95, (acc * scale) / totalViz * 100);
+    html += `<div style="position:absolute;left:0;right:0;top:${pct}%;height:1.5px;background:rgba(0,0,0,0.25)"></div>
+             <div style="position:absolute;left:10px;top:${Math.max(0,pct-4)}%;font-size:9px;color:#555;font-family:'DM Mono',monospace">${l.name}</div>`;
+  });
+  document.getElementById('frost-section-layers').innerHTML = '';
+  const viz = document.getElementById('frost-viz');
+  // clear old layer lines
+  viz.querySelectorAll('.frost-layer-line').forEach(e => e.remove());
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('div').forEach(d => { d.classList.add('frost-layer-line'); viz.appendChild(d); });
+}
+
+function renderSectionRec(layers, fpd, soil) {
+  const typeClass = {asphalt:'layer-asphalt', base:'layer-base', 'frost-protection':'layer-frost-protection', 'select-a':'layer-select-a', 'select-b':'layer-select-b', subgrade:'layer-subgrade'};
+  const total = layers.reduce((s,l) => s+l.thick, 0) - 24; // subtract infinite subgrade
+  let html = '<div class="layer-viz">';
+  layers.forEach(l => {
+    const minH = 28;
+    const propH = Math.max(minH, Math.round((l.thick / Math.max(total,1)) * 160));
+    const h = l.name.includes('Subgrade') ? 36 : propH;
+    html += `<div class="layer-bar ${typeClass[l.type] || 'layer-base'}" style="height:${h}px">
+      <span class="layer-label">${l.name}</span>
+      <span class="layer-thick">${l.name.includes('Subgrade') ? '∞' : l.thick + '"'}</span>
+    </div>`;
+  });
+  html += '</div>';
+  
+  const totalSec = layers.filter(l=>!l.name.includes('Subgrade')).reduce((s,l)=>s+l.thick, 0);
+  html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+    <span class="badge badge-frost">Total Section: ${totalSec}"</span>
+    <span style="font-size:10px;color:#888">FPD required: ${fpd}"</span>
+  </div>`;
+  if (fpd > 0) {
+    html += `<div class="info-box" style="margin-top:10px;font-size:11px"><strong>Frost Protection Note</strong>
+      Blue-hatched layers indicate frost protection material (F1 or F2 rated, P200 &lt; 3% ideally). 
+      ${soil.fs === 'F4' ? 'F4 subgrade: ensure protection layer fully intercepts frost depth.' : 
+        soil.fs === 'F3' ? 'F3 subgrade: monitor spring thaw conditions. Seasonal load restrictions may apply.' : ''}
+    </div>`;
+  }
+  return html;
+}
+
+// ================================================================
+// ESAL CALCULATOR
+// ================================================================
+function calcESAL() {
+  const aadt = parseFloat(document.getElementById('aadt').value) || 2000;
+  const dir = parseFloat(document.getElementById('dir-factor').value) || 0.5;
+  const lane = parseFloat(document.getElementById('lane-factor').value) || 1.0;
+  const g = (parseFloat(document.getElementById('growth-rate').value) || 2.0) / 100;
+  const n = parseInt(document.getElementById('esal-period').value) || 20;
+  const baseYear = parseInt(document.getElementById('base-year').value) || 2024;
+  const designYear = baseYear; // construction at base year
+  
+  // Truck categories: id, %, load factor
+  const cats = [
+    {id:'t2', lf:0.50},
+    {id:'t3', lf:0.85},
+    {id:'t4', lf:1.20},
+    {id:'t5', lf:1.55},
+    {id:'t6', lf:2.24},
+  ];
+
+  const designAADT = aadt; // base year
+  const designLaneAADT = designAADT * dir * lane;
+  
+  let trucksPerDay = 0;
+  let esalPerDay = 0;
+  cats.forEach(c => {
+    const pct = (parseFloat(document.getElementById(c.id).value) || 0) / 100;
+    const trucks = designLaneAADT * pct;
+    const esal = trucks * c.lf;
+    trucksPerDay += trucks;
+    esalPerDay += esal;
+    document.getElementById('esal-' + c.id).textContent = esal.toFixed(1);
+  });
+
+  // Compound growth
+  let designESAL;
+  if (g === 0) {
+    designESAL = esalPerDay * 365 * n;
+  } else {
+    designESAL = esalPerDay * 365 * ((Math.pow(1+g, n) - 1) / g);
+  }
+
+  document.getElementById('esal-cy-aadt').textContent = designAADT.toLocaleString();
+  document.getElementById('esal-trucks-day').textContent = trucksPerDay.toFixed(0);
+  document.getElementById('esal-per-day').textContent = esalPerDay.toFixed(1);
+  document.getElementById('esal-design').textContent = Math.round(designESAL).toLocaleString();
+  
+  const method = designESAL < 1e6 ? 
+    '<span class="badge badge-good">Excess Fines or Mechanistic</span>' :
+    '<span class="badge badge-frost">Mechanistic Required</span>';
+  document.getElementById('esal-method').innerHTML = method;
+}
+
+function importESAL() {
+  // Pull design ESAL into excess fines
+  const val = document.getElementById('esal-design').textContent.replace(/,/g,'');
+  if (val && val !== '—') {
+    document.getElementById('ef-esals').value = val;
+    calcExcessFines();
+  }
+}
+function importESALMech() {
+  const val = document.getElementById('esal-design').textContent.replace(/,/g,'');
+  if (val && val !== '—') {
+    document.getElementById('mech-esals').value = val;
+    calcMechanistic();
+  }
+}
+
+// ================================================================
+// EXCESS FINES DESIGN
+// ================================================================
+let efLayers = [
+  {material: 'D-1 Aggregate Base', top:0, bot:8, p200:5},
+  {material: 'Select Material Type A', top:8, bot:20, p200:7},
+  {material: 'Select Material Type B / Subgrade', top:20, bot:40, p200:15},
+];
+
+function renderEFLayers() {
+  const matOpts = `
+    <option>D-1 Aggregate Base</option>
+    <option>Select Material Type A</option>
+    <option>Select Material Type B</option>
+    <option>Select Material Type C</option>
+    <option>Subbase F</option>
+    <option>Native Subgrade</option>
+    <option>Stabilized Base (ATB)</option>
+    <option>Fill Material</option>
+  `;
+  let html = '';
+  efLayers.forEach((l, i) => {
+    const status = getLayerStatus(l.p200, l.top, l.bot);
+    html += `<div class="layer-row">
+      <div style="color:#aaa;font-size:11px">${i+1}</div>
+      <div><select onchange="efLayers[${i}].material=this.value;calcExcessFines()" style="width:100%;padding:4px 6px;font-size:11px">${matOpts.replace(`>${l.material}<`, ` selected>${l.material}<`)}</select></div>
+      <div><input type="number" value="${l.top}" min="0" max="40" style="width:100%;padding:4px 6px;font-size:12px" onchange="efLayers[${i}].top=parseFloat(this.value)||0;calcExcessFines()"></div>
+      <div><input type="number" value="${l.bot}" min="0" max="40" style="width:100%;padding:4px 6px;font-size:12px" onchange="efLayers[${i}].bot=parseFloat(this.value)||0;calcExcessFines()"></div>
+      <div><input type="number" value="${l.p200}" min="0" max="100" step="0.5" style="width:100%;padding:4px 6px;font-size:12px" onchange="efLayers[${i}].p200=parseFloat(this.value)||0;calcExcessFines()"></div>
+      <div>${status}</div>
+      <div><button class="layer-del" onclick="efLayers.splice(${i},1);renderEFLayers();calcExcessFines()">×</button></div>
+    </div>`;
+  });
+  document.getElementById('ef-layers-container').innerHTML = html;
+}
+
+function getLayerStatus(p200, top, bot) {
+  // Pmax check for top 18"
+  const upperZone = top < 18;
+  const pmaxAtTop = getPmax(top);
+  if (upperZone && p200 > pmaxAtTop) return `<span class="badge badge-bad">Exceeds Pmax</span>`;
+  const pcr = getPcr(top + (bot-top)/2);
+  if (p200 > pcr) return `<span class="badge badge-warn">Excess Fines</span>`;
+  return `<span class="badge badge-good">OK</span>`;
+}
+
+function addEFLayer() {
+  const lastBot = efLayers.length > 0 ? efLayers[efLayers.length-1].bot : 0;
+  efLayers.push({material:'Select Material Type B', top:lastBot, bot:Math.min(40, lastBot+8), p200:10});
+  renderEFLayers();
+  calcExcessFines();
+}
+
+function SRF(y) {
+  const v = -7.6477232e-7*Math.pow(y,4) + 9.7898212e-5*Math.pow(y,3) - 0.0046242158*Math.pow(y,2) + 0.10298199*y - 0.034613;
+  return Math.max(0, v);
+}
+
+function getPcr(depth) {
+  // Approximate Pcr from Figure 3-4 polynomial fit
+  if (depth <= 0) return 6.0;
+  const x = depth;
+  // Fitted to AKFPD Figure 3-4 Pcr curve
+  return Math.min(50, 6.0 + 0.18*x + 0.003*x*x);
+}
+
+function getPmax(depth) {
+  if (depth > 18) return 100; // no limit beyond 18"
+  // Pmax line approx from Figure 3-4
+  return Math.min(25, 9.0 + 0.6*depth);
+}
+
+function calcExcessFines() {
+  renderEFLayers();
+  const ESALs = parseFloat(document.getElementById('ef-esals').value) || 500000;
+  
+  if (ESALs > 1e6) {
+    document.getElementById('ef-results').innerHTML = `<div class="info-box danger-box"><strong>Method Not Applicable</strong>Design ESALs (${ESALs.toLocaleString()}) exceed 1.0 million. Use Mechanistic Design method.</div>`;
+    return;
+  }
+
+  // Expand layers to 1" sublayers
+  let sublayers = [];
+  for (let d = 0; d < 40; d++) {
+    // find which layer covers this depth
+    const layer = efLayers.find(l => d >= l.top && d < l.bot);
+    if (layer) {
+      sublayers.push({depth_top: d, depth_bot: d+1, p200: layer.p200, material: layer.material});
+    }
+  }
+
+  let EFFt = 0;
+  let pmaxViolation = false;
+  let calcRows = [];
+
+  sublayers.forEach(sl => {
+    const midDepth = sl.depth_top + 0.5;
+    const pcr = getPcr(sl.depth_top);
+    const pmax = getPmax(sl.depth_top);
+
+    if (sl.depth_top < 18 && sl.p200 > pmax) pmaxViolation = true;
+
+    const excessFines = Math.max(0, sl.p200 - pcr);
+    const srfTop = SRF(sl.depth_top);
+    const srfBot = SRF(sl.depth_bot);
+    const deltaSRF = srfBot - srfTop;
+    const eff = deltaSRF * Math.pow(excessFines, 0.8);
+    EFFt += eff;
+    calcRows.push({depth: sl.depth_top, p200: sl.p200, pcr: pcr.toFixed(1), excess: excessFines.toFixed(1), srfTop: srfTop.toFixed(3), srfBot: srfBot.toFixed(3), eff: eff.toFixed(4)});
+  });
+
+  // Predicted deflection
+  const Dp = EFFt === 0 ? 0.034 : 0.056 + 0.0035 * EFFt;
+
+  // Required AC thickness from design chart (Figure 3-6)
+  // Empirical fit to Figure 3-6
+  const acThick = calcACThickness(Dp, ESALs);
+  const acRounded = Math.max(2.0, Math.ceil(acThick * 2) / 2);
+
+  // Check violations
+  let warnings = [];
+  if (pmaxViolation) warnings.push('<div class="info-box danger-box"><strong>Pmax Violation</strong>P200 exceeds Pmax within the upper 18" below the AC layer. Revise layer design — this violates AKFPD requirements.</div>');
+  if (acRounded > 3) {
+    document.getElementById('ef-stabilized-card').style.display = 'block';
+    const stabContent = genStabilizedAlt(Dp, ESALs);
+    document.getElementById('ef-stabilized-content').innerHTML = stabContent;
+  } else {
+    document.getElementById('ef-stabilized-card').style.display = 'none';
+  }
+
+  const dpColor = Dp > 0.10 ? 'bad' : Dp > 0.07 ? 'warn' : 'good';
+
+  document.getElementById('ef-results').innerHTML = `
+    ${warnings.join('')}
+    <div class="result-row"><span class="result-label">Total EFF<sub>t</sub></span><span class="result-value">${EFFt.toFixed(3)}</span></div>
+    <div class="result-row"><span class="result-label">Predicted Deflection D<sub>p</sub></span>
+      <span class="result-value ${dpColor}">${Dp.toFixed(4)}" <span style="font-size:11px">(${dpColor === 'good' ? 'acceptable' : dpColor === 'warn' ? 'moderate' : 'high'})</span></span></div>
+    <div class="result-row"><span class="result-label">Design ESALs</span><span class="result-value">${ESALs.toLocaleString()}</span></div>
+    <div class="result-row"><span class="result-label">Required AC Thickness</span><span class="result-value big">${acRounded}"</span></div>
+    <div class="result-row"><span class="result-label">AC (calculated)</span><span class="result-value">${acThick.toFixed(2)}"</span></div>
+    ${acRounded >= 5 ? '<div class="info-box warn-box"><strong>Thick AC Required</strong>Consider stabilized base alternative (shown below) — may be more cost-effective.</div>' : ''}
+    <details style="margin-top:12px"><summary>Show sublayer calculations (${calcRows.length} rows)</summary>
+    <div style="overflow-x:auto;margin-top:8px"><table class="data-table" style="font-size:10px">
+    <thead><tr><th>Depth</th><th>P200</th><th>Pcr</th><th>Excess</th><th>SRF top</th><th>SRF bot</th><th>EFF</th></tr></thead>
+    <tbody>${calcRows.filter(r=>parseFloat(r.excess)>0).map(r=>`<tr><td>${r.depth}–${parseInt(r.depth)+1}"</td><td>${r.p200}%</td><td>${r.pcr}%</td><td class="mono">${r.excess}%</td><td class="mono">${r.srfTop}</td><td class="mono">${r.srfBot}</td><td class="mono">${r.eff}</td></tr>`).join('')}
+    ${calcRows.filter(r=>parseFloat(r.excess)===0).length > 0 ? `<tr><td colspan="7" style="color:#aaa;font-style:italic">${calcRows.filter(r=>parseFloat(r.excess)===0).length} layers with no excess fines (EFF=0) not shown</td></tr>` : ''}
+    </tbody></table></div></details>
+  `;
+
+  // Draw diagram
+  drawEFDiagram(acRounded);
+}
+
+function calcACThickness(Dp, ESALs) {
+  // Fitted to AKFPD Figure 3-6 design chart
+  if (Dp <= 0.034) return 2.0;
+  const logE = Math.log10(Math.max(1000, ESALs));
+  // Empirical: more ESALs → thicker AC for given deflection
+  const base = (Dp - 0.034) / 0.0025 * (0.8 + (logE - 3) * 0.5);
+  return Math.max(2.0, Math.min(12, base));
+}
+
+function genStabilizedAlt(Dp, ESALs) {
+  const totalRequired = calcACThickness(Dp, ESALs);
+  const stabThick = Math.max(4, Math.ceil((totalRequired - 2) / 2) * 2);
+  const acOverStab = Math.max(2.0, totalRequired - stabThick * 0.6);
+  return `<p style="font-size:12px;margin-bottom:10px">When AC thickness &gt; 3", AKFPD offers a stabilized base alternative (Marshall Stability ≥ 800 lbs per AKFPD default; verify with regional materials lab).</p>
+  <div class="result-row"><span class="result-label">Asphalt Concrete</span><span class="result-value">${Math.max(2.0, Math.ceil(acOverStab * 2)/2)}"</span></div>
+  <div class="result-row"><span class="result-label">Stabilized Base (ATB, MS ≥ 800 lbs)</span><span class="result-value">${stabThick}"</span></div>
+  <div class="result-row"><span class="result-label">Total Bound Structure</span><span class="result-value">${Math.max(2.0, Math.ceil(acOverStab*2)/2) + stabThick}"</span></div>
+  <div class="field-hint" style="margin-top:6px">Contact regional materials lab for actual Marshall Stability value. Any combination of AC + ATB thickness is acceptable.</div>`;
+}
+
+function drawEFDiagram(acThick) {
+  const layers = efLayers.map(l => ({name: l.material, thick: l.bot - l.top}));
+  const typeMap = {
+    'D-1 Aggregate Base': 'layer-base',
+    'Select Material Type A': 'layer-select-a',
+    'Select Material Type B': 'layer-select-b',
+    'Select Material Type C': 'layer-select-b',
+    'Subbase F': 'layer-subbase',
+    'Native Subgrade': 'layer-subgrade',
+    'Stabilized Base (ATB)': 'layer-frost-protection',
+    'Fill Material': 'layer-select-b',
+  };
+  const totalAgg = layers.reduce((s,l)=>s+l.thick,0);
+  let html = `<div class="layer-bar layer-asphalt" style="height:${Math.max(32, acThick * 8)}px">
+    <span class="layer-label">Asphalt Concrete (AC)</span>
+    <span class="layer-thick">${acThick}"</span>
+  </div>`;
+  layers.forEach(l => {
+    const cls = typeMap[l.name] || 'layer-base';
+    const h = Math.max(28, Math.round((l.thick / Math.max(totalAgg,1)) * 120));
+    html += `<div class="layer-bar ${cls}" style="height:${h}px">
+      <span class="layer-label">${l.name}</span>
+      <span class="layer-thick">${l.thick}"</span>
+    </div>`;
+  });
+  document.getElementById('ef-diagram').innerHTML = html;
+}
+
+// ================================================================
+// MECHANISTIC DESIGN
+// ================================================================
+let mechLayers = [
+  {name:'Asphalt Concrete (Modified)', type:'AC', thick:4, mr_spring:450, mr_summer:400, mr_winter:1200, poisson:0.35, bound:true},
+  {name:'D-1 Aggregate Base', type:'Base', thick:10, mr_spring:40, mr_summer:50, mr_winter:100, poisson:0.40, bound:false},
+  {name:'Select Material Type A', type:'SubA', thick:12, mr_spring:35, mr_summer:40, mr_winter:90, poisson:0.40, bound:false},
+  {name:'Native Subgrade', type:'Sub', thick:0, mr_spring:10, mr_summer:10, mr_winter:10, poisson:0.45, bound:false},
+];
+
+const MECH_PRESETS = {
+  'AC (Modified)': {mr_spring:450,mr_summer:400,mr_winter:1200,poisson:0.35,bound:true},
+  'AC (Unmodified)': {mr_spring:350,mr_summer:300,mr_winter:1200,poisson:0.35,bound:true},
+  'D-1 Aggregate Base (<6% P200)': {mr_spring:40,mr_summer:50,mr_winter:100,poisson:0.40,bound:false},
+  'Select Material Type A (<6% P200)': {mr_spring:35,mr_summer:40,mr_winter:90,poisson:0.40,bound:false},
+  'Subbase F (<6% P200)': {mr_spring:35,mr_summer:40,mr_winter:90,poisson:0.40,bound:false},
+  'Select Material Type B (<10% P200)': {mr_spring:20,mr_summer:30,mr_winter:50,poisson:0.40,bound:false},
+  'Select Material Type C / Subgrade (<30% P200)': {mr_spring:10,mr_summer:10,mr_winter:10,poisson:0.45,bound:false},
+  'Stabilized Base (ATB)': {mr_spring:350,mr_summer:350,mr_winter:800,poisson:0.35,bound:true},
+};
+
+function renderMechLayers() {
+  const matOpts = Object.keys(MECH_PRESETS).map(k => `<option value="${k}">${k}</option>`).join('');
+  let html = '';
+  mechLayers.forEach((l, i) => {
+    html += `<div style="border:1.5px solid var(--warm-mid);padding:10px;margin-bottom:8px;border-radius:2px;background:#fff">
+      <div style="display:grid;grid-template-columns:1fr 80px 30px;gap:8px;align-items:center;margin-bottom:8px">
+        <div>
+          <label style="font-size:10px">Material Preset</label>
+          <select onchange="applyMechPreset(${i},this.value)" style="width:100%;padding:5px 8px;font-size:11px">${matOpts}</select>
+        </div>
+        <div class="field">
+          <label>Thick (in)</label>
+          <input type="number" value="${l.thick}" min="0" max="60" style="width:100%" onchange="mechLayers[${i}].thick=parseFloat(this.value)||0;calcMechanistic()">
+          <div style="font-size:9px;color:#aaa">${i===mechLayers.length-1?'Semi-infinite':''}</div>
+        </div>
+        <button class="layer-del" onclick="mechLayers.splice(${i},1);renderMechLayers();calcMechanistic()" style="margin-top:14px">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr) 80px;gap:6px">
+        <div class="field">
+          <label>MR Spring (ksi)</label>
+          <input type="number" value="${l.mr_spring}" min="1" step="5" style="width:100%" onchange="mechLayers[${i}].mr_spring=parseFloat(this.value)||10;calcMechanistic()">
+        </div>
+        <div class="field">
+          <label>MR Summer (ksi)</label>
+          <input type="number" value="${l.mr_summer}" min="1" step="5" style="width:100%" onchange="mechLayers[${i}].mr_summer=parseFloat(this.value)||10;calcMechanistic()">
+        </div>
+        <div class="field">
+          <label>MR Winter (ksi)</label>
+          <input type="number" value="${l.mr_winter}" min="1" step="5" style="width:100%" onchange="mechLayers[${i}].mr_winter=parseFloat(this.value)||10;calcMechanistic()">
+        </div>
+        <div class="field">
+          <label>Poisson</label>
+          <input type="number" value="${l.poisson}" min="0.1" max="0.5" step="0.01" style="width:100%" onchange="mechLayers[${i}].poisson=parseFloat(this.value)||0.35;calcMechanistic()">
+        </div>
+      </div>
+      <div style="margin-top:4px"><label style="display:flex;align-items:center;gap:6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;cursor:pointer">
+        <input type="checkbox" ${l.bound?'checked':''} onchange="mechLayers[${i}].bound=this.checked;calcMechanistic()"> Bound layer (use TAI fatigue)
+      </label></div>
+    </div>`;
+  });
+  document.getElementById('mech-layers-ui').innerHTML = html;
+}
+
+function applyMechPreset(i, key) {
+  const p = MECH_PRESETS[key];
+  if (p) {
+    mechLayers[i] = {...mechLayers[i], ...p, name: key};
+    renderMechLayers();
+    calcMechanistic();
+  }
+}
+
+function addMechLayer() {
+  mechLayers.splice(mechLayers.length-1, 0, {
+    name:'Select Material Type B (<10% P200)', type:'SubB', thick:12,
+    mr_spring:20, mr_summer:30, mr_winter:50, poisson:0.40, bound:false
+  });
+  renderMechLayers();
+  calcMechanistic();
+}
+
+function calcMechanistic() {
+  renderMechLayers();
+  const ESALs = parseFloat(document.getElementById('mech-esals').value) || 2000000;
+  const Vv = parseFloat(document.getElementById('vv').value) || 4.0;
+  const Vb = parseFloat(document.getElementById('vb').value) || 11.5;
+
+  // Simplified layered elastic analysis using Boussinesq-based stress distribution
+  // Critical location analysis per Alaska mechanistic method
+  // Using approximate closed-form for horizontal tensile strain at AC bottom
+  // and vertical stress at each unbound layer top
+
+  const ESAL_load = 9000; // lbs each side of dual-tire ESAL
+  const tirePressure = 110; // psi
+  const contactRadius = Math.sqrt(ESAL_load / (Math.PI * tirePressure)); // ≈5.1"
+
+  // Season fractions (Alaska): Spring 10%, Summer/Fall 65%, Winter 25%
+  const seasons = [
+    {name:'Spring', frac: 0.10, modKey: 'mr_spring'},
+    {name:'Summer/Fall', frac: 0.65, modKey: 'mr_summer'},
+    {name:'Winter', frac: 0.25, modKey: 'mr_winter'},
+  ];
+
+  // For each season, compute stresses/strains using Odemark approximation
+  // Total damage = sum over seasons of (Na_season / Nf_season)
+
+  let acLayer = mechLayers.find(l => l.bound);
+  let unbound = mechLayers.filter(l => !l.bound && l.thick > 0);
+  let subgrade = mechLayers[mechLayers.length-1];
+
+  // C coefficient for TAI equation
+  const M = 4.84 * (Vb / (Vv + Vb) - 0.69);
+  const C = Math.pow(10, M);
+
+  let results = [];
+  let totalDamageFatigue = 0;
+  let totalDamageFunctional = 0;
+
+  seasons.forEach(season => {
+    const Na = ESALs * season.frac;
+    if (!acLayer) return;
+
+    const E_ac = acLayer[season.modKey] * 1000; // psi
+    const acThick = acLayer.thick;
+
+    // Strain at bottom of AC using Odemark equivalent thickness approach
+    // Transform equivalent thickness: H_e = thick * (E_layer/E_sub)^(1/3)
+    let cumH_equiv = 0;
+    mechLayers.forEach((l, idx) => {
+      if (idx === 0) return; // skip AC itself
+      if (!l.bound && l.thick > 0) {
+        const E_top = mechLayers[idx-1][season.modKey] * 1000;
+        const E_this = l[season.modKey] * 1000;
+        cumH_equiv += l.thick * Math.pow(E_this / Math.max(E_top, 1), 1/3);
+      }
+    });
+
+    // Approximate horizontal tensile strain at bottom of AC
+    // Based on simplified elastic layer theory
+    const totalEquivH = acThick + cumH_equiv;
+    const normalizedZ = acThick / contactRadius;
+    const strainFactor = Math.exp(-0.7 * normalizedZ) / Math.pow(1 + (acThick/contactRadius)*0.8, 1.5);
+    const epsilon_t = (tirePressure / E_ac) * strainFactor * 1.2;
+
+    // TAI fatigue: Nf = C * 0.07958 * et^(-3.291) * E*^0.854
+    const Nf_fatigue = C * 0.07958 * Math.pow(epsilon_t, -3.291) * Math.pow(E_ac, 0.854);
+    const damageFatigue = Na / Math.max(1, Nf_fatigue);
+    totalDamageFatigue += damageFatigue;
+
+    // Vertical stress at top of first unbound layer
+    if (unbound.length > 0) {
+      const zUnbound = acThick; // depth to top of first unbound layer
+      const E0 = 23000; // psi
+      const E_unbound = unbound[0][season.modKey] * 1000;
+      const b_factor = E_unbound > E0 ? 1.16 : 1;
+      const sigma_v = tirePressure * Math.pow(contactRadius / Math.sqrt(contactRadius*contactRadius + zUnbound*zUnbound), 3);
+      const R = 2.75; // Alaska regional factor
+      const Nf_func = 3.069e9 * b_factor * Math.pow(E_unbound / E0, 0.36) * Math.pow(Math.max(0.1, sigma_v), -2.82);
+      const damageFunct = Na / Math.max(1, Nf_func);
+      totalDamageFunctional += damageFunct;
+    }
+
+    results.push({season: season.name, frac: season.frac, Na: Na, epsilon_t: epsilon_t, Nf_fatigue: Nf_fatigue, damageFatigue: damageFatigue});
+  });
+
+  const totalDamage = Math.max(totalDamageFatigue, totalDamageFunctional) * 100;
+  const fatDamage = totalDamageFatigue * 100;
+  const funcDamage = totalDamageFunctional * 100;
+  const controlMode = totalDamageFatigue > totalDamageFunctional ? 'Fatigue (AC cracking)' : 'Functional (rutting/deformation)';
+  
+  const damageColor = totalDamage < 60 ? 'good' : totalDamage < 90 ? 'warn' : 'bad';
+  const passText = totalDamage < 100 ? 'PASS' : 'FAIL — increase section';
+
+  // Render results
+  let html = `
+    <div class="result-row"><span class="result-label">Total Fatigue Damage</span>
+      <span class="result-value ${totalDamageFatigue*100 < 100 ? 'good' : 'bad'}">${fatDamage.toFixed(1)}%</span></div>
+    <div class="result-row"><span class="result-label">Total Functional Damage</span>
+      <span class="result-value ${totalDamageFunctional*100 < 100 ? 'good' : 'bad'}">${funcDamage.toFixed(1)}%</span></div>
+    <div class="result-row"><span class="result-label">Controlling Failure Mode</span>
+      <span class="result-value" style="font-size:12px">${controlMode}</span></div>
+    <div class="result-row"><span class="result-label">Overall Damage (Miner's Law)</span>
+      <span class="result-value big ${damageColor}">${totalDamage.toFixed(1)}%</span></div>
+    <div class="result-row"><span class="result-label">Design Assessment</span>
+      <span class="result-value"><span class="badge badge-${totalDamage < 100 ? 'good' : 'bad'}">${passText}</span></span></div>
+    <br>
+    ${totalDamage >= 100 ? `<div class="info-box danger-box"><strong>Design Fails</strong>Total damage exceeds 100% — increase AC thickness or improve subgrade modulus. Try adding 1–2" AC increments.</div>` : ''}
+    ${totalDamage < 60 ? `<div class="info-box"><strong>Conservative Design</strong>Significant remaining life. Consider whether a thinner section would be cost-effective.</div>` : ''}
+    <details><summary>Seasonal Damage Breakdown</summary>
+    <table class="data-table" style="font-size:11px;margin-top:8px">
+      <thead><tr><th>Season</th><th>ESALs</th><th>ε<sub>t</sub></th><th>Nf (fatigue)</th><th>Damage (fat.)</th></tr></thead>
+      <tbody>${results.map(r=>`<tr><td>${r.season}</td><td>${Math.round(r.Na).toLocaleString()}</td>
+        <td class="mono">${r.epsilon_t.toExponential(3)}</td>
+        <td class="mono">${Math.round(r.Nf_fatigue).toLocaleString()}</td>
+        <td class="mono ${r.damageFatigue*100<100?'':'bad'}">${(r.damageFatigue*100).toFixed(2)}%</td></tr>`).join('')}
+      </tbody>
+    </table></details>
+    <details style="margin-top:6px"><summary>About the calculations</summary>
+    <div class="info-box" style="margin-top:8px;font-size:11px">This calculator implements the Alaska mechanistic design equations from AKFPD Ch. 4 using an Odemark equivalent layer approximation for stress/strain calculation. For final design, use the AKFPD software (WESLEA computational engine) which performs full elastic layered analysis. This tool is for preliminary design and learning purposes.</div>
+    </details>
+  `;
+  document.getElementById('mech-results').innerHTML = html;
+
+  // Damage bars
+  let dbars = '';
+  const layers = [{name:'AC Fatigue', dmg:fatDamage},{name:'Unbound Functional', dmg:funcDamage}];
+  layers.forEach(l => {
+    const w = Math.min(100, l.dmg);
+    const col = l.dmg < 60 ? '#3a7a3a' : l.dmg < 100 ? '#c4880a' : '#c4200a';
+    dbars += `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;letter-spacing:0.5px">
+        <span>${l.name}</span><span style="font-weight:600">${l.dmg.toFixed(1)}% / 100%</span>
+      </div>
+      <div style="background:#eee;height:18px;border-radius:2px;overflow:hidden">
+        <div style="height:100%;width:${w}%;background:${col};transition:width 0.5s ease;position:relative">
+          ${l.dmg >= 100 ? '<span style="position:absolute;right:6px;top:2px;color:white;font-size:10px;font-weight:700">EXCEEDED</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('mech-damage-bars').innerHTML = dbars;
+
+  // Section diagram
+  drawMechDiagram();
+}
+
+function drawMechDiagram() {
+  const typeMap = {AC:'layer-asphalt', Base:'layer-base', SubA:'layer-select-a', SubB:'layer-select-b', Sub:'layer-subgrade'};
+  const total = mechLayers.filter(l=>l.thick > 0).reduce((s,l)=>s+l.thick,0) || 40;
+  let html = '';
+  mechLayers.forEach(l => {
+    if (l.thick === 0 && mechLayers.indexOf(l) === mechLayers.length-1) {
+      html += `<div class="layer-bar layer-subgrade" style="height:36px">
+        <span class="layer-label">${l.name || 'Subgrade'}</span>
+        <span class="layer-thick">∞</span>
+      </div>`;
+      return;
+    }
+    if (l.thick === 0) return;
+    const cls = l.bound ? 'layer-asphalt' : (typeMap[l.type] || 'layer-base');
+    const h = Math.max(28, Math.round((l.thick / total) * 160));
+    html += `<div class="layer-bar ${cls}" style="height:${h}px">
+      <span class="layer-label">${l.name}</span>
+      <span class="layer-thick">${l.thick}"</span>
+    </div>`;
+  });
+  document.getElementById('mech-diagram').innerHTML = html;
+}
+
+// ================================================================
+// CASAGRANDE CHECKER
+// ================================================================
+function casagrande() {
+  const p200 = parseFloat(document.getElementById('cas-p200').value) || 0;
+  const p002 = parseFloat(document.getElementById('cas-p002').value) || 0;
+  const cu = parseFloat(document.getElementById('cas-cu').value) || 1;
+  const uscs = document.getElementById('cas-uscs').value;
+  const pi = parseFloat(document.getElementById('cas-pi').value) || 0;
+  const depth = parseFloat(document.getElementById('cas-depth').value) || 0;
+  const name = document.getElementById('cas-name').value;
+
+  // Casagrande criterion: FS if P0.02 > 3% (uniform soils: > 10% if Cu < 5)
+  const uniformThreshold = cu < 5 ? 10 : 3;
+  const isFrostSusceptible = p002 > uniformThreshold;
+
+  // USCS-based FS class
+  const uSCSClass = {
+    GW:'F1', GP:'F1', GM:'F3', GC:'F3',
+    SW:'F1', SP:'F1', SM:'F3', SC:'F3',
+    ML:'F4', CL:'F3', OL:'F4', MH:'F4', CH:'F2', OH:'F4', PT:'F4'
+  }[uscs] || 'F3';
+
+  // Pcr and Pmax at this depth
+  const pcr = getPcr(depth);
+  const pmax = getPmax(depth);
+  const p200ExceedsPcr = p200 > pcr;
+  const p200ExceedsPmax = depth < 18 && p200 > pmax;
+
+  const fsColors = {F1:'good', F2:'good', F3:'warn', F4:'bad'};
+  const casColor = isFrostSusceptible ? (p002 > 10 ? 'bad' : 'warn') : 'good';
+  const casText = isFrostSusceptible ? 'FROST SUSCEPTIBLE' : 'NOT FROST SUSCEPTIBLE';
+
+  let recs = [];
+  if (uSCSClass === 'F4') recs.push('Exclude from upper pavement section (within 2× frost depth). Use as deep fill only.');
+  if (uSCSClass === 'F3') recs.push('Restrict to depths where deflection impact is low. Monitor spring thaw performance.');
+  if (p200ExceedsPmax) recs.push('⚠ P200 exceeds Pmax for this depth — material does not meet AKFPD specification for this layer position.');
+  if (p200ExceedsPcr) recs.push('P200 exceeds Pcr — contributes excess fines factor. Adjust or use material further from AC layer.');
+  if (pi > 15 && (uscs === 'ML' || uscs === 'MH')) recs.push('High PI for ML/MH soil — consider reclassifying or lab testing for accurate FS determination.');
+  if (!isFrostSusceptible) recs.push('Material passes Casagrande criterion for this depth. Verify P200 meets AKFPD layer limits.');
+
+  document.getElementById('casagrande-results').innerHTML = `
+    <div style="text-align:center;padding:16px;border:2px solid var(--${casColor === 'good' ? 'good':'bad'});border-radius:2px;margin-bottom:14px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:var(--${casColor === 'good' ? 'good':'bad'})">${casText}</div>
+      <div style="font-size:11px;color:#888;margin-top:4px">${name}</div>
+    </div>
+    <div class="result-row"><span class="result-label">P &lt; 0.02 mm</span><span class="result-value">${p002}%</span></div>
+    <div class="result-row"><span class="result-label">Casagrande Threshold (Cu${cu<5?'<5':'>5'})</span><span class="result-value">${uniformThreshold}%</span></div>
+    <div class="result-row"><span class="result-label">USCS Frost Class</span>
+      <span class="result-value"><span class="badge badge-${fsColors[uSCSClass]}">${uSCSClass}</span></span></div>
+    <div class="result-row"><span class="result-label">P200 vs. Pcr at ${depth}"</span>
+      <span class="result-value ${p200ExceedsPcr?'bad':'good'}">${p200}% vs. ${pcr.toFixed(1)}% ${p200ExceedsPcr?'⚠ Exceeds':'✓ OK'}</span></div>
+    <div class="result-row"><span class="result-label">P200 vs. Pmax at ${depth}"</span>
+      <span class="result-value ${p200ExceedsPmax?'bad':'good'}">${p200}% vs. ${pmax.toFixed(1)}% ${depth>=18?'(no limit >18")':p200ExceedsPmax?'⚠ Violation':'✓ OK'}</span></div>
+    <br>
+    ${recs.map(r=>`<div class="info-box${r.includes('⚠')?'danger-box':''}" style="margin-bottom:8px;font-size:12px">${r}</div>`).join('')}
+  `;
+
+  // Draw PCR chart
+  drawPcrChart(p200, depth);
+}
+
+function drawPcrChart(p200, depth) {
+  const canvas = document.getElementById('pcr-chart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth - 24;
+  const H = 220;
+  canvas.width = W;
+  canvas.height = H;
+  
+  const padL = 50, padR = 20, padT = 15, padB = 35;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  
+  const maxDepth = 40;
+  const maxP = 45;
+  
+  function toX(d) { return padL + (d/maxDepth) * plotW; }
+  function toY(p) { return padT + plotH - (p/maxP) * plotH; }
+  
+  ctx.clearRect(0,0,W,H);
+  
+  // Grid
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let d = 0; d <= 40; d += 5) {
+    ctx.beginPath(); ctx.moveTo(toX(d), padT); ctx.lineTo(toX(d), padT+plotH); ctx.stroke();
+  }
+  for (let p = 0; p <= 40; p += 5) {
+    ctx.beginPath(); ctx.moveTo(padL, toY(p)); ctx.lineTo(padL+plotW, toY(p)); ctx.stroke();
+  }
+  
+  // Pcr curve
+  ctx.beginPath();
+  ctx.strokeStyle = '#4a7fa5';
+  ctx.lineWidth = 2;
+  for (let d = 0; d <= 40; d += 0.5) {
+    const p = getPcr(d);
+    if (d === 0) ctx.moveTo(toX(d), toY(p));
+    else ctx.lineTo(toX(d), toY(p));
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#4a7fa5';
+  ctx.font = '10px DM Mono';
+  ctx.fillText('Pcr', toX(32), toY(getPcr(32))-5);
+  
+  // Pmax curve (0-18" only)
+  ctx.beginPath();
+  ctx.strokeStyle = '#c4410a';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4,3]);
+  for (let d = 0; d <= 18; d += 0.5) {
+    const p = getPmax(d);
+    if (d === 0) ctx.moveTo(toX(d), toY(p));
+    else ctx.lineTo(toX(d), toY(p));
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#c4410a';
+  ctx.fillText('Pmax', toX(12), toY(getPmax(12))-6);
+  
+  // User material point
+  if (depth >= 0 && depth <= 40 && p200 >= 0) {
+    ctx.beginPath();
+    const px = toX(depth), py = toY(Math.min(p200, maxP));
+    const pcr = getPcr(depth);
+    const pmax = getPmax(depth);
+    const col = (p200 > pmax && depth < 18) ? '#c4200a' : (p200 > pcr) ? '#c4880a' : '#3a7a3a';
+    ctx.fillStyle = col;
+    ctx.arc(px, py, 7, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = col;
+    ctx.font = 'bold 10px DM Mono';
+    ctx.fillText(`P200=${p200}% @${depth}"`, px+10, py);
+  }
+  
+  // Axes
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT+plotH); ctx.lineTo(padL+plotW, padT+plotH); ctx.stroke();
+  
+  ctx.fillStyle = '#555';
+  ctx.font = '10px DM Mono';
+  ctx.fillText('0', padL-15, padT+plotH+12);
+  ctx.fillText('10', toX(10)-8, padT+plotH+12);
+  ctx.fillText('20', toX(20)-8, padT+plotH+12);
+  ctx.fillText('30', toX(30)-8, padT+plotH+12);
+  ctx.fillText('40"', toX(40)-8, padT+plotH+12);
+  ctx.fillText('Depth below AC (inches) →', padL+plotW/2-60, padT+plotH+28);
+  
+  for (let p = 0; p <= 40; p += 10) {
+    ctx.fillText(p+'%', padL-32, toY(p)+4);
+  }
+}
+
+// ================================================================
+// TAB SWITCHING
+// ================================================================
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  
+  if (id === 'tab-casagrande') casagrande();
+  if (id === 'tab-mechanistic') { renderMechLayers(); calcMechanistic(); }
+}
+
+// ================================================================
+// INIT
+// ================================================================
+updateFrostCalc();
+calcESAL();
+renderEFLayers();
+calcExcessFines();
+renderMechLayers();
+calcMechanistic();
+setTimeout(() => {
+  casagrande();
+}, 100);
+</script>
+
+</body>
+</html>

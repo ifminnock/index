@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alaska Geotechnical Data Aggregator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0c0e14;
+  --bg2:      #13151e;
+  --bg3:      #1a1d28;
+  --bg4:      #20243280;
+  --border:   #252836;
+  --border2:  #30354a;
+  --text:     #dde0ee;
+  --muted:    #666d88;
+  --dim:      #3a3f55;
+  --accent:   #f0a500;
+  --teal:     #2ec4b6;
+  --blue:     #4a9eff;
+  --green:    #3dba7e;
+  --red:      #e05a2b;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'IBM Plex Sans', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+}
+
+/* ── GRID TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: relative;
+  z-index: 100;
+  height: 52px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.header-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.header-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.header-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.header-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--border2);
+}
+
+.index-link {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.index-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── MAIN LAYOUT ── */
+.app-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: calc(100vh - 52px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-section {
+  border-bottom: 1px solid var(--border);
+  padding: 16px;
+}
+
+.sidebar-section:last-child {
+  border-bottom: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── INSTRUCTIONS ── */
+.instruction-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(240,165,0,0.1);
+  border: 1px solid rgba(240,165,0,0.25);
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-text {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.step-text span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ── DATA SOURCES ── */
+.source-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.source-item:hover { border-color: var(--border2); background: var(--bg4); }
+.source-item.active { border-color: var(--teal); background: rgba(46,196,182,0.06); }
+.source-item.active .source-dot { background: var(--teal); box-shadow: 0 0 6px var(--teal); }
+.source-item.coming-soon { opacity: 0.4; cursor: not-allowed; }
+
+.source-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--dim);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.source-info { flex: 1; min-width: 0; }
+
+.source-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-desc {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.source-tag {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.tag-live { background: rgba(46,196,182,0.15); color: var(--teal); border: 1px solid rgba(46,196,182,0.3); }
+.tag-soon { background: rgba(102,109,136,0.15); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── AREA INFO ── */
+.area-info {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.area-info .val {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.area-info .empty-hint {
+  color: var(--dim);
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* ── SUBMIT BUTTON ── */
+.submit-wrap {
+  padding: 16px;
+  border-top: 1px solid var(--border2);
+  background: var(--bg2);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #ffb91a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(240,165,0,0.3);
+}
+
+.btn-submit:disabled {
+  background: var(--bg3);
+  color: var(--dim);
+  cursor: not-allowed;
+  border: 1px solid var(--border);
+}
+
+.btn-clear {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-clear:hover:not(:disabled) { color: var(--red); border-color: var(--red); }
+.btn-clear:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  padding: 10px 16px;
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--dim);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.status-dot.ready   { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.waiting { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+.status-dot.error   { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+
+.status-text { flex: 1; }
+
+/* ── MAP ── */
+.map-wrap {
+  flex: 1;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  background: #0d1018;
+}
+
+/* Override Leaflet for dark theme */
+.leaflet-container {
+  background: #0d1018 !important;
+  font-family: var(--mono) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--bg2) !important;
+  color: var(--text) !important;
+  border-color: var(--border2) !important;
+  font-family: var(--mono) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--bg3) !important;
+  color: var(--accent) !important;
+}
+
+.leaflet-bar {
+  border: 1px solid var(--border2) !important;
+  box-shadow: none !important;
+}
+
+.leaflet-draw-toolbar a {
+  background-color: var(--bg2) !important;
+  border-color: var(--border2) !important;
+}
+
+.leaflet-draw-toolbar a:hover {
+  background-color: var(--bg3) !important;
+}
+
+/* Map coordinates overlay */
+.map-coords {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 500;
+  background: rgba(13,16,24,0.85);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* Map overlay hint */
+.map-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 500;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.map-hint.hidden { opacity: 0; }
+
+.map-hint-inner {
+  background: rgba(13,16,24,0.7);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 20px 28px;
+  backdrop-filter: blur(6px);
+}
+
+.map-hint-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.map-hint-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.map-hint-text strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+/* Polygon tooltip */
+.leaflet-tooltip {
+  background: var(--bg2) !important;
+  border: 1px solid var(--border2) !important;
+  color: var(--text) !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  box-shadow: none !important;
+}
+
+/* ── MODAL / RESULT PLACEHOLDER ── */
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(12,14,20,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.result-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.result-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  width: 480px;
+  max-width: 90vw;
+  padding: 28px;
+}
+
+.modal-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-family: var(--mono);
+}
+
+.modal-body .highlight {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.modal-coords {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+
+.modal-close {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modal-close:hover { color: var(--text); border-color: var(--text); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-badge">BETA</div>
+  <div class="header-dot"></div>
+  <span class="header-title">Alaska Geotechnical Data Aggregator</span>
+  <div class="header-dot"></div>
+  <span class="header-sub">Phase 1 · Area Definition</span>
+  <a class="index-link" href="index.html">← Index</a>
+</div>
+
+<!-- BODY -->
+
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+
+  <div class="sidebar">
+
+```
+<!-- Instructions -->
+<div class="sidebar-section">
+  <div class="section-label">How To Use</div>
+  <div class="instruction-step">
+    <div class="step-num">1</div>
+    <div class="step-text">Use the <strong>polygon tool</strong> on the map to draw your project area boundary.<br><span>Click to place vertices. Click the first point to close.</span></div>
+  </div>
+  <div class="instruction-step">
+    <div class="step-num">2</div>
+    <div class="step-text">Select which <strong>data sources</strong> to query below.</div>
+  </div>
+  <div class="instruction-step">
+    <div class="step-num">3</div>
+    <div class="step-text">Hit <strong>Submit Query</strong> to pull and analyze available data.<br><span>Results, quality scores, and reports will be returned.</span></div>
+  </div>
+</div>
+
+<!-- Data Sources -->
+<div class="sidebar-section">
+  <div class="section-label">Data Sources</div>
+
+  <div class="source-item active" data-source="usgs-nwis" onclick="toggleSource(this)">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">USGS NWIS</div>
+      <div class="source-desc">Wells, water levels, site lithology</div>
+    </div>
+    <div class="source-tag tag-live">LIVE</div>
+  </div>
+
+  <div class="source-item active" data-source="nrcs-soils" onclick="toggleSource(this)">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">NRCS Web Soil Survey</div>
+      <div class="source-desc">Soil map units, geotechnical properties</div>
+    </div>
+    <div class="source-tag tag-live">LIVE</div>
+  </div>
+
+  <div class="source-item coming-soon" data-source="dggs">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">AK DGGS</div>
+      <div class="source-desc">Published borings, geologic maps</div>
+    </div>
+    <div class="source-tag tag-soon">SOON</div>
+  </div>
+
+  <div class="source-item coming-soon" data-source="adec">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">ADEC</div>
+      <div class="source-desc">Contamination sites, environmental data</div>
+    </div>
+    <div class="source-tag tag-soon">SOON</div>
+  </div>
+
+  <div class="source-item coming-soon" data-source="fema">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">FEMA Flood Map</div>
+      <div class="source-desc">Flood zones, special hazard areas</div>
+    </div>
+    <div class="source-tag tag-soon">SOON</div>
+  </div>
+
+  <div class="source-item coming-soon" data-source="moa">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">Municipality of Anchorage</div>
+      <div class="source-desc">Local boring logs, utility records</div>
+    </div>
+    <div class="source-tag tag-soon">SOON</div>
+  </div>
+
+</div>
+
+<!-- Area Info -->
+<div class="sidebar-section" style="flex:1; overflow-y:auto;">
+  <div class="section-label">Project Area</div>
+  <div class="area-info" id="areaInfo">
+    <div class="empty-hint">No area defined yet.<br>Draw a polygon on the map.</div>
+  </div>
+</div>
+
+<!-- Status -->
+<div class="status-bar">
+  <div class="status-dot" id="statusDot"></div>
+  <div class="status-text" id="statusText">Draw a project area to begin.</div>
+</div>
+
+<!-- Submit -->
+<div class="submit-wrap">
+  <button class="btn-submit" id="btnSubmit" disabled onclick="submitQuery()">
+    <span>▶</span> Submit Query
+  </button>
+  <button class="btn-clear" id="btnClear" disabled onclick="clearArea()">
+    ✕ Clear Area
+  </button>
+</div>
+```
+
+  </div>
+
+  <!-- MAP -->
+
+  <div class="map-wrap">
+    <div id="map"></div>
+
+```
+<!-- Center hint -->
+<div class="map-hint" id="mapHint">
+  <div class="map-hint-inner">
+    <div class="map-hint-icon">🗺️</div>
+    <div class="map-hint-text">
+      <strong>Define Your Project Area</strong>
+      Use the polygon tool (top-left) to draw a boundary.<br>
+      Navigate to your site first, then draw.
+    </div>
+  </div>
+</div>
+
+<!-- Coordinates readout -->
+<div class="map-coords" id="mapCoords">— , —</div>
+```
+
+  </div>
+
+</div>
+
+<!-- RESULT MODAL (placeholder for Phase 2+) -->
+
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-modal">
+    <div class="modal-title">
+      <span>◆</span> Query Ready
+    </div>
+    <div class="modal-body">
+      Project area defined. <span class="highlight" id="modalSourceCount"></span> data sources selected.<br><br>
+      In Phase 2, this will trigger live API queries to each selected source and return harmonized results.<br><br>
+      Your polygon coordinates are captured and ready to pass to the backend.
+    </div>
+    <div class="modal-coords" id="modalCoords"></div>
+    <button class="modal-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+<script>
+
+// ── STATE ──────────────────────────────────────────────────
+const state = {
+  polygon: null,       // GeoJSON polygon
+  polygonLayer: null,  // Leaflet layer reference
+  areaSqKm: 0,
+  centroid: null,
+  activeSources: new Set(['usgs-nwis', 'nrcs-soils'])
+};
+
+// ── MAP INIT ───────────────────────────────────────────────
+const map = L.map('map', {
+  center: [64.2, -153.0], // Alaska center
+  zoom: 5,
+  zoomControl: true,
+  attributionControl: true
+});
+
+// Dark tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap contributors © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// ── DRAW CONTROLS ──────────────────────────────────────────
+const drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+const drawControl = new L.Control.Draw({
+  edit: {
+    featureGroup: drawnItems,
+    edit: true,
+    remove: true
+  },
+  draw: {
+    polygon: {
+      allowIntersection: false,
+      showArea: true,
+      shapeOptions: {
+        color: '#f0a500',
+        fillColor: '#f0a500',
+        fillOpacity: 0.12,
+        weight: 2,
+        dashArray: null
+      },
+      metric: true,
+      repeatMode: false
+    },
+    polyline: false,
+    rectangle: {
+      shapeOptions: {
+        color: '#f0a500',
+        fillColor: '#f0a500',
+        fillOpacity: 0.12,
+        weight: 2
+      }
+    },
+    circle: false,
+    circlemarker: false,
+    marker: false
+  }
+});
+map.addControl(drawControl);
+
+// ── DRAW EVENTS ────────────────────────────────────────────
+map.on(L.Draw.Event.CREATED, function(e) {
+  // Remove existing polygon if any
+  drawnItems.clearLayers();
+  state.polygonLayer = null;
+  state.polygon = null;
+
+  const layer = e.layer;
+  drawnItems.addLayer(layer);
+  state.polygonLayer = layer;
+
+  // Extract GeoJSON
+  const geojson = layer.toGeoJSON();
+  state.polygon = geojson.geometry;
+
+  // Calculate area and centroid
+  updateAreaInfo(layer);
+  hideHint();
+  setStatus('ready', 'Project area defined. Ready to query.');
+  setButtons(true);
+});
+
+map.on(L.Draw.Event.EDITED, function(e) {
+  e.layers.eachLayer(function(layer) {
+    state.polygonLayer = layer;
+    const geojson = layer.toGeoJSON();
+    state.polygon = geojson.geometry;
+    updateAreaInfo(layer);
+    setStatus('ready', 'Area updated. Ready to query.');
+  });
+});
+
+map.on(L.Draw.Event.DELETED, function() {
+  state.polygon = null;
+  state.polygonLayer = null;
+  clearAreaInfo();
+  showHint();
+  setStatus('idle', 'Draw a project area to begin.');
+  setButtons(false);
+});
+
+// ── MOUSE COORDS ───────────────────────────────────────────
+map.on('mousemove', function(e) {
+  const lat = e.latlng.lat.toFixed(5);
+  const lng = e.latlng.lng.toFixed(5);
+  document.getElementById('mapCoords').textContent = `${lat}°N  ${lng}°E`;
+});
+
+// ── AREA CALCULATIONS ──────────────────────────────────────
+function updateAreaInfo(layer) {
+  const latlngs = layer.getLatLngs()[0];
+  const areaSqM = approximateArea(latlngs);
+  const areaSqKm = (areaSqM / 1e6).toFixed(3);
+  const areaSqMi = (areaSqM / 2589988).toFixed(3);
+  const vertexCount = latlngs.length;
+
+  // Centroid
+  let latSum = 0, lngSum = 0;
+  latlngs.forEach(p => { latSum += p.lat; lngSum += p.lng; });
+  const centLat = (latSum / latlngs.length).toFixed(5);
+  const centLng = (lngSum / latlngs.length).toFixed(5);
+
+  state.areaSqKm = areaSqKm;
+  state.centroid = { lat: centLat, lng: centLng };
+
+  const bbox = layer.getBounds();
+  const ne = bbox.getNorthEast();
+  const sw = bbox.getSouthWest();
+
+  document.getElementById('areaInfo').innerHTML = `
+    AREA<br>
+    <span class="val">${areaSqKm} km²</span> · ${areaSqMi} mi²<br><br>
+    CENTROID<br>
+    <span class="val">${centLat}°N</span><br>
+    <span class="val">${centLng}°E</span><br><br>
+    BOUNDING BOX<br>
+    N <span class="val">${ne.lat.toFixed(4)}°</span>  S <span class="val">${sw.lat.toFixed(4)}°</span><br>
+    E <span class="val">${ne.lng.toFixed(4)}°</span>  W <span class="val">${sw.lng.toFixed(4)}°</span><br><br>
+    VERTICES<br>
+    <span class="val">${vertexCount}</span> points defined<br><br>
+    SOURCES SELECTED<br>
+    <span class="val">${state.activeSources.size}</span> of 6 available
+  `;
+}
+
+function approximateArea(latlngs) {
+  // Shoelace formula approximation
+  let area = 0;
+  const n = latlngs.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const xi = latlngs[i].lng * Math.PI / 180;
+    const yi = latlngs[i].lat * Math.PI / 180;
+    const xj = latlngs[j].lng * Math.PI / 180;
+    const yj = latlngs[j].lat * Math.PI / 180;
+    area += (xj - xi) * (2 + Math.sin(yi) + Math.sin(yj));
+  }
+  return Math.abs(area) * 6378137 * 6378137 / 2;
+}
+
+function clearAreaInfo() {
+  document.getElementById('areaInfo').innerHTML =
+    '<div class="empty-hint">No area defined yet.<br>Draw a polygon on the map.</div>';
+}
+
+// ── SOURCE TOGGLE ──────────────────────────────────────────
+function toggleSource(el) {
+  if (el.classList.contains('coming-soon')) return;
+  const src = el.dataset.source;
+  if (state.activeSources.has(src)) {
+    state.activeSources.delete(src);
+    el.classList.remove('active');
+  } else {
+    state.activeSources.add(src);
+    el.classList.add('active');
+  }
+  // Update sidebar display if polygon exists
+  if (state.polygon) {
+    updateAreaInfo(state.polygonLayer);
+  }
+}
+
+// ── UI HELPERS ─────────────────────────────────────────────
+function setStatus(type, msg) {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  dot.className = 'status-dot ' + (type === 'ready' ? 'ready' : type === 'waiting' ? 'waiting' : type === 'error' ? 'error' : '');
+  text.textContent = msg;
+}
+
+function setButtons(hasArea) {
+  document.getElementById('btnSubmit').disabled = !hasArea || state.activeSources.size === 0;
+  document.getElementById('btnClear').disabled = !hasArea;
+}
+
+function hideHint() { document.getElementById('mapHint').classList.add('hidden'); }
+function showHint() { document.getElementById('mapHint').classList.remove('hidden'); }
+
+// ── CLEAR ─────────────────────────────────────────────────
+function clearArea() {
+  drawnItems.clearLayers();
+  state.polygon = null;
+  state.polygonLayer = null;
+  clearAreaInfo();
+  showHint();
+  setStatus('idle', 'Draw a project area to begin.');
+  setButtons(false);
+}
+
+// ── SUBMIT (Phase 1 placeholder) ───────────────────────────
+function submitQuery() {
+  if (!state.polygon || state.activeSources.size === 0) return;
+
+  // Build coordinate string for display
+  const coords = state.polygon.coordinates[0];
+  const coordStr = coords.map((c, i) => `  [${i}]  ${c[1].toFixed(5)}°N  ${c[0].toFixed(5)}°E`).join('\n');
+
+  document.getElementById('modalSourceCount').textContent =
+    `${state.activeSources.size} data source${state.activeSources.size > 1 ? 's' : ''}`;
+  document.getElementById('modalCoords').textContent = coordStr;
+  document.getElementById('resultOverlay').classList.add('visible');
+
+  // In Phase 2: replace this with actual API call
+  // const payload = buildQueryPayload();
+  // fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload) })
+  //   .then(r => r.json()).then(handleResults);
+}
+
+function closeModal() {
+  document.getElementById('resultOverlay').classList.remove('visible');
+}
+
+// ── QUERY PAYLOAD BUILDER (ready for Phase 2) ──────────────
+// This function will be called when the backend is connected.
+function buildQueryPayload() {
+  return {
+    version: '1.0',
+    timestamp: new Date().toISOString(),
+    projectArea: {
+      type: 'Feature',
+      geometry: state.polygon,
+      properties: {
+        areaSqKm: state.areaSqKm,
+        centroid: state.centroid
+      }
+    },
+    sources: Array.from(state.activeSources),
+    options: {
+      // Future: date range filters, data type filters, etc.
+    }
+  };
+}
+
+// ── KEYBOARD SHORTCUTS ─────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Delete' && state.polygon) clearArea();
+});
+
+</script>
+
+</body>
+</html>
