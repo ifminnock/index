@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Alaska Geotechnical Tools</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg-page:      #2E3A47;
+  --bg-card:      #3A4A5C;
+  --bg-input:     #2A3542;
+  --accent:       #D4651A;
+  --accent-dim:   #A34E14;
+  --secondary:    #4A6070;
+  --text-primary: #E8EAEC;
+  --text-muted:   #9AAABB;
+  --border:       #4A6070;
+  --border-focus: #D4651A;
+  --success-bg:   #1E3A2A;
+  --success-text: #5DBB7A;
+  --error-bg:     #3A1E1E;
+  --error-text:   #E07070;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Courier New', Consolas, monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  background-color: #1E2A35;
+  border-bottom: 2px solid var(--accent);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-title {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.version-badge {
+  background: var(--secondary);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover { color: var(--accent); }
+.header-nav a.active { color: var(--accent); }
+
+/* ── BREADCRUMB ── */
+.breadcrumb {
+  padding: 0.75rem 2rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(74, 96, 112, 0.3);
+}
+
+.breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb span { color: var(--accent); margin: 0 0.4rem; }
+
+/* ── MAIN ── */
+main {
+  flex: 1;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 2rem 4rem;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-bottom: 2.5rem;
+}
+
+.module-number {
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.page-title span {
+  color: var(--accent);
+}
+
+.page-desc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+  opacity: 0.4;
+}
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle left accent bar */
+.form-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+
+.form-card-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+}
+
+/* ── FORM ELEMENTS ── */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+label .required {
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 0.88rem;
+  padding: 0.65rem 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="email"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(212, 101, 26, 0.15);
+}
+
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: #5A6E80;
+}
+
+/* custom select arrow */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+/* ── SUBMIT BUTTON ── */
+.submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.submit-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+button[type="submit"] {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.8rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+button[type="submit"]:hover {
+  background: var(--accent-dim);
+}
+
+button[type="submit"]:active {
+  transform: scale(0.97);
+}
+
+button[type="submit"]:disabled {
+  background: var(--secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ── STATUS MESSAGES ── */
+.status-msg {
+  display: none;
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-top: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+.status-msg.success {
+  display: block;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid rgba(93, 187, 122, 0.3);
+}
+
+.status-msg.error {
+  display: block;
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid rgba(224, 112, 112, 0.3);
+}
+
+/* ── INFO BLOCK ── */
+.info-block {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1.1rem 1.3rem;
+  opacity: 0.85;
+}
+
+.info-card-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.info-card-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.info-card-text a {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.info-card-text a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── FOOTER ── */
+footer {
+  background: #1E2A35;
+  border-top: 1px solid var(--border);
+  padding: 1.25rem 2rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+footer a:hover { color: var(--accent); }
+
+.footer-disclaimer {
+  margin-top: 0.4rem;
+  font-size: 0.67rem;
+  color: #5A6E80;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  header { padding: 0 1rem; }
+  .header-nav { gap: 1rem; }
+  .header-nav a { font-size: 0.7rem; }
+  main { padding: 2rem 1rem 3rem; }
+  .form-card { padding: 1.5rem 1.25rem; }
+  .submit-row { flex-direction: column; align-items: flex-start; }
+  button[type="submit"] { width: 100%; }
+  .info-block { grid-template-columns: 1fr; }
+  .page-title { font-size: 1.4rem; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="header-left">
+      <span class="site-title">Alaska Geotechnical Tools</span>
+      <span class="version-badge">v1.0</span>
+    </div>
+    <nav class="header-nav">
+      <a href="index.html">← Index</a>
+      <a href="references.html">References</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
+  </header>
+
+  <!-- BREADCRUMB -->
+
+  <div class="breadcrumb">
+    <a href="index.html">Index</a>
+    <span>›</span>
+    Contact
+  </div>
+
+  <!-- MAIN -->
+
+  <main>
+
+```
+<div class="page-header">
+  <div class="module-number">Module 08 — Contact</div>
+  <h1 class="page-title">Get in <span>Touch</span></h1>
+  <p class="page-desc">
+    Questions, collaboration interest, or feedback on a specific module — use the form below.
+    All submissions go directly to the site author.
+  </p>
+</div>
+
+<hr class="divider" />
+
+<!-- FORM CARD -->
+<div class="form-card">
+  <div class="form-card-title">// Submit a message</div>
+
+  <form
+    id="contactForm"
+    action="https://formspree.io/f/YOUR_FORM_ID"
+    method="POST"
+  >
+
+    <!-- PURPOSE -->
+    <div class="form-group">
+      <label for="purpose">Purpose <span class="required">*</span></label>
+      <div class="select-wrapper">
+        <select id="purpose" name="purpose" required>
+          <option value="" disabled selected>— Select a purpose —</option>
+          <option value="Collaboration Interest">Collaboration Interest</option>
+          <option value="Feedback / Suggestion">Feedback / Suggestion</option>
+          <option value="General Question">General Question</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="form-group">
+      <label for="email">Your Email <span class="required">*</span></label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        required
+        autocomplete="email"
+      />
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="form-group">
+      <label for="message">Message <span class="required">*</span></label>
+      <textarea
+        id="message"
+        name="message"
+        placeholder="Describe your interest, feedback, or question..."
+        required
+      ></textarea>
+    </div>
+
+    <!-- HIDDEN HONEYPOT (spam trap) -->
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+
+    <!-- SUBMIT ROW -->
+    <div class="submit-row">
+      <p class="submit-note">
+        Fields marked <span style="color:var(--accent)">*</span> are required.<br />
+        Response time is typically 1–3 business days.
+      </p>
+      <button type="submit" id="submitBtn">Send Message</button>
+    </div>
+
+  </form>
+
+  <!-- STATUS MESSAGES -->
+  <div class="status-msg success" id="successMsg">
+    ✓ Message sent. Thanks for reaching out — a response will follow to the email you provided.
+  </div>
+  <div class="status-msg error" id="errorMsg">
+    ✗ Submission failed. Please try again or send directly to
+    <a href="mailto:ian.minnock@mfimpact.com" style="color:var(--error-text)">ian.minnock@mfimpact.com</a>.
+  </div>
+
+</div>
+<!-- /form-card -->
+
+<!-- INFO BLOCK -->
+<div class="info-block">
+  <div class="info-card">
+    <div class="info-card-label">Direct Email</div>
+    <div class="info-card-text">
+      <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a><br />
+      Preferred for detailed technical exchange or file sharing.
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-label">About This Site</div>
+    <div class="info-card-text">
+      Independent project by Ian Minnock, CPG, PMP, PMI-ACP.<br />
+      Not affiliated with Alaska DOT&amp;PF or any agency.
+    </div>
+  </div>
+</div>
+```
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div>
+      Alaska Geotechnical Tools — ifminnock.github.io/index
+      &nbsp;·&nbsp;
+      <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a>
+      &nbsp;·&nbsp;
+      Last updated April 2026
+    </div>
+    <div class="footer-disclaimer">
+      This site is an independent personal project by Ian Minnock and is not affiliated with,
+      endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public
+      Facilities or any government agency. All tool outputs are design aids and should be verified
+      by a qualified professional before use.
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+
+      const data = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          successMsg.style.display = 'block';
+          form.reset();
+        } else {
+          errorMsg.style.display = 'block';
+        }
+      } catch (err) {
+        errorMsg.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      }
+    });
+  </script>
+
+</body>
+</html>
