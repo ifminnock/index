@@ -1,1 +1,1054 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Well & Boring Geometry Builder — Alaska Geotechnical Tools</title>
+<style>
+  :root {
+    --bg-page:   #2E3A47;
+    --bg-card:   #3A4A5C;
+    --bg-deep:   #25323E;
+    --accent:    #D4651A;
+    --accent2:   #4A6070;
+    --text:      #E8EAEC;
+    --text-dim:  #9AAABB;
+    --green:     #4CAF82;
+    --yellow:    #E6B840;
+    --red:       #C94040;
+    --border:    #4A6070;
+    --mono:      'Courier New', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg-page); color: var(--text); font-family: var(--mono); font-size: 14px; min-height: 100vh; }
+
+header {
+background: var(–bg-deep); border-bottom: 2px solid var(–accent);
+padding: 14px 24px; display: flex; align-items: center;
+justify-content: space-between; flex-wrap: wrap; gap: 8px; position: relative;
+}
+header .site-title { color: var(–accent); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+header h1 { font-size: 17px; color: var(–text); letter-spacing: .04em; }
+header nav a {
+color: var(–text-dim); font-size: 11px; text-decoration: none;
+border: 1px solid var(–border); padding: 4px 10px; border-radius: 3px; transition: color .15s, border-color .15s;
+}
+header nav a:hover { color: var(–accent); border-color: var(–accent); }
+
+.workspace { display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: calc(100vh - 62px); }
+
+.panel-left { background: var(–bg-card); border-right: 1px solid var(–border); overflow-y: auto; }
+.panel-section { border-bottom: 1px solid var(–border); }
+.panel-section-header {
+background: var(–bg-deep); padding: 10px 16px; font-size: 11px; letter-spacing: .1em;
+text-transform: uppercase; color: var(–accent); cursor: pointer;
+display: flex; justify-content: space-between; align-items: center; user-select: none;
+}
+.panel-section-header:hover { color: var(–text); }
+.panel-section-body { padding: 12px 16px; }
+
+.mode-selector { display: flex; gap: 8px; padding: 12px 16px; background: var(–bg-deep); border-bottom: 1px solid var(–border); }
+.mode-btn {
+flex: 1; background: var(–bg-card); border: 1px solid var(–border); color: var(–text-dim);
+font-family: var(–mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+padding: 8px 4px; cursor: pointer; border-radius: 3px; transition: all .15s; line-height: 1.4; text-align: center;
+}
+.mode-btn.active { background: var(–accent); border-color: var(–accent); color: #fff; }
+.mode-btn:hover:not(.active) { border-color: var(–accent); color: var(–accent); }
+
+.component-row {
+display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
+padding: 8px 10px; border: 1px solid transparent; border-radius: 4px; transition: border-color .15s, background .15s;
+}
+.component-row.active { background: rgba(212,101,26,.08); border-color: var(–accent); }
+.component-row input[type=“checkbox”] { margin-top: 2px; accent-color: var(–accent); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+.component-label { font-size: 13px; color: var(–text); line-height: 1.3; flex: 1; cursor: pointer; }
+.component-label .sub { font-size: 11px; color: var(–text-dim); display: block; margin-top: 2px; }
+
+.component-inputs { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(–border); gap: 8px; flex-wrap: wrap; }
+.component-inputs.visible { display: flex; }
+.input-group { display: flex; flex-direction: column; gap: 3px; min-width: 90px; flex: 1; }
+.input-group label { font-size: 10px; color: var(–text-dim); letter-spacing: .06em; text-transform: uppercase; }
+.input-group input, .input-group select {
+background: var(–bg-deep); border: 1px solid var(–border); color: var(–text);
+font-family: var(–mono); font-size: 12px; padding: 5px 8px; border-radius: 3px; width: 100%; transition: border-color .15s;
+}
+.input-group input:focus, .input-group select:focus { outline: none; border-color: var(–accent); }
+.input-group select option { background: var(–bg-deep); }
+
+.color-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+.color-swatch { width: 22px; height: 22px; border-radius: 3px; border: 2px solid transparent; cursor: pointer; transition: border-color .15s, transform .1s; }
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.selected { border-color: var(–text); }
+
+.btn-primary { background: var(–accent); border: none; color: #fff; font-family: var(–mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 20px; cursor: pointer; border-radius: 3px; width: 100%; margin-top: 8px; transition: background .15s; }
+.btn-primary:hover { background: #b8521a; }
+.btn-secondary { background: transparent; border: 1px solid var(–border); color: var(–text-dim); font-family: var(–mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 7px 14px; cursor: pointer; border-radius: 3px; transition: all .15s; }
+.btn-secondary:hover { border-color: var(–accent); color: var(–accent); }
+
+.panel-right { display: flex; flex-direction: column; overflow: hidden; }
+.viz-header { background: var(–bg-deep); border-bottom: 1px solid var(–border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.viz-header span { font-size: 11px; color: var(–text-dim); letter-spacing: .08em; text-transform: uppercase; }
+.viz-controls { display: flex; gap: 8px; align-items: center; }
+.viz-controls label { font-size: 11px; color: var(–text-dim); }
+.viz-controls input[type=“range”] { accent-color: var(–accent); width: 80px; }
+
+.viz-area { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; gap: 24px; flex-wrap: wrap; }
+.canvas-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.canvas-wrapper .canvas-label { font-size: 11px; color: var(–text-dim); letter-spacing: .1em; text-transform: uppercase; }
+canvas { border: 1px solid var(–border); border-radius: 4px; background: #1C2730; display: block; }
+
+.legend, .summary-table { background: var(–bg-card); border: 1px solid var(–border); border-radius: 4px; padding: 14px 16px; min-width: 200px; max-width: 260px; }
+.legend h3, .summary-table h3 { font-size: 11px; color: var(–accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(–border); padding-bottom: 6px; }
+.legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; font-size: 12px; color: var(–text); }
+.legend-swatch { width: 18px; height: 18px; border-radius: 2px; flex-shrink: 0; border: 1px solid rgba(255,255,255,.15); }
+.legend-item .dim { color: var(–text-dim); font-size: 11px; margin-left: auto; }
+.summary-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 6px; font-size: 12px; }
+.summary-row .key { color: var(–text-dim); }
+.summary-row .val { color: var(–text); text-align: right; }
+
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(–text-dim); font-size: 13px; padding: 60px 20px; text-align: center; width: 100%; }
+.empty-state .icon { font-size: 48px; opacity: .4; }
+
+.flag { font-size: 11px; padding: 4px 8px; border-radius: 3px; margin-top: 4px; display: inline-block; }
+.flag.warn { background: rgba(230,184,64,.15); color: var(–yellow); border: 1px solid var(–yellow); }
+.flag.ok   { background: rgba(76,175,130,.15); color: var(–green);  border: 1px solid var(–green); }
+.flag.err  { background: rgba(201,64,64,.15);  color: var(–red);    border: 1px solid var(–red); }
+
+.notes-area { border-top: 1px solid var(–border); padding: 12px 20px; background: var(–bg-deep); display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.notes-area textarea { flex: 1; min-width: 200px; background: var(–bg-card); border: 1px solid var(–border); color: var(–text); font-family: var(–mono); font-size: 12px; padding: 8px 10px; border-radius: 3px; resize: vertical; min-height: 60px; }
+.notes-area textarea:focus { outline: none; border-color: var(–accent); }
+.notes-area textarea::placeholder { color: var(–text-dim); }
+
+@media (max-width:860px) { .workspace { grid-template-columns: 1fr; } .panel-right { min-height: 500px; } }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="site-title">Alaska Geotechnical Tools</div>
+    <h1>Well &amp; Boring Geometry Builder</h1>
+  </div>
+  <nav><a href="index.html">← Index</a></nav>
+</header>
+
+<div class="workspace">
+
+  <!-- ══ LEFT PANEL ══ -->
+
+  <div class="panel-left">
+
+```
+<div class="mode-selector">
+  <button class="mode-btn active" onclick="setMode('piezometer')" id="btn-piezometer">Piezometer</button>
+  <button class="mode-btn"        onclick="setMode('perc')"       id="btn-perc">Percolation /<br>Infiltration</button>
+  <button class="mode-btn"        onclick="setMode('monitoring')" id="btn-monitoring">Monitoring<br>Well</button>
+</div>
+
+<!-- BOREHOLE & CASING -->
+<div class="panel-section">
+  <div class="panel-section-header" onclick="toggleSection('borehole')">Borehole &amp; Casing <span id="arrow-borehole">▼</span></div>
+  <div class="panel-section-body" id="sec-borehole">
+
+    <div class="component-row active">
+      <div style="flex:1">
+        <div class="component-label">Borehole <span class="sub">Drill bit / augered hole size</span></div>
+        <div class="component-inputs visible">
+          <div class="input-group">
+            <label>Diameter (in)</label>
+            <input type="number" id="borehole-dia" value="7" min="1" max="48" step="0.25" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Total Depth (ft)</label>
+            <input type="number" id="borehole-depth" value="20" min="1" max="300" step="1" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-casing">
+      <input type="checkbox" id="chk-casing" onchange="toggleComp('casing')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-casing">Well Casing / Riser <span class="sub">PVC, ABS, or other pipe</span></label>
+        <div class="component-inputs" id="inputs-casing">
+          <div class="input-group">
+            <label>OD (in)</label>
+            <input type="number" id="casing-od" value="3.5" min="0.5" max="24" step="0.25" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Wall (in)</label>
+            <input type="number" id="casing-wall" value="0.15" min="0.05" max="1" step="0.05" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Material</label>
+            <select id="casing-mat" onchange="draw()">
+              <option value="pvc">PVC</option>
+              <option value="abs" selected>ABS</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-screen">
+      <input type="checkbox" id="chk-screen" onchange="toggleComp('screen')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-screen">Screen / Perforations <span class="sub">Slotted or perforated interval</span></label>
+        <div class="component-inputs" id="inputs-screen">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="screen-top" value="16" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Length (ft)</label>
+            <input type="number" id="screen-len" value="4" min="0.5" max="100" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Type</label>
+            <select id="screen-type" onchange="draw()">
+              <option value="machine">Machine Slotted</option>
+              <option value="hand">Hand Slotted</option>
+              <option value="commercial">Commercial Screen</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ANNULAR FILL -->
+<div class="panel-section">
+  <div class="panel-section-header" onclick="toggleSection('annular')">Annular Fill Zones <span id="arrow-annular">▼</span></div>
+  <div class="panel-section-body" id="sec-annular">
+
+    <div class="component-row" id="row-filterpack">
+      <input type="checkbox" id="chk-filterpack" onchange="toggleComp('filterpack')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-filterpack">Filter Pack / Gravel Pack <span class="sub">Sand or gravel around screen or perc interval</span></label>
+        <div class="component-inputs" id="inputs-filterpack">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="fp-top" value="14" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Bottom Depth (ft)</label>
+            <input type="number" id="fp-bot" value="20" min="0.5" max="300" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Material</label>
+            <select id="fp-mat" onchange="draw()">
+              <option value="half-three-quarter" selected>½–¾" Gravel</option>
+              <option value="pea">Pea Gravel (#8)</option>
+              <option value="sand">Coarse Sand</option>
+              <option value="chips">Gravel Chips</option>
+              <option value="natural">Natural (cave-in)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-bentonite">
+      <input type="checkbox" id="chk-bentonite" onchange="toggleComp('bentonite')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-bentonite">Bentonite Seal <span class="sub">Annular seal above filter pack</span></label>
+        <div class="component-inputs" id="inputs-bentonite">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="bent-top" value="12" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Bottom Depth (ft)</label>
+            <input type="number" id="bent-bot" value="14" min="0.5" max="300" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Form</label>
+            <select id="bent-form" onchange="draw()">
+              <option value="chips" selected>⅜" Chips</option>
+              <option value="pellets">Pellets</option>
+              <option value="granular">Granular</option>
+              <option value="slurry">Slurry</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-grout">
+      <input type="checkbox" id="chk-grout" onchange="toggleComp('grout')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-grout">Cement / Grout Seal <span class="sub">Surface seal or full annular grout</span></label>
+        <div class="component-inputs" id="inputs-grout">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="grout-top" value="0" min="-3" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Bottom Depth (ft)</label>
+            <input type="number" id="grout-bot" value="10" min="0.5" max="300" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Mix</label>
+            <select id="grout-mix" onchange="draw()">
+              <option value="cement">Neat Cement</option>
+              <option value="cement-bent">Cement-Bentonite</option>
+              <option value="bent-slurry">Bentonite Slurry</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-cuttings">
+      <input type="checkbox" id="chk-cuttings" onchange="toggleComp('cuttings')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-cuttings">Auger Cuttings Backfill <span class="sub">Native cuttings returned to annulus</span></label>
+        <div class="component-inputs" id="inputs-cuttings">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="cut-top" value="0" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Bottom Depth (ft)</label>
+            <input type="number" id="cut-bot" value="12" min="0.5" max="300" step="0.5" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FORMATION PROFILE -->
+<div class="panel-section">
+  <div class="panel-section-header" onclick="toggleSection('soil')">Formation Profile <span id="arrow-soil">▼</span></div>
+  <div class="panel-section-body" id="sec-soil">
+    <div id="soil-layers-container"></div>
+    <button class="btn-secondary" onclick="addSoilLayer()" style="width:100%;margin-top:4px;">+ Add Layer</button>
+  </div>
+</div>
+
+<!-- WATER & TEST PARAMS -->
+<div class="panel-section">
+  <div class="panel-section-header" onclick="toggleSection('water')">Water &amp; Test Parameters <span id="arrow-water">▼</span></div>
+  <div class="panel-section-body" id="sec-water">
+
+    <div class="component-row" id="row-gwl">
+      <input type="checkbox" id="chk-gwl" onchange="toggleComp('gwl')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-gwl">Groundwater Level <span class="sub">Static water table depth</span></label>
+        <div class="component-inputs" id="inputs-gwl">
+          <div class="input-group">
+            <label>Depth to GWL (ft)</label>
+            <input type="number" id="gwl-depth" value="8" min="0" max="300" step="0.5" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-perc">
+      <input type="checkbox" id="chk-perc" onchange="toggleComp('perc')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-perc">Percolation Test Interval <span class="sub">Interval of gravel added to the bottom of the percolation test</span></label>
+        <div class="component-inputs" id="inputs-perc">
+          <div class="input-group">
+            <label>Top Depth (ft)</label>
+            <input type="number" id="perc-top" value="18" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Bottom Depth (ft)</label>
+            <input type="number" id="perc-bot" value="20" min="0.5" max="300" step="0.5" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-control">
+      <input type="checkbox" id="chk-control" onchange="toggleComp('control')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-control">Control Point <span class="sub">Reference elevation datum (geologist provided)</span></label>
+        <div class="component-inputs" id="inputs-control">
+          <div class="input-group">
+            <label>Control Depth (ft)</label>
+            <input type="number" id="control-depth" value="10" min="0" max="299" step="0.5" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SURFACE COMPLETION -->
+<div class="panel-section">
+  <div class="panel-section-header" onclick="toggleSection('surface')">Surface Completion <span id="arrow-surface">▼</span></div>
+  <div class="panel-section-body" id="sec-surface">
+
+    <div class="component-row" id="row-stick">
+      <input type="checkbox" id="chk-stick" onchange="toggleComp('stick')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-stick">Casing Stick-Up <span class="sub">Height above ground surface</span></label>
+        <div class="component-inputs" id="inputs-stick">
+          <div class="input-group">
+            <label>Height (ft)</label>
+            <input type="number" id="stick-height" value="1" min="0.1" max="10" step="0.25" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-cap">
+      <input type="checkbox" id="chk-cap" onchange="toggleComp('cap')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-cap">Cap / Cover <span class="sub">Locking, vented, or flush</span></label>
+        <div class="component-inputs" id="inputs-cap">
+          <div class="input-group">
+            <label>Type</label>
+            <select id="cap-type" onchange="draw()">
+              <option value="locking">Locking Cap</option>
+              <option value="vented">Vented Cap</option>
+              <option value="flush">Flush Mount</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-vault">
+      <input type="checkbox" id="chk-vault" onchange="toggleComp('vault')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-vault">Protective Casing / Vault <span class="sub">Outer steel protective casing at grade</span></label>
+        <div class="component-inputs" id="inputs-vault">
+          <div class="input-group">
+            <label>OD (in)</label>
+            <input type="number" id="vault-od" value="6" min="3" max="24" step="1" onchange="draw()">
+          </div>
+          <div class="input-group">
+            <label>Height (ft)</label>
+            <input type="number" id="vault-height" value="1.5" min="0.5" max="6" step="0.25" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" id="row-pad">
+      <input type="checkbox" id="chk-pad" onchange="toggleComp('pad')">
+      <div style="flex:1">
+        <label class="component-label" for="chk-pad">Concrete Surface Pad <span class="sub">Surface protection / traffic pad</span></label>
+        <div class="component-inputs" id="inputs-pad">
+          <div class="input-group">
+            <label>Thickness (in)</label>
+            <input type="number" id="pad-thick" value="4" min="2" max="12" step="1" onchange="draw()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="padding:14px 16px;background:var(--bg-deep);">
+  <button class="btn-primary" onclick="draw()">⟳ Update Drawing</button>
+  <div style="margin-top:10px;display:flex;gap:8px;">
+    <button class="btn-secondary" onclick="exportPNG()" style="flex:1">↓ Export PNG</button>
+    <button class="btn-secondary" onclick="resetAll()"  style="flex:1">✕ Reset</button>
+  </div>
+</div>
+```
+
+  </div><!-- end panel-left -->
+
+  <!-- ══ RIGHT PANEL ══ -->
+
+  <div class="panel-right">
+    <div class="viz-header">
+      <span>Cross-Section View</span>
+      <div class="viz-controls">
+        <label>Zoom</label>
+        <input type="range" id="zoom-slider" min="0.5" max="3" step="0.1" value="1" oninput="draw()">
+        <label id="zoom-label">1.0×</label>
+      </div>
+    </div>
+    <div class="viz-area" id="viz-area">
+      <div class="empty-state" id="empty-state">
+        <div class="icon">🔩</div>
+        <div>Configure components at left<br>and click <strong>Update Drawing</strong></div>
+      </div>
+      <div class="canvas-wrapper" id="canvas-wrapper" style="display:none">
+        <canvas id="wellCanvas"></canvas>
+        <div class="canvas-label" id="canvas-mode-label">Cross Section</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;align-self:flex-start;">
+        <div class="legend"        id="legend-box"  style="display:none"></div>
+        <div class="summary-table" id="summary-box" style="display:none"></div>
+        <div id="flags-box" style="display:flex;flex-direction:column;gap:4px;max-width:260px;"></div>
+      </div>
+    </div>
+    <div class="notes-area">
+      <textarea id="well-notes" placeholder="Well notes / boring log remarks..."></textarea>
+    </div>
+  </div>
+
+</div><!-- end workspace -->
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────────────────
+let currentMode = 'piezometer';
+let soilLayers  = [];
+let soilLayerCount = 0;
+
+const SOIL_COLORS = ['#8B6914','#C4A262','#9E8060','#6B8C42','#4A7CA5','#A05050','#7A9E7A','#B8A878','#5C7A8A','#8C7050'];
+const SOIL_TYPES  = ['Gravel','Sand','Silt','Clay','Peat','Fill','Bedrock'];
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────────
+function toggleSection(id) {
+  const body = document.getElementById('sec-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? '' : 'none';
+  arrow.textContent = hidden ? '▼' : '▶';
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  ['piezometer','perc','monitoring'].forEach(m =>
+    document.getElementById('btn-' + m).classList.toggle('active', m === mode)
+  );
+  draw();
+}
+
+function toggleComp(id) {
+  const chk    = document.getElementById('chk-' + id);
+  const inputs = document.getElementById('inputs-' + id);
+  const row    = document.getElementById('row-' + id);
+  if (!chk || !inputs) return;
+  const on = chk.checked;
+  inputs.classList.toggle('visible', on);
+  if (row) row.classList.toggle('active', on);
+  draw();
+}
+
+function isOn(id) { const el = document.getElementById('chk-' + id); return el ? el.checked : false; }
+function val(id)  { const el = document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; }
+function sel(id)  { const el = document.getElementById(id); return el ? el.value : ''; }
+
+// ── SOIL LAYERS ───────────────────────────────────────────────────────────────
+function addSoilLayer() {
+  soilLayerCount++;
+  const id = soilLayerCount;
+  const defaultTop = soilLayers.length > 0 ? soilLayers[soilLayers.length-1].bot : 0;
+  const defaultBot = Math.min(defaultTop + 5, val('borehole-depth'));
+  soilLayers.push({ id, top: defaultTop, bot: defaultBot, type: 'Sand', color: SOIL_COLORS[soilLayers.length % SOIL_COLORS.length] });
+  renderSoilLayers();
+  draw();
+}
+
+function removeSoilLayer(id) {
+  soilLayers = soilLayers.filter(l => l.id !== id);
+  renderSoilLayers(); draw();
+}
+
+function renderSoilLayers() {
+  const c = document.getElementById('soil-layers-container');
+  c.innerHTML = '';
+  soilLayers.forEach(layer => {
+    const div = document.createElement('div');
+    div.className = 'component-row active';
+    div.style.marginBottom = '10px';
+    div.innerHTML = `
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span class="component-label" style="font-size:12px;">Layer ${layer.id}</span>
+          <button onclick="removeSoilLayer(${layer.id})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;">✕</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div class="input-group" style="min-width:70px">
+            <label>Top (ft)</label>
+            <input type="number" value="${layer.top}" min="0" max="299" step="0.5" onchange="updateLayer(${layer.id},'top',this.value)">
+          </div>
+          <div class="input-group" style="min-width:70px">
+            <label>Bot (ft)</label>
+            <input type="number" value="${layer.bot}" min="0.5" max="300" step="0.5" onchange="updateLayer(${layer.id},'bot',this.value)">
+          </div>
+          <div class="input-group" style="min-width:100px">
+            <label>Dominant Soil</label>
+            <select onchange="updateLayer(${layer.id},'type',this.value)">
+              ${SOIL_TYPES.map(t => `<option value="${t}"${t===layer.type?' selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:6px;">
+          <label style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;">Color</label>
+          <div class="color-row">
+            ${SOIL_COLORS.map(c2 => `<div class="color-swatch${c2===layer.color?' selected':''}" style="background:${c2}" onclick="updateLayer(${layer.id},'color','${c2}');renderSoilLayers();"></div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function updateLayer(id, field, value) {
+  const layer = soilLayers.find(l => l.id === id);
+  if (!layer) return;
+  layer[field] = (field==='top'||field==='bot') ? parseFloat(value) : value;
+  draw();
+}
+
+// ── DRAWING ENGINE ────────────────────────────────────────────────────────────
+function draw() {
+  const zoom       = parseFloat(document.getElementById('zoom-slider').value);
+  document.getElementById('zoom-label').textContent = zoom.toFixed(1) + '×';
+
+  const totalDepth = val('borehole-depth') || 20;
+  const boreDia    = val('borehole-dia')   || 7;
+  const stickUp    = isOn('stick') ? val('stick-height') : 0;
+  const pxPerFt    = 24; // base scale; zoom applied via canvas dimensions
+
+  // Canvas layout: fixed title zone + stick-up zone + depth zone
+  const TITLE_H   = 60;  // px above grade (title block) — always enough clearance
+  const stickH    = stickUp * pxPerFt;
+  const aboveGrade = TITLE_H + stickH;
+  const belowGrade = totalDepth * pxPerFt + 30;
+  const totalH     = aboveGrade + belowGrade;
+  const totalW     = 320;
+
+  const canvas = document.getElementById('wellCanvas');
+  canvas.width  = Math.round(totalW * zoom);
+  canvas.height = Math.round(totalH * zoom);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(zoom, zoom);  // draw everything at base px, canvas scales it
+
+  const marginL = 58;
+  const marginR = 18;
+  const drawW   = totalW - marginL - marginR;
+  const surfaceY = aboveGrade; // y of ground surface in base px
+
+  const dy = d => surfaceY + d * pxPerFt;
+  const boreholeR = (boreDia / 2) * (drawW / (boreDia + 10));
+  const inToPx    = inches => inches * (boreholeR / (boreDia / 2));
+  const cx        = marginL + drawW / 2;
+
+  // Clear
+  ctx.fillStyle = '#1C2730';
+  ctx.fillRect(0, 0, totalW, totalH);
+
+  // ── SOIL PROFILE ──────────────────────────────────────────────────────────
+  soilLayers.forEach(layer => {
+    const yT = dy(layer.top);
+    const yB = Math.min(dy(layer.bot), dy(totalDepth));
+    if (yB <= yT) return;
+    ctx.fillStyle = layer.color + '44';
+    ctx.fillRect(0, yT, cx - boreholeR, yB - yT);
+    ctx.fillRect(cx + boreholeR, yT, totalW - (cx + boreholeR), yB - yT);
+    drawSoilHatch(ctx, layer.type, layer.color, 0, yT, cx - boreholeR, yB - yT);
+    drawSoilHatch(ctx, layer.type, layer.color, cx + boreholeR, yT, totalW - (cx + boreholeR), yB - yT);
+    ctx.fillStyle = layer.color;
+    ctx.font = '9px Courier New';
+    ctx.fillText(layer.type.substring(0,4), 3, (yT+yB)/2 + 3);
+  });
+
+  // ── ANNULAR FILLS ─────────────────────────────────────────────────────────
+  if (isOn('cuttings')) {
+    const yT = dy(val('cut-top')), yB = dy(val('cut-bot'));
+    if (yB > yT) {
+      ctx.fillStyle = '#7A604088';
+      ctx.fillRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      drawDots(ctx, '#AA8855', cx - boreholeR, yT, boreholeR*2, yB - yT);
+      lbl(ctx, 'CUTTINGS', cx + boreholeR + 4, (yT+yB)/2+3, '#AA8855');
+    }
+  }
+
+  if (isOn('filterpack')) {
+    const yT = dy(val('fp-top')), yB = dy(val('fp-bot'));
+    if (yB > yT) {
+      ctx.fillStyle = '#C4A26270';
+      ctx.fillRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      drawGravel(ctx, cx - boreholeR, yT, boreholeR*2, yB - yT);
+      lbl(ctx, 'GRAVEL', cx + boreholeR + 4, (yT+yB)/2+3, '#E8B870');
+      const matTxt = {'half-three-quarter':'½–¾"', pea:'Pea', sand:'C. Sand', chips:'Chips', natural:'Natural'}[sel('fp-mat')]||'';
+      lbl(ctx, matTxt, cx + boreholeR + 4, (yT+yB)/2+13, '#9AAABB');
+    }
+  }
+
+  if (isOn('bentonite')) {
+    const yT = dy(val('bent-top')), yB = dy(val('bent-bot'));
+    if (yB > yT) {
+      ctx.fillStyle = '#2F5030BB';
+      ctx.fillRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      drawHatch45(ctx, '#3A8A3A', cx - boreholeR, yT, boreholeR*2, yB - yT);
+      lbl(ctx, 'BENTONITE', cx + boreholeR + 4, (yT+yB)/2+3, '#5CBF5C');
+      lbl(ctx, {'chips':'⅜" Chips', pellets:'Pellets', granular:'Granular', slurry:'Slurry'}[sel('bent-form')]||'', cx + boreholeR + 4, (yT+yB)/2+13, '#9AAABB');
+    }
+  }
+
+  if (isOn('grout')) {
+    const yT = dy(val('grout-top')), yB = dy(val('grout-bot'));
+    if (yB > yT) {
+      ctx.fillStyle = '#888888AA';
+      ctx.fillRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      drawHatch90(ctx, '#AAAAAA', cx - boreholeR, yT, boreholeR*2, yB - yT);
+      lbl(ctx, 'GROUT', cx + boreholeR + 4, (yT+yB)/2+3, '#BBBBBB');
+    }
+  }
+
+  // ── BOREHOLE WALLS ────────────────────────────────────────────────────────
+  ctx.save();
+  ctx.strokeStyle = '#6A7A8A'; ctx.lineWidth = 1; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  ctx.moveTo(cx - boreholeR, surfaceY); ctx.lineTo(cx - boreholeR, dy(totalDepth));
+  ctx.moveTo(cx + boreholeR, surfaceY); ctx.lineTo(cx + boreholeR, dy(totalDepth));
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = '#6A7A8A'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx - boreholeR, dy(totalDepth)); ctx.lineTo(cx + boreholeR, dy(totalDepth)); ctx.stroke();
+  ctx.restore();
+
+  // ── GWL ───────────────────────────────────────────────────────────────────
+  if (isOn('gwl')) {
+    const gwY = dy(val('gwl-depth'));
+    ctx.save(); ctx.strokeStyle = '#4A9FD4'; ctx.lineWidth = 1.5; ctx.setLineDash([6,3]);
+    ctx.beginPath(); ctx.moveTo(0, gwY); ctx.lineTo(totalW, gwY); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+    ctx.fillStyle = '#4A9FD4'; ctx.font = 'bold 9px Courier New';
+    ctx.fillText('▼ GWL  ' + val('gwl-depth') + 'ft', 3, gwY - 3);
+    ctx.fillStyle = '#4A9FD418';
+    ctx.fillRect(cx - boreholeR, gwY, boreholeR*2, dy(totalDepth) - gwY);
+  }
+
+  // ── CONTROL LINE ──────────────────────────────────────────────────────────
+  if (isOn('control')) {
+    const ctY = dy(val('control-depth'));
+    ctx.save(); ctx.strokeStyle = '#E8EAEC'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, ctY); ctx.lineTo(totalW, ctY); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 9px Courier New';
+    ctx.fillText('CONTROL', 3, ctY - 3);
+  }
+
+  // ── PERC GRAVEL INTERVAL ──────────────────────────────────────────────────
+  if (isOn('perc')) {
+    const yT = dy(val('perc-top')), yB = dy(val('perc-bot'));
+    if (yB > yT) {
+      ctx.fillStyle = '#C4A26255';
+      ctx.fillRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      drawGravel(ctx, cx - boreholeR, yT, boreholeR*2, yB - yT);
+      ctx.save(); ctx.strokeStyle = '#E8B870'; ctx.lineWidth = 1.5; ctx.setLineDash([3,2]);
+      ctx.strokeRect(cx - boreholeR, yT, boreholeR*2, yB - yT);
+      ctx.setLineDash([]); ctx.restore();
+      lbl(ctx, 'PERC GRAVEL', cx + boreholeR + 4, (yT+yB)/2+3, '#E8B870');
+    }
+  }
+
+  // ── SCREEN ────────────────────────────────────────────────────────────────
+  if (isOn('screen') && isOn('casing')) {
+    const casingR = inToPx(val('casing-od') / 2);
+    const yT = dy(val('screen-top'));
+    const yB = dy(val('screen-top') + val('screen-len'));
+    if (yB > yT && casingR > 0) {
+      const slotSp = 5, nSlots = Math.floor((yB-yT)/slotSp);
+      ctx.save(); ctx.strokeStyle = '#D4651A'; ctx.lineWidth = 1;
+      for (let i = 0; i < nSlots; i++) {
+        const sy = yT + i*slotSp + slotSp/2;
+        ctx.beginPath();
+        ctx.moveTo(cx - casingR, sy); ctx.lineTo(cx - casingR - 5, sy);
+        ctx.moveTo(cx + casingR, sy); ctx.lineTo(cx + casingR + 5, sy);
+        ctx.stroke();
+      }
+      ctx.lineWidth = 2; ctx.strokeRect(cx - casingR, yT, casingR*2, yB-yT);
+      ctx.restore();
+      lbl(ctx, 'SCREEN', cx + casingR + 8, (yT+yB)/2+3, '#D4651A');
+      lbl(ctx, val('screen-len').toFixed(1)+'ft', cx + casingR + 8, (yT+yB)/2+13, '#9AAABB');
+    }
+  }
+
+  // ── CASING ────────────────────────────────────────────────────────────────
+  if (isOn('casing')) {
+    const od = val('casing-od'), wall = val('casing-wall');
+    const casingR  = inToPx(od / 2);
+    const casingIR = inToPx((od - 2*wall) / 2);
+    if (casingR > 0) {
+      const matColor = {pvc:'#D0E4F0', abs:'#D4C8A8', other:'#C0C8D0'}[sel('casing-mat')] || '#D0C8B8';
+      // Draw casing from surface line down (does not include stick-up yet)
+      ctx.fillStyle = matColor + 'CC';
+      ctx.fillRect(cx - casingR,  surfaceY, casingR - casingIR, dy(totalDepth) - surfaceY);
+      ctx.fillRect(cx + casingIR, surfaceY, casingR - casingIR, dy(totalDepth) - surfaceY);
+      ctx.save(); ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 1.5;
+      ctx.strokeRect(cx - casingR, surfaceY, casingR*2, dy(totalDepth) - surfaceY);
+      ctx.strokeStyle = '#6A7A8A'; ctx.lineWidth = 0.5;
+      ctx.strokeRect(cx - casingIR, surfaceY, casingIR*2, dy(totalDepth) - surfaceY);
+      ctx.restore();
+
+      // Stick-up above grade
+      if (stickUp > 0) {
+        const stickTopY = surfaceY - stickH;
+        ctx.fillStyle = matColor + 'CC';
+        ctx.fillRect(cx - casingR,  stickTopY, casingR - casingIR, stickH);
+        ctx.fillRect(cx + casingIR, stickTopY, casingR - casingIR, stickH);
+        ctx.save(); ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 1.5;
+        ctx.strokeRect(cx - casingR, stickTopY, casingR*2, stickH); ctx.restore();
+        // Dimension arrow
+        const dimX = cx + casingR + 16;
+        ctx.save(); ctx.strokeStyle = '#E8EAEC33'; ctx.lineWidth = 0.5; ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(dimX, stickTopY); ctx.lineTo(dimX, surfaceY); ctx.stroke();
+        ctx.setLineDash([]); ctx.restore();
+        ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+        ctx.fillText('↕ ' + stickUp.toFixed(1) + 'ft', dimX + 2, (stickTopY + surfaceY)/2 + 3);
+      }
+    }
+  }
+
+  // ── CAP ───────────────────────────────────────────────────────────────────
+  if (isOn('cap') && isOn('casing')) {
+    const casingR = inToPx(val('casing-od') / 2);
+    const capY = stickUp > 0 ? surfaceY - stickH - 5 : surfaceY - 5;
+    ctx.fillStyle = '#D4651A';
+    ctx.fillRect(cx - casingR - 3, capY, (casingR+3)*2, 5);
+    ctx.save(); ctx.strokeStyle = '#FF8040'; ctx.lineWidth = 1;
+    ctx.strokeRect(cx - casingR - 3, capY, (casingR+3)*2, 5); ctx.restore();
+  }
+
+  // ── VAULT ─────────────────────────────────────────────────────────────────
+  if (isOn('vault')) {
+    const vR = inToPx(val('vault-od') / 2);
+    const vH = val('vault-height') * pxPerFt;
+    ctx.fillStyle = '#6A6A7A88';
+    ctx.fillRect(cx - vR, surfaceY - vH, vR*2, vH);
+    ctx.save(); ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 2;
+    ctx.strokeRect(cx - vR, surfaceY - vH, vR*2, vH); ctx.restore();
+  }
+
+  // ── CONCRETE PAD ──────────────────────────────────────────────────────────
+  if (isOn('pad')) {
+    const thPx = (val('pad-thick') / 12) * pxPerFt;
+    const padW = boreholeR * 5;
+    ctx.fillStyle = '#888888CC';
+    ctx.fillRect(cx - padW/2, surfaceY - thPx, padW, thPx);
+    ctx.save(); ctx.strokeStyle = '#AAAAAA'; ctx.lineWidth = 1;
+    ctx.strokeRect(cx - padW/2, surfaceY - thPx, padW, thPx); ctx.restore();
+  }
+
+  // ── GROUND SURFACE ────────────────────────────────────────────────────────
+  ctx.save(); ctx.strokeStyle = '#8B6914'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, surfaceY); ctx.lineTo(totalW, surfaceY); ctx.stroke();
+  ctx.strokeStyle = '#8B691455'; ctx.lineWidth = 1;
+  for (let x = 0; x < totalW; x += 8) {
+    ctx.beginPath(); ctx.moveTo(x, surfaceY); ctx.lineTo(x - 5, surfaceY + 5); ctx.stroke();
+  }
+  ctx.restore();
+
+  // ── BOREHOLE DIA ANNOTATION ───────────────────────────────────────────────
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.fillText('⌀ ' + boreDia + '"', cx - boreholeR - 2, surfaceY + 13);
+
+  // ── DEPTH SCALE ───────────────────────────────────────────────────────────
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.save(); ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
+  const dStep = totalDepth > 50 ? 10 : totalDepth > 20 ? 5 : 2;
+  for (let d = 0; d <= totalDepth; d += dStep) {
+    const y = dy(d);
+    ctx.beginPath(); ctx.moveTo(marginL - 7, y); ctx.lineTo(marginL, y); ctx.stroke();
+    ctx.fillText(d + 'ft', 2, y + 3);
+  }
+  ctx.restore();
+
+  // ── TITLE BLOCK ── placed in the TITLE_H zone, always well above stick-up ──
+  const titleY = 14; // fixed at top of canvas — TITLE_H zone is always 60px regardless of stick-up
+  const modeLabel = {piezometer:'Piezometer', perc:'Percolation / Infiltration Test', monitoring:'Monitoring Well'}[currentMode] || currentMode;
+  ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 11px Courier New';
+  ctx.fillText(modeLabel + ' — Cross Section', marginL, titleY);
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.fillText('Depth: ' + totalDepth + 'ft  |  Borehole: ' + boreDia + '"', marginL, titleY + 13);
+
+  // Reset transform
+  ctx.setTransform(1,0,0,1,0,0);
+
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('canvas-wrapper').style.display = 'flex';
+  document.getElementById('canvas-mode-label').textContent = modeLabel + ' — Cross Section';
+
+  buildLegend(); buildSummary(); buildFlags();
+}
+
+// ── TEXTURE HELPERS ───────────────────────────────────────────────────────────
+function lbl(ctx, text, x, y, color) {
+  ctx.fillStyle = color; ctx.font = '9px Courier New'; ctx.fillText(text, x, y);
+}
+
+function drawSoilHatch(ctx, type, color, x, y, w, h) {
+  if (w <= 0 || h <= 0) return;
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.strokeStyle = color + 'AA'; ctx.lineWidth = 0.7;
+  const sp = 8;
+  if (type === 'Gravel' || type === 'Bedrock') {
+    for (let cy2 = y+sp/2; cy2 < y+h; cy2 += sp)
+      for (let cx2 = x+sp/2; cx2 < x+w; cx2 += sp) { ctx.beginPath(); ctx.arc(cx2,cy2,2.5,0,Math.PI*2); ctx.stroke(); }
+  } else if (type === 'Sand' || type === 'Fill') {
+    ctx.fillStyle = color + 'BB';
+    for (let cy2 = y+sp*0.4; cy2 < y+h; cy2 += sp*0.8)
+      for (let cx2 = x+sp*0.4; cx2 < x+w; cx2 += sp*0.8) { ctx.beginPath(); ctx.arc(cx2,cy2,1,0,Math.PI*2); ctx.fill(); }
+  } else if (type === 'Silt' || type === 'Clay') {
+    for (let ly = y+sp*0.3; ly < y+h; ly += sp*0.6) { ctx.beginPath(); ctx.moveTo(x,ly); ctx.lineTo(x+w,ly); ctx.stroke(); }
+  } else if (type === 'Peat') {
+    for (let ly = y+sp/2; ly < y+h; ly += sp) {
+      ctx.beginPath();
+      for (let lx = x; lx < x+w; lx += 4) ctx.lineTo(lx, ly + Math.sin((lx-x)/3)*2);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawGravel(ctx, x, y, w, h) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.fillStyle = '#C4A262';
+  for (let gy = y+3; gy < y+h-3; gy += 7)
+    for (let gx = x+3; gx < x+w-3; gx += 7) {
+      ctx.beginPath(); ctx.arc(gx+(Math.random()-.5)*3, gy+(Math.random()-.5)*3, 2.5, 0, Math.PI*2); ctx.fill();
+    }
+  ctx.restore();
+}
+
+function drawHatch45(ctx, color, x, y, w, h) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.strokeStyle = color; ctx.lineWidth = 1;
+  for (let i = -h; i < w+h; i += 7) { ctx.beginPath(); ctx.moveTo(x+i,y); ctx.lineTo(x+i+h,y+h); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawHatch90(ctx, color, x, y, w, h) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.strokeStyle = color; ctx.lineWidth = 0.8;
+  for (let ly = y; ly < y+h; ly += 6) { ctx.beginPath(); ctx.moveTo(x,ly); ctx.lineTo(x+w,ly); ctx.stroke(); }
+  for (let lx = x; lx < x+w; lx += 6) { ctx.beginPath(); ctx.moveTo(lx,y); ctx.lineTo(lx,y+h); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawDots(ctx, color, x, y, w, h) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.fillStyle = color;
+  for (let gy = y+4; gy < y+h; gy += 8)
+    for (let gx = x+4; gx < x+w; gx += 8) { ctx.beginPath(); ctx.arc(gx,gy,1.5,0,Math.PI*2); ctx.fill(); }
+  ctx.restore();
+}
+
+// ── LEGEND / SUMMARY / FLAGS ──────────────────────────────────────────────────
+function buildLegend() {
+  const box = document.getElementById('legend-box');
+  const items = [];
+  if (isOn('cuttings'))   items.push({color:'#AA8855', label:'Auger Cuttings', sub:'backfill'});
+  if (isOn('filterpack')) items.push({color:'#C4A262', label:'Filter/Gravel Pack', sub:sel('fp-mat').replace('half-three-quarter','½–¾"')});
+  if (isOn('bentonite'))  items.push({color:'#3A8A3A', label:'Bentonite Seal', sub:sel('bent-form')});
+  if (isOn('grout'))      items.push({color:'#888888', label:'Cement/Grout', sub:sel('grout-mix')});
+  if (isOn('screen'))     items.push({color:'#D4651A', label:'Screen/Perforations', sub:sel('screen-type')});
+  if (isOn('casing'))     items.push({color:'#9AAABB', label:'Casing', sub:sel('casing-mat').toUpperCase()});
+  if (isOn('gwl'))        items.push({color:'#4A9FD4', label:'Groundwater Level', sub:val('gwl-depth')+'ft bgs'});
+  if (isOn('control'))    items.push({color:'#E8EAEC', label:'Control Point', sub:val('control-depth')+'ft bgs'});
+  if (isOn('perc'))       items.push({color:'#E8B870', label:'Perc Gravel Interval', sub:val('perc-top')+'–'+val('perc-bot')+'ft'});
+  soilLayers.forEach(l => items.push({color:l.color, label:l.type, sub:l.top+'–'+l.bot+'ft'}));
+  if (!items.length) { box.style.display='none'; return; }
+  box.innerHTML = '<h3>Legend</h3>' + items.map(i =>
+    `<div class="legend-item"><div class="legend-swatch" style="background:${i.color}"></div><span>${i.label}</span><span class="dim">${i.sub}</span></div>`
+  ).join('');
+  box.style.display = 'block';
+}
+
+function buildSummary() {
+  const box = document.getElementById('summary-box');
+  const ml = {piezometer:'Piezometer', perc:'Perc/Infil. Test', monitoring:'Monitoring Well'}[currentMode]||currentMode;
+  const rows = [
+    {k:'Type', v:ml},
+    {k:'Borehole', v:val('borehole-dia')+'" dia'},
+    {k:'Total Depth', v:val('borehole-depth')+' ft bgs'},
+  ];
+  if (isOn('casing'))  rows.push({k:'Casing OD', v:val('casing-od')+'"  '+sel('casing-mat').toUpperCase()});
+  if (isOn('screen'))  rows.push({k:'Screen', v:val('screen-top')+'–'+(val('screen-top')+val('screen-len')).toFixed(1)+' ft'});
+  if (isOn('gwl'))     rows.push({k:'GWL', v:val('gwl-depth')+' ft bgs'});
+  if (isOn('control')) rows.push({k:'Control Pt', v:val('control-depth')+' ft bgs'});
+  if (isOn('stick'))   rows.push({k:'Stick-Up', v:val('stick-height')+' ft'});
+  box.innerHTML = '<h3>Well Summary</h3>' + rows.map(r =>
+    `<div class="summary-row"><span class="key">${r.k}</span><span class="val">${r.v}</span></div>`
+  ).join('');
+  box.style.display = 'block';
+}
+
+function buildFlags() {
+  const box = document.getElementById('flags-box');
+  const flags = [];
+  const bd = val('borehole-depth'), bdia = val('borehole-dia');
+  if (isOn('casing') && val('casing-od') >= bdia)
+    flags.push({type:'err', msg:'Casing OD ≥ borehole diameter'});
+  if (isOn('screen') && isOn('casing') && (val('screen-top')+val('screen-len')) > bd)
+    flags.push({type:'warn', msg:'Screen extends below total depth'});
+  if (isOn('filterpack') && isOn('bentonite') && val('fp-bot') > val('bent-top'))
+    flags.push({type:'warn', msg:'Filter pack and bentonite may overlap'});
+  if (isOn('gwl') && isOn('screen')) {
+    const gwl=val('gwl-depth'), st=val('screen-top'), sb=st+val('screen-len');
+    if (gwl > sb) flags.push({type:'warn', msg:'GWL below screen — well may be dry'});
+    if (gwl <= st) flags.push({type:'ok',  msg:'Screen fully below water table ✓'});
+  }
+  if (isOn('perc') && val('perc-bot') > bd)
+    flags.push({type:'warn', msg:'Perc gravel interval extends below total depth'});
+  box.innerHTML = flags.map(f => `<div class="flag ${f.type}">${f.msg}</div>`).join('');
+}
+
+// ── EXPORT / RESET ────────────────────────────────────────────────────────────
+function exportPNG() {
+  const canvas = document.getElementById('wellCanvas');
+  const a = document.createElement('a');
+  a.download = 'well_geometry_' + currentMode + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function resetAll() {
+  document.querySelectorAll('input[type="checkbox"]').forEach(c => { c.checked = false; });
+  document.querySelectorAll('.component-inputs').forEach(d => d.classList.remove('visible'));
+  soilLayers = []; soilLayerCount = 0; renderSoilLayers();
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('canvas-wrapper').style.display = 'none';
+  document.getElementById('legend-box').style.display = 'none';
+  document.getElementById('summary-box').style.display = 'none';
+  document.getElementById('flags-box').innerHTML = '';
+}
+
+// ── INIT — default matches your typical piezometer drawing ───────────────────
+document.getElementById('chk-casing').checked = true;    toggleComp('casing');
+document.getElementById('chk-screen').checked = true;    toggleComp('screen');
+document.getElementById('chk-filterpack').checked = true; toggleComp('filterpack');
+document.getElementById('chk-bentonite').checked = true;  toggleComp('bentonite');
+document.getElementById('chk-cuttings').checked = true;   toggleComp('cuttings');
+document.getElementById('chk-stick').checked = true;     toggleComp('stick');
+document.getElementById('chk-cap').checked = true;       toggleComp('cap');
+
+// Default values matching 3.5" OD ABS in 7" borehole, 2ft bentonite chips, ½–¾" gravel
+document.getElementById('borehole-dia').value   = '7';
+document.getElementById('borehole-depth').value = '20';
+document.getElementById('casing-od').value      = '3.5';
+document.getElementById('casing-mat').value     = 'abs';
+document.getElementById('screen-top').value     = '16';
+document.getElementById('screen-len').value     = '4';
+document.getElementById('fp-top').value         = '14';
+document.getElementById('fp-bot').value         = '20';
+document.getElementById('fp-mat').value         = 'half-three-quarter';
+document.getElementById('bent-top').value       = '12';
+document.getElementById('bent-bot').value       = '14';
+document.getElementById('bent-form').value      = 'chips';
+document.getElementById('cut-top').value        = '0';
+document.getElementById('cut-bot').value        = '12';
+
+addSoilLayer();
+soilLayers[0].type='Silt'; soilLayers[0].top=0; soilLayers[0].bot=10; soilLayers[0].color='#9E8060';
+addSoilLayer();
+soilLayers[1].type='Gravel'; soilLayers[1].top=10; soilLayers[1].bot=20; soilLayers[1].color='#C4A262';
+renderSoilLayers();
+
+draw();
+</script>
+
+</body>
+</html>
