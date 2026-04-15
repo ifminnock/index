@@ -6,29 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact — Alaska Geotechnical Tools</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 ```
-:root {
-  --bg-page:      #2E3A47;
-  --bg-card:      #3A4A5C;
-  --bg-input:     #2A3542;
-  --accent:       #D4651A;
-  --accent-dim:   #A34E14;
-  --secondary:    #4A6070;
-  --text-primary: #E8EAEC;
-  --text-muted:   #9AAABB;
-  --border:       #4A6070;
-  --border-focus: #D4651A;
-  --success-bg:   #1E3A2A;
-  --success-text: #5DBB7A;
-  --error-bg:     #3A1E1E;
-  --error-text:   #E07070;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background-color: var(--bg-page);
-  color: var(--text-primary);
+  background-color: #2E3A47;
+  color: #E8EAEC;
   font-family: 'Courier New', Consolas, monospace;
   min-height: 100vh;
   display: flex;
@@ -37,8 +25,8 @@ body {
 
 /* ── HEADER ── */
 header {
-  background-color: #1E2A35;
-  border-bottom: 2px solid var(--accent);
+  background-color: #1A2530;
+  border-bottom: 2px solid #D4651A;
   padding: 0 2rem;
   display: flex;
   align-items: center;
@@ -58,18 +46,18 @@ header {
 .site-title {
   font-size: 0.95rem;
   font-weight: bold;
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
+  color: #E8EAEC;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .version-badge {
-  background: var(--secondary);
-  color: var(--text-muted);
+  background-color: #3A4A5C;
+  color: #9AAABB;
   font-size: 0.65rem;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 3px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .header-nav {
@@ -79,342 +67,336 @@ header {
 }
 
 .header-nav a {
-  color: var(--text-muted);
+  color: #9AAABB;
   text-decoration: none;
   font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  transition: color 0.2s;
 }
 
-.header-nav a:hover { color: var(--accent); }
-.header-nav a.active { color: var(--accent); }
+.header-nav a:hover {
+  color: #D4651A;
+}
+
+.header-nav a.active {
+  color: #D4651A;
+}
 
 /* ── BREADCRUMB ── */
 .breadcrumb {
-  padding: 0.75rem 2rem;
+  background-color: #263240;
+  padding: 0.6rem 2rem;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: #9AAABB;
   letter-spacing: 0.04em;
-  border-bottom: 1px solid rgba(74, 96, 112, 0.3);
+  border-bottom: 1px solid #3A4A5C;
 }
 
 .breadcrumb a {
-  color: var(--text-muted);
+  color: #9AAABB;
   text-decoration: none;
-  transition: color 0.2s;
 }
 
-.breadcrumb a:hover { color: var(--accent); }
-.breadcrumb span { color: var(--accent); margin: 0 0.4rem; }
+.breadcrumb a:hover {
+  color: #D4651A;
+}
+
+.breadcrumb .sep {
+  color: #D4651A;
+  margin: 0 0.5rem;
+}
 
 /* ── MAIN ── */
 main {
   flex: 1;
-  max-width: 760px;
+  max-width: 720px;
   width: 100%;
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
 }
 
 /* ── PAGE HEADER ── */
-.page-header {
-  margin-bottom: 2.5rem;
-}
-
-.module-number {
-  font-size: 0.7rem;
-  color: var(--accent);
-  letter-spacing: 0.12em;
+.module-label {
+  font-size: 0.68rem;
+  color: #D4651A;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
-.page-title {
-  font-size: 1.8rem;
+h1 {
+  font-size: 1.75rem;
   font-weight: bold;
-  color: var(--text-primary);
+  color: #E8EAEC;
   letter-spacing: 0.03em;
-  line-height: 1.2;
   margin-bottom: 0.75rem;
 }
 
-.page-title span {
-  color: var(--accent);
+h1 em {
+  color: #D4651A;
+  font-style: normal;
 }
 
 .page-desc {
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  color: #9AAABB;
+  font-size: 0.84rem;
   line-height: 1.7;
-  max-width: 560px;
+  max-width: 540px;
+  margin-bottom: 2.5rem;
 }
 
-/* ── DIVIDER ── */
-.divider {
+.rule {
   border: none;
-  border-top: 1px solid var(--border);
-  margin: 2rem 0;
-  opacity: 0.4;
+  border-top: 1px solid #3A4A5C;
+  margin-bottom: 2rem;
 }
 
 /* ── FORM CARD ── */
 .form-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2rem 2.5rem;
-  position: relative;
-  overflow: hidden;
+  background-color: #3A4A5C;
+  border: 1px solid #4A6070;
+  border-left: 3px solid #D4651A;
+  border-radius: 5px;
+  padding: 2rem 2.25rem 2.25rem;
 }
 
-/* subtle left accent bar */
-.form-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--accent);
-}
-
-.form-card-title {
-  font-size: 0.78rem;
+.card-label {
+  font-size: 0.68rem;
+  color: #9AAABB;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-muted);
   margin-bottom: 1.75rem;
 }
 
-/* ── FORM ELEMENTS ── */
+/* ── FORM FIELDS ── */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
 label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
+  color: #9AAABB;
+  margin-bottom: 0.45rem;
 }
 
-label .required {
-  color: var(--accent);
+label .req {
+  color: #D4651A;
   margin-left: 2px;
 }
 
-input[type="email"],
 select,
+input[type="email"],
 textarea {
+  display: block;
   width: 100%;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
+  background-color: #232F3A;
+  border: 1px solid #4A6070;
   border-radius: 4px;
-  color: var(--text-primary);
+  color: #E8EAEC;
   font-family: 'Courier New', Consolas, monospace;
   font-size: 0.88rem;
   padding: 0.65rem 0.85rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
   appearance: none;
   -webkit-appearance: none;
 }
 
-input[type="email"]:focus,
 select:focus,
+input[type="email"]:focus,
 textarea:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px rgba(212, 101, 26, 0.15);
+  border-color: #D4651A;
+  box-shadow: 0 0 0 2px rgba(212, 101, 26, 0.18);
 }
 
 input[type="email"]::placeholder,
 textarea::placeholder {
-  color: #5A6E80;
+  color: #4A6070;
 }
 
-/* custom select arrow */
-.select-wrapper {
+.select-wrap {
   position: relative;
 }
 
-.select-wrapper::after {
-  content: '▾';
+.select-wrap::after {
+  content: '\25BE';
   position: absolute;
-  right: 0.85rem;
+  right: 0.9rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--accent);
-  font-size: 0.9rem;
+  color: #D4651A;
   pointer-events: none;
+  font-size: 0.85rem;
 }
 
 select option {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background-color: #3A4A5C;
+  color: #E8EAEC;
 }
 
 textarea {
   resize: vertical;
-  min-height: 140px;
-  line-height: 1.6;
+  min-height: 145px;
+  line-height: 1.65;
 }
 
-/* ── SUBMIT BUTTON ── */
+/* ── SUBMIT ROW ── */
 .submit-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .submit-note {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  line-height: 1.5;
+  font-size: 0.71rem;
+  color: #9AAABB;
+  line-height: 1.55;
 }
 
-button[type="submit"] {
-  background: var(--accent);
-  color: #fff;
+.submit-note .req-star {
+  color: #D4651A;
+}
+
+.btn-send {
+  background-color: #D4651A;
+  color: #E8EAEC;
   border: none;
   border-radius: 4px;
   font-family: 'Courier New', Consolas, monospace;
   font-size: 0.82rem;
   font-weight: bold;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  padding: 0.7rem 1.8rem;
+  padding: 0.72rem 1.9rem;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-button[type="submit"]:hover {
-  background: var(--accent-dim);
+.btn-send:hover {
+  background-color: #B85516;
+  color: #E8EAEC;
 }
 
-button[type="submit"]:active {
-  transform: scale(0.97);
+.btn-send:active {
+  background-color: #9C4712;
 }
 
-button[type="submit"]:disabled {
-  background: var(--secondary);
+.btn-send:disabled {
+  background-color: #4A6070;
+  color: #9AAABB;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 /* ── STATUS MESSAGES ── */
-.status-msg {
+.msg-success,
+.msg-error {
   display: none;
   border-radius: 4px;
-  padding: 0.85rem 1rem;
+  padding: 0.8rem 1rem;
   font-size: 0.82rem;
-  line-height: 1.5;
+  line-height: 1.55;
   margin-top: 1.25rem;
-  letter-spacing: 0.02em;
 }
 
-.status-msg.success {
-  display: block;
-  background: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid rgba(93, 187, 122, 0.3);
+.msg-success {
+  background-color: #1A3326;
+  color: #5DBB7A;
+  border: 1px solid #2A5C3A;
 }
 
-.status-msg.error {
-  display: block;
-  background: var(--error-bg);
-  color: var(--error-text);
-  border: 1px solid rgba(224, 112, 112, 0.3);
+.msg-error {
+  background-color: #3A1E1E;
+  color: #E07878;
+  border: 1px solid #5C2A2A;
 }
 
-/* ── INFO BLOCK ── */
-.info-block {
-  margin-top: 2.5rem;
+.msg-error a {
+  color: #E07878;
+}
+
+/* ── INFO CARDS ── */
+.info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 .info-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 1.1rem 1.3rem;
-  opacity: 0.85;
+  background-color: #3A4A5C;
+  border: 1px solid #4A6070;
+  border-radius: 4px;
+  padding: 1.1rem 1.25rem;
 }
 
 .info-card-label {
-  font-size: 0.65rem;
+  font-size: 0.64rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-bottom: 0.4rem;
+  letter-spacing: 0.11em;
+  color: #D4651A;
+  margin-bottom: 0.45rem;
 }
 
-.info-card-text {
+.info-card-body {
   font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.6;
+  color: #9AAABB;
+  line-height: 1.65;
 }
 
-.info-card-text a {
-  color: var(--text-primary);
+.info-card-body a {
+  color: #E8EAEC;
   text-decoration: none;
-  border-bottom: 1px solid var(--border);
-  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 1px solid #4A6070;
 }
 
-.info-card-text a:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+.info-card-body a:hover {
+  color: #D4651A;
+  border-bottom-color: #D4651A;
 }
 
 /* ── FOOTER ── */
 footer {
-  background: #1E2A35;
-  border-top: 1px solid var(--border);
+  background-color: #1A2530;
+  border-top: 1px solid #3A4A5C;
   padding: 1.25rem 2rem;
   text-align: center;
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.71rem;
+  color: #9AAABB;
   line-height: 1.8;
 }
 
 footer a {
-  color: var(--text-muted);
+  color: #9AAABB;
   text-decoration: none;
-  transition: color 0.2s;
 }
 
-footer a:hover { color: var(--accent); }
+footer a:hover {
+  color: #D4651A;
+}
 
 .footer-disclaimer {
-  margin-top: 0.4rem;
-  font-size: 0.67rem;
-  color: #5A6E80;
-  max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 0.65rem;
+  color: #4A6070;
+  max-width: 620px;
+  margin: 0.4rem auto 0;
   line-height: 1.7;
 }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 600px) {
+@media (max-width: 580px) {
   header { padding: 0 1rem; }
-  .header-nav { gap: 1rem; }
-  .header-nav a { font-size: 0.7rem; }
+  .header-nav { gap: 0.9rem; }
   main { padding: 2rem 1rem 3rem; }
-  .form-card { padding: 1.5rem 1.25rem; }
-  .submit-row { flex-direction: column; align-items: flex-start; }
-  button[type="submit"] { width: 100%; }
-  .info-block { grid-template-columns: 1fr; }
-  .page-title { font-size: 1.4rem; }
+  .form-card { padding: 1.5rem 1.1rem; }
+  .submit-row { flex-direction: column; align-items: stretch; }
+  .btn-send { text-align: center; }
+  .info-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 1.4rem; }
 }
 ```
 
@@ -430,7 +412,7 @@ footer a:hover { color: var(--accent); }
       <span class="version-badge">v1.0</span>
     </div>
     <nav class="header-nav">
-      <a href="index.html">← Index</a>
+      <a href="index.html">&#8592; Index</a>
       <a href="references.html">References</a>
       <a href="contact.html" class="active">Contact</a>
     </nav>
@@ -440,7 +422,7 @@ footer a:hover { color: var(--accent); }
 
   <div class="breadcrumb">
     <a href="index.html">Index</a>
-    <span>›</span>
+    <span class="sep">&#8250;</span>
     Contact
   </div>
 
@@ -449,33 +431,32 @@ footer a:hover { color: var(--accent); }
   <main>
 
 ```
-<div class="page-header">
-  <div class="module-number">Module 08 — Contact</div>
-  <h1 class="page-title">Get in <span>Touch</span></h1>
-  <p class="page-desc">
-    Questions, collaboration interest, or feedback on a specific module — use the form below.
-    All submissions go directly to the site author.
-  </p>
-</div>
+<div class="module-label">Module 08 &mdash; Contact</div>
+<h1>Get in <em>Touch</em></h1>
+<p class="page-desc">
+  Questions, collaboration interest, or feedback on a specific module &mdash;
+  use the form below. All submissions go directly to the site author.
+</p>
 
-<hr class="divider" />
+<hr class="rule" />
 
 <!-- FORM CARD -->
 <div class="form-card">
-  <div class="form-card-title">// Submit a message</div>
+
+  <div class="card-label">// Submit a message</div>
 
   <form
     id="contactForm"
-    action="https://formspree.io/f/xkoknrnz"
+    action="https://formspree.io/f/YOUR_FORM_ID"
     method="POST"
   >
 
     <!-- PURPOSE -->
     <div class="form-group">
-      <label for="purpose">Purpose <span class="required">*</span></label>
-      <div class="select-wrapper">
+      <label for="purpose">Purpose <span class="req">*</span></label>
+      <div class="select-wrap">
         <select id="purpose" name="purpose" required>
-          <option value="" disabled selected>— Select a purpose —</option>
+          <option value="" disabled selected>&#8212; Select a purpose &#8212;</option>
           <option value="Collaboration Interest">Collaboration Interest</option>
           <option value="Feedback / Suggestion">Feedback / Suggestion</option>
           <option value="General Question">General Question</option>
@@ -485,7 +466,7 @@ footer a:hover { color: var(--accent); }
 
     <!-- EMAIL -->
     <div class="form-group">
-      <label for="email">Your Email <span class="required">*</span></label>
+      <label for="email">Your Email <span class="req">*</span></label>
       <input
         type="email"
         id="email"
@@ -498,7 +479,7 @@ footer a:hover { color: var(--accent); }
 
     <!-- MESSAGE -->
     <div class="form-group">
-      <label for="message">Message <span class="required">*</span></label>
+      <label for="message">Message <span class="req">*</span></label>
       <textarea
         id="message"
         name="message"
@@ -507,44 +488,44 @@ footer a:hover { color: var(--accent); }
       ></textarea>
     </div>
 
-    <!-- HIDDEN HONEYPOT (spam trap) -->
+    <!-- HONEYPOT spam trap -->
     <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
 
     <!-- SUBMIT ROW -->
     <div class="submit-row">
       <p class="submit-note">
-        Fields marked <span style="color:var(--accent)">*</span> are required.<br />
-        Response time is typically 1–3 business days.
+        Fields marked <span class="req-star">*</span> are required.<br />
+        Response time is typically 1&ndash;3 business days.
       </p>
-      <button type="submit" id="submitBtn">Send Message</button>
+      <button type="submit" class="btn-send" id="submitBtn">Send Message</button>
     </div>
 
   </form>
 
   <!-- STATUS MESSAGES -->
-  <div class="status-msg success" id="successMsg">
-    ✓ Message sent. Thanks for reaching out — a response will follow to the email you provided.
+  <div class="msg-success" id="msgSuccess">
+    &#10003; Message sent. Thanks for reaching out &mdash; a response will follow to the email you provided.
   </div>
-  <div class="status-msg error" id="errorMsg">
-    ✗ Submission failed. Please try again or send directly to
-    <a href="mailto:ian.minnock@mfimpact.com" style="color:var(--error-text)">ian.minnock@mfimpact.com</a>.
+  <div class="msg-error" id="msgError">
+    &#10007; Submission failed. Please try again or email directly:
+    <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a>
   </div>
 
 </div>
 <!-- /form-card -->
 
-<!-- INFO BLOCK -->
-<div class="info-block">
+<!-- INFO CARDS -->
+<div class="info-grid">
   <div class="info-card">
     <div class="info-card-label">Direct Email</div>
-    <div class="info-card-text">
+    <div class="info-card-body">
       <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a><br />
       Preferred for detailed technical exchange or file sharing.
     </div>
   </div>
   <div class="info-card">
     <div class="info-card-label">About This Site</div>
-    <div class="info-card-text">
+    <div class="info-card-body">
       Independent project by Ian Minnock, CPG, PMP, PMI-ACP.<br />
       Not affiliated with Alaska DOT&amp;PF or any agency.
     </div>
@@ -558,11 +539,10 @@ footer a:hover { color: var(--accent); }
 
   <footer>
     <div>
-      Alaska Geotechnical Tools — ifminnock.github.io/index
-      &nbsp;·&nbsp;
+      Alaska Geotechnical Tools &nbsp;&middot;&nbsp;
+      ifminnock.github.io/index &nbsp;&middot;&nbsp;
       <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a>
-      &nbsp;·&nbsp;
-      Last updated April 2026
+      &nbsp;&middot;&nbsp; Last updated April 2026
     </div>
     <div class="footer-disclaimer">
       This site is an independent personal project by Ian Minnock and is not affiliated with,
@@ -573,40 +553,39 @@ footer a:hover { color: var(--accent); }
   </footer>
 
   <script>
-    const form = document.getElementById('contactForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const successMsg = document.getElementById('successMsg');
-    const errorMsg = document.getElementById('errorMsg');
+    var form    = document.getElementById('contactForm');
+    var btn     = document.getElementById('submitBtn');
+    var msgOK   = document.getElementById('msgSuccess');
+    var msgFail = document.getElementById('msgError');
 
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
-      successMsg.style.display = 'none';
-      errorMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      msgOK.style.display   = 'none';
+      msgFail.style.display = 'none';
 
-      const data = new FormData(form);
-
-      try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          body: data,
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (response.ok) {
-          successMsg.style.display = 'block';
+      fetch(form.action, {
+        method:  'POST',
+        body:    new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function(res) {
+        if (res.ok) {
+          msgOK.style.display = 'block';
           form.reset();
         } else {
-          errorMsg.style.display = 'block';
+          msgFail.style.display = 'block';
         }
-      } catch (err) {
-        errorMsg.style.display = 'block';
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Message';
-      }
+      })
+      .catch(function() {
+        msgFail.style.display = 'block';
+      })
+      .finally(function() {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      });
     });
   </script>
 
