@@ -5,38 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alaska Geotechnical Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-–bg:      #0c0e14;
-–bg2:     #13151e;
-–bg3:     #1a1d28;
-–border:  #252836;
-–border2: #30354a;
-–text:    #dde0ee;
-–muted:   #666d88;
-–dim:     #3a3f55;
-–accent:  #f0a500;
-–teal:    #2ec4b6;
-–blue:    #4a9eff;
-–green:   #3dba7e;
-–red:     #e05a2b;
-–purple:  #9b72cf;
-–orange:  #f6ad55;
-–ice:     #63b3ed;
-–violet:  #b794f4;
-–mono: ‘IBM Plex Mono’, monospace;
-–sans: ‘IBM Plex Sans’, sans-serif;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
 min-height: 100vh;
-background: var(–bg);
-color: var(–text);
-font-family: var(–sans);
+background: #0c0e14;
+color: #dde0ee;
+font-family: ‘IBM Plex Sans’, sans-serif;
 }
 
 body::before {
@@ -50,11 +29,12 @@ pointer-events: none;
 z-index: 0;
 }
 
+/* ── TOP BAR ── */
 .topbar {
 position: relative;
 z-index: 10;
-background: var(–bg2);
-border-bottom: 1px solid var(–border);
+background: #13151e;
+border-bottom: 1px solid #252836;
 padding: 0 40px;
 display: flex;
 align-items: center;
@@ -65,26 +45,27 @@ height: 52px;
 .topbar-left { display: flex; align-items: center; gap: 20px; }
 .dot-cluster { display: flex; gap: 5px; align-items: center; }
 .dot { width: 8px; height: 8px; border-radius: 50%; }
-.dot-1 { background: var(–red); }
-.dot-2 { background: var(–accent); }
-.dot-3 { background: var(–green); }
+.dot-1 { background: #e05a2b; }
+.dot-2 { background: #f0a500; }
+.dot-3 { background: #3dba7e; }
 
 .topbar-title {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 11px;
 font-weight: 600;
 letter-spacing: 0.14em;
 text-transform: uppercase;
-color: var(–muted);
+color: #666d88;
 }
 
 .topbar-right {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
-color: var(–dim);
+color: #3a3f55;
 letter-spacing: 0.06em;
 }
 
+/* ── WRAPPER ── */
 .wrapper {
 position: relative;
 z-index: 1;
@@ -93,18 +74,19 @@ margin: 0 auto;
 padding: 64px 40px 80px;
 }
 
+/* ── HERO ── */
 .hero {
 margin-bottom: 56px;
 animation: fadeUp 0.4s ease both;
 }
 
 .hero-tag {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
 font-weight: 600;
 letter-spacing: 0.22em;
 text-transform: uppercase;
-color: var(–accent);
+color: #f0a500;
 margin-bottom: 18px;
 display: flex;
 align-items: center;
@@ -116,30 +98,31 @@ content: ‘’;
 display: inline-block;
 width: 24px;
 height: 1px;
-background: var(–accent);
+background: #f0a500;
 }
 
 .hero-title {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: clamp(24px, 4vw, 40px);
 font-weight: 700;
 line-height: 1.1;
-color: var(–text);
+color: #dde0ee;
 letter-spacing: -0.02em;
 margin-bottom: 18px;
 }
 
-.hero-title span { color: var(–accent); }
+.hero-title span { color: #f0a500; }
 
 .hero-sub {
-font-family: var(–sans);
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 14px;
 font-weight: 300;
-color: var(–muted);
+color: #666d88;
 line-height: 1.75;
 max-width: 560px;
 }
 
+/* ── DIVIDER ── */
 .divider {
 display: flex;
 align-items: center;
@@ -148,17 +131,18 @@ margin-bottom: 36px;
 }
 
 .divider-label {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.18em;
 text-transform: uppercase;
-color: var(–dim);
+color: #3a3f55;
 white-space: nowrap;
 }
 
-.divider-line { flex: 1; height: 1px; background: var(–border); }
+.divider-line { flex: 1; height: 1px; background: #252836; }
 
+/* ── GRID ── */
 .app-grid {
 display: grid;
 grid-template-columns: repeat(3, 1fr);
@@ -173,11 +157,12 @@ margin-bottom: 64px;
 .topbar   { padding: 0 20px; }
 }
 
+/* ── APP CARD ── */
 .app-card {
 display: block;
 text-decoration: none;
-background: var(–bg2);
-border: 1px solid var(–border);
+background: #13151e;
+border: 1px solid #252836;
 border-radius: 3px;
 padding: 24px 24px 20px;
 position: relative;
@@ -202,28 +187,27 @@ from { opacity: 0; transform: translateY(14px); }
 to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Left accent strip — color set per card below */
 .app-card::before {
 content: ‘’;
 position: absolute;
 left: 0; top: 0; bottom: 0;
 width: 3px;
-background: var(–card-color);
 opacity: 0.6;
 transition: opacity 0.2s;
 }
 
+/* Hover glow — color set per card below */
 .app-card::after {
 content: ‘’;
 position: absolute;
 inset: 0;
-background: radial-gradient(ellipse at 20% 50%, var(–card-color) 0%, transparent 70%);
 opacity: 0;
 transition: opacity 0.3s;
 pointer-events: none;
 }
 
 .app-card:hover {
-border-color: var(–card-color);
 transform: translateY(-2px);
 box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 }
@@ -232,11 +216,10 @@ box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 .app-card:hover::after  { opacity: 0.06; }
 
 .card-num {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.14em;
-color: var(–card-color);
 opacity: 0.8;
 margin-bottom: 14px;
 }
@@ -244,23 +227,21 @@ margin-bottom: 14px;
 .card-icon { font-size: 26px; margin-bottom: 12px; display: block; line-height: 1; }
 
 .card-title {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 12px;
 font-weight: 600;
 letter-spacing: 0.02em;
-color: var(–text);
+color: #dde0ee;
 margin-bottom: 8px;
 line-height: 1.45;
 transition: color 0.2s;
 }
 
-.app-card:hover .card-title { color: var(–card-color); }
-
 .card-desc {
-font-family: var(–sans);
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
-color: var(–muted);
+color: #666d88;
 line-height: 1.65;
 margin-bottom: 16px;
 }
@@ -268,48 +249,101 @@ margin-bottom: 16px;
 .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
 .tag {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 8px;
 font-weight: 500;
 letter-spacing: 0.1em;
 text-transform: uppercase;
 padding: 2px 7px;
-border: 1px solid var(–border2);
+border: 1px solid #30354a;
 border-radius: 2px;
-color: var(–muted);
-background: var(–bg3);
+color: #666d88;
+background: #1a1d28;
 }
 
-.tag.wip    { border-color: var(–dim);    color: var(–dim); }
-.tag.complete { border-color: var(–green); color: var(–green); }
-.tag.draft  { border-color: var(–accent); color: var(–accent); }
+.tag.wip      { border-color: #3a3f55; color: #3a3f55; }
+.tag.complete { border-color: #3dba7e; color: #3dba7e; }
+.tag.draft    { border-color: #f0a500; color: #f0a500; }
 
 .card-arrow {
 position: absolute;
 bottom: 18px;
 right: 20px;
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 15px;
-color: var(–dim);
+color: #3a3f55;
 transition: color 0.2s, transform 0.2s;
 }
 
-.app-card:hover .card-arrow { color: var(–card-color); transform: translate(3px, -2px); }
+/* ── PER-CARD COLOR HARDCODING ── */
 
-/* Card color assignments */
-.card-distress { –card-color: var(–accent); }
-.card-soil     { –card-color: var(–teal); }
-.card-invest   { –card-color: var(–orange); }
-.card-well     { –card-color: var(–blue); }
-.card-design   { –card-color: #4a9eff; }
-.card-thaw     { –card-color: var(–ice); }
-.card-ai       { –card-color: var(–violet); }
-.card-contact  { –card-color: var(–green); }
-.card-refs     { –card-color: var(–purple); }
+/* 01 Pavement Distress — amber #f0a500 */
+.card-distress::before { background: #f0a500; }
+.card-distress::after  { background: radial-gradient(ellipse at 20% 50%, #f0a500 0%, transparent 70%); }
+.card-distress:hover   { border-color: #f0a500; }
+.card-distress:hover .card-title  { color: #f0a500; }
+.card-distress:hover .card-arrow  { color: #f0a500; transform: translate(3px, -2px); }
+.card-distress .card-num          { color: #f0a500; }
+
+/* 02 Rock & Soil — teal #2ec4b6 */
+.card-soil::before { background: #2ec4b6; }
+.card-soil::after  { background: radial-gradient(ellipse at 20% 50%, #2ec4b6 0%, transparent 70%); }
+.card-soil:hover   { border-color: #2ec4b6; }
+.card-soil:hover .card-title { color: #2ec4b6; }
+.card-soil:hover .card-arrow { color: #2ec4b6; transform: translate(3px, -2px); }
+.card-soil .card-num         { color: #2ec4b6; }
+
+/* 03 Investigation — orange #f6ad55 */
+.card-invest::before { background: #f6ad55; }
+.card-invest::after  { background: radial-gradient(ellipse at 20% 50%, #f6ad55 0%, transparent 70%); }
+.card-invest:hover   { border-color: #f6ad55; }
+.card-invest:hover .card-title { color: #f6ad55; }
+.card-invest:hover .card-arrow { color: #f6ad55; transform: translate(3px, -2px); }
+.card-invest .card-num         { color: #f6ad55; }
+
+/* 04 Design Tools — blue #4a9eff */
+.card-design::before { background: #4a9eff; }
+.card-design::after  { background: radial-gradient(ellipse at 20% 50%, #4a9eff 0%, transparent 70%); }
+.card-design:hover   { border-color: #4a9eff; }
+.card-design:hover .card-title { color: #4a9eff; }
+.card-design:hover .card-arrow { color: #4a9eff; transform: translate(3px, -2px); }
+.card-design .card-num         { color: #4a9eff; }
+
+/* 05 Thaw Consolidation — ice blue #63b3ed */
+.card-thaw::before { background: #63b3ed; }
+.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
+.card-thaw:hover   { border-color: #63b3ed; }
+.card-thaw:hover .card-title { color: #63b3ed; }
+.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
+.card-thaw .card-num         { color: #63b3ed; }
+
+/* 06 AI Analysis — violet #b794f4 */
+.card-ai::before { background: #b794f4; }
+.card-ai::after  { background: radial-gradient(ellipse at 20% 50%, #b794f4 0%, transparent 70%); }
+.card-ai:hover   { border-color: #b794f4; }
+.card-ai:hover .card-title { color: #b794f4; }
+.card-ai:hover .card-arrow { color: #b794f4; transform: translate(3px, -2px); }
+.card-ai .card-num         { color: #b794f4; }
+
+/* 07 Contact — green #3dba7e */
+.card-contact::before { background: #3dba7e; }
+.card-contact::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
+.card-contact:hover   { border-color: #3dba7e; }
+.card-contact:hover .card-title { color: #3dba7e; }
+.card-contact:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
+.card-contact .card-num         { color: #3dba7e; }
+
+/* 08 References — purple #9b72cf */
+.card-refs::before { background: #9b72cf; }
+.card-refs::after  { background: radial-gradient(ellipse at 20% 50%, #9b72cf 0%, transparent 70%); }
+.card-refs:hover   { border-color: #9b72cf; }
+.card-refs:hover .card-title { color: #9b72cf; }
+.card-refs:hover .card-arrow { color: #9b72cf; transform: translate(3px, -2px); }
+.card-refs .card-num         { color: #9b72cf; }
 
 /* ── FOOTER ── */
 .footer {
-border-top: 1px solid var(–border);
+border-top: 1px solid #252836;
 padding-top: 32px;
 display: flex;
 flex-direction: column;
@@ -325,17 +359,17 @@ gap: 16px;
 }
 
 .footer-author {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 11px;
-color: var(–muted);
+color: #666d88;
 letter-spacing: 0.06em;
 line-height: 1.9;
 }
 
-.footer-author strong { color: var(–text); font-weight: 600; }
+.footer-author strong { color: #dde0ee; font-weight: 600; }
 
 .footer-author a {
-color: var(–blue);
+color: #4a9eff;
 text-decoration: none;
 opacity: 0.8;
 transition: opacity 0.15s;
@@ -344,14 +378,14 @@ transition: opacity 0.15s;
 .footer-author a:hover { opacity: 1; text-decoration: underline; }
 
 .footer-badge {
-font-family: var(–mono);
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 letter-spacing: 0.1em;
 text-transform: uppercase;
 padding: 5px 12px;
-border: 1px solid var(–border2);
+border: 1px solid #30354a;
 border-radius: 2px;
-color: var(–dim);
+color: #3a3f55;
 white-space: nowrap;
 align-self: flex-start;
 }
@@ -360,11 +394,11 @@ align-self: flex-start;
 display: inline-block;
 width: 6px; height: 6px;
 border-radius: 50%;
-background: var(–green);
+background: #3dba7e;
 margin-right: 6px;
 position: relative;
 top: -1px;
-box-shadow: 0 0 6px var(–green);
+box-shadow: 0 0 6px #3dba7e;
 animation: pulse 2.5s ease infinite;
 }
 
@@ -374,13 +408,13 @@ animation: pulse 2.5s ease infinite;
 }
 
 .footer-disclaimer {
-font-family: var(–sans);
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
 font-style: italic;
-color: var(–dim);
+color: #3a3f55;
 line-height: 1.7;
-border-top: 1px solid var(–border);
+border-top: 1px solid #252836;
 padding-top: 16px;
 max-width: 780px;
 }
@@ -416,6 +450,7 @@ max-width: 780px;
 
   <div class="app-grid">
 
+```
 <a class="app-card card-distress" href="pavement-distress.html">
   <div class="card-num">01 — Diagnostics</div>
   <span class="card-icon">🛣️</span>
@@ -446,7 +481,7 @@ max-width: 780px;
 
 <a class="app-card card-invest" href="investigation_planning.html">
   <div class="card-num">03 — Planning</div>
-  <span class="card-icon">⚙️</span>
+  <span class="card-icon">🚁</span>
   <div class="card-title">Subsurface Investigation<br>Planning</div>
   <p class="card-desc">Interactive planning tool for selecting drilling methods, rig types, and investigative technologies. Covers rotary, auger, sonic, geophysics, and drone-based surveying.</p>
   <div class="card-tags">
@@ -458,36 +493,22 @@ max-width: 780px;
   <div class="card-arrow">↗</div>
 </a>
 
-<a class="app-card card-well" href="well-geometry.html">
-  <div class="card-num">04 — Geometry</div>
-  <span class="card-icon">📏</span>
-  <div class="card-title">Well Geometry<br>Tool</div>
-  <p class="card-desc">Design and reference tool for well and borehole geometry. Casing dimensions, screen placement, annular seal calculations, and completion specifications.</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">Well Design</span>
-    <span class="tag">Casing</span>
-    <span class="tag">Geometry</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<a class="app-card card-design" href="pavement-design.html">
-  <div class="card-num">05 — Design</div>
+<a class="app-card card-design" href="design-index.html">
+  <div class="card-num">04 — Design Tools</div>
   <span class="card-icon">📐</span>
-  <div class="card-title">Pavement Section Design<br>&amp; Frost Susceptibility</div>
-  <p class="card-desc">Flexible pavement section calculator with Alaska material specs, frost susceptibility screening, ESAL calculator, and Casagrande criterion checker.</p>
+  <div class="card-title">Engineering<br>Design Tools</div>
+  <p class="card-desc">Interactive calculators and design aids for pavement section design, well geometry, and more. Alaska material specifications and frost design methods throughout.</p>
   <div class="card-tags">
-    <span class="tag draft">⚠ Under Review</span>
-    <span class="tag">Section Design</span>
+    <span class="tag">Pavement</span>
+    <span class="tag">Wells</span>
     <span class="tag">Frost</span>
-    <span class="tag">ESAL</span>
+    <span class="tag">Calculators</span>
   </div>
   <div class="card-arrow">↗</div>
 </a>
 
 <a class="app-card card-thaw" href="thaw_consolidation.html">
-  <div class="card-num">06 — Modeling</div>
+  <div class="card-num">05 — Modeling</div>
   <span class="card-icon">🧊</span>
   <div class="card-title">Thaw Consolidation<br>Model</div>
   <p class="card-desc">1D thaw consolidation model for estimating settlement in thawing permafrost. Couples the Stefan equation with Terzaghi consolidation theory. Planned expansion to 2D. Math capstone project.</p>
@@ -501,7 +522,7 @@ max-width: 780px;
 </a>
 
 <a class="app-card card-ai" href="geo-agg.html">
-  <div class="card-num">07 — Analysis</div>
+  <div class="card-num">06 — Analysis</div>
   <span class="card-icon">📡</span>
   <div class="card-title">AI Historical<br>Data Analysis</div>
   <p class="card-desc">AI-assisted analysis tool for historical geotechnical and climate datasets. Pattern recognition, trend analysis, and site characterization support using regional Alaska data.</p>
@@ -515,7 +536,7 @@ max-width: 780px;
 </a>
 
 <a class="app-card card-contact" href="contact.html">
-  <div class="card-num">08 — Contact</div>
+  <div class="card-num">07 — Contact</div>
   <span class="card-icon">✉️</span>
   <div class="card-title">Contact &amp;<br>Feedback</div>
   <p class="card-desc">Questions, corrections, or suggestions about any tool in this reference system. Feedback helps improve the accuracy and usefulness of these guides.</p>
@@ -527,7 +548,7 @@ max-width: 780px;
 </a>
 
 <a class="app-card card-refs" href="references.html">
-  <div class="card-num">09 — References</div>
+  <div class="card-num">08 — References</div>
   <span class="card-icon">📚</span>
   <div class="card-title">References</div>
   <p class="card-desc">Source documents, standards, and manuals cited across all tools. Alaska DOT&amp;PF specifications, AASHTO, ASTM, USACE CRREL, and peer-reviewed literature.</p>
@@ -551,7 +572,7 @@ max-width: 780px;
         <div>Last updated: April 2026</div>
       </div>
       <div class="footer-badge">
-        <span class="status-dot"></span>9 tools &nbsp;·&nbsp; 2 complete &nbsp;·&nbsp; 1 draft &nbsp;·&nbsp; 4 in progress
+        <span class="status-dot"></span>8 tools &nbsp;·&nbsp; 2 complete &nbsp;·&nbsp; 4 in progress &nbsp;·&nbsp; 1 draft
       </div>
     </div>
     <div class="footer-disclaimer">
