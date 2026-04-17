@@ -574,6 +574,91 @@ body::before {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── EMAIL INPUT ── */
+.email-wrap {
+  padding: 14px 16px 0;
+}
+
+.email-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.email-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.email-input::placeholder { color: var(--dim); }
+.email-input:focus { border-color: var(--accent); }
+.email-input.invalid { border-color: var(--red); }
+
+.email-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.email-hint.error { color: var(--red); }
+
+/* ── AREA LIMIT WARNING ── */
+.area-warning {
+  display: none;
+  margin-top: 8px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  border: 1px solid;
+}
+
+.area-warning.too-small {
+  display: block;
+  background: rgba(74,158,255,0.08);
+  border-color: rgba(74,158,255,0.3);
+  color: var(--blue);
+}
+
+.area-warning.too-large {
+  display: block;
+  background: rgba(224,90,43,0.08);
+  border-color: rgba(224,90,43,0.3);
+  color: var(--red);
+}
+
+/* ── HOW TO LINK ── */
+.howto-link {
+  display: block;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.howto-link:hover { color: var(--teal); }
 </style>
 
 </head>
@@ -620,20 +705,11 @@ body::before {
 <div class="sidebar-section">
   <div class="section-label">Data Sources</div>
 
-  <div class="source-item active" data-source="usgs-nwis" onclick="toggleSource(this)">
+  <div class="source-item active" data-source="moa" onclick="toggleSource(this)">
     <div class="source-dot"></div>
     <div class="source-info">
-      <div class="source-name">USGS NWIS</div>
-      <div class="source-desc">Wells, water levels, site lithology</div>
-    </div>
-    <div class="source-tag tag-live">LIVE</div>
-  </div>
-
-  <div class="source-item active" data-source="nrcs-soils" onclick="toggleSource(this)">
-    <div class="source-dot"></div>
-    <div class="source-info">
-      <div class="source-name">NRCS Web Soil Survey</div>
-      <div class="source-desc">Soil map units, geotechnical properties</div>
+      <div class="source-name">Municipality of Anchorage</div>
+      <div class="source-desc">Boring logs, geotech records, utilities</div>
     </div>
     <div class="source-tag tag-live">LIVE</div>
   </div>
@@ -643,6 +719,15 @@ body::before {
     <div class="source-info">
       <div class="source-name">AK DGGS</div>
       <div class="source-desc">Published borings, geologic maps</div>
+    </div>
+    <div class="source-tag tag-soon">SOON</div>
+  </div>
+
+  <div class="source-item coming-soon" data-source="nrcs-soils">
+    <div class="source-dot"></div>
+    <div class="source-info">
+      <div class="source-name">NRCS Web Soil Survey</div>
+      <div class="source-desc">Soil map units, geotechnical properties</div>
     </div>
     <div class="source-tag tag-soon">SOON</div>
   </div>
@@ -665,11 +750,11 @@ body::before {
     <div class="source-tag tag-soon">SOON</div>
   </div>
 
-  <div class="source-item coming-soon" data-source="moa">
+  <div class="source-item coming-soon" data-source="usgs-nwis">
     <div class="source-dot"></div>
     <div class="source-info">
-      <div class="source-name">Municipality of Anchorage</div>
-      <div class="source-desc">Local boring logs, utility records</div>
+      <div class="source-name">USGS NWIS</div>
+      <div class="source-desc">Wells, water levels, site lithology</div>
     </div>
     <div class="source-tag tag-soon">SOON</div>
   </div>
@@ -682,12 +767,27 @@ body::before {
   <div class="area-info" id="areaInfo">
     <div class="empty-hint">No area defined yet.<br>Draw a polygon on the map.</div>
   </div>
+  <div class="area-warning" id="areaWarning"></div>
 </div>
 
 <!-- Status -->
 <div class="status-bar">
   <div class="status-dot" id="statusDot"></div>
   <div class="status-text" id="statusText">Draw a project area to begin.</div>
+</div>
+
+<!-- Email + Submit -->
+<div class="email-wrap">
+  <label class="email-label" for="emailInput">Report Delivery Email</label>
+  <input
+    class="email-input"
+    id="emailInput"
+    type="email"
+    placeholder="your@email.com"
+    autocomplete="email"
+    oninput="validateEmail()"
+  />
+  <div class="email-hint" id="emailHint">Report will be sent here when ready.</div>
 </div>
 
 <!-- Submit -->
@@ -698,6 +798,7 @@ body::before {
   <button class="btn-clear" id="btnClear" disabled onclick="clearArea()">
     ✕ Clear Area
   </button>
+  <a class="howto-link" href="geo-agg-guide.html" target="_blank">? How to use this tool</a>
 </div>
 ```
 
@@ -738,8 +839,8 @@ body::before {
     </div>
     <div class="modal-body">
       Project area defined. <span class="highlight" id="modalSourceCount"></span> data sources selected.<br><br>
-      In Phase 2, this will trigger live API queries to each selected source and return harmonized results.<br><br>
-      Your polygon coordinates are captured and ready to pass to the backend.
+      Report will be delivered to: <span class="highlight" id="modalEmail"></span><br><br>
+      In Phase 2, this will trigger live API queries to each selected source, harmonize the results, and email you three deliverables: a data inventory report, side-by-side comparison, and data quality assessment.
     </div>
     <div class="modal-coords" id="modalCoords"></div>
     <button class="modal-close" onclick="closeModal()">Close</button>
@@ -752,13 +853,18 @@ body::before {
 
 <script>
 
+// ── CONSTANTS ─────────────────────────────────────────────
+const AREA_MIN_KM2 = 0.01;   // ~1 hectare — prevents single-point queries
+const AREA_MAX_KM2 = 500;    // ~193 sq miles — keeps queries manageable
+
 // ── STATE ──────────────────────────────────────────────────
 const state = {
-  polygon: null,       // GeoJSON polygon
-  polygonLayer: null,  // Leaflet layer reference
+  polygon: null,
+  polygonLayer: null,
   areaSqKm: 0,
   centroid: null,
-  activeSources: new Set(['usgs-nwis', 'nrcs-soils'])
+  activeSources: new Set(['moa']),
+  emailValid: false
 };
 
 // ── MAP INIT ───────────────────────────────────────────────
@@ -938,6 +1044,52 @@ function toggleSource(el) {
   }
 }
 
+// ── EMAIL VALIDATION ───────────────────────────────────────
+function validateEmail() {
+  const input = document.getElementById('emailInput');
+  const hint  = document.getElementById('emailHint');
+  const val   = input.value.trim();
+  const re    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (val === '') {
+    input.classList.remove('invalid');
+    hint.className = 'email-hint';
+    hint.textContent = 'Report will be sent here when ready.';
+    state.emailValid = false;
+  } else if (re.test(val)) {
+    input.classList.remove('invalid');
+    hint.className = 'email-hint';
+    hint.textContent = '✓ Looks good.';
+    state.emailValid = true;
+  } else {
+    input.classList.add('invalid');
+    hint.className = 'email-hint error';
+    hint.textContent = 'Enter a valid email address.';
+    state.emailValid = false;
+  }
+  setButtons(!!state.polygon);
+}
+
+// ── AREA LIMIT CHECK ───────────────────────────────────────
+function checkAreaLimits(areaSqKm) {
+  const warn = document.getElementById('areaWarning');
+  const km   = parseFloat(areaSqKm);
+
+  if (km < AREA_MIN_KM2) {
+    warn.className = 'area-warning too-small';
+    warn.textContent = `Area too small (${km.toFixed(4)} km²). Minimum is ${AREA_MIN_KM2} km². Expand your polygon.`;
+    return false;
+  } else if (km > AREA_MAX_KM2) {
+    warn.className = 'area-warning too-large';
+    warn.textContent = `Area too large (${km.toFixed(1)} km²). Maximum is ${AREA_MAX_KM2} km². Reduce your polygon.`;
+    return false;
+  } else {
+    warn.className = 'area-warning';
+    warn.textContent = '';
+    return true;
+  }
+}
+
 // ── UI HELPERS ─────────────────────────────────────────────
 function setStatus(type, msg) {
   const dot = document.getElementById('statusDot');
@@ -947,8 +1099,10 @@ function setStatus(type, msg) {
 }
 
 function setButtons(hasArea) {
-  document.getElementById('btnSubmit').disabled = !hasArea || state.activeSources.size === 0;
-  document.getElementById('btnClear').disabled = !hasArea;
+  const areaOk  = hasArea && checkAreaLimits(state.areaSqKm);
+  const emailOk = state.emailValid;
+  document.getElementById('btnSubmit').disabled = !(areaOk && emailOk);
+  document.getElementById('btnClear').disabled  = !hasArea;
 }
 
 function hideHint() { document.getElementById('mapHint').classList.add('hidden'); }
@@ -968,20 +1122,20 @@ function clearArea() {
 // ── SUBMIT (Phase 1 placeholder) ───────────────────────────
 function submitQuery() {
   if (!state.polygon || state.activeSources.size === 0) return;
+  if (!state.emailValid) return;
+  if (!checkAreaLimits(state.areaSqKm)) return;
 
-  // Build coordinate string for display
+  const email  = document.getElementById('emailInput').value.trim();
   const coords = state.polygon.coordinates[0];
-  const coordStr = coords.map((c, i) => `  [${i}]  ${c[1].toFixed(5)}°N  ${c[0].toFixed(5)}°E`).join('\n');
+  const coordStr = coords.map((c, i) =>
+    `  [${i}]  ${c[1].toFixed(5)}°N  ${c[0].toFixed(5)}°E`
+  ).join('\n');
 
   document.getElementById('modalSourceCount').textContent =
     `${state.activeSources.size} data source${state.activeSources.size > 1 ? 's' : ''}`;
   document.getElementById('modalCoords').textContent = coordStr;
+  document.getElementById('modalEmail').textContent = email;
   document.getElementById('resultOverlay').classList.add('visible');
-
-  // In Phase 2: replace this with actual API call
-  // const payload = buildQueryPayload();
-  // fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload) })
-  //   .then(r => r.json()).then(handleResults);
 }
 
 function closeModal() {
@@ -989,11 +1143,11 @@ function closeModal() {
 }
 
 // ── QUERY PAYLOAD BUILDER (ready for Phase 2) ──────────────
-// This function will be called when the backend is connected.
 function buildQueryPayload() {
   return {
     version: '1.0',
     timestamp: new Date().toISOString(),
+    deliveryEmail: document.getElementById('emailInput').value.trim(),
     projectArea: {
       type: 'Feature',
       geometry: state.polygon,
