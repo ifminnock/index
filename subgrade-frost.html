@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subgrade &amp; Frost Evaluation — Alaska Geotechnical Tools</title>
+<style>
+  :root {
+    --bg-page:       #2E3A47;
+    --bg-card:       #3A4A5C;
+    --bg-card-deep:  #30404F;
+    --bg-input:      #253340;
+    --accent-orange: #D4651A;
+    --accent-orange-dim: #A84E14;
+    --accent-blue:   #4A6070;
+    --accent-blue-lt: #5C7A8F;
+    --text-primary:  #E8EAEC;
+    --text-secondary:#9AAABB;
+    --text-dim:      #6A8090;
+    --border:        #4A5A6A;
+    --border-light:  #5A6A7A;
+    --green:  #3DAA6E;
+    --yellow: #D4A017;
+    --red:    #C0392B;
+    --green-bg:  rgba(61,170,110,0.12);
+    --yellow-bg: rgba(212,160,23,0.12);
+    --red-bg:    rgba(192,57,43,0.12);
+  }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Courier New’, Consolas, monospace;
+background: var(–bg-page);
+color: var(–text-primary);
+min-height: 100vh;
+font-size: 14px;
+line-height: 1.6;
+}
+
+/* ── HEADER ── */
+header {
+background: #1E2D3A;
+border-bottom: 2px solid var(–accent-orange);
+padding: 0 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+min-height: 60px;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-icon { font-size: 22px; }
+.header-title { font-size: 17px; font-weight: 700; color: var(–text-primary); letter-spacing: 0.03em; }
+.header-subtitle { font-size: 11px; color: var(–text-secondary); letter-spacing: 0.08em; text-transform: uppercase; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.btn-index {
+background: var(–bg-card);
+border: 1px solid var(–border);
+color: var(–text-secondary);
+padding: 6px 14px;
+border-radius: 4px;
+text-decoration: none;
+font-family: inherit;
+font-size: 12px;
+cursor: pointer;
+transition: all 0.18s;
+letter-spacing: 0.04em;
+}
+.btn-index:hover { background: var(–accent-blue); color: var(–text-primary); border-color: var(–accent-blue-lt); }
+
+/* ── TAB NAV ── */
+.tab-nav {
+background: #253340;
+border-bottom: 1px solid var(–border);
+display: flex;
+gap: 0;
+padding: 0 24px;
+overflow-x: auto;
+}
+.tab-btn {
+background: none;
+border: none;
+border-bottom: 3px solid transparent;
+color: var(–text-secondary);
+font-family: inherit;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.07em;
+text-transform: uppercase;
+padding: 14px 20px 11px;
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.18s;
+}
+.tab-btn:hover { color: var(–text-primary); }
+.tab-btn.active { color: var(–accent-orange); border-bottom-color: var(–accent-orange); }
+
+/* ── LAYOUT ── */
+.tab-content { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+background: var(–bg-card);
+border: 1px solid var(–border);
+border-radius: 6px;
+padding: 20px 22px;
+margin-bottom: 18px;
+}
+.card-title {
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(–accent-orange);
+margin-bottom: 14px;
+padding-bottom: 8px;
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+@media (max-width: 760px) {
+.two-col, .three-col { grid-template-columns: 1fr; }
+.tab-btn { padding: 12px 14px 9px; font-size: 11px; }
+header { padding: 0 14px; }
+.tab-content { padding: 14px; }
+}
+
+/* ── FORM ELEMENTS ── */
+label {
+display: block;
+font-size: 11px;
+color: var(–text-secondary);
+letter-spacing: 0.06em;
+text-transform: uppercase;
+margin-bottom: 5px;
+margin-top: 12px;
+}
+label:first-child { margin-top: 0; }
+input[type=“number”], input[type=“text”], select {
+width: 100%;
+background: var(–bg-input);
+border: 1px solid var(–border);
+color: var(–text-primary);
+font-family: inherit;
+font-size: 13px;
+padding: 8px 10px;
+border-radius: 4px;
+outline: none;
+transition: border-color 0.15s;
+}
+input:focus, select:focus { border-color: var(–accent-orange); }
+select option { background: var(–bg-card-deep); }
+
+.btn-calc {
+background: var(–accent-orange);
+border: none;
+color: #fff;
+font-family: inherit;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+padding: 10px 22px;
+border-radius: 4px;
+cursor: pointer;
+margin-top: 16px;
+transition: background 0.18s;
+}
+.btn-calc:hover { background: var(–accent-orange-dim); }
+.btn-reset {
+background: var(–bg-card-deep);
+border: 1px solid var(–border);
+color: var(–text-secondary);
+font-family: inherit;
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.06em;
+padding: 9px 16px;
+border-radius: 4px;
+cursor: pointer;
+margin-top: 16px;
+margin-left: 8px;
+transition: all 0.18s;
+}
+.btn-reset:hover { background: var(–accent-blue); color: var(–text-primary); }
+
+/* ── RESULT BOXES ── */
+.result-box {
+background: var(–bg-card-deep);
+border: 1px solid var(–border);
+border-radius: 4px;
+padding: 14px 16px;
+margin-top: 14px;
+}
+.result-box.pass  { border-color: var(–green);  background: var(–green-bg); }
+.result-box.warn  { border-color: var(–yellow); background: var(–yellow-bg); }
+.result-box.fail  { border-color: var(–red);    background: var(–red-bg); }
+.result-title { font-size: 11px; color: var(–text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.result-value { font-size: 20px; font-weight: 700; color: var(–text-primary); }
+.result-value.pass { color: var(–green); }
+.result-value.warn { color: var(–yellow); }
+.result-value.fail { color: var(–red); }
+.result-note  { font-size: 12px; color: var(–text-secondary); margin-top: 6px; line-height: 1.5; }
+
+/* ── INFO / NOTE BLOCKS ── */
+.info-block {
+background: rgba(74,96,112,0.25);
+border-left: 3px solid var(–accent-blue-lt);
+border-radius: 0 4px 4px 0;
+padding: 10px 14px;
+font-size: 12px;
+color: var(–text-secondary);
+margin-top: 10px;
+line-height: 1.6;
+}
+.warn-block {
+background: var(–yellow-bg);
+border-left: 3px solid var(–yellow);
+border-radius: 0 4px 4px 0;
+padding: 10px 14px;
+font-size: 12px;
+color: #D4B060;
+margin-top: 10px;
+line-height: 1.6;
+}
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+background: var(–bg-card-deep);
+color: var(–text-secondary);
+font-size: 11px;
+letter-spacing: 0.07em;
+text-transform: uppercase;
+padding: 8px 10px;
+text-align: left;
+border-bottom: 1px solid var(–border);
+}
+td { padding: 8px 10px; border-bottom: 1px solid rgba(74,90,106,0.4); color: var(–text-primary); }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(0,0,0,0.12); }
+.td-orange { color: var(–accent-orange); font-weight: 700; }
+.td-green  { color: var(–green); }
+.td-yellow { color: var(–yellow); }
+.td-red    { color: var(–red); }
+
+/* ── BADGE / PILL ── */
+.badge {
+display: inline-block;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+padding: 3px 8px;
+border-radius: 3px;
+margin-left: 6px;
+}
+.badge-orange { background: rgba(212,101,26,0.25); color: var(–accent-orange); border: 1px solid var(–accent-orange); }
+.badge-blue   { background: rgba(74,96,112,0.3);  color: #7AACCC; border: 1px solid var(–accent-blue-lt); }
+
+/* ── SOIL GUIDE LINK BANNER ── */
+.guide-banner {
+background: linear-gradient(135deg, #1E2D3A 0%, #2A3D50 100%);
+border: 1px solid var(–accent-blue-lt);
+border-left: 4px solid var(–accent-orange);
+border-radius: 6px;
+padding: 16px 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+.guide-banner-text { font-size: 13px; color: var(–text-primary); }
+.guide-banner-text strong { color: var(–accent-orange); }
+.guide-banner-text p { font-size: 11px; color: var(–text-secondary); margin-top: 3px; }
+.btn-guide {
+background: var(–accent-orange);
+color: #fff;
+border: none;
+font-family: inherit;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.07em;
+text-transform: uppercase;
+padding: 9px 16px;
+border-radius: 4px;
+text-decoration: none;
+white-space: nowrap;
+transition: background 0.18s;
+}
+.btn-guide:hover { background: var(–accent-orange-dim); }
+
+/* ── FROST CLASS GRID ── */
+.fclass-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+@media (max-width: 700px) { .fclass-grid { grid-template-columns: 1fr 1fr; } }
+.fclass-card {
+background: var(–bg-card-deep);
+border: 1px solid var(–border);
+border-radius: 5px;
+padding: 12px;
+text-align: center;
+transition: border-color 0.18s;
+}
+.fclass-card.active-class { border-color: var(–accent-orange); background: rgba(212,101,26,0.10); }
+.fclass-label { font-size: 18px; font-weight: 700; color: var(–accent-orange); }
+.fclass-name  { font-size: 11px; color: var(–text-secondary); margin: 4px 0; }
+.fclass-desc  { font-size: 10px; color: var(–text-dim); line-height: 1.5; }
+
+/* ── PERMAFROST RISK METER ── */
+.risk-bar-wrap { margin-top: 12px; }
+.risk-bar-bg {
+background: var(–bg-input);
+border-radius: 4px;
+height: 18px;
+position: relative;
+overflow: hidden;
+border: 1px solid var(–border);
+}
+.risk-bar-fill {
+height: 100%;
+border-radius: 4px;
+transition: width 0.5s ease, background 0.5s ease;
+display: flex;
+align-items: center;
+justify-content: flex-end;
+padding-right: 8px;
+font-size: 10px;
+font-weight: 700;
+color: #fff;
+letter-spacing: 0.05em;
+}
+.risk-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(–text-dim); margin-top: 4px; }
+
+/* ── DEPTH PROFILE ── */
+.depth-profile {
+background: var(–bg-input);
+border: 1px solid var(–border);
+border-radius: 4px;
+padding: 14px;
+margin-top: 14px;
+font-size: 12px;
+}
+.depth-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(–border); }
+.depth-row:last-child { border-bottom: none; }
+.depth-label { width: 80px; color: var(–text-secondary); font-size: 11px; }
+.depth-bar-bg { flex: 1; background: var(–bg-card-deep); height: 14px; border-radius: 2px; overflow: hidden; }
+.depth-bar-fill { height: 100%; border-radius: 2px; }
+.depth-val { width: 60px; text-align: right; font-weight: 700; }
+
+/* ── LOAD RESTRICTION TABLE ── */
+.lr-table th { background: #1E2D3A; }
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+height: 1px;
+background: linear-gradient(90deg, var(–accent-orange) 0%, var(–border) 60%, transparent 100%);
+margin: 22px 0 18px;
+}
+
+/* ── FOOTER ── */
+footer {
+background: #1E2D3A;
+border-top: 1px solid var(–border);
+padding: 18px 24px;
+text-align: center;
+font-size: 11px;
+color: var(–text-dim);
+line-height: 1.8;
+margin-top: 40px;
+}
+footer a { color: var(–text-secondary); text-decoration: none; }
+footer a:hover { color: var(–accent-orange); }
+
+/* ── HIDDEN ── */
+.hidden { display: none !important; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; padding: 0; }
+.checklist li {
+padding: 7px 0;
+border-bottom: 1px dashed rgba(74,90,106,0.5);
+font-size: 12px;
+display: flex;
+align-items: flex-start;
+gap: 8px;
+color: var(–text-secondary);
+}
+.checklist li:last-child { border-bottom: none; }
+.chk-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── STEP INDICATOR ── */
+.step-row { display: flex; gap: 0; margin-bottom: 18px; }
+.step-item {
+flex: 1;
+text-align: center;
+padding: 10px 6px;
+background: var(–bg-card-deep);
+border: 1px solid var(–border);
+font-size: 10px;
+color: var(–text-dim);
+letter-spacing: 0.05em;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.18s;
+}
+.step-item:not(:last-child) { border-right: none; }
+.step-item:first-child { border-radius: 4px 0 0 4px; }
+.step-item:last-child  { border-radius: 0 4px 4px 0; }
+.step-item.done  { background: var(–green-bg); border-color: var(–green); color: var(–green); }
+.step-item.active { background: rgba(212,101,26,0.15); border-color: var(–accent-orange); color: var(–accent-orange); font-weight: 700; }
+.step-num { font-size: 14px; font-weight: 700; display: block; margin-bottom: 2px; }
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<header>
+  <div class="header-left">
+    <div class="header-icon">🧊</div>
+    <div>
+      <div class="header-title">Subgrade &amp; Frost Evaluation</div>
+      <div class="header-subtitle">Alaska Geotechnical Tools — Module</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a class="btn-index" href="index.html">← Index</a>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('frost-analysis')">❄ Frost Analysis &amp; Stefan</button>
+  <button class="tab-btn" onclick="switchTab('casagrande')">🔬 Casagrande &amp; F-Class</button>
+  <button class="tab-btn" onclick="switchTab('layer-acceptance')">📋 Layer Acceptance</button>
+  <button class="tab-btn" onclick="switchTab('permafrost')">🌡 Permafrost Risk</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- TAB 1 — FROST ANALYSIS & STEFAN EQUATION              -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="tab-content active" id="tab-frost-analysis">
+
+  <div class="guide-banner">
+    <div class="guide-banner-text">
+      <strong>🪨 Start with Soil Identification</strong>
+      <p>Characterize your subgrade soil first, then return here to evaluate frost susceptibility and design implications.</p>
+    </div>
+    <a class="btn-guide" href="soil_rock_guide.html">Open Soil &amp; Rock Guide →</a>
+  </div>
+
+  <div class="two-col">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card">
+        <div class="card-title">❄ Stefan Equation — Frost/Thaw Depth</div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">
+          Estimates frost or thaw penetration depth using the Stefan equation: <strong style="color:var(--text-primary);">Z = C × √(FI)</strong>
+          where C is a soil-type coefficient and FI is the freezing or thawing index.
+        </p>
+
+```
+    <label>Analysis Type</label>
+    <select id="stefan-type" onchange="updateStefanLabel()">
+      <option value="freeze">Frost Depth (Freezing Index)</option>
+      <option value="thaw">Thaw Depth (Thawing Index)</option>
+    </select>
+
+    <label id="fi-label">Design Freezing Index (°F·days)</label>
+    <input type="number" id="stefan-fi" value="5000" min="100" max="40000" step="100"
+           placeholder="e.g. 5000">
+
+    <label>Soil/Material Type</label>
+    <select id="stefan-soil">
+      <option value="0.8">Crushed stone / clean gravel (C ≈ 0.8)</option>
+      <option value="1.1" selected>Dense-graded crushed aggregate — base (C ≈ 1.1)</option>
+      <option value="1.4">Sandy gravel subbase (C ≈ 1.4)</option>
+      <option value="1.5">Sand — clean (C ≈ 1.5)</option>
+      <option value="1.7">Silty sand / sandy silt (C ≈ 1.7)</option>
+      <option value="1.9">Silt — low plasticity (C ≈ 1.9)</option>
+      <option value="2.0">Clay — low plasticity (C ≈ 2.0)</option>
+      <option value="2.1">Clay — high plasticity (C ≈ 2.1)</option>
+      <option value="custom">Custom C value</option>
+    </select>
+
+    <div id="custom-c-wrap" class="hidden">
+      <label>Custom C Coefficient</label>
+      <input type="number" id="stefan-c-custom" value="1.5" min="0.5" max="3.0" step="0.05">
+    </div>
+
+    <label>Moisture Content (%, for latent heat)</label>
+    <input type="number" id="stefan-w" value="15" min="0" max="100" step="1">
+
+    <label>Dry Unit Weight (pcf)</label>
+    <input type="number" id="stefan-gamma" value="100" min="60" max="135" step="1">
+
+    <button class="btn-calc" onclick="calcStefan()">Calculate Depth</button>
+    <button class="btn-reset" onclick="resetStefan()">Reset</button>
+  </div>
+
+  <!-- Alaska Regional FI Reference -->
+  <div class="card">
+    <div class="card-title">📍 Alaska Regional Freezing Index Reference</div>
+    <table>
+      <thead>
+        <tr><th>Region</th><th>Area</th><th>FI Range (°F·days)</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-orange">Southeast</td><td>Juneau / Ketchikan</td><td>200 – 800</td><td>Maritime, mild</td></tr>
+        <tr><td class="td-orange">Southcentral</td><td>Anchorage / Mat-Su</td><td>2,500 – 5,000</td><td>Most DOT&PF design work</td></tr>
+        <tr><td class="td-orange">Southcentral</td><td>Kenai / Homer</td><td>1,500 – 3,500</td><td>Coastal moderation</td></tr>
+        <tr><td class="td-orange">Interior</td><td>Fairbanks</td><td>9,000 – 14,000</td><td>Permafrost common</td></tr>
+        <tr><td class="td-orange">Interior</td><td>Delta Jct / Tok</td><td>8,000 – 12,000</td><td>Continental extreme</td></tr>
+        <tr><td class="td-orange">Interior</td><td>Nenana / McGrath</td><td>7,000 – 11,000</td><td>Discontinuous permafrost</td></tr>
+        <tr><td class="td-orange">Southwest</td><td>Bethel / Dillingham</td><td>4,000 – 8,000</td><td>Low-lying, wet soils</td></tr>
+        <tr><td class="td-orange">Northwest</td><td>Nome</td><td>7,000 – 10,000</td><td>Coastal tundra</td></tr>
+        <tr><td class="td-orange">Arctic</td><td>Kotzebue / Barrow</td><td>12,000 – 20,000</td><td>Continuous permafrost</td></tr>
+        <tr><td class="td-orange">Arctic</td><td>Prudhoe Bay area</td><td>15,000 – 22,000</td><td>Deep frost, permafrost table near surface</td></tr>
+      </tbody>
+    </table>
+    <div class="info-block">⚠ Use site-specific climate records for design. Values above are approximate historical ranges; 100-year design FI may exceed these bounds. Source: AKFPD Manual / WRCC climate records.</div>
+  </div>
+</div>
+
+<!-- RIGHT: RESULTS -->
+<div>
+  <div class="card" id="stefan-results-card">
+    <div class="card-title">📐 Stefan Equation Results</div>
+    <div id="stefan-output">
+      <p style="color:var(--text-dim);font-size:12px;">Enter inputs and click Calculate to see results.</p>
+    </div>
+  </div>
+
+  <!-- Spring Load Restriction -->
+  <div class="card">
+    <div class="card-title">🚦 Spring Thaw Load Restriction Guidance</div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+      Alaska DOT&PF imposes spring load restrictions (SLR) when thawing weakens subgrade. Timing and severity depend on frost susceptibility class and local thaw conditions.
+    </p>
+    <table class="lr-table">
+      <thead>
+        <tr><th>Frost Class</th><th>Typical SLR Duration</th><th>Axle Reduction</th><th>Trigger Condition</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-green">F1 — Negligible</td>
+          <td>None required</td>
+          <td>—</td>
+          <td>Non-frost-susceptible; no SLR needed</td>
+        </tr>
+        <tr>
+          <td class="td-green">F2 — Low</td>
+          <td>2–4 weeks</td>
+          <td>Reduce by ~20%</td>
+          <td>Thaw front in upper 12"; reduced bearing</td>
+        </tr>
+        <tr>
+          <td class="td-yellow">F3 — Medium</td>
+          <td>3–6 weeks</td>
+          <td>Reduce by 40–50%</td>
+          <td>Active frost heave / thaw weakening observed</td>
+        </tr>
+        <tr>
+          <td class="td-red">F4 — High</td>
+          <td>4–8+ weeks</td>
+          <td>Reduce by 50–70%</td>
+          <td>Significant heave; subgrade may lose bearing entirely during thaw</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-block">SLR schedules vary by route, region, and year. Verify current restrictions with Alaska DOT&PF regional offices. This table is a planning reference, not an official restriction schedule.</div>
+  </div>
+
+  <!-- Thaw Weakening Note -->
+  <div class="card">
+    <div class="card-title">📊 Freeze–Thaw Cycle Effects on Subgrade</div>
+    <ul class="checklist">
+      <li><span class="chk-icon">❄</span><span>Ice lens formation in frost-susceptible soils causes heave, disrupts pavement surface, and disrupts drainage</span></li>
+      <li><span class="chk-icon">💧</span><span>Thaw releases excess moisture — subgrade temporarily saturated and very weak (CBR may drop to &lt;3)</span></li>
+      <li><span class="chk-icon">📉</span><span>Resilient modulus (M<sub>R</sub>) during thaw can be as low as 10–20% of normal summer value</span></li>
+      <li><span class="chk-icon">🔁</span><span>Repeated cycling causes progressive weakening, rutting, and differential settlement in fine-grained soils</span></li>
+      <li><span class="chk-icon">🏔</span><span>Permafrost thaw adds long-term settlement risk beyond seasonal frost effects — see Permafrost Risk tab</span></li>
+    </ul>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- TAB 2 — CASAGRANDE & FROST CLASS                      -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="tab-content" id="tab-casagrande">
+
+  <div class="guide-banner">
+    <div class="guide-banner-text">
+      <strong>🪨 Workflow: Identify Soil → Classify Frost Susceptibility</strong>
+      <p>Use the Soil &amp; Rock Guide to determine USCS classification, then return here to map it to F1–F4 frost class.</p>
+    </div>
+    <a class="btn-guide" href="soil_rock_guide.html">Open Soil &amp; Rock Guide →</a>
+  </div>
+
+  <!-- Step indicator -->
+
+  <div class="step-row">
+    <div class="step-item active" id="step1"><span class="step-num">1</span>Grain Size Data</div>
+    <div class="step-item" id="step2"><span class="step-num">2</span>P200 &amp; P0.02</div>
+    <div class="step-item" id="step3"><span class="step-num">3</span>USCS Class</div>
+    <div class="step-item" id="step4"><span class="step-num">4</span>Frost Class</div>
+  </div>
+
+  <div class="two-col">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card">
+        <div class="card-title">🔬 Grain Size &amp; Fines Input</div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+          Enter percent passing at key sieve sizes from your gradation analysis. The Casagrande criterion evaluates the percent finer than 0.02 mm (0.02 mm = No. 635 equivalent / hydrometer).
+        </p>
+
+```
+    <label>Percent Passing No. 4 (4.75 mm) — %</label>
+    <input type="number" id="cas-p4" min="0" max="100" step="0.1" placeholder="e.g. 85">
+
+    <label>Percent Passing No. 40 (0.425 mm) — %</label>
+    <input type="number" id="cas-p40" min="0" max="100" step="0.1" placeholder="e.g. 55">
+
+    <label>Percent Passing No. 200 (0.075 mm) — P200, %</label>
+    <input type="number" id="cas-p200" min="0" max="100" step="0.1" placeholder="e.g. 18">
+
+    <label>Percent Finer than 0.02 mm (from hydrometer) — %</label>
+    <input type="number" id="cas-p002" min="0" max="100" step="0.1" placeholder="e.g. 8">
+
+    <div class="section-divider"></div>
+
+    <label>Liquid Limit (LL) — %</label>
+    <input type="number" id="cas-ll" min="0" max="150" step="1" placeholder="e.g. 35 (enter 0 if NP)">
+
+    <label>Plasticity Index (PI) — %</label>
+    <input type="number" id="cas-pi" min="0" max="100" step="1" placeholder="e.g. 10 (enter 0 if NP)">
+
+    <label>USCS Classification (optional — confirms routing)</label>
+    <select id="cas-uscs">
+      <option value="">— Select if known —</option>
+      <optgroup label="Coarse-Grained">
+        <option value="GW">GW — Well-graded gravel</option>
+        <option value="GP">GP — Poorly graded gravel</option>
+        <option value="GM">GM — Silty gravel</option>
+        <option value="GC">GC — Clayey gravel</option>
+        <option value="SW">SW — Well-graded sand</option>
+        <option value="SP">SP — Poorly graded sand</option>
+        <option value="SM">SM — Silty sand</option>
+        <option value="SC">SC — Clayey sand</option>
+      </optgroup>
+      <optgroup label="Fine-Grained">
+        <option value="ML">ML — Silt, low plasticity</option>
+        <option value="CL">CL — Clay, low plasticity</option>
+        <option value="OL">OL — Organic silt/clay, low plasticity</option>
+        <option value="MH">MH — Elastic silt</option>
+        <option value="CH">CH — Fat clay</option>
+        <option value="OH">OH — Organic clay, high plasticity</option>
+      </optgroup>
+      <optgroup label="Highly Organic">
+        <option value="PT">PT — Peat</option>
+      </optgroup>
+    </select>
+
+    <button class="btn-calc" onclick="calcCasagrande()">Evaluate Frost Class</button>
+    <button class="btn-reset" onclick="resetCasagrande()">Reset</button>
+  </div>
+</div>
+
+<!-- RIGHT: RESULTS + REFERENCE -->
+<div>
+  <div class="card" id="cas-results-card">
+    <div class="card-title">🏷 Frost Susceptibility Classification</div>
+    <div id="cas-output">
+      <p style="color:var(--text-dim);font-size:12px;">Enter grain size data and click Evaluate to classify.</p>
+    </div>
+  </div>
+
+  <!-- F-Class Reference Grid -->
+  <div class="card">
+    <div class="card-title">📖 Frost Susceptibility Class Reference</div>
+    <div class="fclass-grid" id="fclass-ref-grid">
+      <div class="fclass-card" id="fc-F1">
+        <div class="fclass-label">F1</div>
+        <div class="fclass-name">Negligible</div>
+        <div class="fclass-desc">Gravelly soils with &lt;3% finer than 0.02 mm; clean gravels</div>
+      </div>
+      <div class="fclass-card" id="fc-F2">
+        <div class="fclass-label">F2</div>
+        <div class="fclass-name">Low</div>
+        <div class="fclass-desc">Sands &lt;3% passing 0.02 mm; gravels 3–10% finer than 0.02 mm</div>
+      </div>
+      <div class="fclass-card" id="fc-F3">
+        <div class="fclass-label">F3</div>
+        <div class="fclass-name">Medium</div>
+        <div class="fclass-desc">Gravels &gt;10% &lt;0.02 mm; sandy and fine-grained soils with moderate fines</div>
+      </div>
+      <div class="fclass-card" id="fc-F4">
+        <div class="fclass-label">F4</div>
+        <div class="fclass-name">High</div>
+        <div class="fclass-desc">Silts, CH/MH clays, varved clays, organic soils; &gt;3% passing 0.02 mm in fine-grained soils</div>
+      </div>
+    </div>
+    <div class="info-block" style="margin-top:12px;">
+      Classification per Casagrande (1931/1938) as referenced in USACE TM 5-818-2 and AKFPD Manual guidance. The 0.02 mm threshold is the primary Casagrande criterion. AKFPD also applies P200 limits for material acceptance.
+    </div>
+  </div>
+
+  <!-- USCS → Frost Class mapping -->
+  <div class="card">
+    <div class="card-title">🗺 USCS → Frost Class Mapping</div>
+    <table>
+      <thead><tr><th>USCS Symbol</th><th>Typical Frost Class</th><th>Key Criterion</th></tr></thead>
+      <tbody>
+        <tr><td>GW, GP</td><td class="td-green">F1</td><td>P&lt;0.02mm &lt; 3%; non-susceptible</td></tr>
+        <tr><td>GM, GC (clean)</td><td class="td-green">F1–F2</td><td>Depends on fines; borderline</td></tr>
+        <tr><td>SW, SP</td><td class="td-green">F1–F2</td><td>Clean sands; low susceptibility</td></tr>
+        <tr><td>SM, SC</td><td class="td-yellow">F2–F3</td><td>Silty/clayey sands; moderate</td></tr>
+        <tr><td>ML, CL</td><td class="td-yellow">F3–F4</td><td>Silt-dominated; high concern</td></tr>
+        <tr><td>MH, CH</td><td class="td-red">F4</td><td>Highly plastic; very high heave potential</td></tr>
+        <tr><td>OL, OH, PT</td><td class="td-red">F4</td><td>Organic soils; avoid in frost zones</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- TAB 3 — LAYER ACCEPTANCE                              -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="tab-content" id="tab-layer-acceptance">
+
+  <div class="card">
+    <div class="card-title">📋 AKFPD Material Acceptance — P200 Limits by Layer Position</div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">
+      Alaska DOT&PF Flexible Pavement Design Manual (AKFPD, July 2020) specifies maximum percent passing the No. 200 sieve for each pavement layer position. Enter your material's P200 to check acceptance for each position.
+    </p>
+    <div class="two-col">
+      <div>
+        <label>Material P200 — Percent Passing No. 200 Sieve (%)</label>
+        <input type="number" id="acc-p200" min="0" max="100" step="0.1" placeholder="e.g. 12">
+
+```
+    <label>Material P0.02mm — Percent Finer than 0.02 mm (%) <span style="color:var(--text-dim)">(if available)</span></label>
+    <input type="number" id="acc-p002" min="0" max="100" step="0.1" placeholder="e.g. 5">
+
+    <label>PI of Fines (if applicable)</label>
+    <input type="number" id="acc-pi" min="0" max="80" step="1" placeholder="e.g. 6">
+
+    <button class="btn-calc" onclick="calcAcceptance()">Check All Layers</button>
+    <button class="btn-reset" onclick="resetAcceptance()">Reset</button>
+  </div>
+  <div id="acc-results">
+    <p style="color:var(--text-dim);font-size:12px;padding-top:8px;">Enter P200 and click Check to evaluate layer acceptance.</p>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- AKFPD Limits Reference -->
+
+  <div class="card">
+    <div class="card-title">📐 AKFPD P200 Limit Reference Table</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer Position</th>
+          <th>Material Type</th>
+          <th>Max P200 (%)</th>
+          <th>Additional Limits</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-orange">Surface / Leveling</td>
+          <td>HMA / Asphalt Concrete</td>
+          <td>—</td>
+          <td>Mix design per AKDOT spec</td>
+          <td>Not evaluated by P200 directly</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Base Course</td>
+          <td>D-1 Gravel (Spec. 703-2.1)</td>
+          <td class="td-green"><strong>8%</strong></td>
+          <td>PI of fines ≤ 6; LL ≤ 25</td>
+          <td>Structural layer; strict limit</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Subbase</td>
+          <td>Select Material Type A (703-2.4)</td>
+          <td class="td-yellow"><strong>12%</strong></td>
+          <td>PI of fines ≤ 6</td>
+          <td>Drainage and frost barrier function</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Subbase / Embankment</td>
+          <td>Select Material Type B (703-2.5)</td>
+          <td class="td-yellow"><strong>15%</strong></td>
+          <td>PI ≤ 8; frost susceptibility F2 or better</td>
+          <td>Less critical structurally</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Embankment Fill</td>
+          <td>Common Borrow (703-2.6)</td>
+          <td class="td-red"><strong>35%</strong></td>
+          <td>Free of organics, oversized rock</td>
+          <td>Frost susceptibility not restricted but screened</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Subgrade (existing)</td>
+          <td>In-situ soil</td>
+          <td>N/A</td>
+          <td>Evaluate frost class; design for</td>
+          <td>Cannot replace — must design around</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="warn-block">⚠ These limits reflect AKFPD Manual Table values. Always verify against current project-specific specifications. DOT&PF specs may be updated; the project Special Provisions supersede general table values.</div>
+  </div>
+
+  <!-- Casagrande limits by layer -->
+
+  <div class="card">
+    <div class="card-title">❄ Frost Susceptibility Acceptance by Layer</div>
+    <table>
+      <thead>
+        <tr><th>Layer Position</th><th>Acceptable Frost Class</th><th>Casagrande 0.02 mm Limit</th><th>Design Approach if Non-Conforming</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-orange">Base Course (D-1)</td>
+          <td class="td-green">F1 required</td>
+          <td>&lt;3% passing 0.02 mm</td>
+          <td>Reject material; source conforming aggregate</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Subbase (Sel. Mat. Type A)</td>
+          <td class="td-green">F1–F2 acceptable</td>
+          <td>Generally &lt;3–10% passing 0.02 mm</td>
+          <td>Increase thickness or add non-frost layer</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Subbase (Type B / Lower)</td>
+          <td class="td-yellow">F2–F3 borderline</td>
+          <td>Case-by-case; evaluate heave potential</td>
+          <td>Frost heave analysis; may require capillary barrier</td>
+        </tr>
+        <tr>
+          <td class="td-orange">Embankment / Subgrade</td>
+          <td class="td-red">F3–F4 common</td>
+          <td>Evaluate — design total section for frost</td>
+          <td>Full reduced-subgrade design; consider thaw consolidation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- TAB 4 — PERMAFROST RISK                               -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="tab-content" id="tab-permafrost">
+
+  <div class="two-col">
+    <!-- LEFT: Screening Inputs -->
+    <div>
+      <div class="card">
+        <div class="card-title">🌡 MAAT-Based Permafrost Screening</div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+          Mean Annual Air Temperature (MAAT) is the primary climate indicator for permafrost presence. This screening estimates relative permafrost risk and suggests investigation level.
+        </p>
+
+```
+    <label>Mean Annual Air Temperature (MAAT) — °F</label>
+    <input type="number" id="pfr-maat" step="0.5" placeholder="e.g. 28.5 (Fairbanks ~26°F; Anchorage ~35°F)">
+
+    <label>Terrain / Vegetation Type</label>
+    <select id="pfr-terrain">
+      <option value="exposed">Exposed ridge / south-facing slope (warms soil)</option>
+      <option value="mixed" selected>Mixed forest / shrub tundra (moderate)</option>
+      <option value="spruce">Black spruce / peat bog (insulates — permafrost favorable)</option>
+      <option value="tundra">Open tundra (high latitude — permafrost favorable)</option>
+      <option value="disturbed">Previously disturbed / burned area</option>
+    </select>
+
+    <label>Surface Drainage Condition</label>
+    <select id="pfr-drainage">
+      <option value="well">Well-drained — no ponding</option>
+      <option value="moderate" selected>Moderate — seasonal wetness</option>
+      <option value="poor">Poor — wet most of year, bog, muskeg</option>
+    </select>
+
+    <label>Aspect / Solar Exposure</label>
+    <select id="pfr-aspect">
+      <option value="south">South-facing (high solar gain)</option>
+      <option value="flat" selected>Flat or variable</option>
+      <option value="north">North-facing (shaded, cold)</option>
+    </select>
+
+    <label>Known Historical Permafrost at Site?</label>
+    <select id="pfr-history">
+      <option value="unknown">Unknown / no data</option>
+      <option value="yes">Yes — confirmed by prior investigation</option>
+      <option value="possible">Possible — regional mapping suggests presence</option>
+      <option value="no">No — confirmed absent</option>
+    </select>
+
+    <button class="btn-calc" onclick="calcPermafrost()">Assess Permafrost Risk</button>
+    <button class="btn-reset" onclick="resetPermafrost()">Reset</button>
+  </div>
+
+  <!-- Alaska Permafrost Zones -->
+  <div class="card">
+    <div class="card-title">🗺 Alaska Permafrost Zone Reference</div>
+    <table>
+      <thead><tr><th>Region</th><th>Permafrost Type</th><th>MAAT Range</th></tr></thead>
+      <tbody>
+        <tr><td class="td-orange">Arctic Coastal Plain</td><td class="td-red">Continuous</td><td>&lt;14°F (&lt;-10°C)</td></tr>
+        <tr><td class="td-orange">Brooks Range / North Slope</td><td class="td-red">Continuous</td><td>14–23°F (-5 to -10°C)</td></tr>
+        <tr><td class="td-orange">Interior — Fairbanks</td><td class="td-yellow">Discontinuous (extensive)</td><td>23–30°F (-5 to -1°C)</td></tr>
+        <tr><td class="td-orange">Interior — Delta / Tok</td><td class="td-yellow">Discontinuous (sporadic)</td><td>28–34°F (-2 to 1°C)</td></tr>
+        <tr><td class="td-orange">Southwest — Bethel area</td><td class="td-yellow">Discontinuous (widespread)</td><td>26–32°F (-3 to 0°C)</td></tr>
+        <tr><td class="td-orange">Southcentral — Anchorage</td><td class="td-green">Isolated patches only</td><td>34–38°F (1–3°C)</td></tr>
+        <tr><td class="td-orange">Kenai / Homer</td><td class="td-green">None / very rare</td><td>&gt;36°F (&gt;2°C)</td></tr>
+      </tbody>
+    </table>
+    <div class="info-block">Permafrost distribution is highly sensitive to local vegetation, drainage, and disturbance. Site-specific investigation (drilling, temperature monitoring) is required for any project in permafrost terrain.</div>
+  </div>
+</div>
+
+<!-- RIGHT: Results + Depth Profile -->
+<div>
+  <div class="card" id="pfr-results-card">
+    <div class="card-title">⚠ Permafrost Risk Assessment</div>
+    <div id="pfr-output">
+      <p style="color:var(--text-dim);font-size:12px;">Enter site conditions and click Assess to evaluate risk.</p>
+    </div>
+  </div>
+
+  <!-- Simplified Ground Temp Profile -->
+  <div class="card">
+    <div class="card-title">📊 Simplified Ground Temperature Profile</div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">
+      Illustrative annual ground temperature range by depth. Actual temperatures require site instrumentation.
+    </p>
+    <div class="depth-profile" id="depth-profile-display">
+      <p style="color:var(--text-dim);font-size:12px;">Run assessment above to generate depth profile estimate.</p>
+    </div>
+  </div>
+
+  <!-- Engineering Implications -->
+  <div class="card">
+    <div class="card-title">🏗 Permafrost Engineering Implications</div>
+    <ul class="checklist">
+      <li><span class="chk-icon">🌡</span><span><strong style="color:var(--text-primary);">Thermal stability:</strong> Any disturbance — clearing, grading, paving — changes energy balance. Dark pavement absorbs heat; can deepen active layer or thaw permafrost table.</span></li>
+      <li><span class="chk-icon">💧</span><span><strong style="color:var(--text-primary);">Excess ice:</strong> Thaw of ice-rich permafrost causes large settlement (thaw settlement ≠ frost heave). Volume loss on thaw can be 10–40% in silty soils.</span></li>
+      <li><span class="chk-icon">📐</span><span><strong style="color:var(--text-primary);">Design approach:</strong> Preserve permafrost (insulation, raised grade, air convection embankments) OR design for thaw (remove ice-rich material, thaw consolidation analysis).</span></li>
+      <li><span class="chk-icon">🔭</span><span><strong style="color:var(--text-primary);">Investigation:</strong> Require borehole temperature monitoring, undisturbed sampling for ice content, and thaw consolidation testing for critical structures.</span></li>
+      <li><span class="chk-icon">📈</span><span><strong style="color:var(--text-primary);">Climate change:</strong> Permafrost is actively degrading across Alaska. Design life assumptions for roads should account for warming trends — especially in discontinuous zones.</span></li>
+    </ul>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+  <p>Alaska Geotechnical Tools — Subgrade &amp; Frost Evaluation</p>
+  <p>Independent personal project by Ian Minnock, CPG, PMP, PMI-ACP &nbsp;|&nbsp; <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a></p>
+  <p style="margin-top:4px;font-size:10px;color:var(--text-dim);">
+    Not affiliated with, endorsed by, or developed on behalf of Alaska DOT&amp;PF or any government agency.
+    References to agency specifications are for informational purposes only.
+    All outputs are design aids — verify with a qualified professional before use.
+  </p>
+</footer>
+
+<!-- ════════════════════════ JAVASCRIPT ════════════════════════ -->
+
+<script>
+/* ── TAB SWITCHING ── */
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+/* ── STEFAN EQUATION ── */
+document.getElementById('stefan-soil').addEventListener('change', function() {
+  document.getElementById('custom-c-wrap').classList.toggle('hidden', this.value !== 'custom');
+});
+
+function updateStefanLabel() {
+  const type = document.getElementById('stefan-type').value;
+  document.getElementById('fi-label').textContent =
+    type === 'freeze'
+      ? 'Design Freezing Index (°F·days)'
+      : 'Design Thawing Index (°F·days)';
+}
+
+function calcStefan() {
+  const fi  = parseFloat(document.getElementById('stefan-fi').value);
+  const type = document.getElementById('stefan-type').value;
+  const soilSel = document.getElementById('stefan-soil').value;
+  const C = soilSel === 'custom'
+    ? parseFloat(document.getElementById('stefan-c-custom').value)
+    : parseFloat(soilSel);
+  const w = parseFloat(document.getElementById('stefan-w').value) / 100;
+  const gamma = parseFloat(document.getElementById('stefan-gamma').value);
+
+  if (isNaN(fi) || isNaN(C) || isNaN(w) || isNaN(gamma)) {
+    showStefanError('Please fill in all input fields.'); return;
+  }
+  if (fi <= 0) { showStefanError('Freezing/Thawing Index must be positive.'); return; }
+
+  // Stefan equation: Z = C * sqrt(FI) [result in feet when FI in °F-days]
+  const Z_ft = C * Math.sqrt(fi);
+  const Z_in = Z_ft * 12;
+  const Z_m  = Z_ft * 0.3048;
+
+  // Latent heat check (L = 144 * w * gamma_d / 62.4 in BTU/ft³)
+  const L = 144 * w * gamma / 62.4;
+
+  // Frost susceptibility implication
+  let implication = '';
+  let cls = '';
+  if (Z_ft < 2)       { implication = 'Shallow frost penetration — likely limited to upper subbase.'; cls = 'pass'; }
+  else if (Z_ft < 6)  { implication = 'Moderate frost depth — full pavement section affected; evaluate subgrade frost class.'; cls = 'warn'; }
+  else if (Z_ft < 12) { implication = 'Deep frost penetration — subgrade and upper embankment affected; consider full non-frost design depth.'; cls = 'warn'; }
+  else                { implication = 'Very deep frost penetration — permafrost risk zone; site-specific thermal analysis recommended.'; cls = 'fail'; }
+
+  const label = type === 'freeze' ? 'Frost Depth' : 'Thaw Depth';
+  const fiLabel = type === 'freeze' ? 'Freezing Index' : 'Thawing Index';
+
+  document.getElementById('stefan-output').innerHTML = `
+    <div class="result-box ${cls}">
+      <div class="result-title">${label} (Stefan Equation)</div>
+      <div class="result-value ${cls}">${Z_ft.toFixed(1)} ft &nbsp;(${Z_in.toFixed(0)} in &nbsp;/&nbsp; ${Z_m.toFixed(2)} m)</div>
+      <div class="result-note">${implication}</div>
+    </div>
+    <div class="result-box" style="margin-top:10px;">
+      <div class="result-title">Inputs Summary</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:2;">
+        ${fiLabel}: <strong style="color:var(--text-primary)">${fi.toLocaleString()} °F·days</strong><br>
+        C coefficient: <strong style="color:var(--text-primary)">${C}</strong><br>
+        Moisture content: <strong style="color:var(--text-primary)">${(w*100).toFixed(0)}%</strong><br>
+        Dry unit weight: <strong style="color:var(--text-primary)">${gamma} pcf</strong><br>
+        Latent heat (L): <strong style="color:var(--text-primary)">${L.toFixed(0)} BTU/ft³</strong>
+      </div>
+    </div>
+    <div class="info-block" style="margin-top:10px;">
+      The Stefan equation is an approximation. It does not account for soil stratification, variable moisture, or heat conduction from below. Use for planning-level estimates; site-specific thermal modeling recommended for critical structures.
+    </div>
+  `;
+
+  // Update step indicator
+  markStep(1, 'done');
+}
+
+function showStefanError(msg) {
+  document.getElementById('stefan-output').innerHTML =
+    `<div class="result-box fail"><div class="result-note">⚠ ${msg}</div></div>`;
+}
+
+function resetStefan() {
+  document.getElementById('stefan-fi').value = 5000;
+  document.getElementById('stefan-w').value = 15;
+  document.getElementById('stefan-gamma').value = 100;
+  document.getElementById('stefan-soil').value = '1.1';
+  document.getElementById('custom-c-wrap').classList.add('hidden');
+  document.getElementById('stefan-output').innerHTML =
+    '<p style="color:var(--text-dim);font-size:12px;">Enter inputs and click Calculate to see results.</p>';
+}
+
+/* ── CASAGRANDE / FROST CLASS ── */
+function calcCasagrande() {
+  const p200 = parseFloat(document.getElementById('cas-p200').value);
+  const p002 = parseFloat(document.getElementById('cas-p002').value);
+  const p4   = parseFloat(document.getElementById('cas-p4').value);
+  const ll   = parseFloat(document.getElementById('cas-ll').value) || 0;
+  const pi   = parseFloat(document.getElementById('cas-pi').value) || 0;
+  const uscs = document.getElementById('cas-uscs').value;
+
+  if (isNaN(p200)) { showCasError('P200 is required for frost classification.'); return; }
+  if (isNaN(p002)) { showCasError('Percent finer than 0.02 mm is required for Casagrande criterion.'); return; }
+
+  // Determine if predominantly coarse or fine
+  const isCoarse = !isNaN(p4) && p200 < 50;
+  const isGravel = !isNaN(p4) && p4 < 50;
+
+  // ── CASAGRANDE CLASSIFICATION LOGIC ──
+  let fClass = '', fName = '', fColor = '', reason = '';
+  let borderline = false;
+
+  if (isGravel) {
+    // Gravel-dominated
+    if (p002 < 1.5)       { fClass = 'F1'; fName = 'Negligible'; fColor = 'td-green'; reason = 'Gravel with &lt;1.5% passing 0.02 mm — negligible frost susceptibility.'; }
+    else if (p002 < 3.0)  { fClass = 'F1'; fName = 'Negligible'; fColor = 'td-green'; reason = 'Gravel with &lt;3% passing 0.02 mm — at lower end of F1; monitor.'; }
+    else if (p002 < 10)   { fClass = 'F3'; fName = 'Medium'; fColor = 'td-yellow'; reason = 'Gravel with 3–10% passing 0.02 mm — medium frost susceptibility (F3 per Casagrande gravelly soils criterion).'; borderline = p002 < 6; }
+    else                  { fClass = 'F4'; fName = 'High'; fColor = 'td-red'; reason = 'Gravel with &gt;10% passing 0.02 mm — high frost susceptibility.'; }
+  } else {
+    // Sand or fine-grained
+    if (p200 < 15) {
+      // Predominantly sand
+      if (p002 < 3) { fClass = 'F2'; fName = 'Low'; fColor = 'td-green'; reason = 'Sand with &lt;3% passing 0.02 mm — low frost susceptibility.'; }
+      else          { fClass = 'F3'; fName = 'Medium'; fColor = 'td-yellow'; reason = 'Sand with &ge;3% passing 0.02 mm — medium frost susceptibility.'; }
+    } else {
+      // Fine-grained dominant
+      if (p002 < 3) { fClass = 'F3'; fName = 'Medium'; fColor = 'td-yellow'; reason = 'Fine-grained soil with &lt;3% passing 0.02 mm — classified F3 per fine-grained Casagrande criterion.'; }
+      else          { fClass = 'F4'; fName = 'High'; fColor = 'td-red'; reason = 'Fine-grained soil with &ge;3% passing 0.02 mm — high frost susceptibility (F4).'; }
+    }
+  }
+
+  // Organic override
+  if (uscs === 'OL' || uscs === 'OH' || uscs === 'PT' || pi > 40) {
+    fClass = 'F4'; fName = 'High'; fColor = 'td-red';
+    reason = 'Organic soil or very high plasticity — automatic F4 classification. Organics retain water and are highly frost susceptible.';
+  }
+
+  // Highlight active class card
+  ['F1','F2','F3','F4'].forEach(fc => {
+    const el = document.getElementById('fc-' + fc);
+    if (el) el.classList.toggle('active-class', fc === fClass);
+  });
+
+  // AKFPD layer check
+  let layerMsg = '';
+  if (fClass === 'F1') layerMsg = '<span style="color:var(--green)">✓ Acceptable for base, subbase, and embankment applications (subject to P200 limit).</span>';
+  else if (fClass === 'F2') layerMsg = '<span style="color:var(--green)">✓ Acceptable for subbase (Type A/B) if P200 meets limits. Not suitable for D-1 base.</span>';
+  else if (fClass === 'F3') layerMsg = '<span style="color:var(--yellow)">⚠ Borderline — acceptable for lower subbase only with frost heave analysis. Reject for base and upper subbase.</span>';
+  else layerMsg = '<span style="color:var(--red)">✗ Not acceptable for any structural layer. Design around this material; evaluate thaw consolidation if in embankment.</span>';
+
+  document.getElementById('cas-output').innerHTML = `
+    <div class="result-box ${fClass === 'F1' || fClass === 'F2' ? 'pass' : fClass === 'F3' ? 'warn' : 'fail'}">
+      <div class="result-title">Casagrande Frost Susceptibility Class</div>
+      <div class="result-value ${fClass === 'F1' || fClass === 'F2' ? 'pass' : fClass === 'F3' ? 'warn' : 'fail'}">
+        ${fClass} — ${fName}
+      </div>
+      <div class="result-note">${reason}</div>
+    </div>
+    <div class="result-box" style="margin-top:10px;">
+      <div class="result-title">Layer Acceptance</div>
+      <div style="font-size:12px;line-height:1.8;">${layerMsg}</div>
+    </div>
+    <div class="result-box" style="margin-top:10px;">
+      <div class="result-title">Key Values</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:2;">
+        P200: <strong style="color:var(--text-primary)">${p200.toFixed(1)}%</strong>
+        &nbsp;|&nbsp; P&lt;0.02mm: <strong style="color:var(--text-primary)">${p002.toFixed(1)}%</strong>
+        ${!isNaN(ll) && ll > 0 ? `&nbsp;|&nbsp; LL: <strong style="color:var(--text-primary)">${ll}%</strong>` : ''}
+        ${!isNaN(pi) && pi > 0 ? `&nbsp;|&nbsp; PI: <strong style="color:var(--text-primary)">${pi}%</strong>` : ''}
+        ${uscs ? `&nbsp;|&nbsp; USCS: <strong style="color:var(--accent-orange)">${uscs}</strong>` : ''}
+      </div>
+    </div>
+    ${borderline ? '<div class="warn-block">⚠ Borderline classification — this sample is near the F1/F3 boundary. Collect additional gradation data or run hydrometer test to confirm.</div>' : ''}
+    <div class="info-block" style="margin-top:10px;">
+      Classification follows Casagrande (1938) criterion as applied in USACE and AKFPD guidance. The 0.02 mm threshold is the primary discriminator. Results are sensitive to hydrometer test quality — ensure ASTM D7928 compliance.
+    </div>
+  `;
+}
+
+function showCasError(msg) {
+  document.getElementById('cas-output').innerHTML =
+    `<div class="result-box fail"><div class="result-note">⚠ ${msg}</div></div>`;
+}
+
+function resetCasagrande() {
+  ['cas-p4','cas-p40','cas-p200','cas-p002','cas-ll','cas-pi'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('cas-uscs').value = '';
+  document.getElementById('cas-output').innerHTML =
+    '<p style="color:var(--text-dim);font-size:12px;">Enter grain size data and click Evaluate to classify.</p>';
+  ['F1','F2','F3','F4'].forEach(fc => {
+    const el = document.getElementById('fc-' + fc);
+    if (el) el.classList.remove('active-class');
+  });
+}
+
+/* ── LAYER ACCEPTANCE ── */
+function calcAcceptance() {
+  const p200 = parseFloat(document.getElementById('acc-p200').value);
+  const p002 = parseFloat(document.getElementById('acc-p002').value);
+  const pi   = parseFloat(document.getElementById('acc-pi').value);
+
+  if (isNaN(p200)) {
+    document.getElementById('acc-results').innerHTML =
+      '<div class="result-box fail"><div class="result-note">⚠ P200 is required.</div></div>';
+    return;
+  }
+
+  const layers = [
+    { name: 'D-1 Base Course',      p200max: 8,  pimax: 6,  label: 'D-1 Gravel (Spec. 703-2.1)' },
+    { name: 'Select Material Type A', p200max: 12, pimax: 6, label: 'Subbase — Sel. Mat. Type A' },
+    { name: 'Select Material Type B', p200max: 15, pimax: 8, label: 'Subbase — Sel. Mat. Type B' },
+    { name: 'Common Borrow',         p200max: 35, pimax: null, label: 'Embankment Fill' },
+  ];
+
+  let html = '';
+  layers.forEach(layer => {
+    const p200fail = p200 > layer.p200max;
+    const pifail   = layer.pimax !== null && !isNaN(pi) && pi > layer.pimax;
+    const status   = (p200fail || pifail) ? 'fail' : 'pass';
+    const icon     = status === 'pass' ? '✓' : '✗';
+    const color    = status === 'pass' ? 'var(--green)' : 'var(--red)';
+    let notes = '';
+    if (p200fail) notes += `P200 ${p200.toFixed(1)}% exceeds max ${layer.p200max}%. `;
+    if (pifail)   notes += `PI ${pi} exceeds max ${layer.pimax}. `;
+    if (!p200fail && !pifail) notes = `P200 ${p200.toFixed(1)}% ≤ ${layer.p200max}%${layer.pimax !== null && !isNaN(pi) ? ` and PI ${pi} ≤ ${layer.pimax}` : ''} — meets limits.`;
+
+    html += `
+      <div class="result-box ${status}" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span style="font-size:13px;font-weight:700;color:${color}">${icon} ${layer.name}</span>
+            <span style="font-size:11px;color:var(--text-dim);margin-left:8px;">${layer.label}</span>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${color}">${status.toUpperCase()}</span>
+        </div>
+        <div class="result-note" style="margin-top:4px;">${notes}</div>
+      </div>`;
+  });
+
+  if (!isNaN(p002)) {
+    html += `<div class="info-block">P&lt;0.02 mm = ${p002.toFixed(1)}% — use Casagrande tab to determine frost susceptibility class for this material.</div>`;
+  }
+
+  document.getElementById('acc-results').innerHTML = html;
+}
+
+function resetAcceptance() {
+  ['acc-p200','acc-p002','acc-pi'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('acc-results').innerHTML =
+    '<p style="color:var(--text-dim);font-size:12px;padding-top:8px;">Enter P200 and click Check to evaluate layer acceptance.</p>';
+}
+
+/* ── PERMAFROST RISK ── */
+function calcPermafrost() {
+  const maat     = parseFloat(document.getElementById('pfr-maat').value);
+  const terrain  = document.getElementById('pfr-terrain').value;
+  const drainage = document.getElementById('pfr-drainage').value;
+  const aspect   = document.getElementById('pfr-aspect').value;
+  const history  = document.getElementById('pfr-history').value;
+
+  if (isNaN(maat)) {
+    document.getElementById('pfr-output').innerHTML =
+      '<div class="result-box fail"><div class="result-note">⚠ Please enter MAAT.</div></div>';
+    return;
+  }
+
+  // Score-based risk: 0–10
+  let score = 0;
+
+  // MAAT scoring (primary)
+  if      (maat < 14)  score += 5;
+  else if (maat < 23)  score += 4;
+  else if (maat < 28)  score += 3;
+  else if (maat < 32)  score += 2;
+  else if (maat < 36)  score += 1;
+  // above 36°F: 0
+
+  // Terrain modifier
+  if      (terrain === 'spruce')    score += 2;
+  else if (terrain === 'tundra')    score += 2;
+  else if (terrain === 'mixed')     score += 1;
+  else if (terrain === 'disturbed') score -= 1;
+  else if (terrain === 'exposed')   score -= 1;
+
+  // Drainage
+  if      (drainage === 'poor')     score += 2;
+  else if (drainage === 'moderate') score += 1;
+
+  // Aspect
+  if   (aspect === 'north')  score += 1;
+  else if (aspect === 'south') score -= 1;
+
+  // History override
+  if (history === 'yes') score = Math.max(score, 7);
+  if (history === 'no')  score = Math.min(score, 2);
+
+  score = Math.max(0, Math.min(10, score));
+
+  // Determine risk level
+  let riskLabel, riskClass, riskColor, riskDesc, investigation, pctFill;
+  if (score >= 8) {
+    riskLabel = 'VERY HIGH'; riskClass = 'fail'; riskColor = '#C0392B';
+    pctFill = score * 10;
+    riskDesc = 'Permafrost is likely present and probably continuous or extensive. Expect ice-rich soils, deep permafrost table, and significant thaw sensitivity.';
+    investigation = 'Mandatory: borehole drilling with temperature monitoring; undisturbed sampling for ice content; thermistor installation; thaw consolidation testing.';
+  } else if (score >= 6) {
+    riskLabel = 'HIGH'; riskClass = 'fail'; riskColor = '#E67E22';
+    pctFill = score * 10;
+    riskDesc = 'Permafrost probable. Likely discontinuous but may be widespread depending on local conditions. Isolated thaw lakes and thermokarst possible.';
+    investigation = 'Strongly recommended: drilling with temp monitoring; ground-penetrating radar screening; review of aerial photography for thermokarst features.';
+  } else if (score >= 4) {
+    riskLabel = 'MODERATE'; riskClass = 'warn'; riskColor = '#D4A017';
+    pctFill = score * 10;
+    riskDesc = 'Permafrost possible in favorable microsites (north slopes, peat bogs, black spruce). Climate is marginal — local conditions dominate.';
+    investigation = 'Recommended: GPR and EM geophysical screening; test pits in suspicious areas; probing in wet/organic zones; temperature monitoring if drilling.';
+  } else if (score >= 2) {
+    riskLabel = 'LOW'; riskClass = 'pass'; riskColor = '#D4A017';
+    pctFill = score * 10;
+    riskDesc = 'Permafrost unlikely but not impossible. May exist as isolated patches in anomalous conditions. Seasonal frost is the primary concern.';
+    investigation = 'Investigate if site features suggest cold microsites. Standard subsurface investigation adequate for most projects.';
+  } else {
+    riskLabel = 'NEGLIGIBLE'; riskClass = 'pass'; riskColor = '#3DAA6E';
+    pctFill = 10;
+    riskDesc = 'Permafrost very unlikely at this MAAT and site conditions. Seasonal frost is active — evaluate frost depth and subgrade frost susceptibility.';
+    investigation = 'Standard geotechnical investigation. Focus on seasonal frost depth, frost susceptibility classification, and subgrade bearing capacity.';
+  }
+
+  document.getElementById('pfr-output').innerHTML = `
+    <div class="result-box ${riskClass}">
+      <div class="result-title">Permafrost Risk Level</div>
+      <div class="result-value ${riskClass}">${riskLabel}</div>
+      <div class="result-note">${riskDesc}</div>
+    </div>
+    <div class="risk-bar-wrap" style="margin-top:14px;">
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;">Risk Score: ${score}/10</div>
+      <div class="risk-bar-bg">
+        <div class="risk-bar-fill" style="width:${pctFill}%;background:${riskColor};">${score}/10</div>
+      </div>
+      <div class="risk-labels"><span>Negligible</span><span>Moderate</span><span>Very High</span></div>
+    </div>
+    <div class="result-box" style="margin-top:12px;">
+      <div class="result-title">Recommended Investigation</div>
+      <div class="result-note">${investigation}</div>
+    </div>
+    <div class="info-block" style="margin-top:10px;">
+      MAAT = ${maat}°F. This is a screening tool only. Permafrost presence must be confirmed by site investigation. See Module 06 — Subsurface Investigation Planning for field methods.
+    </div>
+  `;
+
+  // Generate depth profile
+  generateDepthProfile(maat, score);
+}
+
+function generateDepthProfile(maat, riskScore) {
+  const depths = [
+    { label: '0–1 ft', key: 0.5 },
+    { label: '1–3 ft', key: 2 },
+    { label: '3–6 ft', key: 4.5 },
+    { label: '6–10 ft', key: 8 },
+    { label: '10–20 ft', key: 15 },
+    { label: '20–40 ft', key: 30 },
+  ];
+
+  // Simplified: temp at depth = MAAT + amplitude * exp(-depth/damping)
+  const amplitude = (32 - maat) * 1.2; // seasonal swing estimate
+  const damping   = 8; // ft, typical
+  const maatC     = (maat - 32) * 5/9;
+
+  let html = '';
+  depths.forEach(d => {
+    const tempC_min = maatC - amplitude * Math.exp(-d.key / damping) * 5/9;
+    const tempC_max = maatC + amplitude * Math.exp(-d.key / damping) * 5/9;
+    const tempF_min = tempC_min * 9/5 + 32;
+    const tempF_max = tempC_max * 9/5 + 32;
+    const isFrozen  = tempF_max < 32 && riskScore >= 4;
+    const isMarginal = tempF_min < 32 && tempF_max >= 32;
+
+    const barColor = isFrozen ? 'var(--red)' : isMarginal ? 'var(--yellow)' : 'var(--accent-blue-lt)';
+    const barPct   = Math.min(100, Math.max(10, ((tempF_min + 50) / 130) * 100));
+    const label    = isFrozen ? '(perennially frozen)' : isMarginal ? '(seasonally frozen)' : '';
+
+    html += `
+      <div class="depth-row">
+        <div class="depth-label">${d.label}</div>
+        <div class="depth-bar-bg">
+          <div class="depth-bar-fill" style="width:${barPct}%;background:${barColor};"></div>
+        </div>
+        <div class="depth-val" style="color:${barColor};font-size:11px;">${tempF_min.toFixed(0)}–${tempF_max.toFixed(0)}°F</div>
+        <div style="font-size:10px;color:var(--text-dim);width:140px;">${label}</div>
+      </div>`;
+  });
+
+  document.getElementById('depth-profile-display').innerHTML = html;
+}
+
+function resetPermafrost() {
+  ['pfr-maat'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pfr-terrain').value = 'mixed';
+  document.getElementById('pfr-drainage').value = 'moderate';
+  document.getElementById('pfr-aspect').value = 'flat';
+  document.getElementById('pfr-history').value = 'unknown';
+  document.getElementById('pfr-output').innerHTML =
+    '<p style="color:var(--text-dim);font-size:12px;">Enter site conditions and click Assess to evaluate risk.</p>';
+  document.getElementById('depth-profile-display').innerHTML =
+    '<p style="color:var(--text-dim);font-size:12px;">Run assessment above to generate depth profile estimate.</p>';
+}
+
+/* ── STEP INDICATOR ── */
+function markStep(num, state) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    if (!el) continue;
+    el.classList.remove('active', 'done');
+    if (i < num) el.classList.add('done');
+    else if (i === num) el.classList.add(state);
+  }
+}
+</script>
+
+</body>
+</html>
