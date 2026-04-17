@@ -1,1 +1,1678 @@
-test
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESAL & Traffic Calculator — Alaska Geotechnical Tools</title>
+<style>
+  :root {
+    --bg:        #2E3A47;
+    --card:      #3A4A5C;
+    --card2:     #344455;
+    --accent:    #D4651A;
+    --accent2:   #4A6070;
+    --text:      #E8EAEC;
+    --muted:     #9AAABB;
+    --border:    #4A5F72;
+    --green:     #4CAF82;
+    --yellow:    #E8B84B;
+    --red:       #E05252;
+    --mono:      'Courier New', Consolas, monospace;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–mono);
+font-size: 13px;
+line-height: 1.5;
+min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+background: #1E2B36;
+border-bottom: 3px solid var(–accent);
+padding: 16px 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 10px;
+}
+.header-left { display: flex; flex-direction: column; gap: 4px; }
+.header-badge {
+font-size: 10px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(–accent);
+font-weight: 700;
+}
+header h1 {
+font-size: 20px;
+font-weight: 700;
+color: var(–text);
+letter-spacing: 0.5px;
+}
+.header-sub {
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.3px;
+}
+.back-btn {
+background: var(–card);
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 7px 14px;
+border-radius: 4px;
+cursor: pointer;
+font-family: var(–mono);
+font-size: 12px;
+text-decoration: none;
+transition: all 0.15s;
+white-space: nowrap;
+}
+.back-btn:hover { background: var(–accent2); color: var(–text); border-color: var(–accent2); }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+background: #253340;
+border-bottom: 1px solid var(–border);
+padding: 0 24px;
+display: flex;
+gap: 2px;
+overflow-x: auto;
+}
+.nav-tab {
+background: none;
+border: none;
+border-bottom: 3px solid transparent;
+color: var(–muted);
+padding: 12px 16px;
+cursor: pointer;
+font-family: var(–mono);
+font-size: 12px;
+letter-spacing: 0.5px;
+white-space: nowrap;
+transition: all 0.15s;
+}
+.nav-tab:hover { color: var(–text); }
+.nav-tab.active { color: var(–accent); border-bottom-color: var(–accent); }
+
+/* ── MAIN LAYOUT ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.section-header {
+font-size: 15px;
+font-weight: 700;
+color: var(–accent);
+letter-spacing: 0.5px;
+margin-bottom: 4px;
+text-transform: uppercase;
+}
+.section-desc {
+font-size: 12px;
+color: var(–muted);
+margin-bottom: 20px;
+line-height: 1.6;
+border-left: 3px solid var(–accent2);
+padding-left: 12px;
+}
+
+/* ── CARDS ── */
+.card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 6px;
+padding: 16px;
+margin-bottom: 16px;
+}
+.card-title {
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 1px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 14px;
+padding-bottom: 8px;
+border-bottom: 1px solid var(–border);
+}
+.card-title .icon { margin-right: 6px; }
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* ── FORM FIELDS ── */
+.field { margin-bottom: 12px; }
+.field label {
+display: block;
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.5px;
+margin-bottom: 4px;
+text-transform: uppercase;
+}
+.field input, .field select {
+width: 100%;
+background: var(–card2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 7px 10px;
+border-radius: 4px;
+font-family: var(–mono);
+font-size: 13px;
+}
+.field input:focus, .field select:focus {
+outline: none;
+border-color: var(–accent);
+}
+.field-hint {
+font-size: 10px;
+color: var(–muted);
+margin-top: 3px;
+font-style: italic;
+}
+
+/* ── RESULT BLOCK ── */
+.result-block {
+background: #1E2B36;
+border: 2px solid var(–accent);
+border-radius: 6px;
+padding: 18px;
+margin-top: 20px;
+}
+.result-title {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 14px;
+}
+.result-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+gap: 12px;
+}
+.result-item { }
+.result-label {
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 0.5px;
+text-transform: uppercase;
+margin-bottom: 3px;
+}
+.result-value {
+font-size: 20px;
+font-weight: 700;
+color: var(–text);
+}
+.result-value.big { font-size: 28px; color: var(–accent); }
+.result-value.green { color: var(–green); }
+.result-value.yellow { color: var(–yellow); }
+.result-value.red { color: var(–red); }
+.result-note {
+font-size: 11px;
+color: var(–muted);
+margin-top: 14px;
+padding-top: 12px;
+border-top: 1px solid var(–border);
+line-height: 1.6;
+}
+
+/* ── TRUCK TABLE ── */
+.truck-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+margin-top: 4px;
+}
+.truck-table th {
+text-align: left;
+padding: 6px 8px;
+font-size: 10px;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+color: var(–muted);
+border-bottom: 1px solid var(–border);
+}
+.truck-table td {
+padding: 7px 8px;
+border-bottom: 1px solid rgba(74,95,114,0.4);
+}
+.truck-table tr:hover td { background: rgba(255,255,255,0.03); }
+.truck-table input[type=“number”] {
+width: 70px;
+background: var(–card2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 4px 6px;
+border-radius: 3px;
+font-family: var(–mono);
+font-size: 12px;
+}
+.truck-table input:focus { outline: none; border-color: var(–accent); }
+.pill {
+display: inline-block;
+background: var(–accent2);
+color: #C8D8E8;
+padding: 2px 8px;
+border-radius: 10px;
+font-size: 10px;
+font-weight: 700;
+}
+.mono { font-family: var(–mono); color: var(–green); font-weight: 600; }
+
+/* ── SENSITIVITY TABLE ── */
+.sens-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+}
+.sens-table th {
+text-align: center;
+padding: 8px;
+font-size: 10px;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+color: var(–muted);
+border-bottom: 1px solid var(–border);
+}
+.sens-table td {
+text-align: center;
+padding: 8px;
+border-bottom: 1px solid rgba(74,95,114,0.4);
+font-family: var(–mono);
+}
+.sens-table tr.highlight-row td {
+background: rgba(212,101,26,0.15);
+color: var(–accent);
+font-weight: 700;
+}
+
+/* ── CHART ── */
+.chart-wrap {
+position: relative;
+background: var(–card2);
+border: 1px solid var(–border);
+border-radius: 4px;
+padding: 16px;
+height: 220px;
+}
+canvas { display: block; }
+
+/* ── REFERENCE TABLES ── */
+.ref-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+margin-top: 8px;
+}
+.ref-table th {
+background: var(–card2);
+text-align: left;
+padding: 8px 10px;
+font-size: 10px;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+color: var(–muted);
+border-bottom: 2px solid var(–border);
+}
+.ref-table td {
+padding: 8px 10px;
+border-bottom: 1px solid rgba(74,95,114,0.4);
+vertical-align: top;
+}
+.ref-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.ref-table tr:hover td { background: rgba(255,255,255,0.04); }
+.tag-ak { color: var(–accent); font-weight: 700; }
+.tag-note { color: var(–muted); font-size: 11px; font-style: italic; }
+
+/* ── TRUCK MIX DEFAULTS ── */
+.mix-preset {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+margin-bottom: 12px;
+}
+.preset-btn {
+background: var(–card2);
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 5px 12px;
+border-radius: 4px;
+cursor: pointer;
+font-family: var(–mono);
+font-size: 11px;
+transition: all 0.15s;
+}
+.preset-btn:hover, .preset-btn.active-preset {
+background: var(–accent);
+border-color: var(–accent);
+color: white;
+}
+
+/* ── INFO BOX ── */
+.info-box {
+background: rgba(74,96,112,0.25);
+border: 1px solid var(–accent2);
+border-radius: 4px;
+padding: 10px 14px;
+font-size: 11px;
+color: var(–muted);
+margin-bottom: 16px;
+line-height: 1.6;
+}
+.info-box strong { color: var(–text); }
+
+/* ── OUTPUT LINK ── */
+.output-link-box {
+background: rgba(212,101,26,0.12);
+border: 1px solid var(–accent);
+border-radius: 6px;
+padding: 14px 18px;
+margin-top: 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+}
+.output-link-box .link-text {
+font-size: 12px;
+color: var(–muted);
+line-height: 1.6;
+}
+.output-link-box .link-text strong { color: var(–text); }
+.link-btn {
+background: var(–accent);
+border: none;
+color: white;
+padding: 8px 16px;
+border-radius: 4px;
+cursor: pointer;
+font-family: var(–mono);
+font-size: 12px;
+font-weight: 700;
+text-decoration: none;
+white-space: nowrap;
+transition: opacity 0.15s;
+}
+.link-btn:hover { opacity: 0.85; }
+
+/* ── FOOTER ── */
+footer {
+text-align: center;
+padding: 24px;
+font-size: 10px;
+color: var(–muted);
+border-top: 1px solid var(–border);
+margin-top: 40px;
+line-height: 1.8;
+}
+
+/* ── HISTORICAL SECTION ── */
+.hist-row {
+display: grid;
+grid-template-columns: 2fr 1fr 1fr 1fr;
+gap: 6px;
+align-items: center;
+padding: 5px 0;
+border-bottom: 1px solid rgba(74,95,114,0.3);
+font-size: 12px;
+}
+.hist-row.header-row {
+font-size: 10px;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+border-bottom: 1px solid var(–border);
+padding-bottom: 6px;
+margin-bottom: 4px;
+}
+.hist-row input {
+background: var(–card2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 4px 6px;
+border-radius: 3px;
+font-family: var(–mono);
+font-size: 12px;
+width: 100%;
+}
+.hist-row input:focus { outline: none; border-color: var(–accent); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(–bg); }
+::-webkit-scrollbar-thumb { background: var(–accent2); border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="header-badge">Alaska Geotechnical Tools — AKFPD Manual 2020 · Chapter 6</div>
+    <h1>⚖ ESAL &amp; Traffic Calculator</h1>
+    <div class="header-sub">Design &amp; historical ESAL estimation · DOT&amp;PF truck categories · Sensitivity analysis · AADT projection</div>
+  </div>
+  <a href="index.html" class="back-btn">← Index</a>
+</header>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('tab-design')">🚛 Design ESAL</button>
+  <button class="nav-tab" onclick="showTab('tab-historical')">📅 Historical ESAL</button>
+  <button class="nav-tab" onclick="showTab('tab-truckmix')">🔧 Truck Mix</button>
+  <button class="nav-tab" onclick="showTab('tab-aadtproj')">📈 AADT Projector</button>
+  <button class="nav-tab" onclick="showTab('tab-sensitivity')">📊 Sensitivity</button>
+  <button class="nav-tab" onclick="showTab('tab-laneref')">📖 Lane &amp; Dir. Reference</button>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════════════ TAB 1: DESIGN ESAL -->
+
+<div id="tab-design" class="section active">
+  <div class="section-header">Design ESAL Calculator</div>
+  <div class="section-desc">Estimate future design ESALs for a new pavement section using DOT&amp;PF five-category truck system and the compound growth formula from AKFPD Section 6.4. Directional and lane distribution factors are applied to the design lane.</div>
+
+  <div class="grid-2">
+    <!-- LEFT: Traffic inputs -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚦</span> Traffic Inputs</div>
+
+```
+    <div class="field">
+      <label>Base Year AADT (both directions)</label>
+      <input type="number" id="d-aadt" value="2000" min="10" onchange="calcDesignESAL()">
+    </div>
+    <div class="field">
+      <label>Directional Distribution Factor (D)</label>
+      <input type="number" id="d-dir" value="0.5" min="0.4" max="0.6" step="0.01" onchange="calcDesignESAL()">
+      <div class="field-hint">Typically 0.5 (two-way roads). Use Lane &amp; Dir. Reference tab for guidance.</div>
+    </div>
+    <div class="field">
+      <label>Lane Distribution Factor (L)</label>
+      <input type="number" id="d-lane" value="1.0" min="0.5" max="1.0" step="0.05" onchange="calcDesignESAL()">
+      <div class="field-hint">1.0 for 1 lane; 0.9 for 2 lanes; 0.8 for 3+ lanes per direction.</div>
+    </div>
+    <div class="field">
+      <label>Traffic Growth Rate (% / year)</label>
+      <input type="number" id="d-growth" value="2.0" min="0" max="10" step="0.1" onchange="calcDesignESAL()">
+    </div>
+    <div class="field">
+      <label>Design Period (years)</label>
+      <input type="number" id="d-period" value="20" min="5" max="50" onchange="calcDesignESAL()">
+    </div>
+    <div class="field">
+      <label>Years Until Construction Opens</label>
+      <input type="number" id="d-delay" value="0" min="0" max="10" onchange="calcDesignESAL()">
+      <div class="field-hint">AADT is projected to opening year before design period begins.</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: Truck mix -->
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🚛</span> DOT&amp;PF Truck Categories (% of AADT)</div>
+    <div class="info-box" style="margin-bottom:10px;">
+      Load equivalency factors from AKFPD Table 6-1. Percentages are each category's share of total AADT. 
+      <strong>Use Truck Mix tab</strong> for Alaska-typical defaults by road class.
+    </div>
+    <div class="mix-preset" id="design-presets">
+      <button class="preset-btn" onclick="applyPreset('local','design')">Local Road</button>
+      <button class="preset-btn" onclick="applyPreset('collector','design')">Collector</button>
+      <button class="preset-btn" onclick="applyPreset('arterial','design')">Arterial</button>
+      <button class="preset-btn" onclick="applyPreset('highway','design')">Highway</button>
+    </div>
+
+    <table class="truck-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>FHWA Class</th>
+          <th>LEF</th>
+          <th>% AADT</th>
+          <th>ESALs/Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2-axle 4T</td>
+          <td style="color:var(--muted)">Class 5</td>
+          <td><span class="pill">0.39</span></td>
+          <td><input type="number" id="dt1" value="4" min="0" max="30" step="0.5" onchange="calcDesignESAL()"></td>
+          <td id="d-t1-esal" class="mono">—</td>
+        </tr>
+        <tr>
+          <td>2-axle 6T</td>
+          <td style="color:var(--muted)">Class 6</td>
+          <td><span class="pill">0.62</span></td>
+          <td><input type="number" id="dt2" value="3" min="0" max="30" step="0.5" onchange="calcDesignESAL()"></td>
+          <td id="d-t2-esal" class="mono">—</td>
+        </tr>
+        <tr>
+          <td>3-axle ST</td>
+          <td style="color:var(--muted)">Class 7</td>
+          <td><span class="pill">0.90</span></td>
+          <td><input type="number" id="dt3" value="2" min="0" max="30" step="0.5" onchange="calcDesignESAL()"></td>
+          <td id="d-t3-esal" class="mono">—</td>
+        </tr>
+        <tr>
+          <td>3–5 axle CT</td>
+          <td style="color:var(--muted)">Class 8–9,11</td>
+          <td><span class="pill">1.55</span></td>
+          <td><input type="number" id="dt4" value="2" min="0" max="30" step="0.5" onchange="calcDesignESAL()"></td>
+          <td id="d-t4-esal" class="mono">—</td>
+        </tr>
+        <tr>
+          <td>6+ axle CT</td>
+          <td style="color:var(--muted)">Class 10,12,13</td>
+          <td><span class="pill">2.24</span></td>
+          <td><input type="number" id="dt5" value="1" min="0" max="30" step="0.5" onchange="calcDesignESAL()"></td>
+          <td id="d-t5-esal" class="mono">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Chart -->
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📈</span> Cumulative ESAL Accumulation Over Design Life</div>
+    <div class="chart-wrap">
+      <canvas id="esalChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Result -->
+
+  <div class="result-block">
+    <div class="result-title">Design ESAL Summary</div>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-label">Opening Year AADT</div>
+        <div class="result-value" id="d-out-aadt">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Trucks / Day (Design Lane)</div>
+        <div class="result-value" id="d-out-trucks">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">ESALs / Day</div>
+        <div class="result-value" id="d-out-epd">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Growth Factor (GF)</div>
+        <div class="result-value" id="d-out-gf">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Design ESALs</div>
+        <div class="result-value big" id="d-out-esal">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Recommended Method</div>
+        <div class="result-value" id="d-out-method" style="font-size:14px;">—</div>
+      </div>
+    </div>
+    <div class="result-note" id="d-out-note">Enter inputs above to calculate design ESALs.</div>
+  </div>
+
+  <div class="output-link-box">
+    <div class="link-text">
+      <strong>→ Next Step:</strong> Use the Design ESAL result as input to the Pavement Section Design Calculator.<br>
+      The ESAL Calculator tab inside that tool uses the same DOT&amp;PF truck categories and produces the same result.
+    </div>
+    <a href="pavement-design.html" class="link-btn">Open Pavement Section Design →</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 2: HISTORICAL ESAL -->
+
+<div id="tab-historical" class="section">
+  <div class="section-header">Historical ESAL Calculator</div>
+  <div class="section-desc">For overlay design, you need the ESALs already accumulated on the existing pavement — not future ESALs. Enter known or estimated traffic conditions for each past period. AKFPD Section 6.4 guidance applies.</div>
+
+  <div class="info-box">
+    <strong>When to use this tab:</strong> Overlay and rehabilitation design requires knowing the cumulative ESALs the existing structure has already experienced. This helps assess remaining structural life and guides overlay thickness selection.
+    Enter each distinct traffic period (e.g., before a major widening, after a traffic change) as a separate row. The tool sums all periods.
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Traffic Periods</div>
+
+```
+<div style="margin-bottom:12px;">
+  <div class="mix-preset">
+    <button class="preset-btn" onclick="applyPreset('local','hist')">Local Road Defaults</button>
+    <button class="preset-btn" onclick="applyPreset('collector','hist')">Collector Defaults</button>
+    <button class="preset-btn" onclick="applyPreset('arterial','hist')">Arterial Defaults</button>
+    <button class="preset-btn" onclick="applyPreset('highway','hist')">Highway Defaults</button>
+  </div>
+</div>
+
+<div class="hist-row header-row">
+  <div>Period Description</div>
+  <div>AADT (Dir. Lane)</div>
+  <div>Avg LEF</div>
+  <div>Years</div>
+</div>
+<div id="hist-periods">
+  <!-- rows injected by JS -->
+</div>
+
+<div style="display:flex; gap:8px; margin-top:12px;">
+  <button class="preset-btn" onclick="addHistPeriod()" style="border-color:var(--accent);color:var(--accent);">+ Add Period</button>
+  <button class="preset-btn" onclick="removeHistPeriod()">− Remove Last</button>
+</div>
+```
+
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">ℹ️</span> Average LEF Reference</div>
+    <div class="field-hint" style="font-size:11px; margin-bottom:8px;">Estimated average LEF based on truck mix. Use Truck Mix tab for a more precise weighted LEF.</div>
+    <table class="ref-table">
+      <thead><tr><th>Road Class</th><th>Typical Avg LEF</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>Local / Low-volume</td><td>0.45–0.55</td><td>Mostly 2-axle trucks, few combos</td></tr>
+        <tr><td>Collector</td><td>0.55–0.80</td><td>Moderate 3-axle, limited combination trucks</td></tr>
+        <tr><td>Arterial</td><td>0.80–1.20</td><td>Mixed fleet, significant CT component</td></tr>
+        <tr><td>Primary Highway</td><td>1.10–1.60</td><td>Heavy CT fleet, potential overloads</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="result-block">
+    <div class="result-title">Historical ESAL Summary</div>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-label">Total Period (years)</div>
+        <div class="result-value" id="h-out-years">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Historical ESALs</div>
+        <div class="result-value big" id="h-out-esal">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Avg ESALs / Year</div>
+        <div class="result-value" id="h-out-peryear">—</div>
+      </div>
+    </div>
+    <div class="result-note" id="h-out-note">Add traffic periods above to calculate historical ESALs accumulated on the existing pavement.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 3: TRUCK MIX -->
+
+<div id="tab-truckmix" class="section">
+  <div class="section-header">Truck Mix Estimator</div>
+  <div class="section-desc">If WIM data or scalehouse counts are unavailable, use Alaska-typical default truck mixes by road classification. Adjust percentages to match site conditions. The tool calculates a weighted average LEF for use in ESAL estimates.</div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔧</span> Select Road Class &amp; Adjust Mix</div>
+
+```
+<div class="mix-preset" id="mix-presets">
+  <button class="preset-btn active-preset" onclick="loadMixPreset('local')">Local Road</button>
+  <button class="preset-btn" onclick="loadMixPreset('collector')">Collector</button>
+  <button class="preset-btn" onclick="loadMixPreset('arterial')">Arterial</button>
+  <button class="preset-btn" onclick="loadMixPreset('highway')">Highway / NHS</button>
+</div>
+
+<div class="info-box" id="mix-context">Select a road class above to see Alaska-typical defaults and context.</div>
+
+<table class="truck-table" style="margin-top:12px;">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>FHWA Class</th>
+      <th>LEF</th>
+      <th>% of AADT</th>
+      <th>Weighted Contribution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2-axle 4T</td>
+      <td style="color:var(--muted)">Class 5</td>
+      <td><span class="pill">0.39</span></td>
+      <td><input type="number" id="mx1" value="4" min="0" max="30" step="0.5" onchange="calcMix()"></td>
+      <td id="mx1-contrib" class="mono">—</td>
+    </tr>
+    <tr>
+      <td>2-axle 6T</td>
+      <td style="color:var(--muted)">Class 6</td>
+      <td><span class="pill">0.62</span></td>
+      <td><input type="number" id="mx2" value="3" min="0" max="30" step="0.5" onchange="calcMix()"></td>
+      <td id="mx2-contrib" class="mono">—</td>
+    </tr>
+    <tr>
+      <td>3-axle ST</td>
+      <td style="color:var(--muted)">Class 7</td>
+      <td><span class="pill">0.90</span></td>
+      <td><input type="number" id="mx3" value="2" min="0" max="30" step="0.5" onchange="calcMix()"></td>
+      <td id="mx3-contrib" class="mono">—</td>
+    </tr>
+    <tr>
+      <td>3–5 axle CT</td>
+      <td style="color:var(--muted)">Class 8–9,11</td>
+      <td><span class="pill">1.55</span></td>
+      <td><input type="number" id="mx4" value="2" min="0" max="30" step="0.5" onchange="calcMix()"></td>
+      <td id="mx4-contrib" class="mono">—</td>
+    </tr>
+    <tr>
+      <td>6+ axle CT</td>
+      <td style="color:var(--muted)">Class 10,12,13</td>
+      <td><span class="pill">2.24</span></td>
+      <td><input type="number" id="mx5" value="1" min="0" max="30" step="0.5" onchange="calcMix()"></td>
+      <td id="mx5-contrib" class="mono">—</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+  </div>
+
+  <div class="result-block">
+    <div class="result-title">Truck Mix Summary</div>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-label">Total Truck % of AADT</div>
+        <div class="result-value" id="mx-total-pct">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Weighted Avg LEF</div>
+        <div class="result-value big" id="mx-avg-lef">—</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">Dominant Category</div>
+        <div class="result-value" id="mx-dominant" style="font-size:14px;">—</div>
+      </div>
+    </div>
+    <div class="result-note">
+      The <strong>Weighted Avg LEF</strong> can be used as the average LEF input in the Historical ESAL tab when a precise per-category breakdown is not available for past periods.
+      It can also inform the overall LEF weighting for simplified ESAL estimates.
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="icon">📋</span> Alaska Default Truck Mixes by Road Class</div>
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Road Class</th>
+          <th>2-axle 4T</th>
+          <th>2-axle 6T</th>
+          <th>3-axle ST</th>
+          <th>3–5 axle CT</th>
+          <th>6+ axle CT</th>
+          <th>Total Trucks</th>
+          <th>Basis / Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tag-ak">Local</td>
+          <td>4–6%</td><td>3–5%</td><td>1–2%</td><td>0.5–1%</td><td>0–0.5%</td>
+          <td>8–14%</td>
+          <td class="tag-note">Utility vehicles, local delivery, light construction. Minimal CT.</td>
+        </tr>
+        <tr>
+          <td class="tag-ak">Collector</td>
+          <td>4–5%</td><td>3–4%</td><td>2–3%</td><td>1–2%</td><td>0.5–1%</td>
+          <td>10–15%</td>
+          <td class="tag-note">Regional freight movement, resource extraction access routes.</td>
+        </tr>
+        <tr>
+          <td class="tag-ak">Arterial</td>
+          <td>3–5%</td><td>3–4%</td><td>2–3%</td><td>3–5%</td><td>1–2%</td>
+          <td>12–19%</td>
+          <td class="tag-note">Inter-city freight, aggregate haul, supply chain routes.</td>
+        </tr>
+        <tr>
+          <td class="tag-ak">Highway / NHS</td>
+          <td>2–4%</td><td>2–3%</td><td>2–4%</td><td>4–7%</td><td>2–4%</td>
+          <td>12–22%</td>
+          <td class="tag-note">FHWA classification data, Alaska-adjusted for resource industries. High oversize/overweight potential.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="field-hint" style="margin-top:8px; font-size:10px;">
+      ⚠ These are representative defaults for planning and preliminary design. Obtain WIM data, scalehouse records, or ATR counts for final design.
+      Alaska truck traffic is frequently seasonal — winter ice road haul and summer construction seasons can significantly skew annual averages.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 4: AADT PROJECTOR -->
+
+<div id="tab-aadtproj" class="section">
+  <div class="section-header">Construction Year AADT Projector</div>
+  <div class="section-desc">Project base-year AADT forward to the anticipated construction opening year using a compound growth model. The resulting opening-year AADT is the correct starting value for design ESAL calculations.</div>
+
+  <div class="info-box">
+    <strong>Why this matters:</strong> Design ESALs should be accumulated starting from the year the road opens to traffic — not the current year. If construction is 3–5 years away, using today's AADT understates the design traffic.
+    The compound growth formula is: AADT<sub>n</sub> = AADT<sub>0</sub> × (1 + r)<sup>n</sup>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🗓</span> Projection Inputs</div>
+
+```
+    <div class="field">
+      <label>Base Year AADT</label>
+      <input type="number" id="proj-aadt" value="2000" min="10" onchange="calcProjection()">
+      <div class="field-hint">Current or most recent count year AADT (both directions).</div>
+    </div>
+    <div class="field">
+      <label>Count Year</label>
+      <input type="number" id="proj-base-year" value="2024" min="1990" max="2040" onchange="calcProjection()">
+    </div>
+    <div class="field">
+      <label>Expected Construction Year (Opens to Traffic)</label>
+      <input type="number" id="proj-open-year" value="2028" min="2024" max="2050" onchange="calcProjection()">
+    </div>
+    <div class="field">
+      <label>Traffic Growth Rate (% / year)</label>
+      <input type="number" id="proj-growth" value="2.0" min="0" max="10" step="0.1" onchange="calcProjection()">
+    </div>
+
+    <div class="result-block" style="margin-top:16px;">
+      <div class="result-title">Projection Result</div>
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="result-label">Years Projected</div>
+          <div class="result-value" id="proj-out-yrs">—</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Opening Year AADT</div>
+          <div class="result-value big" id="proj-out-aadt">—</div>
+        </div>
+      </div>
+      <div class="result-note" id="proj-out-note">Enter inputs to project AADT.</div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> AADT Growth Projection</div>
+    <div class="chart-wrap">
+      <canvas id="aadtChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Alaska Growth Rate Guidance</div>
+    <table class="ref-table">
+      <thead><tr><th>Context</th><th>Typical Rate</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Stable rural corridors</td><td>0–1%</td><td class="tag-note">Low pop. growth, stable economy</td></tr>
+        <tr><td>Urban / suburban Anchorage</td><td>1–2%</td><td class="tag-note">Moderate growth, established network</td></tr>
+        <tr><td>Growing communities</td><td>2–3%</td><td class="tag-note">Mat-Su, Fairbanks fringe areas</td></tr>
+        <tr><td>Resource access roads</td><td>Variable</td><td class="tag-note">Step-changes possible; use scenario planning</td></tr>
+        <tr><td>DOT&amp;PF default (no data)</td><td>2%</td><td class="tag-note">Standard assumption per AKFPD</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 5: SENSITIVITY -->
+
+<div id="tab-sensitivity" class="section">
+  <div class="section-header">Sensitivity Analysis</div>
+  <div class="section-desc">Shows how sensitive design ESALs are to the assumed growth rate. The growth rate is often the most uncertain input — this panel quantifies that uncertainty. Uses current Design ESAL tab inputs for all parameters except growth rate.</div>
+
+  <div class="info-box">
+    <strong>How to use:</strong> Set up your Design ESAL inputs first, then return here. The table and chart below automatically recalculate for growth rates of 0–5%. The row matching your assumed growth rate is highlighted.
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> Growth Rate Sensitivity — Design ESAL vs Growth Rate</div>
+    <table class="sens-table" id="sens-table">
+      <thead>
+        <tr>
+          <th>Growth Rate</th>
+          <th>Growth Factor (GF)</th>
+          <th>Design ESALs</th>
+          <th>vs. 0% Growth</th>
+          <th>vs. 2% Growth</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody id="sens-tbody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="icon">📊</span> ESAL Sensitivity Chart</div>
+    <div class="chart-wrap">
+      <canvas id="sensChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0;">
+    <div class="card-title"><span class="icon">📋</span> Design Period Sensitivity — ESALs at Varying Periods</div>
+    <table class="sens-table" id="period-table">
+      <thead>
+        <tr>
+          <th>Design Period</th>
+          <th>Growth Factor (GF)</th>
+          <th>Design ESALs</th>
+          <th>vs. 20-yr</th>
+        </tr>
+      </thead>
+      <tbody id="period-tbody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 6: LANE & DIR REFERENCE -->
+
+<div id="tab-laneref" class="section">
+  <div class="section-header">Lane &amp; Directional Distribution Reference</div>
+  <div class="section-desc">Guidance for selecting the Directional Distribution Factor (D) and Lane Distribution Factor (L) for different road types. These factors convert two-way AADT to design lane truck volumes. Source: AKFPD Chapter 6 and AASHTO Pavement Design Guide.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">↔</span> Directional Distribution Factor (D)</div>
+        <div class="info-box">
+          D accounts for the unequal distribution of traffic in each direction.
+          For most two-way roads, trucks travel in both directions roughly equally, giving D ≈ 0.50.
+          On roads with directional imbalance (e.g., loaded trucks predominantly in one direction),
+          D may be as high as 0.60 for the heavier direction.
+        </div>
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Road Situation</th>
+              <th>D Value</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Typical two-way highway</td>
+              <td><strong>0.50</strong></td>
+              <td class="tag-note">Equal split — standard default</td>
+            </tr>
+            <tr>
+              <td>Moderate directional imbalance</td>
+              <td><strong>0.55</strong></td>
+              <td class="tag-note">Slight preference for one direction observed</td>
+            </tr>
+            <tr>
+              <td>Significant directional imbalance</td>
+              <td><strong>0.60</strong></td>
+              <td class="tag-note">Heavy trucks predominantly in one direction (mine haul, port access)</td>
+            </tr>
+            <tr>
+              <td>One-way road</td>
+              <td><strong>1.00</strong></td>
+              <td class="tag-note">All traffic in one direction</td>
+            </tr>
+            <tr>
+              <td>Alaska resource corridor (loaded outbound)</td>
+              <td class="tag-ak"><strong>0.55–0.60</strong></td>
+              <td class="tag-note">Loaded trucks leave; empties return — design outbound direction</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+```
+<div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🛣</span> Lane Distribution Factor (L)</div>
+    <div class="info-box">
+      L accounts for the distribution of trucks among lanes when multiple lanes exist per direction.
+      Trucks tend to concentrate in the right lane (outer/slow lane), especially on multi-lane highways.
+      For single-lane roads in each direction, L = 1.0 (all trucks in the design lane).
+    </div>
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Lanes Per Direction</th>
+          <th>L Value</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1 lane</td>
+          <td><strong>1.00</strong></td>
+          <td class="tag-note">All trucks in the design lane — most Alaska roads</td>
+        </tr>
+        <tr>
+          <td>2 lanes</td>
+          <td><strong>0.80–0.90</strong></td>
+          <td class="tag-note">AASHTO: 0.90 typical; trucks favor right lane</td>
+        </tr>
+        <tr>
+          <td>3 lanes</td>
+          <td><strong>0.60–0.80</strong></td>
+          <td class="tag-note">AASHTO: 0.80 typical; some dispersal to middle lane</td>
+        </tr>
+        <tr>
+          <td>4+ lanes</td>
+          <td><strong>0.50–0.65</strong></td>
+          <td class="tag-note">Urban multi-lane; AASHTO lower bound 0.50</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📐</span> ESAL Formula Reference</div>
+    <table class="ref-table">
+      <thead>
+        <tr><th>Formula</th><th>Variable</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="6" style="font-family:var(--mono); font-size:12px; vertical-align:top; padding-top:10px; color:var(--accent);">
+            W<sub>18</sub> = AADT × D × L × ΣT<sub>i</sub>%×LEF<sub>i</sub> × 365 × GF
+          </td>
+          <td>AADT</td><td>Annual Average Daily Traffic (both directions)</td>
+        </tr>
+        <tr><td>D</td><td>Directional Distribution Factor (typically 0.5)</td></tr>
+        <tr><td>L</td><td>Lane Distribution Factor (1.0 for single lane)</td></tr>
+        <tr><td>T<sub>i</sub>%</td><td>Percentage of AADT in each truck category</td></tr>
+        <tr><td>LEF<sub>i</sub></td><td>Load Equivalency Factor for truck category i (AKFPD Table 6-1)</td></tr>
+        <tr><td>GF</td><td>Growth Factor = [(1+r)<sup>n</sup> − 1] / (r × n) for r &gt; 0; = 1.0 for r = 0</td></tr>
+        <tr>
+          <td style="font-family:var(--mono); font-size:12px; color:var(--accent);">GF = [(1+r)<sup>n</sup>−1]/(r)</td>
+          <td colspan="2" style="color:var(--muted); font-size:11px;">Compound growth factor for traffic over design period n (years), growth rate r (decimal). Final ESAL = base ESALs/year × GF</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠</span> Alaska-Specific Considerations</div>
+    <table class="ref-table">
+      <thead><tr><th>Factor</th><th>Alaska Context</th><th>Design Implication</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Seasonal overloads</td>
+          <td class="tag-note">Spring weight restrictions often lifted for resource haul; oversize/overweight loads common on remote routes</td>
+          <td>LEF can undercount damage — consider applying a load spectrum factor or using conservative upper LEF values</td>
+        </tr>
+        <tr>
+          <td>Winter ice road traffic</td>
+          <td class="tag-note">Seasonal gravel road construction traffic may apply heavy loads for short durations</td>
+          <td>Separate short-term construction ESAL estimate may be warranted for access road design</td>
+        </tr>
+        <tr>
+          <td>Resource development step-changes</td>
+          <td class="tag-note">Traffic can change dramatically when a mine or development project begins</td>
+          <td>Scenario-based ESAL estimates (without project / with project) recommended over single growth rate</td>
+        </tr>
+        <tr>
+          <td>Thaw weakening</td>
+          <td class="tag-note">Spring breakup dramatically reduces subgrade support capacity</td>
+          <td>DOT&amp;PF applies spring weight restrictions; ESALs during breakup may cause disproportionate damage — consider seasonal adjustment</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<footer>
+  <div>ESAL &amp; Traffic Calculator — Alaska Geotechnical Tools</div>
+  <div style="margin-top:4px;">Based on AKFPD Flexible Pavement Design Manual (July 2020), Chapter 6 | AASHTO Guide for Design of Pavement Structures</div>
+  <div style="margin-top:4px;">Independent personal project by Ian Minnock, CPG, PMP, PMI-ACP · ian.minnock@mfimpact.com</div>
+  <div style="margin-top:6px; color:#6A7A8A; font-size:10px;">
+    This tool is not affiliated with, endorsed by, or developed on behalf of Alaska DOT&amp;PF or any government agency.
+    All outputs are design aids — verify with a qualified professional before use.
+  </div>
+</footer>
+
+<script>
+/* ═══════════ CONSTANTS ═══════════ */
+const LEF = [0.39, 0.62, 0.90, 1.55, 2.24];
+const TRUCK_NAMES = ['2-axle 4T','2-axle 6T','3-axle ST','3–5 axle CT','6+ axle CT'];
+
+const PRESETS = {
+  local:     { t:[4,3,1,0.5,0],   context:'Local / Low-Volume Road: Light delivery, utility, and service trucks. Minimal combination trucks. Typical total truck % of AADT: 8–10%.', aadt:500,  lef:0.52 },
+  collector: { t:[4,3,2,1.5,0.5], context:'Collector Road: Regional freight, resource extraction access. Moderate combination truck component. Typical total truck %: 11–13%.', aadt:1200, lef:0.68 },
+  arterial:  { t:[4,3,2,4,1.5],   context:'Arterial: Inter-city freight corridors, aggregate haul routes, supply chain roads. Significant heavy combination truck component. Typical total truck %: 14–16%.', aadt:4000, lef:0.95 },
+  highway:   { t:[3,2,3,5,3],     context:'Highway / NHS: Primary freight corridors. High LEF trucks. Possible oversize/overweight loads. Typical total truck %: 16–22%.', aadt:8000, lef:1.28 }
+};
+
+/* ═══════════ TAB NAV ═══════════ */
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'tab-sensitivity') buildSensitivity();
+  if (id === 'tab-aadtproj')   calcProjection();
+}
+
+/* ═══════════ UTILS ═══════════ */
+function fmt(n) {
+  if (n === undefined || isNaN(n)) return '—';
+  if (n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return n.toLocaleString('en-US',{maximumFractionDigits:0});
+  return n.toFixed(2);
+}
+function fmtK(n) {
+  return n >= 1e6 ? (n/1e6).toFixed(3)+'M' : n.toLocaleString('en-US',{maximumFractionDigits:0});
+}
+function growthFactor(r, n) {
+  if (r === 0) return n;
+  return ((Math.pow(1+r,n) - 1) / r);
+}
+function methodLabel(esal) {
+  if (esal < 1e6) return { text:'Excess Fines Method', cls:'green' };
+  if (esal < 3e6) return { text:'Either Method', cls:'yellow' };
+  return { text:'Mechanistic Design', cls:'red' };
+}
+
+/* ═══════════ DESIGN ESAL ═══════════ */
+function getTruckInputs(prefix) {
+  return [1,2,3,4,5].map(i => parseFloat(document.getElementById(prefix+i).value)||0);
+}
+
+function calcDesignESAL() {
+  const aadt   = parseFloat(document.getElementById('d-aadt').value)||0;
+  const D      = parseFloat(document.getElementById('d-dir').value)||0.5;
+  const L      = parseFloat(document.getElementById('d-lane').value)||1.0;
+  const r      = (parseFloat(document.getElementById('d-growth').value)||0)/100;
+  const n      = parseInt(document.getElementById('d-period').value)||20;
+  const delay  = parseInt(document.getElementById('d-delay').value)||0;
+  const t      = getTruckInputs('dt');
+
+  const openAADT = aadt * Math.pow(1+r, delay);
+  const dirLaneAADT = openAADT * D * L;
+
+  // ESALs per day in design lane
+  let epd = 0;
+  t.forEach((pct,i) => {
+    const daily = dirLaneAADT * (pct/100) * LEF[i];
+    epd += daily;
+    const el = document.getElementById('d-t'+(i+1)+'-esal');
+    if(el) el.textContent = daily.toFixed(1);
+  });
+
+  const totalTrucksDay = dirLaneAADT * t.reduce((a,b)=>a+b/100,0);
+  const GF = growthFactor(r, n);
+  const designESAL = epd * 365 * GF;
+  const m = methodLabel(designESAL);
+
+  document.getElementById('d-out-aadt').textContent = Math.round(openAADT).toLocaleString();
+  document.getElementById('d-out-trucks').textContent = Math.round(totalTrucksDay).toLocaleString();
+  document.getElementById('d-out-epd').textContent = epd.toFixed(1);
+  document.getElementById('d-out-gf').textContent = GF.toFixed(2);
+  document.getElementById('d-out-esal').textContent = fmtK(designESAL);
+  document.getElementById('d-out-esal').className = 'result-value big ' + m.cls;
+  document.getElementById('d-out-method').textContent = m.text;
+  document.getElementById('d-out-method').className = 'result-value ' + m.cls;
+  document.getElementById('d-out-note').textContent =
+    `Design ESALs = ${epd.toFixed(2)} ESALs/day × 365 days × ${GF.toFixed(3)} GF = ${fmtK(designESAL)}. ` +
+    (designESAL < 1e6 ? 'ESALs < 1 million: Excess Fines Method applicable per AKFPD Chapter 3.'
+    : designESAL < 3e6 ? 'ESALs 1–3 million: either method may apply; verify with DOT&PF.'
+    : 'ESALs > 1 million: Mechanistic Design required per AKFPD Chapter 4.');
+
+  drawEsalChart(epd, r, n);
+  buildSensitivity();
+}
+
+/* ═══════════ ESAL ACCUMULATION CHART ═══════════ */
+let esalChartRef = null;
+function drawEsalChart(epd, r, n) {
+  const canvas = document.getElementById('esalChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 32;
+  canvas.height = 180;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = {t:12,r:16,b:36,l:70};
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+
+  // Build data
+  const years = [], esals = [];
+  for(let y=0; y<=n; y++) {
+    years.push(y);
+    const gf = growthFactor(r, y);
+    esals.push(epd * 365 * gf);
+  }
+  const maxE = esals[esals.length-1] || 1;
+
+  // Background
+  ctx.fillStyle = '#253340';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle = '#3A4A5C';
+  ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const y = pad.t + cH - (i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
+    ctx.fillStyle = '#6A8A9A';
+    ctx.font = '10px Courier New';
+    ctx.textAlign = 'right';
+    const val = (i/4)*maxE;
+    ctx.fillText(val >= 1e6 ? (val/1e6).toFixed(1)+'M' : Math.round(val/1e3)+'k', pad.l-6, y+3);
+  }
+
+  // Threshold lines
+  const thresh1M = pad.t + cH - (1e6/maxE)*cH;
+  if (thresh1M > pad.t && thresh1M < pad.t+cH) {
+    ctx.strokeStyle = 'rgba(76,175,130,0.5)';
+    ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(pad.l,thresh1M); ctx.lineTo(pad.l+cW,thresh1M); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(76,175,130,0.8)';
+    ctx.font = '9px Courier New'; ctx.textAlign = 'left';
+    ctx.fillText('1M — Method threshold', pad.l+4, thresh1M-3);
+  }
+
+  // Line
+  ctx.strokeStyle = '#D4651A';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  years.forEach((y,i) => {
+    const px = pad.l + (y/n)*cW;
+    const py = pad.t + cH - (esals[i]/maxE)*cH;
+    i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+
+  // Fill under curve
+  ctx.beginPath();
+  years.forEach((y,i) => {
+    const px = pad.l + (y/n)*cW;
+    const py = pad.t + cH - (esals[i]/maxE)*cH;
+    i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+  });
+  ctx.lineTo(pad.l+cW, pad.t+cH);
+  ctx.lineTo(pad.l, pad.t+cH);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(212,101,26,0.12)';
+  ctx.fill();
+
+  // X axis labels
+  ctx.fillStyle = '#6A8A9A';
+  ctx.font = '10px Courier New';
+  ctx.textAlign = 'center';
+  [0, Math.round(n*0.25), Math.round(n*0.5), Math.round(n*0.75), n].forEach(y => {
+    const px = pad.l + (y/n)*cW;
+    ctx.fillText('Yr '+y, px, H-6);
+  });
+
+  ctx.fillStyle = '#9AAABB';
+  ctx.font = '10px Courier New';
+  ctx.textAlign = 'left';
+  ctx.fillText('Cumulative ESALs', pad.l, pad.t+9);
+}
+
+/* ═══════════ HISTORICAL ESAL ═══════════ */
+let histPeriodCount = 3;
+
+function initHistPeriods() {
+  const container = document.getElementById('hist-periods');
+  container.innerHTML = '';
+  for(let i=0; i<histPeriodCount; i++) addHistPeriodRow(i);
+  calcHistESAL();
+}
+
+function addHistPeriodRow(i) {
+  const container = document.getElementById('hist-periods');
+  const desc = i===0?'Initial construction to first overlay':i===1?'After first overlay':'Recent period';
+  const row = document.createElement('div');
+  row.className = 'hist-row';
+  row.id = 'hrow-'+i;
+  row.innerHTML = `
+    <input type="text" id="hd${i}" value="${desc}" placeholder="Period description..." 
+      style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:3px;font-family:var(--mono);font-size:12px;width:100%;" onchange="calcHistESAL()">
+    <input type="number" id="ha${i}" value="${Math.round(500+i*300)}" min="10" onchange="calcHistESAL()" style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:3px;font-family:var(--mono);font-size:12px;">
+    <input type="number" id="hl${i}" value="${0.6+i*0.1}" step="0.05" min="0.1" max="3.0" onchange="calcHistESAL()" style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:3px;font-family:var(--mono);font-size:12px;">
+    <input type="number" id="hy${i}" value="${i===0?10:i===1?8:5}" min="1" max="60" onchange="calcHistESAL()" style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:3px;font-family:var(--mono);font-size:12px;">
+  `;
+  container.appendChild(row);
+}
+
+function addHistPeriod() {
+  addHistPeriodRow(histPeriodCount);
+  histPeriodCount++;
+  calcHistESAL();
+}
+
+function removeHistPeriod() {
+  if(histPeriodCount <= 1) return;
+  histPeriodCount--;
+  const row = document.getElementById('hrow-'+histPeriodCount);
+  if(row) row.remove();
+  calcHistESAL();
+}
+
+function calcHistESAL() {
+  let totalESAL = 0, totalYears = 0;
+  for(let i=0; i<histPeriodCount; i++) {
+    const a = parseFloat(document.getElementById('ha'+i)?.value)||0;
+    const l = parseFloat(document.getElementById('hl'+i)?.value)||0;
+    const y = parseFloat(document.getElementById('hy'+i)?.value)||0;
+    totalESAL += a * l * 365 * y;
+    totalYears += y;
+  }
+  document.getElementById('h-out-years').textContent = totalYears;
+  document.getElementById('h-out-esal').textContent = fmtK(totalESAL);
+  document.getElementById('h-out-peryear').textContent = totalYears > 0 ? fmtK(totalESAL/totalYears) : '—';
+  document.getElementById('h-out-note').textContent =
+    `Cumulative historical ESALs = ${fmtK(totalESAL)} over ${totalYears} years. `+
+    `This represents the structural damage already accumulated on the existing pavement. Use in conjunction with remaining life analysis and deflection testing for overlay design.`;
+}
+
+/* ═══════════ TRUCK MIX ═══════════ */
+function calcMix() {
+  let totalPct=0, weightedLEF=0;
+  [1,2,3,4,5].forEach((i,j) => {
+    const pct = parseFloat(document.getElementById('mx'+i).value)||0;
+    const contrib = pct * LEF[j] / 100;
+    weightedLEF += contrib;
+    totalPct += pct;
+    const el = document.getElementById('mx'+i+'-contrib');
+    if(el) el.textContent = contrib.toFixed(4);
+  });
+
+  const avglef = totalPct > 0 ? weightedLEF/(totalPct/100) : 0;
+
+  let maxPct=0, dominant='—';
+  [1,2,3,4,5].forEach((i,j) => {
+    const pct = parseFloat(document.getElementById('mx'+i).value)||0;
+    if(pct>maxPct){maxPct=pct; dominant=TRUCK_NAMES[j];}
+  });
+
+  document.getElementById('mx-total-pct').textContent = totalPct.toFixed(1)+'%';
+  document.getElementById('mx-avg-lef').textContent = avglef.toFixed(3);
+  document.getElementById('mx-dominant').textContent = dominant;
+}
+
+function loadMixPreset(key) {
+  const p = PRESETS[key];
+  p.t.forEach((v,i) => {
+    const el = document.getElementById('mx'+(i+1));
+    if(el) el.value = v;
+  });
+  document.getElementById('mix-context').innerHTML = '<strong>' + p.context + '</strong>';
+  document.querySelectorAll('#mix-presets .preset-btn').forEach(b => b.classList.remove('active-preset'));
+  event.target.classList.add('active-preset');
+  calcMix();
+}
+
+/* ═══════════ AADT PROJECTOR ═══════════ */
+let aadtChartRef = null;
+function calcProjection() {
+  const aadt      = parseFloat(document.getElementById('proj-aadt').value)||0;
+  const baseYear  = parseInt(document.getElementById('proj-base-year').value)||2024;
+  const openYear  = parseInt(document.getElementById('proj-open-year').value)||2028;
+  const r         = (parseFloat(document.getElementById('proj-growth').value)||0)/100;
+
+  const n = Math.max(0, openYear - baseYear);
+  const projAADT = aadt * Math.pow(1+r, n);
+
+  document.getElementById('proj-out-yrs').textContent = n;
+  document.getElementById('proj-out-aadt').textContent = Math.round(projAADT).toLocaleString();
+  document.getElementById('proj-out-note').textContent =
+    `AADT${openYear} = ${aadt.toLocaleString()} × (1 + ${(r*100).toFixed(1)}%)^${n} = ${Math.round(projAADT).toLocaleString()} vehicles/day. `+
+    `Use this value as the Base Year AADT in the Design ESAL tab.`;
+
+  drawAadtChart(aadt, r, baseYear, openYear);
+}
+
+function drawAadtChart(aadt0, r, baseYear, openYear) {
+  const canvas = document.getElementById('aadtChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 32;
+  canvas.height = 180;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const W=canvas.width, H=canvas.height;
+  const pad={t:12,r:16,b:36,l:70};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const n=Math.max(0,openYear-baseYear);
+  if(n===0) return;
+
+  const years=[], aadts=[];
+  for(let i=0;i<=n;i++){ years.push(baseYear+i); aadts.push(aadt0*Math.pow(1+r,i)); }
+  const maxA=aadts[aadts.length-1]||1;
+
+  ctx.fillStyle='#253340'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#3A4A5C'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+cH-(i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
+    ctx.fillStyle='#6A8A9A'; ctx.font='10px Courier New'; ctx.textAlign='right';
+    ctx.fillText(Math.round((i/4)*maxA).toLocaleString(), pad.l-6, y+3);
+  }
+
+  ctx.strokeStyle='#4CAF82'; ctx.lineWidth=2;
+  ctx.beginPath();
+  years.forEach((yr,i)=>{
+    const px=pad.l+(i/n)*cW, py=pad.t+cH-(aadts[i]/maxA)*cH;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle='#6A8A9A'; ctx.font='10px Courier New'; ctx.textAlign='center';
+  years.filter((_,i)=>i===0||i===n||i===Math.round(n/2)).forEach((yr,_,arr)=>{
+    const i=years.indexOf(yr);
+    const px=pad.l+(i/n)*cW;
+    ctx.fillText(yr, px, H-6);
+  });
+
+  // Mark opening year
+  const opPx=pad.l+cW, opPy=pad.t+cH-(aadts[n]/maxA)*cH;
+  ctx.fillStyle='#D4651A';
+  ctx.beginPath(); ctx.arc(opPx,opPy,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#D4651A'; ctx.font='10px Courier New'; ctx.textAlign='right';
+  ctx.fillText('Open: '+Math.round(aadts[n]).toLocaleString(), opPx-8, opPy-6);
+}
+
+/* ═══════════ SENSITIVITY ═══════════ */
+function buildSensitivity() {
+  const aadt   = parseFloat(document.getElementById('d-aadt').value)||2000;
+  const D      = parseFloat(document.getElementById('d-dir').value)||0.5;
+  const L      = parseFloat(document.getElementById('d-lane').value)||1.0;
+  const n      = parseInt(document.getElementById('d-period').value)||20;
+  const delay  = parseInt(document.getElementById('d-delay').value)||0;
+  const t      = getTruckInputs('dt');
+  const curR   = parseFloat(document.getElementById('d-growth').value)||0;
+
+  // Base ESALs/day (at growth=current but using opening AADT)
+  function calcBase(rVal) {
+    const r = rVal/100;
+    const openAADT = aadt * Math.pow(1+r, delay);
+    const dlAADT = openAADT * D * L;
+    let epd=0;
+    t.forEach((pct,i) => { epd += dlAADT*(pct/100)*LEF[i]; });
+    return epd;
+  }
+
+  // For each growth rate, epd is based on SAME base AADT but different opening projection
+  const rates = [0,1,2,3,4,5];
+  const esals = rates.map(r => {
+    const epd = calcBase(r);
+    const gf = growthFactor(r/100, n);
+    return epd * 365 * gf;
+  });
+  const esal0 = esals[0], esal2 = esals[2]||esals[1]||1;
+
+  // Build sensitivity table
+  const tbody = document.getElementById('sens-tbody');
+  tbody.innerHTML = '';
+  rates.forEach((r,i) => {
+    const gf = growthFactor(r/100,n);
+    const esal = esals[i];
+    const m = methodLabel(esal);
+    const vsZero = esal0 > 0 ? (((esal-esal0)/esal0)*100).toFixed(1)+'%' : '—';
+    const vsTwo  = esal2 > 0 ? (((esal-esal2)/esal2)*100).toFixed(1)+'%' : '—';
+    const isActive = Math.abs(r - curR) < 0.5;
+    const tr = document.createElement('tr');
+    if(isActive) tr.className = 'highlight-row';
+    tr.innerHTML = `
+      <td>${r}%</td>
+      <td>${gf.toFixed(3)}</td>
+      <td style="color:var(--${m.cls})">${fmtK(esal)}</td>
+      <td style="color:var(--${i===0?'muted':'yellow'})">${i===0?'baseline':vsZero}</td>
+      <td style="color:var(--${i===2?'muted':'yellow'})">${i===2?'baseline':vsTwo}</td>
+      <td style="color:var(--${m.cls}); font-size:11px;">${m.text}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Period sensitivity table
+  const periods = [10,15,20,25,30];
+  const r = curR/100;
+  const esal20 = (()=>{
+    const epd=calcBase(curR);
+    return epd*365*growthFactor(r,20);
+  })();
+  const ptbody = document.getElementById('period-tbody');
+  ptbody.innerHTML='';
+  periods.forEach(p=>{
+    const epd=calcBase(curR);
+    const gf=growthFactor(r,p);
+    const esal=epd*365*gf;
+    const m=methodLabel(esal);
+    const vs20=esal20>0?(((esal-esal20)/esal20)*100).toFixed(1)+'%':'—';
+    const isActive=p===n;
+    const tr=document.createElement('tr');
+    if(isActive) tr.className='highlight-row';
+    tr.innerHTML=`
+      <td>${p} yr</td>
+      <td>${gf.toFixed(3)}</td>
+      <td style="color:var(--${m.cls})">${fmtK(esal)}</td>
+      <td style="color:var(--${p===20?'muted':'yellow'})">${p===20?'baseline':vs20}</td>
+    `;
+    ptbody.appendChild(tr);
+  });
+
+  drawSensChart(rates, esals, curR);
+}
+
+function drawSensChart(rates, esals, curR) {
+  const canvas = document.getElementById('sensChart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.parentElement.clientWidth-32;
+  canvas.height=180;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const W=canvas.width, H=canvas.height;
+  const pad={t:12,r:16,b:36,l:70};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const maxE=esals[esals.length-1]||1;
+
+  ctx.fillStyle='#253340'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#3A4A5C'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+cH-(i/4)*cH;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+    ctx.fillStyle='#6A8A9A';ctx.font='10px Courier New';ctx.textAlign='right';
+    const v=(i/4)*maxE;
+    ctx.fillText(v>=1e6?(v/1e6).toFixed(1)+'M':Math.round(v/1e3)+'k',pad.l-6,y+3);
+  }
+
+  // 1M threshold
+  const t1=pad.t+cH-(1e6/maxE)*cH;
+  if(t1>pad.t&&t1<pad.t+cH){
+    ctx.strokeStyle='rgba(76,175,130,0.4)';ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(pad.l,t1);ctx.lineTo(pad.l+cW,t1);ctx.stroke();ctx.setLineDash([]);
+  }
+
+  ctx.strokeStyle='#D4651A';ctx.lineWidth=2;
+  ctx.beginPath();
+  rates.forEach((r,i)=>{
+    const px=pad.l+(i/(rates.length-1))*cW;
+    const py=pad.t+cH-(esals[i]/maxE)*cH;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+
+  rates.forEach((r,i)=>{
+    const px=pad.l+(i/(rates.length-1))*cW;
+    const py=pad.t+cH-(esals[i]/maxE)*cH;
+    const isActive=Math.abs(r-curR)<0.5;
+    ctx.fillStyle=isActive?'#D4651A':'#9AAABB';
+    ctx.beginPath();ctx.arc(px,py,isActive?6:4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#9AAABB';ctx.font='10px Courier New';ctx.textAlign='center';
+    ctx.fillText(r+'%',px,H-6);
+  });
+}
+
+/* ═══════════ PRESET APPLICATOR ═══════════ */
+function applyPreset(key, target) {
+  const p = PRESETS[key];
+  if(target==='design') {
+    p.t.forEach((v,i) => {
+      const el=document.getElementById('dt'+(i+1));
+      if(el) el.value=v;
+    });
+    document.getElementById('d-aadt').value = p.aadt;
+    calcDesignESAL();
+  } else if(target==='hist') {
+    for(let i=0;i<histPeriodCount;i++){
+      const al=document.getElementById('hl'+i);
+      if(al) al.value=p.lef;
+    }
+    calcHistESAL();
+  }
+}
+
+/* ═══════════ INIT ═══════════ */
+window.addEventListener('load', () => {
+  initHistPeriods();
+  calcDesignESAL();
+  calcMix();
+  calcProjection();
+});
+
+window.addEventListener('resize', () => {
+  calcDesignESAL();
+  calcProjection();
+});
+</script>
+
+</body>
+</html>
