@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Well & Boring Geometry Builder — Alaska Geotechnical Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-page:   #2E3A47;
@@ -18,108 +21,109 @@
     --yellow:    #E6B840;
     --red:       #C94040;
     --border:    #4A6070;
-    --mono:      'Courier New', Consolas, monospace;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg-page); color: var(--text); font-family: var(--mono); font-size: 14px; min-height: 100vh; }
 
 header {
-background: var(–bg-deep); border-bottom: 2px solid var(–accent);
+background: var(--bg-deep); border-bottom: 2px solid var(--accent);
 padding: 14px 24px; display: flex; align-items: center;
 justify-content: space-between; flex-wrap: wrap; gap: 8px; position: relative;
 }
-header .site-title { color: var(–accent); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-header h1 { font-size: 17px; color: var(–text); letter-spacing: .04em; }
+header .site-title { color: var(--accent); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+header h1 { font-size: 17px; color: var(--text); letter-spacing: .04em; }
 header nav a {
-color: var(–text-dim); font-size: 11px; text-decoration: none;
-border: 1px solid var(–border); padding: 4px 10px; border-radius: 3px; transition: color .15s, border-color .15s;
+color: var(--text-dim); font-size: 11px; text-decoration: none;
+border: 1px solid var(--border); padding: 4px 10px; border-radius: 3px; transition: color .15s, border-color .15s;
 }
-header nav a:hover { color: var(–accent); border-color: var(–accent); }
+header nav a:hover { color: var(--accent); border-color: var(--accent); }
 
 .workspace { display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: calc(100vh - 62px); }
 
-.panel-left { background: var(–bg-card); border-right: 1px solid var(–border); overflow-y: auto; }
-.panel-section { border-bottom: 1px solid var(–border); }
+.panel-left { background: var(--bg-card); border-right: 1px solid var(--border); overflow-y: auto; }
+.panel-section { border-bottom: 1px solid var(--border); }
 .panel-section-header {
-background: var(–bg-deep); padding: 10px 16px; font-size: 11px; letter-spacing: .1em;
-text-transform: uppercase; color: var(–accent); cursor: pointer;
+background: var(--bg-deep); padding: 10px 16px; font-size: 11px; letter-spacing: .1em;
+text-transform: uppercase; color: var(--accent); cursor: pointer;
 display: flex; justify-content: space-between; align-items: center; user-select: none;
 }
-.panel-section-header:hover { color: var(–text); }
+.panel-section-header:hover { color: var(--text); }
 .panel-section-body { padding: 12px 16px; }
 
-.mode-selector { display: flex; gap: 8px; padding: 12px 16px; background: var(–bg-deep); border-bottom: 1px solid var(–border); }
+.mode-selector { display: flex; gap: 8px; padding: 12px 16px; background: var(--bg-deep); border-bottom: 1px solid var(--border); }
 .mode-btn {
-flex: 1; background: var(–bg-card); border: 1px solid var(–border); color: var(–text-dim);
-font-family: var(–mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+flex: 1; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-dim);
+font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
 padding: 8px 4px; cursor: pointer; border-radius: 3px; transition: all .15s; line-height: 1.4; text-align: center;
 }
-.mode-btn.active { background: var(–accent); border-color: var(–accent); color: #fff; }
-.mode-btn:hover:not(.active) { border-color: var(–accent); color: var(–accent); }
+.mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.mode-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
 
 .component-row {
 display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
 padding: 8px 10px; border: 1px solid transparent; border-radius: 4px; transition: border-color .15s, background .15s;
 }
-.component-row.active { background: rgba(212,101,26,.08); border-color: var(–accent); }
-.component-row input[type=“checkbox”] { margin-top: 2px; accent-color: var(–accent); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
-.component-label { font-size: 13px; color: var(–text); line-height: 1.3; flex: 1; cursor: pointer; }
-.component-label .sub { font-size: 11px; color: var(–text-dim); display: block; margin-top: 2px; }
+.component-row.active { background: rgba(212,101,26,.08); border-color: var(--accent); }
+.component-row input[type=“checkbox”] { margin-top: 2px; accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+.component-label { font-size: 13px; color: var(--text); line-height: 1.3; flex: 1; cursor: pointer; }
+.component-label .sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 2px; }
 
-.component-inputs { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(–border); gap: 8px; flex-wrap: wrap; }
+.component-inputs { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); gap: 8px; flex-wrap: wrap; }
 .component-inputs.visible { display: flex; }
 .input-group { display: flex; flex-direction: column; gap: 3px; min-width: 90px; flex: 1; }
-.input-group label { font-size: 10px; color: var(–text-dim); letter-spacing: .06em; text-transform: uppercase; }
+.input-group label { font-size: 10px; color: var(--text-dim); letter-spacing: .06em; text-transform: uppercase; }
 .input-group input, .input-group select {
-background: var(–bg-deep); border: 1px solid var(–border); color: var(–text);
-font-family: var(–mono); font-size: 12px; padding: 5px 8px; border-radius: 3px; width: 100%; transition: border-color .15s;
+background: var(--bg-deep); border: 1px solid var(--border); color: var(--text);
+font-family: var(--mono); font-size: 12px; padding: 5px 8px; border-radius: 3px; width: 100%; transition: border-color .15s;
 }
-.input-group input:focus, .input-group select:focus { outline: none; border-color: var(–accent); }
-.input-group select option { background: var(–bg-deep); }
+.input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
+.input-group select option { background: var(--bg-deep); }
 
 .color-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
 .color-swatch { width: 22px; height: 22px; border-radius: 3px; border: 2px solid transparent; cursor: pointer; transition: border-color .15s, transform .1s; }
 .color-swatch:hover { transform: scale(1.15); }
-.color-swatch.selected { border-color: var(–text); }
+.color-swatch.selected { border-color: var(--text); }
 
-.btn-primary { background: var(–accent); border: none; color: #fff; font-family: var(–mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 20px; cursor: pointer; border-radius: 3px; width: 100%; margin-top: 8px; transition: background .15s; }
+.btn-primary { background: var(--accent); border: none; color: #fff; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 20px; cursor: pointer; border-radius: 3px; width: 100%; margin-top: 8px; transition: background .15s; }
 .btn-primary:hover { background: #b8521a; }
-.btn-secondary { background: transparent; border: 1px solid var(–border); color: var(–text-dim); font-family: var(–mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 7px 14px; cursor: pointer; border-radius: 3px; transition: all .15s; }
-.btn-secondary:hover { border-color: var(–accent); color: var(–accent); }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 7px 14px; cursor: pointer; border-radius: 3px; transition: all .15s; }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
 .panel-right { display: flex; flex-direction: column; overflow: hidden; }
-.viz-header { background: var(–bg-deep); border-bottom: 1px solid var(–border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.viz-header span { font-size: 11px; color: var(–text-dim); letter-spacing: .08em; text-transform: uppercase; }
+.viz-header { background: var(--bg-deep); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.viz-header span { font-size: 11px; color: var(--text-dim); letter-spacing: .08em; text-transform: uppercase; }
 .viz-controls { display: flex; gap: 8px; align-items: center; }
-.viz-controls label { font-size: 11px; color: var(–text-dim); }
-.viz-controls input[type=“range”] { accent-color: var(–accent); width: 80px; }
+.viz-controls label { font-size: 11px; color: var(--text-dim); }
+.viz-controls input[type=“range”] { accent-color: var(--accent); width: 80px; }
 
 .viz-area { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; gap: 24px; flex-wrap: wrap; }
 .canvas-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.canvas-wrapper .canvas-label { font-size: 11px; color: var(–text-dim); letter-spacing: .1em; text-transform: uppercase; }
-canvas { border: 1px solid var(–border); border-radius: 4px; background: #1C2730; display: block; }
+.canvas-wrapper .canvas-label { font-size: 11px; color: var(--text-dim); letter-spacing: .1em; text-transform: uppercase; }
+canvas { border: 1px solid var(--border); border-radius: 4px; background: #1C2730; display: block; }
 
-.legend, .summary-table { background: var(–bg-card); border: 1px solid var(–border); border-radius: 4px; padding: 14px 16px; min-width: 200px; max-width: 260px; }
-.legend h3, .summary-table h3 { font-size: 11px; color: var(–accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(–border); padding-bottom: 6px; }
-.legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; font-size: 12px; color: var(–text); }
+.legend, .summary-table { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; min-width: 200px; max-width: 260px; }
+.legend h3, .summary-table h3 { font-size: 11px; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; font-size: 12px; color: var(--text); }
 .legend-swatch { width: 18px; height: 18px; border-radius: 2px; flex-shrink: 0; border: 1px solid rgba(255,255,255,.15); }
-.legend-item .dim { color: var(–text-dim); font-size: 11px; margin-left: auto; }
+.legend-item .dim { color: var(--text-dim); font-size: 11px; margin-left: auto; }
 .summary-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 6px; font-size: 12px; }
-.summary-row .key { color: var(–text-dim); }
-.summary-row .val { color: var(–text); text-align: right; }
+.summary-row .key { color: var(--text-dim); }
+.summary-row .val { color: var(--text); text-align: right; }
 
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(–text-dim); font-size: 13px; padding: 60px 20px; text-align: center; width: 100%; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-dim); font-size: 13px; padding: 60px 20px; text-align: center; width: 100%; }
 .empty-state .icon { font-size: 48px; opacity: .4; }
 
 .flag { font-size: 11px; padding: 4px 8px; border-radius: 3px; margin-top: 4px; display: inline-block; }
-.flag.warn { background: rgba(230,184,64,.15); color: var(–yellow); border: 1px solid var(–yellow); }
-.flag.ok   { background: rgba(76,175,130,.15); color: var(–green);  border: 1px solid var(–green); }
-.flag.err  { background: rgba(201,64,64,.15);  color: var(–red);    border: 1px solid var(–red); }
+.flag.warn { background: rgba(230,184,64,.15); color: var(--yellow); border: 1px solid var(--yellow); }
+.flag.ok   { background: rgba(76,175,130,.15); color: var(--green);  border: 1px solid var(--green); }
+.flag.err  { background: rgba(201,64,64,.15);  color: var(--red);    border: 1px solid var(--red); }
 
-.notes-area { border-top: 1px solid var(–border); padding: 12px 20px; background: var(–bg-deep); display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
-.notes-area textarea { flex: 1; min-width: 200px; background: var(–bg-card); border: 1px solid var(–border); color: var(–text); font-family: var(–mono); font-size: 12px; padding: 8px 10px; border-radius: 3px; resize: vertical; min-height: 60px; }
-.notes-area textarea:focus { outline: none; border-color: var(–accent); }
-.notes-area textarea::placeholder { color: var(–text-dim); }
+.notes-area { border-top: 1px solid var(--border); padding: 12px 20px; background: var(--bg-deep); display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.notes-area textarea { flex: 1; min-width: 200px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 12px; padding: 8px 10px; border-radius: 3px; resize: vertical; min-height: 60px; }
+.notes-area textarea:focus { outline: none; border-color: var(--accent); }
+.notes-area textarea::placeholder { color: var(--text-dim); }
 
 @media (max-width:860px) { .workspace { grid-template-columns: 1fr; } .panel-right { min-height: 500px; } }
 </style>
@@ -650,7 +654,7 @@ function draw() {
     drawSoilHatch(ctx, layer.type, layer.color, 0, yT, cx - boreholeR, yB - yT);
     drawSoilHatch(ctx, layer.type, layer.color, cx + boreholeR, yT, totalW - (cx + boreholeR), yB - yT);
     ctx.fillStyle = layer.color;
-    ctx.font = '9px Courier New';
+    ctx.font = '9px IBM Plex Mono';
     ctx.fillText(layer.type.substring(0,4), 3, (yT+yB)/2 + 3);
   });
 
@@ -715,7 +719,7 @@ function draw() {
     ctx.save(); ctx.strokeStyle = '#4A9FD4'; ctx.lineWidth = 1.5; ctx.setLineDash([6,3]);
     ctx.beginPath(); ctx.moveTo(0, gwY); ctx.lineTo(totalW, gwY); ctx.stroke();
     ctx.setLineDash([]); ctx.restore();
-    ctx.fillStyle = '#4A9FD4'; ctx.font = 'bold 9px Courier New';
+    ctx.fillStyle = '#4A9FD4'; ctx.font = 'bold 9px IBM Plex Mono';
     ctx.fillText('▼ GWL  ' + val('gwl-depth') + 'ft', 3, gwY - 3);
     ctx.fillStyle = '#4A9FD418';
     ctx.fillRect(cx - boreholeR, gwY, boreholeR*2, dy(totalDepth) - gwY);
@@ -726,7 +730,7 @@ function draw() {
     const ctY = dy(val('control-depth'));
     ctx.save(); ctx.strokeStyle = '#E8EAEC'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, ctY); ctx.lineTo(totalW, ctY); ctx.stroke(); ctx.restore();
-    ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 9px Courier New';
+    ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 9px IBM Plex Mono';
     ctx.fillText('CONTROL', 3, ctY - 3);
   }
 
@@ -796,7 +800,7 @@ function draw() {
         ctx.save(); ctx.strokeStyle = '#E8EAEC33'; ctx.lineWidth = 0.5; ctx.setLineDash([3,3]);
         ctx.beginPath(); ctx.moveTo(dimX, stickTopY); ctx.lineTo(dimX, surfaceY); ctx.stroke();
         ctx.setLineDash([]); ctx.restore();
-        ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+        ctx.fillStyle = '#9AAABB'; ctx.font = '9px IBM Plex Mono';
         ctx.fillText('↕ ' + stickUp.toFixed(1) + 'ft', dimX + 2, (stickTopY + surfaceY)/2 + 3);
       }
     }
@@ -842,11 +846,11 @@ function draw() {
   ctx.restore();
 
   // ── BOREHOLE DIA ANNOTATION ───────────────────────────────────────────────
-  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px IBM Plex Mono';
   ctx.fillText('⌀ ' + boreDia + '"', cx - boreholeR - 2, surfaceY + 13);
 
   // ── DEPTH SCALE ───────────────────────────────────────────────────────────
-  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px IBM Plex Mono';
   ctx.save(); ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
   const dStep = totalDepth > 50 ? 10 : totalDepth > 20 ? 5 : 2;
   for (let d = 0; d <= totalDepth; d += dStep) {
@@ -859,9 +863,9 @@ function draw() {
   // ── TITLE BLOCK ── placed in the TITLE_H zone, always well above stick-up ──
   const titleY = 14; // fixed at top of canvas — TITLE_H zone is always 60px regardless of stick-up
   const modeLabel = {piezometer:'Piezometer', perc:'Percolation / Infiltration Test', monitoring:'Monitoring Well'}[currentMode] || currentMode;
-  ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 11px Courier New';
+  ctx.fillStyle = '#E8EAEC'; ctx.font = 'bold 11px IBM Plex Mono';
   ctx.fillText(modeLabel + ' — Cross Section', marginL, titleY);
-  ctx.fillStyle = '#9AAABB'; ctx.font = '9px Courier New';
+  ctx.fillStyle = '#9AAABB'; ctx.font = '9px IBM Plex Mono';
   ctx.fillText('Depth: ' + totalDepth + 'ft  |  Borehole: ' + boreDia + '"', marginL, titleY + 13);
 
   // Reset transform
@@ -876,7 +880,7 @@ function draw() {
 
 // ── TEXTURE HELPERS ───────────────────────────────────────────────────────────
 function lbl(ctx, text, x, y, color) {
-  ctx.fillStyle = color; ctx.font = '9px Courier New'; ctx.fillText(text, x, y);
+  ctx.fillStyle = color; ctx.font = '9px IBM Plex Mono'; ctx.fillText(text, x, y);
 }
 
 function drawSoilHatch(ctx, type, color, x, y, w, h) {
