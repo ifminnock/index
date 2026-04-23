@@ -14,16 +14,16 @@
 
 :root {
   --bg:        #2E3A47;
-  --bg2:       #263240;
-  --bg3:       #1E2830;
-  --card:      #35424F;
-  --card2:     #3A4A5C;
-  --border:    #3E5060;
-  --border2:   #4A6070;
+  --bg2:       #1A2530;
+  --bg3:       #263240;
+  --card:      #3A4A5C;
+  --card2:     #344455;
+  --border:    #4A6070;
+  --border2:   #3A4A5C;
   --text:      #E8EAEC;
   --text2:     #9AAABB;
   --accent:    #D4651A;
-  --accent2:   #E07A30;
+  --accent2:   #B85516;
   --green:     #3DBE7E;
   --red:       #D45050;
   --yellow:    #D4A820;
@@ -639,7 +639,6 @@ opacity: 0.75;
   <div class="col-left">
     <div class="col-section-label">Observed distress</div>
 
-```
 <div class="distress-group-label">A — Cracking</div>
 <button class="distress-btn" onclick="selectDistress('fatigue')" id="btn-fatigue">
   <span class="distress-icon">🕸️</span>
@@ -796,7 +795,6 @@ opacity: 0.75;
     <div class="unofficial-note">Not an official FHWA distress type</div>
   </div>
 </button>
-```
 
   </div>
 
@@ -808,11 +806,9 @@ opacity: 0.75;
       <div class="detail-empty-text">Select a distress type from the list<br>to view causes, severity indicators,<br>and Alaska-specific context</div>
     </div>
 
-```
 <div id="detailContent" style="display:none">
   <!-- Populated by JS -->
 </div>
-```
 
   </div>
 
@@ -827,7 +823,6 @@ opacity: 0.75;
       </div>
     </div>
 
-```
 <div class="right-section" id="photoSection">
   <div class="right-label">Reference photos</div>
   <div id="photoGrid"></div>
@@ -836,7 +831,6 @@ opacity: 0.75;
     <div class="photo-empty-text">Reference photos will appear here.<br>Select a distress type to begin.</div>
   </div>
 </div>
-```
 
   </div>
 </div>

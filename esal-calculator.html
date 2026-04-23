@@ -14,10 +14,10 @@
     --card:      #3A4A5C;
     --card2:     #344455;
     --accent:    #D4651A;
-    --accent2:   #4A6070;
+    --accent2:   #B85516;
     --text:      #E8EAEC;
     --muted:     #9AAABB;
-    --border:    #4A5F72;
+    --border:    #4A6070;
     --green:     #4CAF82;
     --yellow:    #E8B84B;
     --red:       #E05252;
@@ -38,8 +38,8 @@ min-height: 100vh;
 
 /* ── HEADER ── */
 header {
-background: #1E2B36;
-border-bottom: 3px solid var(--accent);
+background: #1A2530;
+border-bottom: 2px solid var(--accent);
 padding: 16px 24px;
 display: flex;
 align-items: center;
@@ -83,7 +83,7 @@ white-space: nowrap;
 
 /* ── NAV TABS ── */
 .nav-tabs {
-background: #253340;
+background: #1A2530;
 border-bottom: 1px solid var(--border);
 padding: 0 24px;
 display: flex;
@@ -187,7 +187,7 @@ font-style: italic;
 
 /* ── RESULT BLOCK ── */
 .result-block {
-background: #1E2B36;
+background: #1A2530;
 border: 2px solid var(--accent);
 border-radius: 6px;
 padding: 18px;
@@ -414,12 +414,12 @@ transition: opacity 0.15s;
 
 /* ── FOOTER ── */
 footer {
+background: #1A2530;
+border-top: 1px solid var(--border);
 text-align: center;
 padding: 24px;
 font-size: 10px;
 color: var(--muted);
-border-top: 1px solid var(--border);
-margin-top: 40px;
 line-height: 1.8;
 }
 
@@ -495,7 +495,6 @@ width: 100%;
       <div class="card">
         <div class="card-title"><span class="icon">🚦</span> Traffic Inputs</div>
 
-```
     <div class="field">
       <label>Base Year AADT (both directions)</label>
       <input type="number" id="d-aadt" value="2000" min="10" onchange="calcDesignESAL()">
@@ -591,7 +590,6 @@ width: 100%;
     </table>
   </div>
 </div>
-```
 
   </div>
 
@@ -660,7 +658,6 @@ width: 100%;
   <div class="card">
     <div class="card-title"><span class="icon">📅</span> Traffic Periods</div>
 
-```
 <div style="margin-bottom:12px;">
   <div class="mix-preset">
     <button class="preset-btn" onclick="applyPreset('local','hist')">Local Road Defaults</button>
@@ -684,7 +681,6 @@ width: 100%;
   <button class="preset-btn" onclick="addHistPeriod()" style="border-color:var(--accent);color:var(--accent);">+ Add Period</button>
   <button class="preset-btn" onclick="removeHistPeriod()">− Remove Last</button>
 </div>
-```
 
   </div>
 
@@ -731,7 +727,6 @@ width: 100%;
   <div class="card">
     <div class="card-title"><span class="icon">🔧</span> Select Road Class &amp; Adjust Mix</div>
 
-```
 <div class="mix-preset" id="mix-presets">
   <button class="preset-btn active-preset" onclick="loadMixPreset('local')">Local Road</button>
   <button class="preset-btn" onclick="loadMixPreset('collector')">Collector</button>
@@ -789,7 +784,6 @@ width: 100%;
     </tr>
   </tbody>
 </table>
-```
 
   </div>
 
@@ -880,7 +874,6 @@ width: 100%;
       <div class="card">
         <div class="card-title"><span class="icon">🗓</span> Projection Inputs</div>
 
-```
     <div class="field">
       <label>Base Year AADT</label>
       <input type="number" id="proj-aadt" value="2000" min="10" onchange="calcProjection()">
@@ -938,7 +931,6 @@ width: 100%;
     </table>
   </div>
 </div>
-```
 
   </div>
 </div>
@@ -1052,7 +1044,6 @@ width: 100%;
       </div>
     </div>
 
-```
 <div>
   <div class="card">
     <div class="card-title"><span class="icon">🛣</span> Lane Distribution Factor (L)</div>
@@ -1094,7 +1085,6 @@ width: 100%;
     </table>
   </div>
 </div>
-```
 
   </div>
 
@@ -1282,7 +1272,7 @@ function drawEsalChart(epd, r, n) {
   const maxE = esals[esals.length-1] || 1;
 
   // Background
-  ctx.fillStyle = '#253340';
+  ctx.fillStyle = '#263240';
   ctx.fillRect(0,0,W,H);
 
   // Grid lines
@@ -1481,7 +1471,7 @@ function drawAadtChart(aadt0, r, baseYear, openYear) {
   for(let i=0;i<=n;i++){ years.push(baseYear+i); aadts.push(aadt0*Math.pow(1+r,i)); }
   const maxA=aadts[aadts.length-1]||1;
 
-  ctx.fillStyle='#253340'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#263240'; ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='#3A4A5C'; ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
     const y=pad.t+cH-(i/4)*cH;
@@ -1608,7 +1598,7 @@ function drawSensChart(rates, esals, curR) {
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
   const maxE=esals[esals.length-1]||1;
 
-  ctx.fillStyle='#253340'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#263240'; ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='#3A4A5C'; ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
     const y=pad.t+cH-(i/4)*cH;
