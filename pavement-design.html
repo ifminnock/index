@@ -97,10 +97,14 @@ transition: background 0.2s;
 }
 .header-subgrade-link:hover { background: rgba(255,255,255,0.14); color: #c8e0f0; }
 
-.btn-index {
+.btn-index-group {
 position: absolute;
 top: 18px;
 right: 24px;
+display: flex;
+gap: 6px;
+}
+.btn-index {
 font-family: var(--mono);
 font-size: 11px;
 letter-spacing: 0.5px;
@@ -598,7 +602,10 @@ line-height: 1.6;
 
 <header>
   <div class="header-inner">
-    <a href="index.html" class="btn-index">← Index</a>
+    <div class="btn-index-group">
+      <a href="tool-index.html" class="btn-index">← Tools</a>
+      <a href="index.html" class="btn-index">Home</a>
+    </div>
     <div class="header-badge">Alaska Geotechnical Tools · Module 03 · Based on AKFPD Manual 2020</div>
     <h1>📐 Pavement Section Design Calculator</h1>
     <div class="header-sub">Flexible pavement design — Excess Fines &amp; Mechanistic methods · ESAL Calculator</div>

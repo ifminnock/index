@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Alaska Geotechnical Tools is a suite of 13 field reference tools and calculators for Alaska Department of Transportation (DOT) geotechnical engineering applications. The entire project is pure vanilla HTML/CSS/JavaScript — no build step, no package manager, no external dependencies to install.
+This repository contains two distinct layers:
+
+1. **MFI Site** (`index.html`) — landing page for Meteor Forge Industries / MinnFall Innovations. Marketing/portfolio page with its own design system (Space Mono + Syne fonts, slate/orange palette).
+
+2. **Alaska Geotechnical Tools** — a suite of field reference tools and calculators for geotechnical engineering applications, organized through `tool-index.html`. Pure vanilla HTML/CSS/JavaScript — no build step, no package manager, no external dependencies.
 
 ## Development Workflow
 
@@ -23,11 +27,16 @@ There are no tests, no linting tools, and no CI/CD pipelines.
 Each tool is a **single, self-contained `.html` file** with all HTML structure, `<style>` CSS, and `<script>` JS inline. There are no shared CSS files, no shared JS modules, and no component system — styles and logic are intentionally duplicated per file.
 
 **Navigation structure:**
-- `index.html` — main hub, links to all tools via a card grid
+- `index.html` — MFI home / portfolio page (links to tools section and `tool-index.html`)
+- `tool-index.html` — primary hub for all Alaska Geotechnical Tools (card grid with amber accent)
 - `design-index.html` — secondary hub for design-focused tools (pavement design, subgrade frost, ESAL)
 
+**Back-navigation standard:** Every tool has two links at the top of its header:
+- `← Tools` → `tool-index.html`
+- `Home` → `index.html`
+
 **Typical tool layout pattern:**
-1. Header with back-link, title, status badge, and module number
+1. Header with back-links (← Tools / Home), title, status badge, and module number
 2. Tab navigation bar (where multiple modes exist)
 3. Input cards → real-time results sections
 4. Footer bar with metadata
@@ -40,16 +49,27 @@ Each tool is a **single, self-contained `.html` file** with all HTML structure, 
 
 ## Design System Conventions
 
-- **Theme:** Dark throughout. CSS variables are defined in `:root` per file (e.g., `--bg`, `--text`, `--accent`, `--card`). Background range: `#0c0e14`–`#20243a`; primary text: `#dde0ee`.
-- **Fonts:** IBM Plex Mono for headers, labels, and computed values; IBM Plex Sans for body text. Both loaded via Google Fonts CDN.
-- **Status badges** on tool pages use: `Complete`, `WIP`, or `Draft`.
+### Alaska Geo Tools (`tool-index.html` + all tools)
+- **Theme:** Dark throughout. CSS variables defined in `:root` per file.
+- **Background palette:** `#2E3A47` (main) / `#1A2530` (topbar/header) / `#263240` (card bg)
+- **Primary text:** `#E8EAEC`; **Dim text:** `#9AAABB`; **Border:** `#3A4A5C` / `#4A6070`
+- **Accent:** `#f0a500` (amber/gold) in `tool-index.html`; individual tools use per-card colors (teal `#2ec4b6`, blue `#4a9eff`, ice `#63b3ed`, violet `#b794f4`, etc.)
+- **Fonts:** IBM Plex Mono for headers, labels, computed values; IBM Plex Sans for body text. Both via Google Fonts CDN.
+- **Grid texture:** `repeating-linear-gradient` at 40px intervals, ~1.8% opacity
+- **Status tags:** `complete` (green `#3dba7e`), `wip` (muted blue-gray), `draft` (amber)
 - Layout uses CSS Grid and Flexbox with media queries for mobile breakpoints.
+
+### MFI Site (`index.html`)
+- **Fonts:** Space Mono (mono), Syne (display/headers)
+- **Palette:** `--slate-deep: #1C2730`, `--slate: #2E3A47`, `--orange: #D4651A`, `--text: #E8EAEC`
+- **Features:** Animated hero, scroll-reveal sections, fixed nav with hover dropdown, noise texture overlay
 
 ## Tool Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main landing hub |
+| `index.html` | MFI home / portfolio page |
+| `tool-index.html` | Alaska Geo Tools primary hub |
 | `design-index.html` | Design tools sub-hub |
 | `pavement-distress.html` | Distress type identification with field photos |
 | `pavement-design.html` | Pavement section design calculator (AKFPD Ch. 4) |
