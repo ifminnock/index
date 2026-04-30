@@ -1251,19 +1251,27 @@ function flipCard(n) {
 // STEP COMMIT / PROGRESSION
 // ============================================================
 function advStep(cur, nxt) {
+  var dbg = document.getElementById('debug-bar');
+  if (dbg) { dbg.textContent = 'advStep called: cur=' + cur + ' nxt=' + nxt; dbg.style.display = 'block'; }
   var card = document.getElementById('c' + cur);
+  if (!card) { if (dbg) dbg.textContent += ' ERROR: card c' + cur + ' not found'; return; }
   card.classList.remove('c-active');
-  card.classList.add('c-done', 'c-shut');
-  if (nxt) {
+  card.classList.add('c-done');
+  card.classList.add('c-shut');
+  if (nxt && nxt !== '') {
     var nc = document.getElementById('c' + nxt);
-    nc.classList.remove('c-locked', 'c-shut');
+    if (!nc) { return; }
+    nc.classList.remove('c-locked');
+    nc.classList.remove('c-shut');
     nc.classList.add('c-active');
     setTimeout(function() { nc.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
   } else {
     buildSummary();
     var sum = document.getElementById('p1-sum');
-    sum.classList.remove('hidden');
-    setTimeout(function() { sum.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
+    if (sum) {
+      sum.classList.remove('hidden');
+      setTimeout(function() { sum.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
+    }
   }
   updBanner();
 }
@@ -1666,21 +1674,19 @@ renderNames();
 renderRoles();
 updBanner();
 
-// Wire step-advance buttons via event delegation (no inline onclick)
-document.addEventListener(‘click’, function(e) {
-var btn = e.target;
-while (btn && btn !== document) {
-if (btn.tagName === ‘BUTTON’ && btn.hasAttribute(‘data-adv-cur’)) {
-var cur = btn.getAttribute(‘data-adv-cur’);
-var nxt = btn.getAttribute(‘data-adv-nxt’) || null;
-advStep(cur, nxt);
-return;
-}
-btn = btn.parentNode;
-}
+// Wire each step-advance button directly by querying data attributes
+var advBtns = document.querySelectorAll(’[data-adv-cur]’);
+for (var bi = 0; bi < advBtns.length; bi++) {
+(function(b) {
+b.addEventListener(‘click’, function() {
+var cur = b.getAttribute(‘data-adv-cur’);
+var nxt = b.getAttribute(‘data-adv-nxt’);
+advStep(cur, nxt || null);
 });
+})(advBtns[bi]);
+}
 });
 </script>
 
 </body>
-</html> 
+</html>
