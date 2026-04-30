@@ -4,219 +4,600 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMI Alaska Chapter &mdash; Event Preparation Guide</title>
+<title>PMI Alaska Chapter - Event Preparation Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* === VARIABLES === */
 :root {
-  --page-bg: #2E3A47;
-  --card-bg: #3A4A5C;
-  --card-dark: #28353F;
-  --card-hdr: #2A3D50;
-  --accent: #D4651A;
-  --grey: #4A6070;
-  --text: #E8EAEC;
-  --muted: #9AAABB;
-  --green: #3A8C5C;
-  --amber: #C49A1A;
-  --red: #B03030;
-  --font: 'IBM Plex Mono','Courier New',Consolas,monospace;
+  --bg:        #2E3A47;
+  --card:      #3A4A5C;
+  --carddk:    #28353F;
+  --cardhdr:   #2A3D50;
+  --orange:    #D4651A;
+  --steel:     #4A6070;
+  --ink:       #E8EAEC;
+  --smoke:     #9AAABB;
+  --go:        #3A8C5C;
+  --warn:      #C49A1A;
+  --stop:      #B03030;
+  --mono:      'IBM Plex Mono', 'Courier New', Consolas, monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--page-bg);color:var(--text);font-family:var(--font);font-size:.92rem;line-height:1.55;min-height:100vh;}
 
-/* HEADER */
-.hdr{background:#1C2830;border-bottom:3px solid var(–accent);display:flex;align-items:center;gap:1.5rem;padding:1rem 2rem;}
-.hdr-txt{flex:1;}
-.hdr h1{color:var(–accent);font-size:1.1rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
-.hdr .sub{color:var(–muted);font-size:.77rem;margin-top:.18rem;}
-.btn-home{background:var(–grey);border:none;border-radius:3px;color:var(–text);cursor:pointer;font-family:var(–font);font-size:.77rem;font-weight:700;letter-spacing:.04em;padding:.38rem .85rem;text-decoration:none;text-transform:uppercase;white-space:nowrap;}
-.btn-home:hover{opacity:.82;}
+/* === RESET === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* BANNER */
-#banner{align-items:center;display:flex;gap:.75rem;letter-spacing:.05em;padding:.58rem 2rem;font-size:.8rem;font-weight:700;text-transform:uppercase;transition:background .3s,color .3s;}
-#banner.b-action{background:var(–red);color:#fff;}
-#banner.b-attn{background:var(–amber);color:#1a1000;}
-#banner.b-ready{background:var(–green);color:#fff;}
-.bdot{border-radius:50%;flex-shrink:0;height:9px;width:9px;background:currentColor;opacity:.8;}
-.bmsg{flex:1;}
-.bsub{font-size:.7rem;font-weight:400;opacity:.88;}
+/* === BODY === */
+body {
+background-color: #2E3A47;
+color: #E8EAEC;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.92rem;
+line-height: 1.55;
+min-height: 100vh;
+}
 
-/* LAYOUT */
-.wrap{max-width:960px;margin:0 auto;padding:1.7rem 1.4rem 5rem;}
+/* === HEADER === */
+.site-hdr {
+background-color: #1C2830;
+border-bottom: 3px solid #D4651A;
+display: flex;
+align-items: center;
+gap: 1.5rem;
+padding: 1rem 2rem;
+}
+.hdr-txt { flex: 1; }
+.site-hdr h1 {
+color: #D4651A;
+font-size: 1.1rem;
+font-weight: 700;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+}
+.site-hdr .sub {
+color: #9AAABB;
+font-size: 0.77rem;
+margin-top: 0.18rem;
+}
+a.btn-home, button.btn-home {
+background-color: #4A6070;
+border: none;
+border-radius: 3px;
+color: #E8EAEC;
+cursor: pointer;
+display: inline-block;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.77rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+padding: 0.38rem 0.85rem;
+text-decoration: none;
+text-transform: uppercase;
+white-space: nowrap;
+}
+a.btn-home:hover, button.btn-home:hover { opacity: 0.82; }
 
-/* PHASE TABS */
-.tabs{border-bottom:2px solid var(–grey);display:flex;margin-bottom:1.5rem;}
-.tab{background:transparent;border:none;border-bottom:3px solid transparent;color:var(–muted);cursor:pointer;font-family:var(–font);font-size:.8rem;font-weight:700;letter-spacing:.05em;margin-bottom:-2px;padding:.52rem 1.25rem;text-transform:uppercase;transition:color .2s,border-color .2s;}
-.tab.on{color:var(–accent);border-bottom-color:var(–accent);}
-.tab:disabled{cursor:not-allowed;opacity:.3;}
+/* === STATUS BANNER === */
+#banner {
+align-items: center;
+display: flex;
+font-size: 0.8rem;
+font-weight: 700;
+gap: 0.75rem;
+letter-spacing: 0.05em;
+padding: 0.58rem 2rem;
+text-transform: uppercase;
+transition: background-color 0.3s;
+}
+#banner.b-action  { background-color: #B03030; color: #ffffff; }
+#banner.b-attn    { background-color: #C49A1A; color: #1a1000; }
+#banner.b-ready   { background-color: #3A8C5C; color: #ffffff; }
+.bdot {
+background-color: currentColor;
+border-radius: 50%;
+flex-shrink: 0;
+height: 9px;
+opacity: 0.8;
+width: 9px;
+}
+.bmsg { flex: 1; }
+.bsub { font-size: 0.7rem; font-weight: 400; opacity: 0.88; }
 
-/* STEP CARDS */
-.card{background:var(–card-bg);border-left:4px solid var(–grey);border-radius:4px;margin-bottom:.95rem;overflow:hidden;}
-.card.c-active{border-left-color:var(–accent);}
-.card.c-done{border-left-color:var(–green);}
-.card.c-locked{opacity:.38;pointer-events:none;}
-.card.c-shut .cbody{display:none;}
+/* === MAIN WRAPPER === */
+.wrap { max-width: 960px; margin: 0 auto; padding: 1.7rem 1.4rem 5rem; }
 
-.chdr{align-items:center;cursor:pointer;display:flex;gap:.7rem;padding:.78rem 1.05rem;user-select:none;}
-.cnum{background:var(–accent);border-radius:2px;color:#fff;flex-shrink:0;font-size:.67rem;font-weight:700;padding:.1rem .38rem;}
-.card.c-done .cnum{background:var(–green);}
-.ctitle{flex:1;font-size:.91rem;font-weight:700;}
-.ccaret{color:var(–muted);font-size:.73rem;transition:transform .2s;}
-.card.c-shut .ccaret{transform:rotate(-90deg);}
+/* === PHASE TABS === */
+.tabs {
+border-bottom: 2px solid #4A6070;
+display: flex;
+margin-bottom: 1.5rem;
+}
+.tab {
+background: transparent;
+border: none;
+border-bottom: 3px solid transparent;
+color: #9AAABB;
+cursor: pointer;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.8rem;
+font-weight: 700;
+letter-spacing: 0.05em;
+margin-bottom: -2px;
+padding: 0.52rem 1.25rem;
+text-transform: uppercase;
+transition: color 0.2s, border-color 0.2s;
+}
+.tab.on  { color: #D4651A; border-bottom-color: #D4651A; }
+.tab:disabled { cursor: not-allowed; opacity: 0.3; }
 
-.cbody{padding:.15rem 1.05rem 1.05rem;}
+/* === STEP CARDS === */
+.card {
+background-color: #3A4A5C;
+border-left: 4px solid #4A6070;
+border-radius: 4px;
+margin-bottom: 0.95rem;
+overflow: hidden;
+}
+.card.c-active  { border-left-color: #D4651A; }
+.card.c-done    { border-left-color: #3A8C5C; }
+.card.c-locked  { opacity: 0.38; pointer-events: none; }
+.card.c-shut .cbody { display: none; }
 
-/* FORMS */
-.frow{margin-bottom:.85rem;}
-.frow label{color:var(–muted);display:block;font-size:.73rem;letter-spacing:.04em;margin-bottom:.25rem;text-transform:uppercase;}
-input[type=text],input[type=number],input[type=date],input[type=time],select,textarea{background:var(–card-dark);border:1px solid var(–grey);border-radius:3px;color:var(–text);font-family:var(–font);font-size:.86rem;outline:none;padding:.4rem .62rem;transition:border-color .18s;width:100%;}
-input:focus,select:focus,textarea:focus{border-color:var(–accent);}
-select option{background:var(–card-dark);color:var(–text);}
-textarea{min-height:52px;resize:vertical;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;}
+.chdr {
+align-items: center;
+cursor: pointer;
+display: flex;
+gap: 0.7rem;
+padding: 0.78rem 1.05rem;
+user-select: none;
+}
+.cnum {
+background-color: #D4651A;
+border-radius: 2px;
+color: #ffffff;
+flex-shrink: 0;
+font-size: 0.67rem;
+font-weight: 700;
+padding: 0.1rem 0.38rem;
+}
+.card.c-done .cnum { background-color: #3A8C5C; }
+.ctitle { flex: 1; font-size: 0.91rem; font-weight: 700; color: #E8EAEC; }
+.ccaret { color: #9AAABB; font-size: 0.73rem; transition: transform 0.2s; }
+.card.c-shut .ccaret { transform: rotate(-90deg); }
 
-/* CUSTOM CHECKBOXES */
-.cklist{}
-.cki{align-items:flex-start;border-bottom:1px solid rgba(74,96,112,.22);cursor:pointer;display:flex;gap:.58rem;padding:.36rem 0;}
-.cki:last-child{border-bottom:none;}
-.ck{border:2px solid var(–grey);border-radius:2px;flex-shrink:0;height:16px;margin-top:2px;position:relative;transition:background .14s,border-color .14s;width:16px;}
-.ck.on{background:var(–accent);border-color:var(–accent);}
-.ck.on::after{color:#fff;content:’\2713’;font-size:.62rem;font-weight:700;left:50%;position:absolute;top:50%;transform:translate(-50%,-52%);}
-.cklbl{flex:1;font-size:.84rem;}
-.badge{border-radius:2px;flex-shrink:0;font-size:.66rem;font-weight:700;margin-left:.32rem;padding:.07rem .32rem;}
-.bh{background:var(–red);color:#fff;}
-.bs{background:var(–amber);color:#1a1000;}
-.bf{background:#3A4A7A;color:#C8D8F0;}
-.ck-note{color:var(–muted);display:block;font-size:.7rem;margin-top:.1rem;}
+.cbody { padding: 0.15rem 1.05rem 1.05rem; }
 
-/* OPTION BUTTONS */
-.optg{display:flex;flex-wrap:wrap;gap:.42rem;margin-top:.32rem;}
-.optb{background:var(–grey);border:2px solid transparent;border-radius:3px;color:var(–text);cursor:pointer;font-family:var(–font);font-size:.79rem;padding:.3rem .7rem;transition:background .14s,border-color .14s;}
-.optb:hover{background:#556677;}
-.optb.on{background:var(–accent);border-color:var(–accent);color:#fff;}
+/* === FORM ELEMENTS === */
+.frow { margin-bottom: 0.85rem; }
+.frow label {
+color: #9AAABB;
+display: block;
+font-size: 0.73rem;
+letter-spacing: 0.04em;
+margin-bottom: 0.25rem;
+text-transform: uppercase;
+}
+input[type=“text”],
+input[type=“number”],
+input[type=“date”],
+input[type=“time”],
+select,
+textarea {
+background-color: #28353F;
+border: 1px solid #4A6070;
+border-radius: 3px;
+color: #E8EAEC;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.86rem;
+outline: none;
+padding: 0.4rem 0.62rem;
+transition: border-color 0.18s;
+width: 100%;
+}
+input[type=“text”]:focus,
+input[type=“number”]:focus,
+input[type=“date”]:focus,
+input[type=“time”]:focus,
+select:focus,
+textarea:focus { border-color: #D4651A; }
+select option { background-color: #28353F; color: #E8EAEC; }
+textarea { min-height: 52px; resize: vertical; }
 
-/* TOGGLE */
-.togwrap{align-items:center;display:flex;gap:.7rem;margin:.42rem 0;}
-.tog{background:var(–grey);border-radius:11px;cursor:pointer;flex-shrink:0;height:22px;position:relative;transition:background .2s;width:42px;}
-.tog.on{background:var(–accent);}
-.tog::after{background:#fff;border-radius:50%;content:’’;height:16px;left:3px;position:absolute;top:3px;transition:left .18s;width:16px;}
-.tog.on::after{left:23px;}
-.toglbl{font-size:.85rem;}
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.7rem; }
 
-/* NOTICES */
-.notice{border-radius:3px;font-size:.78rem;margin-top:.42rem;padding:.42rem .68rem;}
-.n-hard{background:rgba(176,48,48,.17);border-left:3px solid var(–red);color:#FFBBBB;}
-.n-soft{background:rgba(196,154,26,.13);border-left:3px solid var(–amber);color:#EDD870;}
-.n-info{background:rgba(74,96,112,.2);border-left:3px solid var(–grey);color:var(–muted);}
+/* === CUSTOM CHECKBOXES === */
+.cki {
+align-items: flex-start;
+border-bottom: 1px solid rgba(74, 96, 112, 0.22);
+cursor: pointer;
+display: flex;
+gap: 0.58rem;
+padding: 0.36rem 0;
+}
+.cki:last-child { border-bottom: none; }
+.ckbox {
+border: 2px solid #4A6070;
+border-radius: 2px;
+flex-shrink: 0;
+height: 16px;
+margin-top: 2px;
+position: relative;
+transition: background-color 0.14s, border-color 0.14s;
+width: 16px;
+}
+.ckbox.on {
+background-color: #D4651A;
+border-color: #D4651A;
+}
+.ckbox.on::after {
+color: #ffffff;
+content: ‘\2713’;
+font-size: 0.62rem;
+font-weight: 700;
+left: 50%;
+position: absolute;
+top: 50%;
+transform: translate(-50%, -52%);
+}
+.cklbl { flex: 1; font-size: 0.84rem; color: #E8EAEC; }
+.bdg {
+border-radius: 2px;
+flex-shrink: 0;
+font-size: 0.66rem;
+font-weight: 700;
+margin-left: 0.32rem;
+padding: 0.07rem 0.32rem;
+}
+.bdg-h { background-color: #B03030; color: #ffffff; }
+.bdg-s { background-color: #C49A1A; color: #1a1000; }
+.bdg-f { background-color: #3A4A7A; color: #C8D8F0; }
+.ck-note { color: #9AAABB; display: block; font-size: 0.7rem; margin-top: 0.1rem; }
 
-/* AV PILLS */
-.avgrid{display:flex;flex-wrap:wrap;gap:.38rem;margin-top:.32rem;}
-.avp{align-items:center;background:var(–card-dark);border:1px solid var(–grey);border-radius:3px;cursor:pointer;display:flex;font-size:.79rem;gap:.32rem;padding:.26rem .6rem;transition:border-color .14s;}
-.avp.on{border-color:var(–accent);}
-.avpip{border:2px solid var(–grey);border-radius:2px;flex-shrink:0;height:12px;position:relative;transition:background .14s,border-color .14s;width:12px;}
-.avp.on .avpip{background:var(–accent);border-color:var(–accent);}
-.avp.on .avpip::after{color:#fff;content:’\2713’;font-size:.55rem;font-weight:700;left:50%;position:absolute;top:50%;transform:translate(-50%,-52%);}
+/* === OPTION BUTTONS === */
+.optg { display: flex; flex-wrap: wrap; gap: 0.42rem; margin-top: 0.32rem; }
+.optb {
+background-color: #4A6070;
+border: 2px solid transparent;
+border-radius: 3px;
+color: #E8EAEC;
+cursor: pointer;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.79rem;
+padding: 0.3rem 0.7rem;
+transition: background-color 0.14s, border-color 0.14s;
+}
+.optb:hover { background-color: #556677; }
+.optb.on {
+background-color: #D4651A;
+border-color: #D4651A;
+color: #ffffff;
+}
 
-/* BUTTONS */
-.btnp{background:var(–accent);border:none;border-radius:3px;color:#fff;cursor:pointer;font-family:var(–font);font-size:.85rem;font-weight:700;letter-spacing:.04em;padding:.5rem 1.25rem;text-transform:uppercase;transition:opacity .14s;}
-.btnp:hover{opacity:.86;}
-.btnp:disabled{cursor:not-allowed;opacity:.3;}
-.btns{background:var(–grey);border:none;border-radius:3px;color:#fff;cursor:pointer;font-family:var(–font);font-size:.8rem;font-weight:700;letter-spacing:.04em;padding:.42rem .95rem;text-transform:uppercase;transition:opacity .14s;}
-.btns:hover{opacity:.84;}
-.brow{align-items:center;display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.95rem;}
+/* === TOGGLE SWITCHES === */
+.togwrap { align-items: center; display: flex; gap: 0.7rem; margin: 0.42rem 0; }
+.tog {
+background-color: #4A6070;
+border-radius: 11px;
+cursor: pointer;
+flex-shrink: 0;
+height: 22px;
+position: relative;
+transition: background-color 0.2s;
+width: 42px;
+}
+.tog.on { background-color: #D4651A; }
+.tog::after {
+background-color: #ffffff;
+border-radius: 50%;
+content: ‘’;
+height: 16px;
+left: 3px;
+position: absolute;
+top: 3px;
+transition: left 0.18s;
+width: 16px;
+}
+.tog.on::after { left: 23px; }
+.toglbl { font-size: 0.85rem; color: #E8EAEC; }
 
-/* NAMES MANAGER */
-.nmgr{background:var(–card-dark);border:1px solid var(–grey);border-radius:3px;margin-bottom:.85rem;padding:.7rem;}
-.nmgr h4{color:var(–muted);font-size:.72rem;letter-spacing:.04em;margin-bottom:.52rem;text-transform:uppercase;}
-.npills{display:flex;flex-wrap:wrap;gap:.32rem;margin-bottom:.52rem;}
-.npill{align-items:center;background:var(–grey);border-radius:12px;color:var(–text);display:flex;font-size:.75rem;gap:.28rem;padding:.16rem .52rem;}
-.nx{color:var(–muted);cursor:pointer;font-size:.68rem;line-height:1;}
-.nx:hover{color:#FF9999;}
-.nadd{display:flex;gap:.42rem;}
-.nadd input{flex:1;}
+/* === NOTICE BOXES === */
+.notice {
+border-radius: 3px;
+font-size: 0.78rem;
+margin-top: 0.42rem;
+padding: 0.42rem 0.68rem;
+}
+.n-hard { background-color: rgba(176, 48, 48, 0.17); border-left: 3px solid #B03030; color: #FFBBBB; }
+.n-soft { background-color: rgba(196, 154, 26, 0.13); border-left: 3px solid #C49A1A; color: #EDD870; }
+.n-info { background-color: rgba(74, 96, 112, 0.2); border-left: 3px solid #4A6070; color: #9AAABB; }
 
-/* ROLES TABLE */
-.rtbl{border-collapse:collapse;margin-top:.28rem;width:100%;}
-.rtbl th{border-bottom:1px solid var(–grey);color:var(–muted);font-size:.7rem;letter-spacing:.04em;padding:.28rem .48rem;text-align:left;text-transform:uppercase;}
-.rtbl td{border-bottom:1px solid rgba(74,96,112,.17);font-size:.81rem;padding:.3rem .48rem;}
-.rtbl td select{font-size:.76rem;padding:.2rem .38rem;}
-.rnote{color:var(–muted);display:block;font-size:.68rem;}
-.sbtns{display:flex;flex-wrap:wrap;gap:.25rem;}
-.sb{background:transparent;border:1px solid var(–grey);border-radius:2px;color:var(–muted);cursor:pointer;font-family:var(–font);font-size:.66rem;font-weight:700;padding:.12rem .35rem;transition:background .13s;}
-.sb.sa{background:var(–green);border-color:var(–green);color:#fff;}
-.sb.sn{background:var(–red);border-color:var(–red);color:#fff;}
-.sb.sr{background:var(–grey);color:#fff;}
+/* === AV PILL BUTTONS === */
+.avgrid { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-top: 0.32rem; }
+.avp {
+align-items: center;
+background-color: #28353F;
+border: 1px solid #4A6070;
+border-radius: 3px;
+cursor: pointer;
+display: flex;
+font-size: 0.79rem;
+gap: 0.32rem;
+padding: 0.26rem 0.6rem;
+transition: border-color 0.14s;
+color: #E8EAEC;
+}
+.avp.on { border-color: #D4651A; }
+.avpip {
+border: 2px solid #4A6070;
+border-radius: 2px;
+flex-shrink: 0;
+height: 12px;
+position: relative;
+transition: background-color 0.14s, border-color 0.14s;
+width: 12px;
+}
+.avp.on .avpip { background-color: #D4651A; border-color: #D4651A; }
+.avp.on .avpip::after {
+color: #ffffff;
+content: ‘\2713’;
+font-size: 0.55rem;
+font-weight: 700;
+left: 50%;
+position: absolute;
+top: 50%;
+transform: translate(-50%, -52%);
+}
 
-/* SUMMARY CARD */
-.sumcard{background:var(–card-bg);border:1px solid var(–grey);border-radius:4px;margin-bottom:1.3rem;padding:1.05rem 1.25rem;}
-.sumcard h3{border-bottom:1px solid var(–grey);color:var(–accent);font-size:.9rem;font-weight:700;letter-spacing:.05em;margin-bottom:.7rem;padding-bottom:.36rem;text-transform:uppercase;}
-.srow{display:flex;font-size:.82rem;gap:.48rem;padding:.2rem 0;}
-.sk{color:var(–muted);flex-shrink:0;min-width:170px;}
-.sv{color:var(–text);}
-.rbar{margin:.7rem 0;}
-.rbarbg{background:var(–grey);border-radius:3px;height:7px;overflow:hidden;}
-.rbarfill{border-radius:3px;height:100%;transition:width .4s;}
-.rbarlbl{color:var(–muted);font-size:.76rem;margin-top:.26rem;}
+/* === BUTTONS === */
+.btnp {
+background-color: #D4651A;
+border: none;
+border-radius: 3px;
+color: #ffffff;
+cursor: pointer;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.85rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+padding: 0.5rem 1.25rem;
+text-transform: uppercase;
+transition: opacity 0.14s;
+}
+.btnp:hover { opacity: 0.86; }
+.btnp:disabled { cursor: not-allowed; opacity: 0.3; }
 
-/* PHASE 2 */
-.p2prog{align-items:center;background:var(–card-bg);border-radius:4px;display:flex;gap:1.05rem;margin-bottom:1.25rem;padding:.85rem 1.25rem;}
-.p2lbl{color:var(–muted);font-size:.77rem;min-width:110px;}
-.p2bar{background:var(–grey);border-radius:3px;flex:1;height:9px;overflow:hidden;}
-.p2fill{background:var(–accent);border-radius:3px;height:100%;transition:width .3s;}
-.p2pct{color:var(–accent);font-size:.86rem;font-weight:700;min-width:40px;text-align:right;}
+.btns {
+background-color: #4A6070;
+border: none;
+border-radius: 3px;
+color: #ffffff;
+cursor: pointer;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.8rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+padding: 0.42rem 0.95rem;
+text-transform: uppercase;
+transition: opacity 0.14s;
+}
+.btns:hover { opacity: 0.84; }
 
-.clsect{background:var(–card-bg);border-left:3px solid var(–grey);border-radius:4px;margin-bottom:.85rem;overflow:hidden;}
-.clhdr{align-items:center;background:var(–card-hdr);cursor:pointer;display:flex;gap:.7rem;padding:.67rem 1rem;user-select:none;}
-.clhdr.c-shut + .clbody{display:none;}
-.cltitle{flex:1;font-size:.86rem;font-weight:700;}
-.clcount{color:var(–muted);font-size:.74rem;}
-.clcaret{color:var(–muted);font-size:.73rem;transition:transform .2s;}
-.clbody{padding:.22rem 1rem .7rem;}
-.clsect.c-shut .clcaret{transform:rotate(-90deg);}
-.clsect.c-shut .clbody{display:none;}
+.brow { align-items: center; display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.95rem; }
 
-.cli{align-items:flex-start;border-bottom:1px solid rgba(74,96,112,.2);display:flex;gap:.6rem;padding:.47rem 0;}
-.cli:last-child{border-bottom:none;}
-.clibody{flex:1;}
-.clitxt{font-size:.84rem;}
-.cliown{color:var(–accent);font-size:.71rem;margin-top:.1rem;}
-.clntog{color:var(–muted);cursor:pointer;display:inline-block;font-size:.69rem;margin-top:.16rem;text-decoration:underline;}
-.clnwrap{display:none;margin-top:.32rem;}
-.clnwrap.on{display:block;}
-.clnwrap textarea{font-size:.77rem;min-height:42px;padding:.28rem .48rem;}
+/* === NAMES MANAGER === */
+.nmgr {
+background-color: #28353F;
+border: 1px solid #4A6070;
+border-radius: 3px;
+margin-bottom: 0.85rem;
+padding: 0.7rem;
+}
+.nmgr h4 {
+color: #9AAABB;
+font-size: 0.72rem;
+letter-spacing: 0.04em;
+margin-bottom: 0.52rem;
+text-transform: uppercase;
+}
+.npills { display: flex; flex-wrap: wrap; gap: 0.32rem; margin-bottom: 0.52rem; }
+.npill {
+align-items: center;
+background-color: #4A6070;
+border-radius: 12px;
+color: #E8EAEC;
+display: flex;
+font-size: 0.75rem;
+gap: 0.28rem;
+padding: 0.16rem 0.52rem;
+}
+.nx { color: #9AAABB; cursor: pointer; font-size: 0.68rem; line-height: 1; }
+.nx:hover { color: #FF9999; }
+.nadd { display: flex; gap: 0.42rem; }
+.nadd input { flex: 1; }
 
-/* MISSION */
-.mission{background:var(–card-bg);border:2px solid var(–accent);border-radius:4px;margin-top:1.3rem;padding:1.25rem;}
-.mission h2{border-bottom:1px solid var(–accent);color:var(–accent);font-size:1rem;font-weight:700;letter-spacing:.05em;margin-bottom:.85rem;padding-bottom:.42rem;text-transform:uppercase;}
+/* === ROLES TABLE === */
+.rtbl { border-collapse: collapse; margin-top: 0.28rem; width: 100%; }
+.rtbl th {
+border-bottom: 1px solid #4A6070;
+color: #9AAABB;
+font-size: 0.7rem;
+letter-spacing: 0.04em;
+padding: 0.28rem 0.48rem;
+text-align: left;
+text-transform: uppercase;
+}
+.rtbl td {
+border-bottom: 1px solid rgba(74, 96, 112, 0.17);
+font-size: 0.81rem;
+padding: 0.3rem 0.48rem;
+color: #E8EAEC;
+}
+.rtbl td select { font-size: 0.76rem; padding: 0.2rem 0.38rem; }
+.rnote { color: #9AAABB; display: block; font-size: 0.68rem; }
+.sbtns { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.sb {
+background: transparent;
+border: 1px solid #4A6070;
+border-radius: 2px;
+color: #9AAABB;
+cursor: pointer;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.66rem;
+font-weight: 700;
+padding: 0.12rem 0.35rem;
+transition: background-color 0.13s;
+}
+.sb.sa { background-color: #3A8C5C; border-color: #3A8C5C; color: #ffffff; }
+.sb.sn { background-color: #B03030; border-color: #B03030; color: #ffffff; }
+.sb.sr { background-color: #4A6070; color: #ffffff; }
 
-/* FOOTER */
-.footer{border-top:1px solid var(–grey);color:var(–muted);font-size:.72rem;margin-top:2rem;padding:.95rem 2rem;text-align:center;}
+/* === SUMMARY CARD === */
+.sumcard {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-radius: 4px;
+margin-bottom: 1.3rem;
+padding: 1.05rem 1.25rem;
+}
+.sumcard h3 {
+border-bottom: 1px solid #4A6070;
+color: #D4651A;
+font-size: 0.9rem;
+font-weight: 700;
+letter-spacing: 0.05em;
+margin-bottom: 0.7rem;
+padding-bottom: 0.36rem;
+text-transform: uppercase;
+}
+.srow { display: flex; font-size: 0.82rem; gap: 0.48rem; padding: 0.2rem 0; }
+.sk { color: #9AAABB; flex-shrink: 0; min-width: 170px; }
+.sv { color: #E8EAEC; }
+.rbar { margin: 0.7rem 0; }
+.rbarbg { background-color: #4A6070; border-radius: 3px; height: 7px; overflow: hidden; }
+.rbarfill { border-radius: 3px; height: 100%; transition: width 0.4s; }
+.rbarlbl { color: #9AAABB; font-size: 0.76rem; margin-top: 0.26rem; }
 
-.hidden{display:none!important;}
-hr.div{border:none;border-top:1px solid rgba(74,96,112,.28);margin:.7rem 0;}
+/* === PHASE 2 PROGRESS === */
+.p2prog {
+align-items: center;
+background-color: #3A4A5C;
+border-radius: 4px;
+display: flex;
+gap: 1.05rem;
+margin-bottom: 1.25rem;
+padding: 0.85rem 1.25rem;
+}
+.p2lbl { color: #9AAABB; font-size: 0.77rem; min-width: 110px; }
+.p2bar { background-color: #4A6070; border-radius: 3px; flex: 1; height: 9px; overflow: hidden; }
+.p2fill { background-color: #D4651A; border-radius: 3px; height: 100%; transition: width 0.3s; }
+.p2pct { color: #D4651A; font-size: 0.86rem; font-weight: 700; min-width: 40px; text-align: right; }
 
-@media print{
-body{background:#f5f5f5;color:#111;}
-.hdr{background:#e8e8e8;border-bottom:2px solid #333;}
-.hdr h1,.mission h2{color:#333;}
-.btn-home,#banner,.tabs,#p1,.no-print{display:none!important;}
-#p2{display:block!important;}
-.p2prog,.clhdr{background:#e0e0e0;}
-.clsect{background:#fff;border:1px solid #ccc;border-left:3px solid #888;}
-.clsect.c-shut .clbody{display:block!important;}
-.clitxt{color:#111;}
-.cliown{color:#555;}
-.mission{background:#fff;border:2px solid #333;}
-.sk{color:#555;}.sv{color:#111;}
-.footer{border-top:1px solid #bbb;color:#666;}
+/* === CHECKLIST SECTIONS === */
+.clsect {
+background-color: #3A4A5C;
+border-left: 3px solid #4A6070;
+border-radius: 4px;
+margin-bottom: 0.85rem;
+overflow: hidden;
+}
+.clhdr {
+align-items: center;
+background-color: #2A3D50;
+cursor: pointer;
+display: flex;
+gap: 0.7rem;
+padding: 0.67rem 1rem;
+user-select: none;
+}
+.cltitle { flex: 1; font-size: 0.86rem; font-weight: 700; color: #E8EAEC; }
+.clcount { color: #9AAABB; font-size: 0.74rem; }
+.clcaret { color: #9AAABB; font-size: 0.73rem; transition: transform 0.2s; }
+.clbody { padding: 0.22rem 1rem 0.7rem; }
+
+.clsect.c-shut .clcaret { transform: rotate(-90deg); }
+.clsect.c-shut .clbody  { display: none; }
+
+.cli {
+align-items: flex-start;
+border-bottom: 1px solid rgba(74, 96, 112, 0.2);
+display: flex;
+gap: 0.6rem;
+padding: 0.47rem 0;
+}
+.cli:last-child { border-bottom: none; }
+.clibody { flex: 1; }
+.clitxt  { font-size: 0.84rem; color: #E8EAEC; }
+.cliown  { color: #D4651A; font-size: 0.71rem; margin-top: 0.1rem; }
+.clntog {
+color: #9AAABB;
+cursor: pointer;
+display: inline-block;
+font-size: 0.69rem;
+margin-top: 0.16rem;
+text-decoration: underline;
+}
+.clnwrap { display: none; margin-top: 0.32rem; }
+.clnwrap.on { display: block; }
+.clnwrap textarea { font-size: 0.77rem; min-height: 42px; padding: 0.28rem 0.48rem; }
+
+/* === MISSION SUMMARY === */
+.mission {
+background-color: #3A4A5C;
+border: 2px solid #D4651A;
+border-radius: 4px;
+margin-top: 1.3rem;
+padding: 1.25rem;
+}
+.mission h2 {
+border-bottom: 1px solid #D4651A;
+color: #D4651A;
+font-size: 1rem;
+font-weight: 700;
+letter-spacing: 0.05em;
+margin-bottom: 0.85rem;
+padding-bottom: 0.42rem;
+text-transform: uppercase;
+}
+
+/* === FOOTER === */
+.footer {
+border-top: 1px solid #4A6070;
+color: #9AAABB;
+font-size: 0.72rem;
+margin-top: 2rem;
+padding: 0.95rem 2rem;
+text-align: center;
+}
+
+/* === UTILITY === */
+.hidden { display: none !important; }
+.divhr { border: none; border-top: 1px solid rgba(74, 96, 112, 0.28); margin: 0.7rem 0; }
+
+/* === PRINT === */
+@media print {
+body { background-color: #f5f5f5; color: #111111; }
+.site-hdr { background-color: #e8e8e8; border-bottom: 2px solid #333333; }
+.site-hdr h1 { color: #333333; }
+.btn-home, #banner, .tabs, #p1, .no-print { display: none !important; }
+#p2 { display: block !important; }
+.p2prog, .clhdr { background-color: #e0e0e0; }
+.clsect { background-color: #ffffff; border: 1px solid #cccccc; border-left: 3px solid #888888; }
+.clsect.c-shut .clbody { display: block !important; }
+.clitxt { color: #111111; }
+.cliown { color: #555555; }
+.mission { background-color: #ffffff; border: 2px solid #333333; }
+.sk { color: #555555; }
+.sv { color: #111111; }
+.footer { border-top: 1px solid #bbbbbb; color: #666666; }
 }
 </style>
 
 </head>
 <body>
 
-<header class="hdr">
+<!-- HEADER -->
+
+<header class="site-hdr">
   <div class="hdr-txt">
     <h1>PMI Alaska Chapter &mdash; Event Preparation Guide</h1>
     <div class="sub">Monthly Professional Development Event Planning Tool</div>
@@ -224,30 +605,42 @@ body{background:#f5f5f5;color:#111;}
   <a href="tool-index.html" class="btn-home">&#8592; Home</a>
 </header>
 
+<!-- STATUS BANNER -->
+
 <div id="banner" class="b-action">
   <div class="bdot"></div>
   <div class="bmsg" id="bmsg">ACTION REQUIRED &mdash; Complete Phase&nbsp;1 to assess readiness</div>
   <div class="bsub" id="bsub"></div>
 </div>
 
+<!-- MAIN -->
+
 <div class="wrap">
+
+  <!-- PHASE TABS -->
+
   <div class="tabs">
     <button class="tab on" id="t1" onclick="gotoPhase(1)">Phase 1 &mdash; Event Profile &amp; Risk Review</button>
     <button class="tab" id="t2" onclick="gotoPhase(2)" disabled>Phase 2 &mdash; Execution Checklist</button>
   </div>
 
-  <!-- PHASE 1 -->
+  <!-- ===== PHASE 1 ===== -->
 
   <div id="p1">
 
 ```
-<!-- 01 -->
+<!-- STEP 01: Event Information -->
 <div class="card c-active" id="c01">
   <div class="chdr" onclick="flipCard('01')">
-    <span class="cnum">01</span><span class="ctitle">Event Information</span><span class="ccaret" id="cr01">&#9660;</span>
+    <span class="cnum">01</span>
+    <span class="ctitle">Event Information</span>
+    <span class="ccaret" id="cr01">&#9660;</span>
   </div>
   <div class="cbody" id="cb01">
-    <div class="frow"><label>Event Name / Title</label><input type="text" id="ev-name" placeholder="e.g., May PDD &mdash; Project Recovery Techniques"></div>
+    <div class="frow">
+      <label>Event Name / Title</label>
+      <input type="text" id="ev-name" placeholder="e.g., May PDD &mdash; Project Recovery Techniques">
+    </div>
     <div class="g2">
       <div class="frow"><label>Event Date</label><input type="date" id="ev-date"></div>
       <div class="frow"><label>Expected Attendance</label><input type="number" id="ev-att" min="1" placeholder="Est. headcount"></div>
@@ -256,33 +649,43 @@ body{background:#f5f5f5;color:#111;}
       <div class="frow"><label>Start Time</label><input type="time" id="ev-start"></div>
       <div class="frow"><label>End Time</label><input type="time" id="ev-end"></div>
     </div>
-    <div class="frow"><label>Venue Name</label><input type="text" id="ev-venue" placeholder="e.g., UAA Business Education Building"></div>
-    <div class="frow"><label>Venue Address</label><input type="text" id="ev-addr" placeholder="Street address, Anchorage, AK"></div>
+    <div class="frow">
+      <label>Venue Name</label>
+      <input type="text" id="ev-venue" placeholder="e.g., UAA Business Education Building">
+    </div>
+    <div class="frow">
+      <label>Venue Address</label>
+      <input type="text" id="ev-addr" placeholder="Street address, Anchorage, AK">
+    </div>
     <div class="frow">
       <label>Event Format</label>
       <div class="optg" id="g-fmt">
-        <div class="optb" onclick="pickG('g-fmt',this,'fmt','in-person')">In-Person Only</div>
-        <div class="optb" onclick="pickG('g-fmt',this,'fmt','virtual')">Virtual Only</div>
-        <div class="optb" onclick="pickG('g-fmt',this,'fmt','hybrid')">Hybrid (In-Person &amp; Virtual)</div>
+        <div class="optb" onclick="pickG('g-fmt', this, 'fmt', 'in-person')">In-Person Only</div>
+        <div class="optb" onclick="pickG('g-fmt', this, 'fmt', 'virtual')">Virtual Only</div>
+        <div class="optb" onclick="pickG('g-fmt', this, 'fmt', 'hybrid')">Hybrid (In-Person &amp; Virtual)</div>
       </div>
     </div>
-    <div class="brow"><button class="btnp" onclick="next('01','02')">Confirm Event Info &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('01', '02')">Confirm Event Info &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 02 -->
+<!-- STEP 02: Speaker Status -->
 <div class="card c-locked" id="c02">
   <div class="chdr" onclick="flipCard('02')">
-    <span class="cnum">02</span><span class="ctitle">Speaker Status</span><span class="ccaret" id="cr02">&#9660;</span>
+    <span class="cnum">02</span>
+    <span class="ctitle">Speaker Status</span>
+    <span class="ccaret" id="cr02">&#9660;</span>
   </div>
   <div class="cbody" id="cb02">
     <div class="frow">
       <label>Current Speaker Status</label>
       <div class="optg" id="g-sp">
-        <div class="optb" onclick="pickSp(this,'signed')">Confirmed &mdash; Signed Agreement</div>
-        <div class="optb" onclick="pickSp(this,'verbal')">Confirmed &mdash; Verbal Only</div>
-        <div class="optb" onclick="pickSp(this,'tentative')">Tentatively Identified</div>
-        <div class="optb" onclick="pickSp(this,'none')">No Speaker Identified</div>
+        <div class="optb" onclick="pickSp(this, 'signed')">Confirmed &mdash; Signed Agreement</div>
+        <div class="optb" onclick="pickSp(this, 'verbal')">Confirmed &mdash; Verbal Only</div>
+        <div class="optb" onclick="pickSp(this, 'tentative')">Tentatively Identified</div>
+        <div class="optb" onclick="pickSp(this, 'none')">No Speaker Identified</div>
       </div>
       <div id="sp-notice" class="hidden"></div>
     </div>
@@ -293,12 +696,12 @@ body{background:#f5f5f5;color:#111;}
     <div class="frow">
       <label>Speaker AV Needs</label>
       <div class="avgrid">
-        <div class="avp" onclick="togAV(this,'projector')"><span class="avpip"></span>Projector / Screen</div>
-        <div class="avp" onclick="togAV(this,'microphone')"><span class="avpip"></span>Microphone</div>
-        <div class="avp" onclick="togAV(this,'lapel')"><span class="avpip"></span>Lapel Mic</div>
-        <div class="avp" onclick="togAV(this,'clicker')"><span class="avpip"></span>Clicker / Pointer</div>
-        <div class="avp" onclick="togAV(this,'whiteboard')"><span class="avpip"></span>Whiteboard</div>
-        <div class="avp" onclick="togAV(this,'none')"><span class="avpip"></span>None Required</div>
+        <div class="avp" onclick="togAV(this, 'projector')"><span class="avpip"></span>Projector / Screen</div>
+        <div class="avp" onclick="togAV(this, 'microphone')"><span class="avpip"></span>Microphone</div>
+        <div class="avp" onclick="togAV(this, 'lapel')"><span class="avpip"></span>Lapel Mic</div>
+        <div class="avp" onclick="togAV(this, 'clicker')"><span class="avpip"></span>Clicker / Pointer</div>
+        <div class="avp" onclick="togAV(this, 'whiteboard')"><span class="avpip"></span>Whiteboard</div>
+        <div class="avp" onclick="togAV(this, 'none')"><span class="avpip"></span>None Required</div>
       </div>
     </div>
     <div class="frow">
@@ -310,65 +713,73 @@ body{background:#f5f5f5;color:#111;}
     <div class="frow">
       <label>PDU Category</label>
       <div class="optg" id="g-pdu">
-        <div class="optb" onclick="pickPDU(this,'technical')">Technical</div>
-        <div class="optb" onclick="pickPDU(this,'leadership')">Leadership</div>
-        <div class="optb" onclick="pickPDU(this,'strategic')">Strategic / Business</div>
-        <div class="optb" onclick="pickPDU(this,'combination')">Combination</div>
+        <div class="optb" onclick="pickPDU(this, 'technical')">Technical</div>
+        <div class="optb" onclick="pickPDU(this, 'leadership')">Leadership</div>
+        <div class="optb" onclick="pickPDU(this, 'strategic')">Strategic / Business</div>
+        <div class="optb" onclick="pickPDU(this, 'combination')">Combination</div>
       </div>
-      <div id="pdu-split" class="g3 hidden" style="margin-top:.55rem">
-        <div class="frow"><label>Technical PDUs</label><input type="number" id="pdu-t" min="0" step=".5" placeholder="0.0"></div>
-        <div class="frow"><label>Leadership PDUs</label><input type="number" id="pdu-l" min="0" step=".5" placeholder="0.0"></div>
-        <div class="frow"><label>Strategic PDUs</label><input type="number" id="pdu-s" min="0" step=".5" placeholder="0.0"></div>
+      <div id="pdu-split" class="g3 hidden" style="margin-top: 0.55rem;">
+        <div class="frow"><label>Technical PDUs</label><input type="number" id="pdu-t" min="0" step="0.5" placeholder="0.0"></div>
+        <div class="frow"><label>Leadership PDUs</label><input type="number" id="pdu-l" min="0" step="0.5" placeholder="0.0"></div>
+        <div class="frow"><label>Strategic PDUs</label><input type="number" id="pdu-s" min="0" step="0.5" placeholder="0.0"></div>
       </div>
     </div>
     <div id="no-sp-box" class="hidden">
       <div class="notice n-hard">No speaker identified. Hard stop unless event is a workshop or networking event that does not require a speaker.</div>
-      <div class="togwrap" style="margin-top:.45rem">
-        <div class="tog" id="tog-sp-ovr" onclick="flipTog('tog-sp-ovr');updSpOvr()"></div>
+      <div class="togwrap" style="margin-top: 0.45rem;">
+        <div class="tog" id="tog-sp-ovr" onclick="flipSpOvr()"></div>
         <span class="toglbl">Acknowledge: this event does not require a speaker</span>
       </div>
     </div>
-    <div class="brow"><button class="btnp" onclick="next('02','03')">Confirm Speaker &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('02', '03')">Confirm Speaker &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 03 -->
+<!-- STEP 03: Venue & Logistics -->
 <div class="card c-locked" id="c03">
   <div class="chdr" onclick="flipCard('03')">
-    <span class="cnum">03</span><span class="ctitle">Venue &amp; Logistics</span><span class="ccaret" id="cr03">&#9660;</span>
+    <span class="cnum">03</span>
+    <span class="ctitle">Venue &amp; Logistics</span>
+    <span class="ccaret" id="cr03">&#9660;</span>
   </div>
   <div class="cbody" id="cb03">
-    <div class="cklist" id="ck-venue"></div>
-    <hr class="div">
-    <div class="frow" style="margin-top:.45rem">
+    <div id="ck-venue"></div>
+    <div class="divhr"></div>
+    <div class="frow" style="margin-top: 0.45rem;">
       <label>Venue Setup Layout</label>
       <div class="optg" id="g-layout">
-        <div class="optb" onclick="pickG('g-layout',this,'layout','theater')">Theater Style</div>
-        <div class="optb" onclick="pickG('g-layout',this,'layout','classroom')">Classroom Style</div>
-        <div class="optb" onclick="pickG('g-layout',this,'layout','rounds')">Rounds</div>
-        <div class="optb" onclick="pickG('g-layout',this,'layout','reception')">Reception / Standing</div>
-        <div class="optb" onclick="pickG('g-layout',this,'layout','ushape')">U-Shape</div>
+        <div class="optb" onclick="pickG('g-layout', this, 'layout', 'theater')">Theater Style</div>
+        <div class="optb" onclick="pickG('g-layout', this, 'layout', 'classroom')">Classroom Style</div>
+        <div class="optb" onclick="pickG('g-layout', this, 'layout', 'rounds')">Rounds</div>
+        <div class="optb" onclick="pickG('g-layout', this, 'layout', 'reception')">Reception / Standing</div>
+        <div class="optb" onclick="pickG('g-layout', this, 'layout', 'ushape')">U-Shape</div>
         <div class="optb" onclick="pickCustomLayout(this)">Custom</div>
       </div>
-      <div id="layout-custom" class="hidden" style="margin-top:.42rem">
+      <div id="layout-custom" class="hidden" style="margin-top: 0.42rem;">
         <input type="text" id="layout-txt" placeholder="Describe custom layout">
       </div>
     </div>
-    <div class="brow"><button class="btnp" onclick="next('03','04')">Confirm Venue &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('03', '04')">Confirm Venue &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 04 -->
+<!-- STEP 04: Food & Beverage -->
 <div class="card c-locked" id="c04">
   <div class="chdr" onclick="flipCard('04')">
-    <span class="cnum">04</span><span class="ctitle">Food &amp; Beverage</span><span class="ccaret" id="cr04">&#9660;</span>
+    <span class="cnum">04</span>
+    <span class="ctitle">Food &amp; Beverage</span>
+    <span class="ccaret" id="cr04">&#9660;</span>
   </div>
   <div class="cbody" id="cb04">
     <div class="togwrap">
       <div class="tog" id="tog-fb" onclick="flipFB()"></div>
       <span class="toglbl">Food or beverages will be served at this event</span>
     </div>
-    <div id="fb-det" class="hidden" style="margin-top:.68rem">
+    <div id="fb-det" class="hidden" style="margin-top: 0.68rem;">
       <div class="togwrap">
         <div class="tog" id="tog-alc" onclick="flipAlc()"></div>
         <span class="toglbl">Alcohol will be served</span>
@@ -376,36 +787,42 @@ body{background:#f5f5f5;color:#111;}
       <div id="alc-notice" class="notice n-soft hidden">
         Confirm venue permits alcohol service. Designate a board member as point of contact for responsible service.
       </div>
-      <div class="cklist" id="ck-fb" style="margin-top:.45rem"></div>
-      <div class="frow" style="margin-top:.55rem">
+      <div id="ck-fb" style="margin-top: 0.45rem;"></div>
+      <div class="frow" style="margin-top: 0.55rem;">
         <label>Estimated Food &amp; Beverage Cost ($)</label>
         <input type="number" id="fb-cost" min="0" placeholder="0.00">
       </div>
     </div>
-    <div class="brow"><button class="btnp" onclick="next('04','05')">Confirm F&amp;B &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('04', '05')">Confirm F&amp;B &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 05 -->
+<!-- STEP 05: Registration & Communications -->
 <div class="card c-locked" id="c05">
   <div class="chdr" onclick="flipCard('05')">
-    <span class="cnum">05</span><span class="ctitle">Registration &amp; Communications</span><span class="ccaret" id="cr05">&#9660;</span>
+    <span class="cnum">05</span>
+    <span class="ctitle">Registration &amp; Communications</span>
+    <span class="ccaret" id="cr05">&#9660;</span>
   </div>
   <div class="cbody" id="cb05">
-    <div class="cklist" id="ck-reg"></div>
-    <div class="g2" style="margin-top:.65rem">
+    <div id="ck-reg"></div>
+    <div class="g2" style="margin-top: 0.65rem;">
       <div class="frow"><label>Current Registration Count</label><input type="number" id="reg-cnt" min="0" placeholder="0"></div>
       <div class="frow"><label>Registration Deadline</label><input type="date" id="reg-dl"></div>
     </div>
-    <div class="brow"><button class="btnp" onclick="next('05','06')">Confirm Registration &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('05', '06')">Confirm Registration &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 06 -->
+<!-- STEP 06: Budget & Finance -->
 <div class="card c-locked" id="c06">
   <div class="chdr" onclick="flipCard('06')">
     <span class="cnum">06</span>
-    <span class="ctitle">Budget &amp; Finance <span style="color:var(--accent);font-size:.7rem">[VP Finance]</span></span>
+    <span class="ctitle">Budget &amp; Finance <span style="color: #D4651A; font-size: 0.7rem;">[VP Finance]</span></span>
     <span class="ccaret" id="cr06">&#9660;</span>
   </div>
   <div class="cbody" id="cb06">
@@ -413,32 +830,38 @@ body{background:#f5f5f5;color:#111;}
       <div class="frow"><label>Estimated Total Event Cost ($)</label><input type="number" id="bud-cost" min="0" placeholder="0.00"></div>
       <div class="frow"><label>Projected Registration Revenue ($)</label><input type="number" id="bud-rev" min="0" placeholder="0.00"></div>
     </div>
-    <div class="cklist" id="ck-bud"></div>
-    <hr class="div">
+    <div id="ck-bud"></div>
+    <div class="divhr"></div>
     <div class="togwrap">
       <div class="tog" id="tog-spons" onclick="flipSpons()"></div>
       <span class="toglbl">This event has a sponsor</span>
     </div>
-    <div id="spons-det" class="g2 hidden" style="margin-top:.45rem">
+    <div id="spons-det" class="g2 hidden" style="margin-top: 0.45rem;">
       <div class="frow"><label>Sponsor Name</label><input type="text" id="spons-name" placeholder="Organization name"></div>
       <div class="frow"><label>Confirmed Contribution ($)</label><input type="number" id="spons-amt" min="0" placeholder="0.00"></div>
     </div>
-    <div id="spons-notice" class="notice n-soft hidden">Sponsor listed &mdash; confirm contribution amount is finalized before event.</div>
-    <div class="brow"><button class="btnp" onclick="next('06','07')">Confirm Budget &rarr;</button></div>
+    <div id="spons-notice" class="notice n-soft hidden">
+      Sponsor listed &mdash; confirm contribution amount is finalized before event.
+    </div>
+    <div class="brow">
+      <button class="btnp" onclick="next('06', '07')">Confirm Budget &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 07 -->
+<!-- STEP 07: Volunteers & Board Assignments -->
 <div class="card c-locked" id="c07">
   <div class="chdr" onclick="flipCard('07')">
-    <span class="cnum">07</span><span class="ctitle">Volunteers &amp; Board Assignments</span><span class="ccaret" id="cr07">&#9660;</span>
+    <span class="cnum">07</span>
+    <span class="ctitle">Volunteers &amp; Board Assignments</span>
+    <span class="ccaret" id="cr07">&#9660;</span>
   </div>
   <div class="cbody" id="cb07">
     <div class="nmgr">
       <h4>Board Member Name Pool &mdash; Edit as Needed</h4>
       <div class="npills" id="npills"></div>
       <div class="nadd">
-        <input type="text" id="new-name" placeholder="Add board member name&hellip;" onkeydown="if(event.key==='Enter'){doAddName();return false;}">
+        <input type="text" id="new-name" placeholder="Add board member name...">
         <button class="btns" onclick="doAddName()">+ Add</button>
       </div>
     </div>
@@ -446,33 +869,41 @@ body{background:#f5f5f5;color:#111;}
       <thead><tr><th>Role</th><th>Assigned To</th><th>Status</th></tr></thead>
       <tbody id="rtbody"></tbody>
     </table>
-    <div class="brow"><button class="btnp" onclick="next('07','08')">Confirm Assignments &rarr;</button></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('07', '08')">Confirm Assignments &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- 08 -->
+<!-- STEP 08: Day-of Contingencies -->
 <div class="card c-locked" id="c08">
   <div class="chdr" onclick="flipCard('08')">
-    <span class="cnum">08</span><span class="ctitle">Day-of Contingencies</span><span class="ccaret" id="cr08">&#9660;</span>
+    <span class="cnum">08</span>
+    <span class="ctitle">Day-of Contingencies</span>
+    <span class="ccaret" id="cr08">&#9660;</span>
   </div>
   <div class="cbody" id="cb08">
-    <div class="cklist" id="ck-cont"></div>
-    <div class="brow"><button class="btnp" onclick="next('08',null)">Complete Phase 1 &rarr;</button></div>
+    <div id="ck-cont"></div>
+    <div class="brow">
+      <button class="btnp" onclick="next('08', null)">Complete Phase 1 &rarr;</button>
+    </div>
   </div>
 </div>
 
-<!-- Summary -->
+<!-- PHASE 1 SUMMARY -->
 <div id="p1-sum" class="hidden">
   <div class="sumcard">
     <h3>&#9654; Phase 1 Summary &mdash; Readiness Review</h3>
     <div id="sum-body"></div>
     <div class="rbar">
-      <div class="rbarbg"><div class="rbarfill" id="rbar" style="width:0%"></div></div>
+      <div class="rbarbg"><div class="rbarfill" id="rbar" style="width: 0%;"></div></div>
       <div class="rbarlbl" id="rlbl"></div>
     </div>
-    <div class="brow" style="margin-top:1rem">
-      <button class="btnp" id="btn-p2" onclick="doP2()" disabled>Proceed to Phase 2 &mdash; Execution Checklist &rarr;</button>
-      <span id="p2-blockmsg" style="color:#FFBBBB;font-size:.77rem"></span>
+    <div class="brow" style="margin-top: 1rem;">
+      <button class="btnp" id="btn-p2" onclick="doP2()" disabled>
+        Proceed to Phase 2 &mdash; Execution Checklist &rarr;
+      </button>
+      <span id="p2-blockmsg" style="color: #FFBBBB; font-size: 0.77rem;"></span>
     </div>
   </div>
 </div>
@@ -480,19 +911,19 @@ body{background:#f5f5f5;color:#111;}
 
   </div><!-- #p1 -->
 
-  <!-- PHASE 2 -->
+  <!-- ===== PHASE 2 ===== -->
 
   <div id="p2" class="hidden">
     <div class="p2prog">
       <div class="p2lbl">Overall Completion</div>
-      <div class="p2bar"><div class="p2fill" id="p2fill" style="width:0%"></div></div>
+      <div class="p2bar"><div class="p2fill" id="p2fill" style="width: 0%;"></div></div>
       <div class="p2pct" id="p2pct">0%</div>
     </div>
     <div id="cl-cont"></div>
     <div class="mission">
       <h2>&#9654; Mission Summary</h2>
       <div id="miss-body"></div>
-      <div class="brow no-print" style="margin-top:1rem">
+      <div class="brow no-print" style="margin-top: 1rem;">
         <button class="btnp" onclick="window.print()">&#128438; Print / Export</button>
         <button class="btns" onclick="gotoPhase(1)">&#8592; Back to Phase 1</button>
       </div>
@@ -501,65 +932,71 @@ body{background:#f5f5f5;color:#111;}
 
 </div><!-- .wrap -->
 
-<footer class="footer">PMI Alaska Chapter internal planning tool &mdash; not an official PMI publication.</footer>
+<footer class="footer">
+  PMI Alaska Chapter internal planning tool &mdash; not an official PMI publication.
+</footer>
 
 <script>
-// ── STATE ───────────────────────────────────────────────────
+// ============================================================
+// STATE
+// ============================================================
 var S = {
   fmt: null, sp: null, spOvr: false,
   av: [], pdu: null, layout: null,
   fb: false, alc: false, spons: false,
-  names: ['Ian Minnock','[Board Member 2]','[Board Member 3]','[Board Member 4]','[Board Member 5]'],
-  roles: {}, checks: {}, p2: {}, p2Built: false
+  names: ['Ian Minnock', 'Board Member 2', 'Board Member 3', 'Board Member 4', 'Board Member 5'],
+  roles: {}, checks: {}, p2states: {}, p2Built: false
 };
 
-// ── CHECK DATA ──────────────────────────────────────────────
+// ============================================================
+// CHECK DATA
+// ============================================================
 var VENUE = [
-  {id:'v1',lbl:'Venue booking confirmed in writing',sev:'h',note:'No written confirmation = hard stop.'},
-  {id:'v2',lbl:'Venue contact name and phone number on file',sev:'s'},
-  {id:'v3',lbl:'Room capacity sufficient for expected attendance',sev:'s'},
-  {id:'v4',lbl:'AV equipment available at venue or separately arranged',sev:'s'},
-  {id:'v5',lbl:'Parking situation communicated to attendees',sev:'s'},
-  {id:'v6',lbl:'Accessibility confirmed (wheelchair access, elevator if needed)',sev:'s'},
-  {id:'v7',lbl:'Venue setup time confirmed with venue contact',sev:'s'},
-  {id:'v8',lbl:'Breakdown and cleanup window confirmed',sev:'s'},
-  {id:'v9',lbl:'Backup plan identified for venue cancellation',sev:'s'}
+  {id:'v1', lbl:'Venue booking confirmed in writing', sev:'h', note:'No written confirmation = hard stop.'},
+  {id:'v2', lbl:'Venue contact name and phone number on file', sev:'s'},
+  {id:'v3', lbl:'Room capacity sufficient for expected attendance', sev:'s'},
+  {id:'v4', lbl:'AV equipment available at venue or separately arranged', sev:'s'},
+  {id:'v5', lbl:'Parking situation communicated to attendees', sev:'s'},
+  {id:'v6', lbl:'Accessibility confirmed (wheelchair access, elevator if needed)', sev:'s'},
+  {id:'v7', lbl:'Venue setup time confirmed with venue contact', sev:'s'},
+  {id:'v8', lbl:'Breakdown and cleanup window confirmed', sev:'s'},
+  {id:'v9', lbl:'Backup plan identified for venue cancellation', sev:'s'}
 ];
 var FB = [
-  {id:'fb1',lbl:'Caterer or food source confirmed',sev:'h',note:'Hard stop if event is within 2 weeks.'},
-  {id:'fb2',lbl:'Order or headcount submitted to caterer',sev:'s'},
-  {id:'fb3',lbl:'Dietary accommodation options available (vegetarian, gluten-free, allergy-aware)',sev:'s'},
-  {id:'fb4',lbl:'Serving setup arranged (plates, napkins, serving utensils)',sev:'s'},
-  {id:'fb6',lbl:'Budget line confirmed with treasurer',sev:'f'}
+  {id:'fb1', lbl:'Caterer or food source confirmed', sev:'h', note:'Hard stop if event is within 2 weeks.'},
+  {id:'fb2', lbl:'Order or headcount submitted to caterer', sev:'s'},
+  {id:'fb3', lbl:'Dietary accommodation options available (vegetarian, gluten-free, allergy-aware)', sev:'s'},
+  {id:'fb4', lbl:'Serving setup arranged (plates, napkins, serving utensils)', sev:'s'},
+  {id:'fb6', lbl:'Budget line confirmed with treasurer', sev:'f'}
 ];
 var REG = [
-  {id:'r1',lbl:'Event posted on PMI Alaska chapter website',sev:'s'},
-  {id:'r2',lbl:'Event promoted via chapter email list',sev:'s'},
-  {id:'r3',lbl:'Event posted on LinkedIn or social media',sev:'s'},
-  {id:'r4',lbl:'Registration link active and tested',sev:'h',note:'Hard stop if event is within 1 week.'},
-  {id:'r5',lbl:'Registration cap set if venue has capacity limit',sev:'s'},
-  {id:'r6',lbl:'PDU information included in event listing',sev:'s'},
-  {id:'r7',lbl:'Member vs. non-member pricing confirmed',sev:'s'},
-  {id:'r8',lbl:'Registration platform fees accounted for in budget',sev:'f'}
+  {id:'r1', lbl:'Event posted on PMI Alaska chapter website', sev:'s'},
+  {id:'r2', lbl:'Event promoted via chapter email list', sev:'s'},
+  {id:'r3', lbl:'Event posted on LinkedIn or social media', sev:'s'},
+  {id:'r4', lbl:'Registration link active and tested', sev:'h', note:'Hard stop if event is within 1 week.'},
+  {id:'r5', lbl:'Registration cap set if venue has capacity limit', sev:'s'},
+  {id:'r6', lbl:'PDU information included in event listing', sev:'s'},
+  {id:'r7', lbl:'Member vs. non-member pricing confirmed', sev:'s'},
+  {id:'r8', lbl:'Registration platform fees accounted for in budget', sev:'f'}
 ];
 var BUD = [
-  {id:'b1',lbl:'Budget approved by board',sev:'h',note:'No board-approved budget = hard stop.'},
-  {id:'b2',lbl:'Invoices or deposits paid or scheduled',sev:'s'},
-  {id:'b3',lbl:'Petty cash / reimbursement process communicated to board',sev:'s'},
-  {id:'b4',lbl:'Post-event financial summary reminder noted',sev:'s'}
+  {id:'b1', lbl:'Budget approved by board', sev:'h', note:'No board-approved budget = hard stop.'},
+  {id:'b2', lbl:'Invoices or deposits paid or scheduled', sev:'s'},
+  {id:'b3', lbl:'Petty cash / reimbursement process communicated to board', sev:'s'},
+  {id:'b4', lbl:'Post-event financial summary reminder noted', sev:'s'}
 ];
 var CONT = [
-  {id:'c1',lbl:'Speaker cancellation backup plan identified',sev:'s'},
-  {id:'c2',lbl:'AV failure backup plan identified',sev:'s'},
-  {id:'c3',lbl:'Low attendance contingency discussed (refund policy or minimum headcount)',sev:'s'},
-  {id:'c4',lbl:'Inclement weather / access disruption plan (Anchorage winters)',sev:'s'},
-  {id:'c5',lbl:'Key contact list saved offline in case of internet outage',sev:'s'},
-  {id:'c6',lbl:'Board member on-call for last-minute issues identified',sev:'s'}
+  {id:'c1', lbl:'Speaker cancellation backup plan identified', sev:'s'},
+  {id:'c2', lbl:'AV failure backup plan identified', sev:'s'},
+  {id:'c3', lbl:'Low attendance contingency discussed (refund policy or minimum headcount)', sev:'s'},
+  {id:'c4', lbl:'Inclement weather / access disruption plan (Anchorage winters)', sev:'s'},
+  {id:'c5', lbl:'Key contact list saved offline in case of internet outage', sev:'s'},
+  {id:'c6', lbl:'Board member on-call for last-minute issues identified', sev:'s'}
 ];
 
 var ROLES_D = [
-  {key:'emcee',   lbl:'Event host and emcee',          crit:true},
-  {key:'sp-poc',  lbl:'Speaker liaison / point of contact'},
+  {key:'emcee',   lbl:'Event host and emcee', crit:true},
+  {key:'sp-poc',  lbl:'Speaker liaison and point of contact'},
   {key:'reg',     lbl:'Registration desk lead'},
   {key:'setup',   lbl:'Venue setup coordinator'},
   {key:'brkdown', lbl:'Venue breakdown and cleanup lead'},
@@ -574,505 +1011,652 @@ var ROLES_D = [
 ];
 
 var CL = [
-  {id:'s1',title:'4+ Weeks Out', items:[
-    {id:'i01',lbl:'Venue booked and confirmed in writing',role:'setup'},
-    {id:'i02',lbl:'Speaker identified and confirmed with written agreement',role:'sp-poc'},
-    {id:'i03',lbl:'Event date and format communicated to board',role:'emcee'},
-    {id:'i04',lbl:'Budget drafted and submitted for board approval',role:'finance'},
-    {id:'i05',lbl:'Registration platform set up and tested',role:'reg'},
-    {id:'i06',lbl:'PDU details confirmed with VP of Professional Development',role:null},
-    {id:'i07',lbl:'Sponsorship outreach completed if applicable',role:'finance'},
-    {id:'i08',lbl:'Event posted to chapter website and email list',role:'social'}
+  {id:'s1', title:'4+ Weeks Out', items:[
+    {id:'i01', lbl:'Venue booked and confirmed in writing', role:'setup'},
+    {id:'i02', lbl:'Speaker identified and confirmed with written agreement', role:'sp-poc'},
+    {id:'i03', lbl:'Event date and format communicated to board', role:'emcee'},
+    {id:'i04', lbl:'Budget drafted and submitted for board approval', role:'finance'},
+    {id:'i05', lbl:'Registration platform set up and tested', role:'reg'},
+    {id:'i06', lbl:'PDU details confirmed with VP of Professional Development', role:null},
+    {id:'i07', lbl:'Sponsorship outreach completed if applicable', role:'finance'},
+    {id:'i08', lbl:'Event posted to chapter website and email list', role:'social'}
   ]},
-  {id:'s2',title:'2\u20133 Weeks Out', items:[
-    {id:'i09',lbl:'Registration link promoted via all chapter channels',role:'social'},
-    {id:'i10',lbl:'Speaker AV needs confirmed and venue AV matched',role:'av'},
-    {id:'i11',lbl:'Food and beverage order placed or caterer confirmed',role:'food'},
-    {id:'i12',lbl:'Volunteer and board role assignments confirmed',role:'vol'},
-    {id:'i13',lbl:'Event logistics email sent to all board members',role:'emcee'},
-    {id:'i14',lbl:'Accessibility needs confirmed with venue',role:'access'},
-    {id:'i15',lbl:'LinkedIn and social media promotion posted',role:'social'}
+  {id:'s2', title:'2-3 Weeks Out', items:[
+    {id:'i09', lbl:'Registration link promoted via all chapter channels', role:'social'},
+    {id:'i10', lbl:'Speaker AV needs confirmed and venue AV matched', role:'av'},
+    {id:'i11', lbl:'Food and beverage order placed or caterer confirmed', role:'food'},
+    {id:'i12', lbl:'Volunteer and board role assignments confirmed', role:'vol'},
+    {id:'i13', lbl:'Event logistics email sent to all board members', role:'emcee'},
+    {id:'i14', lbl:'Accessibility needs confirmed with venue', role:'access'},
+    {id:'i15', lbl:'LinkedIn and social media promotion posted', role:'social'}
   ]},
-  {id:'s3',title:'1 Week Out', items:[
-    {id:'i16',lbl:'Registration count reviewed against venue capacity',role:'reg'},
-    {id:'i17',lbl:'Final headcount submitted to caterer if applicable',role:'food'},
-    {id:'i18',lbl:'AV equipment tested or confirmed with venue',role:'av'},
-    {id:'i19',lbl:'Speaker confirmation touchpoint (attendance, topic, timing)',role:'sp-poc'},
-    {id:'i20',lbl:'Printed materials prepared (name tags, agendas, signage)',role:null},
-    {id:'i21',lbl:'Petty cash or payment method arranged if needed',role:'finance'},
-    {id:'i22',lbl:'Emergency contact list compiled and distributed',role:'emcee'},
-    {id:'i23',lbl:'Virtual platform tested if applicable',role:'virtual',virt:true}
+  {id:'s3', title:'1 Week Out', items:[
+    {id:'i16', lbl:'Registration count reviewed against venue capacity', role:'reg'},
+    {id:'i17', lbl:'Final headcount submitted to caterer if applicable', role:'food'},
+    {id:'i18', lbl:'AV equipment tested or confirmed with venue', role:'av'},
+    {id:'i19', lbl:'Speaker confirmation touchpoint (attendance, topic, timing)', role:'sp-poc'},
+    {id:'i20', lbl:'Printed materials prepared (name tags, agendas, signage)', role:null},
+    {id:'i21', lbl:'Petty cash or payment method arranged if needed', role:'finance'},
+    {id:'i22', lbl:'Emergency contact list compiled and distributed', role:'emcee'},
+    {id:'i23', lbl:'Virtual platform tested if applicable', role:'virtual', virt:true}
   ]},
-  {id:'s4',title:'48 Hours Out', items:[
-    {id:'i24',lbl:'Final reminder email sent to registrants (venue, parking, agenda)',role:'social'},
-    {id:'i25',lbl:'Speaker final confirmation; travel confirmed if applicable',role:'sp-poc'},
-    {id:'i26',lbl:'Food delivery or pickup logistics confirmed',role:'food'},
-    {id:'i27',lbl:'Board member check-in; confirm all role owners are ready',role:'emcee'},
-    {id:'i28',lbl:'Weather and access check for venue',role:null},
-    {id:'i29',lbl:'Registration list printed or downloaded for door check-in',role:'reg'}
+  {id:'s4', title:'48 Hours Out', items:[
+    {id:'i24', lbl:'Final reminder email sent to registrants (venue, parking, agenda)', role:'social'},
+    {id:'i25', lbl:'Speaker final confirmation; travel confirmed if applicable', role:'sp-poc'},
+    {id:'i26', lbl:'Food delivery or pickup logistics confirmed', role:'food'},
+    {id:'i27', lbl:'Board member check-in; confirm all role owners are ready', role:'emcee'},
+    {id:'i28', lbl:'Weather and access check for venue', role:null},
+    {id:'i29', lbl:'Registration list printed or downloaded for door check-in', role:'reg'}
   ]},
-  {id:'s5',title:'Day of Event', items:[
-    {id:'i30',lbl:'Venue setup complete per layout plan',role:'setup'},
-    {id:'i31',lbl:'AV tested and working',role:'av'},
-    {id:'i32',lbl:'Registration desk staffed and materials ready',role:'reg'},
-    {id:'i33',lbl:'Food and beverage set up and serving arrangement confirmed',role:'food'},
-    {id:'i34',lbl:'Speaker arrived and tech check completed',role:'sp-poc'},
-    {id:'i35',lbl:'Volunteer briefing completed',role:'vol'},
-    {id:'i36',lbl:'Virtual platform open and tested if applicable',role:'virtual',virt:true},
-    {id:'i37',lbl:'Board member roles active and briefed',role:'emcee'},
-    {id:'i38',lbl:'Event start on time',role:'emcee'},
-    {id:'i39',lbl:'Photographer active',role:'photo'},
-    {id:'i40',lbl:'Social media post at event start',role:'social'},
-    {id:'i41',lbl:'PDU sign-in sheet or digital capture active',role:null}
+  {id:'s5', title:'Day of Event', items:[
+    {id:'i30', lbl:'Venue setup complete per layout plan', role:'setup'},
+    {id:'i31', lbl:'AV tested and working', role:'av'},
+    {id:'i32', lbl:'Registration desk staffed and materials ready', role:'reg'},
+    {id:'i33', lbl:'Food and beverage set up and serving arrangement confirmed', role:'food'},
+    {id:'i34', lbl:'Speaker arrived and tech check completed', role:'sp-poc'},
+    {id:'i35', lbl:'Volunteer briefing completed', role:'vol'},
+    {id:'i36', lbl:'Virtual platform open and tested if applicable', role:'virtual', virt:true},
+    {id:'i37', lbl:'Board member roles active and briefed', role:'emcee'},
+    {id:'i38', lbl:'Event start on time', role:'emcee'},
+    {id:'i39', lbl:'Photographer active', role:'photo'},
+    {id:'i40', lbl:'Social media post at event start', role:'social'},
+    {id:'i41', lbl:'PDU sign-in sheet or digital capture active', role:null}
   ]},
-  {id:'s6',title:'Post-Event', items:[
-    {id:'i42',lbl:'Venue breakdown and cleanup complete',role:'brkdown'},
-    {id:'i43',lbl:'Leftover food handled per venue policy',role:'food'},
-    {id:'i44',lbl:'AV equipment returned or venue items restored',role:'av'},
-    {id:'i45',lbl:'Attendee headcount recorded for financial reconciliation',role:'finance'},
-    {id:'i46',lbl:'PDU certificates or reporting submitted to PMI',role:null},
-    {id:'i47',lbl:'Registration revenue and expenses reconciled',role:'finance'},
-    {id:'i48',lbl:'Thank-you message sent to speaker',role:'sp-poc'},
-    {id:'i49',lbl:'Thank-you message sent to volunteers',role:'vol'},
-    {id:'i50',lbl:'Event photos posted to chapter channels',role:'photo'},
-    {id:'i51',lbl:'Lessons learned notes captured',role:'emcee'},
-    {id:'i52',lbl:'Board debrief scheduled or notes circulated',role:'emcee'},
-    {id:'i53',lbl:'Financial summary submitted to board',role:'finance'}
+  {id:'s6', title:'Post-Event', items:[
+    {id:'i42', lbl:'Venue breakdown and cleanup complete', role:'brkdown'},
+    {id:'i43', lbl:'Leftover food handled per venue policy', role:'food'},
+    {id:'i44', lbl:'AV equipment returned or venue items restored', role:'av'},
+    {id:'i45', lbl:'Attendee headcount recorded for financial reconciliation', role:'finance'},
+    {id:'i46', lbl:'PDU certificates or reporting submitted to PMI', role:null},
+    {id:'i47', lbl:'Registration revenue and expenses reconciled', role:'finance'},
+    {id:'i48', lbl:'Thank-you message sent to speaker', role:'sp-poc'},
+    {id:'i49', lbl:'Thank-you message sent to volunteers', role:'vol'},
+    {id:'i50', lbl:'Event photos posted to chapter channels', role:'photo'},
+    {id:'i51', lbl:'Lessons learned notes captured', role:'emcee'},
+    {id:'i52', lbl:'Board debrief scheduled or notes circulated', role:'emcee'},
+    {id:'i53', lbl:'Financial summary submitted to board', role:'finance'}
   ]}
 ];
 
-// ── CHECK LIST RENDER ───────────────────────────────────────
-function buildCklist(cid, data) {
-  var el = document.getElementById(cid);
+// ============================================================
+// BUILD CHECK LISTS
+// ============================================================
+function buildCklist(containerId, data) {
+  var el = document.getElementById(containerId);
   if (!el) return;
-  var h = '';
+  var html = '';
   for (var i = 0; i < data.length; i++) {
     var c = data[i];
-    var bdg = c.sev === 'h' ? '<span class="badge bh">HARD STOP</span>'
-            : c.sev === 'f' ? '<span class="badge bf">FINANCE</span>'
-            : '<span class="badge bs">SOFT FLAG</span>';
+    var bdg = '';
+    if (c.sev === 'h') { bdg = '<span class="bdg bdg-h">HARD STOP</span>'; }
+    else if (c.sev === 'f') { bdg = '<span class="bdg bdg-f">FINANCE</span>'; }
+    else { bdg = '<span class="bdg bdg-s">SOFT FLAG</span>'; }
     var note = c.note ? '<span class="ck-note">' + c.note + '</span>' : '';
-    h += '<div class="cki" onclick="togCk(\'' + c.id + '\',this)">'
-       + '<div class="ck" id="ck-' + c.id + '"></div>'
-       + '<span class="cklbl">' + c.lbl + bdg + note + '</span>'
-       + '</div>';
+    html += '<div class="cki" onclick="togCk(\'' + c.id + '\')">'
+          + '<div class="ckbox" id="ckb-' + c.id + '"></div>'
+          + '<span class="cklbl">' + c.lbl + bdg + note + '</span>'
+          + '</div>';
   }
-  el.innerHTML = h;
+  el.innerHTML = html;
 }
 
 function togCk(id) {
   S.checks[id] = !S.checks[id];
-  var el = document.getElementById('ck-' + id);
-  if (el) { if (S.checks[id]) el.classList.add('on'); else el.classList.remove('on'); }
-  updBanner();
-}
-
-// ── OPTION GROUP ────────────────────────────────────────────
-function pickG(gid, el, key, val) {
-  var g = document.getElementById(gid);
-  if (g) { var bs = g.querySelectorAll('.optb'); for (var i=0;i<bs.length;i++) bs[i].classList.remove('on'); }
-  el.classList.add('on');
-  S[key] = val;
-  updBanner();
-}
-
-// ── SPEAKER ─────────────────────────────────────────────────
-function pickSp(el, val) {
-  var g = document.getElementById('g-sp');
-  if (g) { var bs = g.querySelectorAll('.optb'); for (var i=0;i<bs.length;i++) bs[i].classList.remove('on'); }
-  el.classList.add('on');
-  S.sp = val;
-  var n = document.getElementById('sp-notice');
-  var nb = document.getElementById('no-sp-box');
-  n.className = 'hidden'; n.textContent = '';
-  nb.classList.add('hidden');
-  if (val === 'verbal') {
-    n.className = 'notice n-soft';
-    n.textContent = 'Soft flag: Written confirmation is strongly recommended. Verbal commitments have historically fallen through close to the event date.';
-  } else if (val === 'tentative') {
-    n.className = 'notice n-soft';
-    n.textContent = 'Soft flag: Speaker not yet confirmed. Aim to confirm at least 3 weeks out.';
-  } else if (val === 'none') {
-    nb.classList.remove('hidden');
+  var el = document.getElementById('ckb-' + id);
+  if (el) {
+    if (S.checks[id]) { el.classList.add('on'); }
+    else { el.classList.remove('on'); }
   }
   updBanner();
 }
 
-function updSpOvr() {
-  S.spOvr = document.getElementById('tog-sp-ovr').classList.contains('on');
+// ============================================================
+// OPTION GROUP SELECTOR
+// ============================================================
+function pickG(groupId, el, stateKey, val) {
+  var grp = document.getElementById(groupId);
+  if (grp) {
+    var btns = grp.getElementsByClassName('optb');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('on'); }
+  }
+  el.classList.add('on');
+  S[stateKey] = val;
   updBanner();
 }
 
-// ── PDU ─────────────────────────────────────────────────────
-function pickPDU(el, val) {
-  var g = document.getElementById('g-pdu');
-  if (g) { var bs = g.querySelectorAll('.optb'); for (var i=0;i<bs.length;i++) bs[i].classList.remove('on'); }
+// ============================================================
+// SPEAKER STATUS
+// ============================================================
+function pickSp(el, val) {
+  var grp = document.getElementById('g-sp');
+  if (grp) {
+    var btns = grp.getElementsByClassName('optb');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('on'); }
+  }
   el.classList.add('on');
-  S.pdu = val;
-  document.getElementById('pdu-split').classList.toggle('hidden', val !== 'combination');
+  S.sp = val;
+  var notice = document.getElementById('sp-notice');
+  var noSpBox = document.getElementById('no-sp-box');
+  notice.className = 'hidden';
+  notice.innerHTML = '';
+  noSpBox.classList.add('hidden');
+  if (val === 'verbal') {
+    notice.className = 'notice n-soft';
+    notice.innerHTML = 'Soft flag: Written confirmation is strongly recommended. Verbal commitments have historically fallen through close to the event date.';
+  } else if (val === 'tentative') {
+    notice.className = 'notice n-soft';
+    notice.innerHTML = 'Soft flag: Speaker not yet confirmed. Aim to confirm at least 3 weeks out.';
+  } else if (val === 'none') {
+    noSpBox.classList.remove('hidden');
+  }
+  updBanner();
 }
 
-// ── LAYOUT ──────────────────────────────────────────────────
+function flipSpOvr() {
+  var t = document.getElementById('tog-sp-ovr');
+  t.classList.toggle('on');
+  S.spOvr = t.classList.contains('on');
+  updBanner();
+}
+
+// ============================================================
+// PDU
+// ============================================================
+function pickPDU(el, val) {
+  var grp = document.getElementById('g-pdu');
+  if (grp) {
+    var btns = grp.getElementsByClassName('optb');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('on'); }
+  }
+  el.classList.add('on');
+  S.pdu = val;
+  var split = document.getElementById('pdu-split');
+  if (val === 'combination') { split.classList.remove('hidden'); }
+  else { split.classList.add('hidden'); }
+}
+
+// ============================================================
+// LAYOUT
+// ============================================================
 function pickCustomLayout(el) {
-  var g = document.getElementById('g-layout');
-  if (g) { var bs = g.querySelectorAll('.optb'); for (var i=0;i<bs.length;i++) bs[i].classList.remove('on'); }
+  var grp = document.getElementById('g-layout');
+  if (grp) {
+    var btns = grp.getElementsByClassName('optb');
+    for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('on'); }
+  }
   el.classList.add('on');
   S.layout = 'custom';
   document.getElementById('layout-custom').classList.remove('hidden');
 }
 
-// ── TOGGLES ─────────────────────────────────────────────────
+// ============================================================
+// SIMPLE TOGGLE HELPER
+// ============================================================
 function flipTog(id) {
   var el = document.getElementById(id);
-  if (el) el.classList.toggle('on');
+  if (el) { el.classList.toggle('on'); }
 }
 
 function flipFB() {
   flipTog('tog-fb');
   S.fb = document.getElementById('tog-fb').classList.contains('on');
-  document.getElementById('fb-det').classList.toggle('hidden', !S.fb);
+  var det = document.getElementById('fb-det');
+  if (S.fb) { det.classList.remove('hidden'); }
+  else { det.classList.add('hidden'); }
   updBanner();
 }
 
 function flipAlc() {
   flipTog('tog-alc');
   S.alc = document.getElementById('tog-alc').classList.contains('on');
-  document.getElementById('alc-notice').classList.toggle('hidden', !S.alc);
+  var n = document.getElementById('alc-notice');
+  if (S.alc) { n.classList.remove('hidden'); }
+  else { n.classList.add('hidden'); }
   updBanner();
 }
 
 function flipSpons() {
   flipTog('tog-spons');
   S.spons = document.getElementById('tog-spons').classList.contains('on');
-  document.getElementById('spons-det').classList.toggle('hidden', !S.spons);
-  document.getElementById('spons-notice').classList.toggle('hidden', !S.spons);
+  var det = document.getElementById('spons-det');
+  var n = document.getElementById('spons-notice');
+  if (S.spons) { det.classList.remove('hidden'); n.classList.remove('hidden'); }
+  else { det.classList.add('hidden'); n.classList.add('hidden'); }
   updBanner();
 }
 
-// ── AV ──────────────────────────────────────────────────────
+// ============================================================
+// AV NEEDS
+// ============================================================
 function togAV(el, key) {
   el.classList.toggle('on');
-  if (el.classList.contains('on')) { if (S.av.indexOf(key) < 0) S.av.push(key); }
-  else { S.av = S.av.filter(function(k){ return k !== key; }); }
+  var idx = S.av.indexOf(key);
+  if (el.classList.contains('on')) {
+    if (idx < 0) { S.av.push(key); }
+  } else {
+    if (idx >= 0) { S.av.splice(idx, 1); }
+  }
 }
 
-// ── CARD FLIP ───────────────────────────────────────────────
+// ============================================================
+// CARD COLLAPSE
+// ============================================================
 function flipCard(n) {
-  var c = document.getElementById('c' + n);
-  if (!c || c.classList.contains('c-locked')) return;
-  c.classList.toggle('c-shut');
+  var card = document.getElementById('c' + n);
+  if (!card || card.classList.contains('c-locked')) return;
+  card.classList.toggle('c-shut');
 }
 
-// ── STEP COMMIT ─────────────────────────────────────────────
+// ============================================================
+// STEP COMMIT / PROGRESSION
+// ============================================================
 function next(cur, nxt) {
-  var c = document.getElementById('c' + cur);
-  c.classList.remove('c-active');
-  c.classList.add('c-done','c-shut');
+  var card = document.getElementById('c' + cur);
+  card.classList.remove('c-active');
+  card.classList.add('c-done', 'c-shut');
   if (nxt) {
     var nc = document.getElementById('c' + nxt);
     nc.classList.remove('c-locked');
     nc.classList.add('c-active');
-    setTimeout(function(){ nc.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
+    setTimeout(function() { nc.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
   } else {
     buildSummary();
-    var s = document.getElementById('p1-sum');
-    s.classList.remove('hidden');
-    setTimeout(function(){ s.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
+    var sum = document.getElementById('p1-sum');
+    sum.classList.remove('hidden');
+    setTimeout(function() { sum.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
   }
   updBanner();
 }
 
-// ── NAMES ───────────────────────────────────────────────────
+// ============================================================
+// BOARD NAMES
+// ============================================================
 function renderNames() {
   var el = document.getElementById('npills');
   if (!el) return;
-  var h = '';
+  var html = '';
   for (var i = 0; i < S.names.length; i++) {
-    h += '<div class="npill">' + S.names[i]
-       + ' <span class="nx" onclick="delName(' + i + ')">&#10005;</span></div>';
+    html += '<div class="npill">' + escHtml(S.names[i])
+          + ' <span class="nx" onclick="delName(' + i + ')">&#10005;</span></div>';
   }
-  el.innerHTML = h;
+  el.innerHTML = html;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function doAddName() {
   var inp = document.getElementById('new-name');
-  var n = inp.value.trim();
-  if (!n) return;
-  S.names.push(n);
+  var name = inp.value.trim();
+  if (!name) return;
+  S.names.push(name);
   inp.value = '';
   renderNames();
   renderRoles();
 }
 
-function delName(i) {
-  S.names.splice(i, 1);
+function delName(idx) {
+  S.names.splice(idx, 1);
   renderNames();
   renderRoles();
 }
 
-// ── ROLES ───────────────────────────────────────────────────
+// ============================================================
+// ROLES TABLE
+// ============================================================
 function renderRoles() {
   var tb = document.getElementById('rtbody');
   if (!tb) return;
-  var isV = S.fmt === 'virtual' || S.fmt === 'hybrid';
-  var h = '';
+  var isVirt = (S.fmt === 'virtual' || S.fmt === 'hybrid');
+  var html = '';
   for (var i = 0; i < ROLES_D.length; i++) {
     var r = ROLES_D[i];
-    if (r.virt && !isV) continue;
-    var a = S.roles[r.key] || {own: r.auto || '', st: ''};
+    if (r.virt && !isVirt) continue;
+    var a = S.roles[r.key] || {own: (r.auto || ''), st: ''};
     var opts = '<option value="">-- Unassigned --</option>';
     for (var j = 0; j < S.names.length; j++) {
-      opts += '<option value="' + S.names[j] + '"' + (S.names[j] === a.own ? ' selected' : '') + '>' + S.names[j] + '</option>';
+      var sel = (S.names[j] === a.own) ? ' selected' : '';
+      opts += '<option value="' + escHtml(S.names[j]) + '"' + sel + '>' + escHtml(S.names[j]) + '</option>';
     }
-    h += '<tr>'
-       + '<td>' + r.lbl + (r.note ? '<span class="rnote">' + r.note + '</span>' : '')
-       + (r.crit ? ' <span class="badge bs" style="font-size:.62rem">CRITICAL</span>' : '') + '</td>'
-       + '<td><select onchange="setOwn(\'' + r.key + '\',this.value)">' + opts + '</select></td>'
-       + '<td><div class="sbtns">'
-       + '<button class="sb' + (a.st==='a'?' sa':'') + '" onclick="setSt(\'' + r.key + '\',\'a\',this)">Assigned</button>'
-       + '<button class="sb' + (a.st==='n'?' sn':'') + '" onclick="setSt(\'' + r.key + '\',\'n\',this)">Needs Coverage</button>'
-       + '<button class="sb' + (a.st==='r'?' sr':'') + '" onclick="setSt(\'' + r.key + '\',\'r\',this)">Not Required</button>'
-       + '</div></td></tr>';
+    var stBtns = '<button class="sb' + (a.st === 'a' ? ' sa' : '') + '" onclick="setSt(\'' + r.key + '\',\'a\',this)">Assigned</button>'
+               + '<button class="sb' + (a.st === 'n' ? ' sn' : '') + '" onclick="setSt(\'' + r.key + '\',\'n\',this)">Needs Coverage</button>'
+               + '<button class="sb' + (a.st === 'r' ? ' sr' : '') + '" onclick="setSt(\'' + r.key + '\',\'r\',this)">Not Required</button>';
+    html += '<tr>'
+          + '<td>' + r.lbl
+          + (r.note ? '<span class="rnote">' + r.note + '</span>' : '')
+          + (r.crit ? ' <span class="bdg bdg-s" style="font-size: 0.62rem;">CRITICAL</span>' : '')
+          + '</td>'
+          + '<td><select onchange="setOwn(\'' + r.key + '\', this.value)">' + opts + '</select></td>'
+          + '<td><div class="sbtns">' + stBtns + '</div></td>'
+          + '</tr>';
   }
-  tb.innerHTML = h;
+  tb.innerHTML = html;
 }
 
 function setOwn(key, val) {
-  if (!S.roles[key]) S.roles[key] = {own:'', st:''};
+  if (!S.roles[key]) { S.roles[key] = {own: '', st: ''}; }
   S.roles[key].own = val;
   updBanner();
 }
 
 function setSt(key, val, btn) {
-  if (!S.roles[key]) S.roles[key] = {own:'', st:''};
+  if (!S.roles[key]) { S.roles[key] = {own: '', st: ''}; }
   S.roles[key].st = val;
-  var wrap = btn.closest('.sbtns');
-  var bs = wrap.querySelectorAll('.sb');
-  for (var i = 0; i < bs.length; i++) bs[i].classList.remove('sa','sn','sr');
-  if (val==='a') btn.classList.add('sa');
-  else if (val==='n') btn.classList.add('sn');
-  else btn.classList.add('sr');
+  var wrap = btn.parentNode;
+  var bs = wrap.getElementsByClassName('sb');
+  for (var i = 0; i < bs.length; i++) { bs[i].classList.remove('sa', 'sn', 'sr'); }
+  if (val === 'a') { btn.classList.add('sa'); }
+  else if (val === 'n') { btn.classList.add('sn'); }
+  else { btn.classList.add('sr'); }
   updBanner();
 }
 
-// ── DAYS UNTIL EVENT ────────────────────────────────────────
+// ============================================================
+// DAYS UNTIL EVENT
+// ============================================================
 function daysOut() {
-  var el = document.getElementById('ev-date');
-  if (!el || !el.value) return 999;
-  return (new Date(el.value + 'T12:00:00') - new Date()) / 86400000;
+  var inp = document.getElementById('ev-date');
+  if (!inp || !inp.value) return 999;
+  var evDate = new Date(inp.value + 'T12:00:00');
+  return (evDate - new Date()) / 86400000;
 }
 
-// ── FLAGS ───────────────────────────────────────────────────
+// ============================================================
+// FLAGS COMPUTATION
+// ============================================================
 function getFlags() {
-  var h = [], s = [];
+  var h = [];
+  var s = [];
   var d = daysOut();
 
-  if (S.sp === 'none' && !S.spOvr) h.push('No speaker identified (override not acknowledged)');
-  else if (S.sp === 'verbal') s.push('Speaker verbal only \u2014 written confirmation recommended');
-  else if (S.sp === 'tentative') s.push('Speaker tentatively identified \u2014 confirm 3+ weeks out');
+  // Speaker hard stops / soft flags
+  if (S.sp === 'none' && !S.spOvr) { h.push('No speaker identified (override not acknowledged)'); }
+  else if (S.sp === 'verbal') { s.push('Speaker verbal only - written confirmation recommended'); }
+  else if (S.sp === 'tentative') { s.push('Speaker tentatively identified - confirm 3+ weeks out'); }
 
-  if (!S.checks['v1']) h.push('Venue booking not confirmed in writing');
-  if (S.fb && !S.checks['fb1'] && d <= 14) h.push('Caterer not confirmed and event is within 2 weeks');
-  if (!S.checks['r4'] && d <= 7) h.push('Registration link not tested and event is within 1 week');
-  if (!S.checks['b1']) h.push('Budget not approved by board');
+  // Venue
+  if (!S.checks['v1']) { h.push('Venue booking not confirmed in writing'); }
 
-  var emcee = S.roles['emcee'];
-  if (emcee && emcee.st === 'n') h.push('Event host/emcee needs coverage (critical role)');
+  // FB
+  if (S.fb && !S.checks['fb1'] && d <= 14) { h.push('Caterer not confirmed and event is within 2 weeks'); }
 
-  var ssets = [VENUE.slice(1), S.fb ? FB.slice(1) : [], REG.filter(function(c){ return c.id !== 'r4'; }), BUD.slice(1), CONT];
-  for (var i = 0; i < ssets.length; i++) {
-    for (var j = 0; j < ssets[i].length; j++) {
-      if (!S.checks[ssets[i][j].id]) s.push(ssets[i][j].lbl.substring(0,65) + (ssets[i][j].lbl.length > 65 ? '...' : ''));
+  // Registration
+  if (!S.checks['r4'] && d <= 7) { h.push('Registration link not tested and event is within 1 week'); }
+
+  // Budget
+  if (!S.checks['b1']) { h.push('Budget not approved by board'); }
+
+  // Emcee coverage
+  var em = S.roles['emcee'];
+  if (em && em.st === 'n') { h.push('Event host / emcee needs coverage (critical role)'); }
+
+  // Soft flags from unchecked items
+  var softSets = [
+    VENUE.slice(1),
+    S.fb ? FB.slice(1) : [],
+    REG.filter(function(c) { return c.id !== 'r4'; }),
+    BUD.slice(1),
+    CONT
+  ];
+  for (var si = 0; si < softSets.length; si++) {
+    for (var ci = 0; ci < softSets[si].length; ci++) {
+      var c = softSets[si][ci];
+      if (!S.checks[c.id]) {
+        var lbl = c.lbl.length > 65 ? c.lbl.substring(0, 65) + '...' : c.lbl;
+        s.push(lbl);
+      }
     }
   }
 
-  for (var i = 0; i < ROLES_D.length; i++) {
-    var r = ROLES_D[i];
+  // Role coverage gaps
+  for (var ri = 0; ri < ROLES_D.length; ri++) {
+    var r = ROLES_D[ri];
     if (r.key === 'emcee') continue;
     var a = S.roles[r.key];
-    if (a && a.st === 'n') s.push('Role needs coverage: ' + r.lbl);
+    if (a && a.st === 'n') { s.push('Role needs coverage: ' + r.lbl); }
   }
 
   return {h: h, s: s};
 }
 
-// ── BANNER ──────────────────────────────────────────────────
+// ============================================================
+// BANNER UPDATE
+// ============================================================
 function updBanner() {
   var f = getFlags();
-  var bn = document.getElementById('banner');
-  var bm = document.getElementById('bmsg');
-  var bs = document.getElementById('bsub');
-  bn.classList.remove('b-action','b-attn','b-ready');
+  var bn  = document.getElementById('banner');
+  var msg = document.getElementById('bmsg');
+  var sub = document.getElementById('bsub');
+
+  bn.classList.remove('b-action', 'b-attn', 'b-ready');
+
   if (f.h.length > 0) {
     bn.classList.add('b-action');
-    bm.textContent = 'ACTION REQUIRED \u2014 ' + f.h.length + ' hard stop' + (f.h.length > 1 ? 's' : '') + ' unresolved';
-    bs.textContent = f.h[0];
+    msg.textContent = 'ACTION REQUIRED \u2014 ' + f.h.length + ' hard stop' + (f.h.length > 1 ? 's' : '') + ' unresolved';
+    sub.textContent = f.h[0];
   } else if (f.s.length > 0) {
     bn.classList.add('b-attn');
-    bm.textContent = 'ATTENTION \u2014 ' + f.s.length + ' item' + (f.s.length > 1 ? 's' : '') + ' flagged for review';
-    bs.textContent = f.s[0];
+    msg.textContent = 'ATTENTION \u2014 ' + f.s.length + ' item' + (f.s.length > 1 ? 's' : '') + ' flagged for review';
+    sub.textContent = f.s[0];
   } else {
     bn.classList.add('b-ready');
-    bm.textContent = 'READY \u2014 All critical items confirmed';
-    bs.textContent = '';
+    msg.textContent = 'READY \u2014 All critical items confirmed';
+    sub.textContent = '';
   }
 }
 
-// ── P1 SUMMARY ──────────────────────────────────────────────
+// ============================================================
+// PHASE 1 SUMMARY
+// ============================================================
 function buildSummary() {
   var f = getFlags();
-  var tot = f.h.length + f.s.length;
-  var pct = Math.min(100, Math.max(0, 100 - f.h.length * 20 - f.s.length * 2));
-  var h = '';
+  var total = f.h.length + f.s.length;
+  var pct = Math.min(100, Math.max(0, 100 - (f.h.length * 20) - (f.s.length * 2)));
+  var html = '';
+
   if (f.h.length === 0) {
-    h += '<div class="notice n-info" style="margin-bottom:.5rem">\u2713 No hard stops \u2014 event may proceed to Phase 2.</div>';
+    html += '<div class="notice n-info" style="margin-bottom: 0.5rem;">\u2713 No hard stops \u2014 event may proceed to Phase 2.</div>';
   } else {
-    h += '<div class="notice n-hard" style="margin-bottom:.5rem">\u26a0 ' + f.h.length + ' hard stop(s) unresolved:<br>\u2022 ' + f.h.join('<br>\u2022 ') + '</div>';
+    html += '<div class="notice n-hard" style="margin-bottom: 0.5rem;">\u26a0 ' + f.h.length + ' hard stop(s) must be resolved:<br>\u2022 ' + f.h.join('<br>\u2022 ') + '</div>';
   }
   if (f.s.length > 0) {
-    h += '<div class="notice n-soft" style="margin-bottom:.5rem">\u25b3 ' + f.s.length + ' soft flag(s) active. Address before event day.</div>';
+    html += '<div class="notice n-soft" style="margin-bottom: 0.5rem;">\u25b3 ' + f.s.length + ' soft flag(s) active. Address before event day.</div>';
   }
-  var gaps = ROLES_D.filter(function(r){ var a=S.roles[r.key]; return !a||(!a.own && a.st!=='r'); });
-  if (gaps.length > 0) h += '<div class="notice n-soft" style="margin-bottom:.5rem">\u25b3 ' + gaps.length + ' role(s) without assigned owner.</div>';
-  document.getElementById('sum-body').innerHTML = h;
+
+  var gaps = [];
+  for (var i = 0; i < ROLES_D.length; i++) {
+    var r = ROLES_D[i];
+    var a = S.roles[r.key];
+    if (!a || (!a.own && a.st !== 'r')) { gaps.push(r); }
+  }
+  if (gaps.length > 0) {
+    html += '<div class="notice n-soft" style="margin-bottom: 0.5rem;">\u25b3 ' + gaps.length + ' role(s) without an assigned owner.</div>';
+  }
+
+  document.getElementById('sum-body').innerHTML = html;
+
   var fill = document.getElementById('rbar');
   fill.style.width = pct + '%';
-  fill.style.background = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
-  document.getElementById('rlbl').textContent = 'Readiness score: ' + pct + '% (' + tot + ' item(s) flagged)';
+  if (pct >= 80) { fill.style.backgroundColor = '#3A8C5C'; }
+  else if (pct >= 50) { fill.style.backgroundColor = '#C49A1A'; }
+  else { fill.style.backgroundColor = '#B03030'; }
+
+  document.getElementById('rlbl').textContent = 'Readiness score: ' + pct + '% (' + total + ' item(s) flagged)';
+
   var btn = document.getElementById('btn-p2');
-  var pm = document.getElementById('p2-blockmsg');
-  btn.disabled = f.h.length > 0;
-  pm.textContent = f.h.length > 0 ? 'Resolve all hard stops before proceeding.' : '';
+  var pm  = document.getElementById('p2-blockmsg');
+  if (f.h.length === 0) {
+    btn.disabled = false;
+    pm.textContent = '';
+  } else {
+    btn.disabled = true;
+    pm.textContent = 'Resolve all hard stops before proceeding.';
+  }
 }
 
-// ── PHASE 2 ─────────────────────────────────────────────────
+// ============================================================
+// PHASE 2
+// ============================================================
 function doP2() {
-  if (!S.p2Built) { buildP2(); S.p2Built = true; }
+  if (!S.p2Built) {
+    buildP2();
+    S.p2Built = true;
+  }
   gotoPhase(2);
 }
 
 function buildP2() {
-  var isV = S.fmt === 'virtual' || S.fmt === 'hybrid';
+  var isVirt = (S.fmt === 'virtual' || S.fmt === 'hybrid');
   var cont = document.getElementById('cl-cont');
   cont.innerHTML = '';
+
   for (var si = 0; si < CL.length; si++) {
     var sect = CL[si];
-    var its = sect.items.filter(function(it){ return !it.virt || isV; });
+    var items = [];
+    for (var ii = 0; ii < sect.items.length; ii++) {
+      if (!sect.items[ii].virt || isVirt) { items.push(sect.items[ii]); }
+    }
+
     var rows = '';
-    for (var ii = 0; ii < its.length; ii++) {
-      var it = its[ii];
+    for (var ri = 0; ri < items.length; ri++) {
+      var it = items[ri];
       var own = getOwner(it.role);
       rows += '<div class="cli">'
-            + '<div class="ck" id="p2k-' + it.id + '" onclick="togP2(\'' + it.id + '\')"></div>'
+            + '<div class="ckbox" id="p2k-' + it.id + '" onclick="togP2(\'' + it.id + '\')"></div>'
             + '<div class="clibody">'
             + '<div class="clitxt">' + it.lbl + '</div>'
-            + (own ? '<div class="cliown">\u25ba ' + own + '</div>' : '')
+            + (own ? '<div class="cliown">&#9658; ' + escHtml(own) + '</div>' : '')
             + '<span class="clntog" onclick="togNote(\'' + it.id + '\')">+ Notes</span>'
             + '<div class="clnwrap" id="note-' + it.id + '">'
-            + '<textarea placeholder="Notes\u2026" oninput="setNote(\'' + it.id + '\',this.value)"></textarea>'
+            + '<textarea placeholder="Notes..." oninput="setNote(\'' + it.id + '\',this.value)"></textarea>'
 
 ```
         + '</div></div></div>';
 }
+
 var div = document.createElement('div');
 div.className = 'clsect';
 div.id = 'sec-' + sect.id;
 div.innerHTML = '<div class="clhdr" onclick="togSect(\'' + sect.id + '\')">'
   + '<span class="cltitle">' + sect.title + '</span>'
-  + '<span class="clcount" id="sc-' + sect.id + '">0 of ' + its.length + '</span>'
+  + '<span class="clcount" id="scount-' + sect.id + '">0 of ' + items.length + '</span>'
   + '<span class="clcaret">&#9660;</span></div>'
   + '<div class="clbody">' + rows + '</div>';
 cont.appendChild(div);
 ```
 
 }
+
 buildMission();
 updP2();
 }
 
-function getOwner(rk) {
-if (!rk) return null;
-var a = S.roles[rk];
+function getOwner(roleKey) {
+if (!roleKey) return null;
+var a = S.roles[roleKey];
 if (a && a.own) return a.own;
-var r = null;
-for (var i=0;i<ROLES_D.length;i++) { if (ROLES_D[i].key===rk) { r=ROLES_D[i]; break; } }
-return r && r.auto ? r.auto : null;
+for (var i = 0; i < ROLES_D.length; i++) {
+if (ROLES_D[i].key === roleKey && ROLES_D[i].auto) return ROLES_D[i].auto;
+}
+return null;
 }
 
 function togP2(id) {
-if (!S.p2[id]) S.p2[id] = {done:false, notes:’’};
-S.p2[id].done = !S.p2[id].done;
+if (!S.p2states[id]) { S.p2states[id] = {done: false, notes: ‘’}; }
+S.p2states[id].done = !S.p2states[id].done;
 var el = document.getElementById(‘p2k-’ + id);
-if (el) { if (S.p2[id].done) el.classList.add(‘on’); else el.classList.remove(‘on’); }
+if (el) {
+if (S.p2states[id].done) { el.classList.add(‘on’); }
+else { el.classList.remove(‘on’); }
+}
 updP2();
 }
 
 function setNote(id, val) {
-if (!S.p2[id]) S.p2[id] = {done:false, notes:’’};
-S.p2[id].notes = val;
+if (!S.p2states[id]) { S.p2states[id] = {done: false, notes: ‘’}; }
+S.p2states[id].notes = val;
 }
 
 function togNote(id) {
 var el = document.getElementById(‘note-’ + id);
-if (el) el.classList.toggle(‘on’);
+if (el) { el.classList.toggle(‘on’); }
 }
 
 function togSect(id) {
 var el = document.getElementById(‘sec-’ + id);
-if (el) el.classList.toggle(‘c-shut’);
+if (el) { el.classList.toggle(‘c-shut’); }
 }
 
 function updP2() {
-var isV = S.fmt === ‘virtual’ || S.fmt === ‘hybrid’;
-var tot=0, done=0;
-for (var si=0;si<CL.length;si++) {
-var sect=CL[si];
-var its=sect.items.filter(function(it){ return !it.virt||isV; });
-var sd=0;
-for (var ii=0;ii<its.length;ii++) {
-tot++;
-if (S.p2[its[ii].id] && S.p2[its[ii].id].done) { done++; sd++; }
+var isVirt = (S.fmt === ‘virtual’ || S.fmt === ‘hybrid’);
+var total = 0;
+var done  = 0;
+
+for (var si = 0; si < CL.length; si++) {
+var sect = CL[si];
+var sdone = 0;
+var scount = 0;
+for (var ii = 0; ii < sect.items.length; ii++) {
+var it = sect.items[ii];
+if (it.virt && !isVirt) continue;
+scount++;
+total++;
+if (S.p2states[it.id] && S.p2states[it.id].done) { sdone++; done++; }
 }
-var sc=document.getElementById(‘sc-’+sect.id);
-if (sc) sc.textContent = sd+’ of ‘+its.length;
+var sc = document.getElementById(‘scount-’ + sect.id);
+if (sc) { sc.textContent = sdone + ’ of ’ + scount; }
 }
-var pct = tot>0 ? Math.round(done/tot*100) : 0;
-document.getElementById(‘p2fill’).style.width = pct+’%’;
-document.getElementById(‘p2pct’).textContent = pct+’%’;
+
+var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+document.getElementById(‘p2fill’).style.width = pct + ‘%’;
+document.getElementById(‘p2pct’).textContent = pct + ‘%’;
 }
 
 function buildMission() {
-function gv(id){ var e=document.getElementById(id); return e?e.value:’’; }
-var fm={‘in-person’:‘In-Person Only’,‘virtual’:‘Virtual Only’,‘hybrid’:‘Hybrid’};
-var f=getFlags();
-var h=’’
-+’<div class="srow"><span class="sk">Event</span><span class="sv">’+(gv(‘ev-name’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Date</span><span class="sv">’+(gv(‘ev-date’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Time</span><span class="sv">’+(gv(‘ev-start’)||’—’)+’ – ‘+(gv(‘ev-end’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Venue</span><span class="sv">’+(gv(‘ev-venue’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Address</span><span class="sv">’+(gv(‘ev-addr’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Speaker</span><span class="sv">’+(gv(‘sp-name’)||‘Not assigned’)+’</span></div>’
-+’<div class="srow"><span class="sk">Format</span><span class="sv">’+(fm[S.fmt]||‘Not specified’)+’</span></div>’
-+’<div class="srow"><span class="sk">Expected Attendance</span><span class="sv">’+(gv(‘ev-att’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Registrations</span><span class="sv">’+(gv(‘reg-cnt’)||’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Est. Cost</span><span class="sv">’+(gv(‘bud-cost’)? ‘$’+Number(gv(‘bud-cost’)).toLocaleString():’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Projected Revenue</span><span class="sv">’+(gv(‘bud-rev’)? ‘$’+Number(gv(‘bud-rev’)).toLocaleString():’—’)+’</span></div>’
-+’<div class="srow"><span class="sk">Soft Flags Carried</span><span class="sv">’+f.s.length+’</span></div>’
-+’<div class="srow" style="font-size:.71rem;color:var(--muted);margin-top:.28rem"><span>Generated: ‘+new Date().toLocaleString()+’</span></div>’;
-document.getElementById(‘miss-body’).innerHTML = h;
+function gv(id) { var e = document.getElementById(id); return (e ? e.value : ‘’); }
+var fmtMap = {‘in-person’: ‘In-Person Only’, ‘virtual’: ‘Virtual Only’, ‘hybrid’: ‘Hybrid’};
+var f = getFlags();
+var html = ‘’
++ ‘<div class="srow"><span class="sk">Event</span><span class="sv">’ + (gv(‘ev-name’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Date</span><span class="sv">’ + (gv(‘ev-date’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Time</span><span class="sv">’ + (gv(‘ev-start’) || ‘—’) + ’ – ’ + (gv(‘ev-end’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Venue</span><span class="sv">’ + (gv(‘ev-venue’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Address</span><span class="sv">’ + (gv(‘ev-addr’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Speaker</span><span class="sv">’ + (gv(‘sp-name’) || ‘Not assigned’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Format</span><span class="sv">’ + (fmtMap[S.fmt] || ‘Not specified’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Expected Attendance</span><span class="sv">’ + (gv(‘ev-att’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Registrations</span><span class="sv">’ + (gv(‘reg-cnt’) || ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Est. Cost</span><span class="sv">’ + (gv(‘bud-cost’) ? ‘$’ + Number(gv(‘bud-cost’)).toLocaleString() : ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Projected Revenue</span><span class="sv">’ + (gv(‘bud-rev’) ? ‘$’ + Number(gv(‘bud-rev’)).toLocaleString() : ‘—’) + ‘</span></div>’
++ ‘<div class="srow"><span class="sk">Soft Flags Carried</span><span class="sv">’ + f.s.length + ‘</span></div>’
++ ’<div class="srow" style="font-size: 0.71rem; color: #9AAABB; margin-top: 0.28rem;"><span>Generated: ’ + new Date().toLocaleString() + ‘</span></div>’;
+document.getElementById(‘miss-body’).innerHTML = html;
 }
 
-// ── PHASE SWITCH ────────────────────────────────────────────
+// ============================================================
+// PHASE SWITCH
+// ============================================================
 function gotoPhase(n) {
-document.getElementById(‘p1’).classList.toggle(‘hidden’, n !== 1);
-document.getElementById(‘p2’).classList.toggle(‘hidden’, n !== 2);
-document.getElementById(‘t1’).classList.toggle(‘on’, n === 1);
-document.getElementById(‘t2’).classList.toggle(‘on’, n === 2);
-if (n === 2) document.getElementById(‘t2’).disabled = false;
+var p1 = document.getElementById(‘p1’);
+var p2 = document.getElementById(‘p2’);
+var t1 = document.getElementById(‘t1’);
+var t2 = document.getElementById(‘t2’);
+
+if (n === 1) { p1.classList.remove(‘hidden’); p2.classList.add(‘hidden’); t1.classList.add(‘on’); t2.classList.remove(‘on’); }
+else         { p1.classList.add(‘hidden’); p2.classList.remove(‘hidden’); t1.classList.remove(‘on’); t2.classList.add(‘on’); t2.disabled = false; }
 }
 
-// ── INIT ────────────────────────────────────────────────────
+// ============================================================
+// KEYBOARD: add name on Enter
+// ============================================================
 document.addEventListener(‘DOMContentLoaded’, function() {
+var nameInp = document.getElementById(‘new-name’);
+if (nameInp) {
+nameInp.addEventListener(‘keydown’, function(e) {
+if (e.key === ‘Enter’) { e.preventDefault(); doAddName(); }
+});
+}
 buildCklist(‘ck-venue’, VENUE);
 buildCklist(‘ck-fb’, FB);
 buildCklist(‘ck-reg’, REG);
