@@ -666,7 +666,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('01', '02')">Confirm Event Info &rarr;</button>
+      <button class="btnp" onclick="advStep('01', '02')">Confirm Event Info &rarr;</button>
     </div>
   </div>
 </div>
@@ -732,7 +732,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('02', '03')">Confirm Speaker &rarr;</button>
+      <button class="btnp" onclick="advStep('02', '03')">Confirm Speaker &rarr;</button>
     </div>
   </div>
 </div>
@@ -762,7 +762,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('03', '04')">Confirm Venue &rarr;</button>
+      <button class="btnp" onclick="advStep('03', '04')">Confirm Venue &rarr;</button>
     </div>
   </div>
 </div>
@@ -794,7 +794,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('04', '05')">Confirm F&amp;B &rarr;</button>
+      <button class="btnp" onclick="advStep('04', '05')">Confirm F&amp;B &rarr;</button>
     </div>
   </div>
 </div>
@@ -813,7 +813,7 @@ body { background-color: #f5f5f5; color: #111111; }
       <div class="frow"><label>Registration Deadline</label><input type="date" id="reg-dl"></div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('05', '06')">Confirm Registration &rarr;</button>
+      <button class="btnp" onclick="advStep('05', '06')">Confirm Registration &rarr;</button>
     </div>
   </div>
 </div>
@@ -844,7 +844,7 @@ body { background-color: #f5f5f5; color: #111111; }
       Sponsor listed &mdash; confirm contribution amount is finalized before event.
     </div>
     <div class="brow">
-      <button class="btnp" onclick="next('06', '07')">Confirm Budget &rarr;</button>
+      <button class="btnp" onclick="advStep('06', '07')">Confirm Budget &rarr;</button>
     </div>
   </div>
 </div>
@@ -870,7 +870,7 @@ body { background-color: #f5f5f5; color: #111111; }
       <tbody id="rtbody"></tbody>
     </table>
     <div class="brow">
-      <button class="btnp" onclick="next('07', '08')">Confirm Assignments &rarr;</button>
+      <button class="btnp" onclick="advStep('07', '08')">Confirm Assignments &rarr;</button>
     </div>
   </div>
 </div>
@@ -885,7 +885,7 @@ body { background-color: #f5f5f5; color: #111111; }
   <div class="cbody" id="cb08">
     <div id="ck-cont"></div>
     <div class="brow">
-      <button class="btnp" onclick="next('08', null)">Complete Phase 1 &rarr;</button>
+      <button class="btnp" onclick="advStep('08', null)">Complete Phase 1 &rarr;</button>
     </div>
   </div>
 </div>
@@ -1250,7 +1250,7 @@ function flipCard(n) {
 // ============================================================
 // STEP COMMIT / PROGRESSION
 // ============================================================
-function next(cur, nxt) {
+function advStep(cur, nxt) {
   var card = document.getElementById('c' + cur);
   card.classList.remove('c-active');
   card.classList.add('c-done', 'c-shut');
