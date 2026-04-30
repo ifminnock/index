@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAS Pre-Flight Decision Tree &amp; Checklist — Alaska Geo Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DESIGN TOKENS — MFI Alaska Geo Tools v2.0
+  ============================================================ */
+  :root {
+    --page-bg:       #2E3A47;
+    --card-bg:       #3A4A5C;
+    --accent-orange: #D4651A;
+    --accent-grey:   #4A6070;
+    --text-primary:  #E8EAEC;
+    --text-secondary:#9AAABB;
+    --row-alt:       #ECEEF1;
+    --go-green:      #2A7A4A;
+    --go-green-text: #7FD9A0;
+    --caution-amber: #7A5A1A;
+    --caution-text:  #F5C842;
+    --nogo-red:      #7A2020;
+    --nogo-text:     #F47878;
+    --font-mono:     'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–page-bg);
+color: var(–text-primary);
+font-family: var(–font-mono);
+font-size: 0.95rem;
+line-height: 1.55;
+min-height: 100vh;
+}
+
+/* ============================================================
+HEADER
+============================================================ */
+.site-header {
+background: #1E2830;
+border-bottom: 2px solid var(–accent-orange);
+padding: 0.75rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+
+.header-nav a {
+color: var(–text-secondary);
+text-decoration: none;
+font-size: 0.8rem;
+letter-spacing: 0.05em;
+transition: color 0.2s;
+}
+
+.header-nav a:hover { color: var(–accent-orange); }
+
+.header-title {
+flex: 1;
+}
+
+.header-module-id {
+font-size: 0.7rem;
+color: var(–text-secondary);
+letter-spacing: 0.1em;
+text-transform: uppercase;
+}
+
+.header-module-name {
+font-size: 1.15rem;
+font-weight: 700;
+color: var(–accent-orange);
+letter-spacing: 0.02em;
+}
+
+/* ============================================================
+STATUS BANNER
+============================================================ */
+#status-banner {
+position: sticky;
+top: 0;
+z-index: 100;
+padding: 0.65rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1rem;
+font-weight: 700;
+font-size: 0.85rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+transition: background 0.3s, color 0.3s;
+border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+#status-banner.status-go {
+background: var(–go-green);
+color: var(–go-green-text);
+}
+
+#status-banner.status-caution {
+background: var(–caution-amber);
+color: var(–caution-text);
+}
+
+#status-banner.status-nogo {
+background: var(–nogo-red);
+color: var(–nogo-text);
+}
+
+.banner-dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: currentColor;
+flex-shrink: 0;
+}
+
+.banner-flags {
+font-weight: 400;
+font-size: 0.75rem;
+opacity: 0.85;
+margin-left: auto;
+letter-spacing: 0.03em;
+text-transform: none;
+}
+
+/* ============================================================
+MAIN LAYOUT
+============================================================ */
+.main-content {
+max-width: 860px;
+margin: 0 auto;
+padding: 2rem 1.5rem 4rem;
+}
+
+.phase-header {
+margin: 2rem 0 1.25rem;
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.phase-label {
+background: var(–accent-orange);
+color: #fff;
+font-size: 0.7rem;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+padding: 0.2rem 0.6rem;
+border-radius: 2px;
+white-space: nowrap;
+}
+
+.phase-title {
+font-size: 1.1rem;
+font-weight: 700;
+color: var(–text-primary);
+}
+
+/* ============================================================
+DECISION TREE CARDS (Phase 1)
+============================================================ */
+.step-card {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-radius: 4px;
+margin-bottom: 1rem;
+overflow: hidden;
+display: none; /* hidden until activated */
+animation: slideIn 0.25s ease;
+}
+
+.step-card.active { display: block; }
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-card-header {
+background: rgba(0,0,0,0.2);
+padding: 0.65rem 1rem;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+border-bottom: 1px solid var(–accent-grey);
+}
+
+.step-number {
+background: var(–accent-orange);
+color: #fff;
+font-size: 0.7rem;
+font-weight: 700;
+width: 1.6rem;
+height: 1.6rem;
+border-radius: 2px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+letter-spacing: 0.05em;
+}
+
+.step-number.done {
+background: var(–accent-grey);
+}
+
+.step-title {
+font-size: 0.9rem;
+font-weight: 700;
+color: var(–accent-orange);
+letter-spacing: 0.04em;
+}
+
+.step-subtitle {
+font-size: 0.75rem;
+color: var(–text-secondary);
+margin-left: auto;
+white-space: nowrap;
+}
+
+.step-card-body {
+padding: 1rem 1rem 1.25rem;
+}
+
+.step-instruction {
+font-size: 0.8rem;
+color: var(–text-secondary);
+margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+OPTION BUTTONS (single/multi select)
+============================================================ */
+.option-grid {
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+margin-bottom: 0.75rem;
+}
+
+.option-btn {
+background: var(–page-bg);
+border: 1px solid var(–accent-grey);
+color: var(–text-secondary);
+font-family: var(–font-mono);
+font-size: 0.78rem;
+padding: 0.4rem 0.75rem;
+border-radius: 3px;
+cursor: pointer;
+transition: all 0.15s;
+text-align: left;
+}
+
+.option-btn:hover {
+border-color: var(–accent-orange);
+color: var(–text-primary);
+}
+
+.option-btn.selected {
+background: var(–accent-orange);
+border-color: var(–accent-orange);
+color: #fff;
+}
+
+/* ============================================================
+CHECKBOXES (custom styled)
+============================================================ */
+.checkbox-list {
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+margin-bottom: 0.75rem;
+}
+
+.custom-checkbox {
+display: flex;
+align-items: flex-start;
+gap: 0.6rem;
+cursor: pointer;
+padding: 0.35rem 0.5rem;
+border-radius: 3px;
+transition: background 0.15s;
+}
+
+.custom-checkbox:hover {
+background: rgba(255,255,255,0.04);
+}
+
+.cb-box {
+width: 16px;
+height: 16px;
+min-width: 16px;
+border: 2px solid var(–accent-grey);
+border-radius: 2px;
+margin-top: 2px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.15s;
+background: var(–page-bg);
+}
+
+.custom-checkbox.checked .cb-box {
+background: var(–accent-orange);
+border-color: var(–accent-orange);
+}
+
+.cb-check {
+color: #fff;
+font-size: 10px;
+font-weight: 700;
+display: none;
+line-height: 1;
+}
+
+.custom-checkbox.checked .cb-check { display: block; }
+
+.cb-label {
+font-size: 0.82rem;
+color: var(–text-primary);
+line-height: 1.4;
+}
+
+/* ============================================================
+FLAG ALERTS
+============================================================ */
+.flag-box {
+border-radius: 3px;
+padding: 0.6rem 0.85rem;
+margin: 0.5rem 0;
+font-size: 0.78rem;
+line-height: 1.45;
+display: none;
+}
+
+.flag-box.visible { display: block; }
+
+.flag-box.soft {
+background: rgba(122,90,26,0.35);
+border-left: 3px solid var(–caution-text);
+color: var(–caution-text);
+}
+
+.flag-box.hard {
+background: rgba(122,32,32,0.35);
+border-left: 3px solid var(–nogo-text);
+color: var(–nogo-text);
+}
+
+.flag-box.clear {
+background: rgba(42,122,74,0.25);
+border-left: 3px solid var(–go-green-text);
+color: var(–go-green-text);
+}
+
+.flag-label {
+font-weight: 700;
+letter-spacing: 0.06em;
+font-size: 0.72rem;
+text-transform: uppercase;
+margin-bottom: 0.2rem;
+}
+
+/* ============================================================
+STEP NAVIGATION BUTTONS
+============================================================ */
+.step-actions {
+margin-top: 0.85rem;
+display: flex;
+gap: 0.6rem;
+flex-wrap: wrap;
+}
+
+.btn-primary {
+background: var(–accent-orange);
+color: #fff;
+border: none;
+font-family: var(–font-mono);
+font-size: 0.8rem;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+padding: 0.5rem 1.1rem;
+border-radius: 3px;
+cursor: pointer;
+transition: opacity 0.15s;
+}
+
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+background: var(–accent-grey);
+color: #fff;
+border: none;
+font-family: var(–font-mono);
+font-size: 0.8rem;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+padding: 0.5rem 1.1rem;
+border-radius: 3px;
+cursor: pointer;
+transition: opacity 0.15s;
+}
+
+.btn-secondary:hover { opacity: 0.85; }
+
+/* ============================================================
+OVERRIDE ACKNOWLEDGMENT
+============================================================ */
+.override-prompt {
+display: none;
+margin-top: 0.75rem;
+padding: 0.75rem;
+background: rgba(0,0,0,0.2);
+border: 1px solid var(–nogo-text);
+border-radius: 3px;
+}
+
+.override-prompt.visible { display: block; }
+
+.override-prompt p {
+font-size: 0.78rem;
+color: var(–nogo-text);
+margin-bottom: 0.6rem;
+}
+
+/* ============================================================
+PHASE 1 SUMMARY
+============================================================ */
+#phase1-summary {
+display: none;
+}
+
+#phase1-summary.active { display: block; }
+
+.summary-card {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-radius: 4px;
+padding: 1.25rem;
+margin-bottom: 1rem;
+}
+
+.summary-card h3 {
+color: var(–accent-orange);
+font-size: 0.9rem;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+margin-bottom: 0.75rem;
+padding-bottom: 0.4rem;
+border-bottom: 1px solid var(–accent-grey);
+}
+
+.summary-section {
+margin-bottom: 0.75rem;
+}
+
+.summary-section-label {
+font-size: 0.72rem;
+color: var(–text-secondary);
+letter-spacing: 0.08em;
+text-transform: uppercase;
+margin-bottom: 0.35rem;
+}
+
+.flag-pill {
+display: inline-block;
+font-size: 0.72rem;
+padding: 0.2rem 0.55rem;
+border-radius: 2px;
+margin: 0.15rem 0.15rem 0.15rem 0;
+font-weight: 700;
+letter-spacing: 0.04em;
+}
+
+.pill-soft {
+background: rgba(122,90,26,0.45);
+color: var(–caution-text);
+border: 1px solid var(–caution-text);
+}
+
+.pill-clear {
+background: rgba(42,122,74,0.3);
+color: var(–go-green-text);
+border: 1px solid var(–go-green-text);
+}
+
+.pill-hard {
+background: rgba(122,32,32,0.45);
+color: var(–nogo-text);
+border: 1px solid var(–nogo-text);
+}
+
+/* ============================================================
+PHASE 2 — CHECKLIST
+============================================================ */
+#phase2-section {
+display: none;
+}
+
+#phase2-section.active { display: block; }
+
+.progress-bar-wrap {
+background: rgba(0,0,0,0.3);
+border-radius: 2px;
+height: 8px;
+margin-bottom: 0.4rem;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: var(–accent-orange);
+border-radius: 2px;
+transition: width 0.3s ease;
+width: 0%;
+}
+
+.progress-label {
+font-size: 0.72rem;
+color: var(–text-secondary);
+text-align: right;
+margin-bottom: 1rem;
+}
+
+.checklist-section {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-radius: 4px;
+margin-bottom: 0.75rem;
+overflow: hidden;
+}
+
+.section-toggle {
+width: 100%;
+background: rgba(0,0,0,0.2);
+border: none;
+padding: 0.7rem 1rem;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+cursor: pointer;
+border-bottom: 1px solid var(–accent-grey);
+font-family: var(–font-mono);
+transition: background 0.15s;
+text-align: left;
+}
+
+.section-toggle:hover { background: rgba(0,0,0,0.3); }
+
+.section-toggle-title {
+color: var(–accent-orange);
+font-size: 0.85rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+flex: 1;
+}
+
+.section-progress-badge {
+font-size: 0.7rem;
+color: var(–text-secondary);
+font-family: var(–font-mono);
+white-space: nowrap;
+}
+
+.section-toggle-arrow {
+color: var(–text-secondary);
+font-size: 0.8rem;
+transition: transform 0.2s;
+}
+
+.checklist-section.expanded .section-toggle-arrow { transform: rotate(90deg); }
+
+.section-body {
+display: none;
+padding: 0.75rem 1rem 1rem;
+}
+
+.checklist-section.expanded .section-body { display: block; }
+
+/* Checklist items use same custom-checkbox pattern */
+.checklist-item {
+display: flex;
+align-items: flex-start;
+gap: 0.6rem;
+cursor: pointer;
+padding: 0.35rem 0.4rem;
+border-radius: 3px;
+transition: background 0.15s;
+margin-bottom: 0.15rem;
+}
+
+.checklist-item:hover { background: rgba(255,255,255,0.04); }
+
+.checklist-item.checked .cb-box {
+background: var(–accent-orange);
+border-color: var(–accent-orange);
+}
+
+.checklist-item.checked .cb-check { display: block; }
+
+.checklist-item.checked .cb-label { color: var(–text-secondary); }
+
+/* ============================================================
+MISSION SUMMARY
+============================================================ */
+#mission-summary {
+display: none;
+}
+
+#mission-summary.active {
+display: block;
+}
+
+.mission-summary-card {
+background: var(–card-bg);
+border: 2px solid var(–accent-orange);
+border-radius: 4px;
+padding: 1.5rem;
+}
+
+.mission-summary-card h2 {
+color: var(–accent-orange);
+font-size: 1rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+margin-bottom: 1rem;
+padding-bottom: 0.5rem;
+border-bottom: 1px solid var(–accent-grey);
+}
+
+.summary-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.75rem;
+margin-bottom: 1rem;
+}
+
+.summary-item label {
+font-size: 0.7rem;
+color: var(–text-secondary);
+text-transform: uppercase;
+letter-spacing: 0.08em;
+display: block;
+margin-bottom: 0.2rem;
+}
+
+.summary-item .summary-value {
+font-size: 0.85rem;
+color: var(–text-primary);
+font-weight: 700;
+}
+
+#timestamp { font-size: 0.78rem; color: var(–text-secondary); margin-bottom: 1rem; }
+
+/* ============================================================
+FOOTER
+============================================================ */
+.site-footer {
+background: #1E2830;
+border-top: 1px solid var(–accent-grey);
+padding: 1rem 1.5rem;
+font-size: 0.72rem;
+color: var(–text-secondary);
+line-height: 1.6;
+text-align: center;
+}
+
+/* ============================================================
+UTILITY
+============================================================ */
+.hidden { display: none !important; }
+
+.divider {
+border: none;
+border-top: 1px solid var(–accent-grey);
+margin: 1rem 0;
+opacity: 0.4;
+}
+
+/* ============================================================
+PRINT STYLES
+============================================================ */
+@media print {
+body { background: #fff; color: #111; font-size: 10pt; }
+.site-header, .site-footer, #status-banner, .step-card, #phase1-summary,
+.btn-primary, .btn-secondary, .section-toggle { display: none !important; }
+#print-view { display: block !important; }
+.print-section { margin-bottom: 1.5em; }
+.print-section h3 { font-size: 11pt; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 6px; }
+.print-row { display: flex; gap: 1em; margin-bottom: 3px; font-size: 9pt; }
+.print-check { width: 12px; height: 12px; border: 1px solid #555; margin-top: 1px; flex-shrink: 0; }
+.print-check.done { background: #333; }
+.print-flag-soft { color: #7A5000; font-size: 9pt; }
+.print-flag-hard { color: #7A0000; font-size: 9pt; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+
+<header class="site-header">
+  <nav class="header-nav">
+    <a href="../tool-index.html">&#8592; Index</a>
+  </nav>
+  <div class="header-title">
+    <div class="header-module-id">GIS Tools &mdash; Alaska Geotechnical Tools</div>
+    <div class="header-module-name">UAS Pre-Flight Decision Tree &amp; Checklist</div>
+  </div>
+</header>
+
+<!-- ============================================================
+     STATUS BANNER
+============================================================ -->
+
+<div id="status-banner" class="status-go">
+  <div class="banner-dot"></div>
+  <span id="banner-status-text">GO</span>
+  <span id="banner-detail">No flags raised &mdash; complete all steps</span>
+  <span class="banner-flags" id="banner-flags"></span>
+</div>
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+
+<main class="main-content">
+
+  <!-- PHASE 1 HEADER -->
+
+  <div class="phase-header">
+    <span class="phase-label">Phase 1</span>
+    <span class="phase-title">Go/No-Go Decision Tree</span>
+  </div>
+
+  <!-- STEP 01 — OPERATION TYPE -->
+
+  <div class="step-card active" id="step-01">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-01">01</div>
+      <div class="step-title">Operation Type</div>
+      <div class="step-subtitle">Select all that apply</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Select the type(s) of operations planned for this flight. Multiple selections allowed.</p>
+      <div class="option-grid" id="ops-grid"></div>
+      <div id="flags-01"></div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-01" onclick="commitStep(1)" disabled>Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 02 — AIRSPACE CLASS -->
+
+  <div class="step-card" id="step-02">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-02">02</div>
+      <div class="step-title">Airspace Class</div>
+      <div class="step-subtitle">Select one</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Select the FAA airspace classification at the planned flight location.</p>
+      <div class="option-grid" id="airspace-grid"></div>
+      <div id="flags-02"></div>
+      <div id="override-laanc" class="override-prompt">
+        <p>Class B/C airspace requires explicit authorization. Confirm that LAANC or FAA DroneZone manual authorization has been obtained before continuing.</p>
+        <div class="custom-checkbox" id="override-laanc-cb" onclick="toggleOverride('laanc')">
+          <div class="cb-box"><span class="cb-check">&#10003;</span></div>
+          <span class="cb-label">I confirm LAANC authorization or manual FAA DroneZone approval has been obtained for this operation.</span>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-02" onclick="commitStep(2)" disabled>Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 03 — CERTIFICATION -->
+
+  <div class="step-card" id="step-03">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-03">03</div>
+      <div class="step-title">Pilot Currency &amp; Certification</div>
+      <div class="step-subtitle">Select one</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Select the certification status for the pilot in command for this flight.</p>
+      <div class="option-grid" id="cert-grid"></div>
+      <div id="flags-03"></div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-03" onclick="commitStep(3)" disabled>Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 04 — DOCUMENTATION -->
+
+  <div class="step-card" id="step-04">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-04">04</div>
+      <div class="step-title">Aircraft Registration &amp; Documentation</div>
+      <div class="step-subtitle">Check all that apply</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Verify the following documentation and registration requirements.</p>
+      <div class="checkbox-list" id="docs-list"></div>
+      <div id="flags-04"></div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-04" onclick="commitStep(4)">Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 05 — SITE CONDITIONS -->
+
+  <div class="step-card" id="step-05">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-05">05</div>
+      <div class="step-title">Site Conditions</div>
+      <div class="step-subtitle">Select all that apply</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Select any site conditions present at the planned flight location. Each selected condition will be evaluated.</p>
+      <div class="option-grid" id="site-grid"></div>
+      <div id="flags-05"></div>
+      <div id="override-weather" class="override-prompt">
+        <p>High winds or precipitation conditions flagged. Confirm the aircraft is rated for current conditions before continuing.</p>
+        <div class="custom-checkbox" id="override-weather-cb" onclick="toggleOverride('weather')">
+          <div class="cb-box"><span class="cb-check">&#10003;</span></div>
+          <span class="cb-label">I confirm the aircraft is certified/rated for the current wind and precipitation conditions.</span>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-05" onclick="commitStep(5)">Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 06 — ALASKA CONDITIONS -->
+
+  <div class="step-card" id="step-06">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-06">06</div>
+      <div class="step-title">Alaska-Specific Conditions</div>
+      <div class="step-subtitle">Select all that apply</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Select any Alaska or arctic-specific conditions relevant to this operation. Select none if no conditions apply.</p>
+      <div class="option-grid" id="alaska-grid"></div>
+      <div id="flags-06"></div>
+      <div id="override-cold" class="override-prompt">
+        <p>Extreme cold below battery operating temperature flagged. Operating outside manufacturer-specified temperature limits can cause sudden power loss in flight. This is a hard stop condition.</p>
+        <div class="custom-checkbox" id="override-cold-cb" onclick="toggleOverride('cold')">
+          <div class="cb-box"><span class="cb-check">&#10003;</span></div>
+          <span class="cb-label">I confirm batteries will be kept warm (insulated storage, hand warmers, vehicle pre-warm) and flight will be aborted if battery voltage sag is observed. I accept responsibility for this override.</span>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-06" onclick="commitStep(6)">Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 07 — EMERGENCY PLANNING -->
+
+  <div class="step-card" id="step-07">
+    <div class="step-card-header">
+      <div class="step-number" id="sn-07">07</div>
+      <div class="step-title">Emergency Planning</div>
+      <div class="step-subtitle">Check all that apply</div>
+    </div>
+    <div class="step-card-body">
+      <p class="step-instruction">Verify emergency planning items are complete before proceeding to the checklist phase.</p>
+      <div class="checkbox-list" id="emergency-list"></div>
+      <div id="flags-07"></div>
+      <div class="step-actions">
+        <button class="btn-primary" id="btn-07" onclick="commitStep(7)">Review Summary &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 SUMMARY -->
+
+  <div id="phase1-summary">
+    <div class="phase-header">
+      <span class="phase-label" style="background:var(--accent-grey)">Summary</span>
+      <span class="phase-title">Phase 1 &mdash; Go/No-Go Review</span>
+    </div>
+    <div class="summary-card" id="summary-content">
+      <!-- populated by JS -->
+    </div>
+    <div style="margin-bottom:1.5rem;">
+      <button class="btn-primary" id="btn-to-phase2" onclick="startPhase2()">Proceed to Pre-Flight Checklist &rarr;</button>
+      <button class="btn-secondary" style="margin-left:0.5rem;" onclick="restartTool()">Start Over</button>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+
+  <div id="phase2-section">
+    <div class="phase-header">
+      <span class="phase-label">Phase 2</span>
+      <span class="phase-title">Pre-Flight Checklist</span>
+    </div>
+    <div id="phase2-active-flags" style="margin-bottom:1rem;"></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="checklist-progress-bar"></div>
+    </div>
+    <div class="progress-label" id="checklist-progress-label">0 of 0 items checked</div>
+    <div id="checklist-sections">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- MISSION SUMMARY -->
+
+  <div id="mission-summary">
+    <div class="phase-header">
+      <span class="phase-label" style="background:var(--go-green)">Complete</span>
+      <span class="phase-title">Mission Summary</span>
+    </div>
+    <div class="mission-summary-card">
+      <h2>Pre-Flight Summary</h2>
+      <div id="timestamp"></div>
+      <div class="summary-grid" id="summary-grid-content"></div>
+      <hr class="divider">
+      <div id="summary-flags-section" style="margin-bottom:1rem;"></div>
+      <div id="summary-sections-status"></div>
+      <div class="step-actions" style="margin-top:1rem;">
+        <button class="btn-primary" onclick="window.print()">Print / Export Summary</button>
+        <button class="btn-secondary" onclick="restartTool()">New Pre-Flight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT VIEW (hidden on screen, shown in print) -->
+
+  <div id="print-view" style="display:none;"></div>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+
+<footer class="site-footer">
+  Independent personal project &mdash; not affiliated with Alaska DOT&amp;PF or any government agency.
+  This tool is a planning aid only and does not constitute legal aviation or safety advice.
+  Always verify current regulations with the FAA and applicable authorities.<br>
+  MFI &mdash; Alaska Geotechnical Tools &nbsp;|&nbsp; Ian &amp; Tina Minnock &nbsp;|&nbsp; ifminnock.github.io/index
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT — ALL DATA + LOGIC
+============================================================ -->
+
+<script>
+'use strict';
+
+/* ============================================================
+   DATA DEFINITIONS
+============================================================ */
+
+const OPERATION_TYPES = [
+  { id: 'mapping',     label: 'Mapping / Photogrammetry' },
+  { id: 'inspection',  label: 'Inspection' },
+  { id: 'construction',label: 'Construction Monitoring' },
+  { id: 'research',    label: 'Research / Science' },
+  { id: 'recreational',label: 'Recreational / Training' },
+  { id: 'emergency',   label: 'Emergency Response' }
+];
+
+const AIRSPACE_OPTIONS = [
+  {
+    id: 'classG', label: 'Class G (Uncontrolled)',
+    eval: function() { return { type: 'clear', msg: 'Class G uncontrolled airspace. No authorization required below 400 ft AGL in uncontrolled airspace absent other restrictions.' }; }
+  },
+  {
+    id: 'classE', label: 'Class E',
+    eval: function() { return { type: 'clear', msg: 'Class E airspace. Below 400 ft AGL with no surface-designated facility: typically no LAANC authorization required, but verify using B4UFLY or equivalent.' }; }
+  },
+  {
+    id: 'classD', label: 'Class D',
+    eval: function() { return { type: 'soft', msg: 'CAUTION &mdash; Class D: LAANC authorization is likely required. Check FAA DroneZone and obtain authorization before flight. Many Class D airports are LAANC-enabled.' }; }
+  },
+  {
+    id: 'classC', label: 'Class C',
+    eval: function(overrides) { return overrides.laanc ? { type: 'soft', msg: 'LAANC authorization confirmed. Proceed with awareness that Class C requires ATC coordination.' } : { type: 'hard', msg: 'NO-GO &mdash; Class C airspace requires LAANC or manual FAA DroneZone authorization. Confirm authorization obtained to continue.' }; }
+  },
+  {
+    id: 'classB', label: 'Class B',
+    eval: function(overrides) { return overrides.laanc ? { type: 'soft', msg: 'LAANC authorization confirmed. Class B is among the most restrictive; maintain strict altitude and lateral bounds.' } : { type: 'hard', msg: 'NO-GO &mdash; Class B airspace requires LAANC or manual FAA DroneZone authorization. Confirm authorization obtained to continue.' }; }
+  },
+  {
+    id: 'sua', label: 'Special Use Airspace (MOA / TFR / Restricted / Prohibited)',
+    eval: function() { return { type: 'hard', msg: 'NO-GO &mdash; Special Use Airspace identified. MOA: coordinate with controlling agency; flight may be permitted during inactive periods. TFR: flight prohibited without explicit waiver. Restricted: prohibited without authorization from controlling agency. Prohibited: flight not permitted under any circumstances. Contact FAA Flight Service (1-800-WX-BRIEF) and the controlling agency before any flight in SUA.' }; }
+  },
+  {
+    id: 'unknown', label: 'Unknown / Not Verified',
+    eval: function() { return { type: 'soft', msg: 'CAUTION &mdash; Airspace class not verified. Use B4UFLY, AirMap, or Aloft (formerly Kittyhawk) to verify airspace class and LAANC availability before flight. Do not proceed without airspace verification.' }; }
+  }
+];
+
+const CERT_OPTIONS = [
+  {
+    id: 'p107current', label: 'Part 107 &mdash; certified and current (within 24 months)',
+    eval: function() { return { type: 'clear', msg: 'Part 107 certification current. Pilot authorized for commercial UAS operations.' }; }
+  },
+  {
+    id: 'p107overdue', label: 'Part 107 &mdash; certified but recurrent exam overdue',
+    eval: function() { return { type: 'soft', msg: 'CAUTION &mdash; Part 107 recurrent knowledge test is overdue. Pilot may not conduct commercial operations (including mapping and survey) under Part 107 until the recurrent test is passed. Recreational flight only until currency restored.' }; }
+  },
+  {
+    id: 'recreational', label: 'Recreational flyer &mdash; registered with CBO',
+    eval: function() { return { type: 'soft', msg: 'CAUTION &mdash; Recreational/CBO registration noted. Commercial mapping, survey, inspection, and construction monitoring operations require a Part 107 remote pilot certificate. This tool assumes operations under Part 107 for commercial purposes; verify applicable rules before flight.' }; }
+  },
+  {
+    id: 'none', label: 'No certification',
+    eval: function() { return { type: 'hard', msg: 'NO-GO &mdash; No FAA registration or certification. UAS operations in the National Airspace System require either Part 107 certification (commercial) or recreational flyer registration with a CBO-approved safety course. Flight is not authorized without certification.' }; }
+  }
+];
+
+const DOCS_ITEMS = [
+  { id: 'doc-reg',    label: 'Aircraft has current FAA registration number', flagOnUncheck: 'soft', flagMsg: 'FAA registration is required for all UAS over 0.55 lb. Obtain registration at FAA DroneZone before flight.' },
+  { id: 'doc-marked', label: 'Registration number marked on airframe per FAA requirements', flagOnUncheck: 'soft', flagMsg: 'Registration number must be legible on the exterior of the aircraft. Marking required by 14 CFR 48.205.' },
+  { id: 'doc-rid',    label: 'Remote ID module installed or broadcast capability confirmed', flagOnUncheck: 'soft', flagMsg: 'Remote ID broadcast is required by FAA for most UAS operations as of September 2023. Verify broadcast module is installed and functioning, or confirm operation is within an FAA-recognized identification area (FRIA).' },
+  { id: 'doc-cert',   label: 'Pilot certificate accessible during flight', flagOnUncheck: 'soft', flagMsg: 'Part 107 pilots must have their remote pilot certificate available during operations for inspection by law enforcement or FAA personnel.' }
+];
+
+const SITE_CONDITIONS = [
+  { id: 'near-airport',  label: 'Within 5 mi of airport or helipad', type: 'soft', msg: 'Airport or helipad proximity: verify airspace class and obtain LAANC authorization if required. Note that helipad locations may not always be in LAANC systems; confirm with FAA.' },
+  { id: 'populated',     label: 'Populated area or people nearby', type: 'soft', msg: 'Operations over or near people: Part 107 imposes restrictions on flight over moving vehicles, non-participating people, and populated areas without a waiver. Maintain visual line of sight and manage bystander positions.' },
+  { id: 'vehicles',      label: 'Moving vehicles or active road nearby', type: 'soft', msg: 'Active vehicle traffic in vicinity: maintain safe horizontal distance from roadways. Flight directly over moving vehicles requires a Part 107 waiver. Coordinate flagging or traffic control if over or near a roadway.' },
+  { id: 'powerlines',    label: 'Powerlines or structures in flight path', type: 'soft', msg: 'Powerlines and structures flagged. Conduct a thorough site survey prior to launch. Plan flight corridors with minimum 20 m horizontal clearance from energized lines. Note that powerlines are often not accurately depicted in digital maps.' },
+  { id: 'gps-mask',      label: 'Trees or terrain masking GPS', type: 'soft', msg: 'GPS masking can degrade positioning accuracy and cause loss of autonomous flight capabilities. Plan for manual flight modes. Allow additional GPS lock time prior to launch. Increase minimum satellite count threshold if possible.' },
+  { id: 'night',         label: 'Night or low-light conditions', type: 'soft', msg: 'Night operations require anti-collision lighting visible for 3 statute miles per 14 CFR 107.29. Verify anti-collision strobe is installed and functioning. Additional waivers may be required depending on operation type.' },
+  { id: 'high-winds',    label: 'High winds forecast above aircraft limits', type: 'hard', msg: 'NO-GO &mdash; Forecast winds exceed aircraft operating limits. Exceeding wind limits risks loss of control, reduced battery life, and compromised return-to-home capability. Override available if aircraft is rated for conditions.' },
+  { id: 'precip',        label: 'Precipitation forecast', type: 'hard', msg: 'NO-GO &mdash; Precipitation forecast. Standard commercial UAS are not rated for precipitation; flight in rain or snow can cause motor and electronics damage and unexpected power loss. Override available only for aircraft with certified IP rating for precipitation.' },
+  { id: 'smoke',         label: 'Smoke or reduced visibility', type: 'soft', msg: 'Reduced visibility from smoke: minimum 3 statute miles flight visibility required under Part 107. Confirm visibility meets minimums. Smoke can also damage sensors and motors if heavy. Monitor air quality and AQI at site.' },
+  { id: 'wildlife',      label: 'Active wildlife nesting area', type: 'soft', msg: 'Wildlife nesting area: UAS can disturb nesting birds and mammals. Check for USFWS or state wildlife agency seasonal restrictions. Maintain minimum recommended altitudes and avoid direct overflights of nest sites. Consult Alaska Department of Fish and Game advisories.' },
+  { id: 'avalanche',     label: 'Avalanche or unstable terrain nearby', type: 'soft', msg: 'Avalanche or unstable terrain proximity: acoustic disturbance from UAS has low documented avalanche trigger risk, but plan abort routes away from terrain traps. Position ground crew outside runout zones. Monitor snowpack conditions.' },
+  { id: 'over-water',    label: 'Over water', type: 'soft', msg: 'Over-water operations: plan for aircraft loss; bring recovery capability if water is accessible. Be aware that many UAS return-to-home paths are straight-line and may fly over water unexpectedly. Cold Alaskan water greatly reduces recovery windows.' }
+];
+
+const ALASKA_CONDITIONS = [
+  { id: 'remote-flyin',  label: 'Remote fly-in site (no road access)', type: 'soft', msg: 'Remote fly-in site: logistics complexity is high. Ensure all equipment, batteries, and survival gear are staged before departure. No resupply is practical if items are forgotten. Coordinate closely with charter pilot on weight limits and return schedule.' },
+  { id: 'no-cell',       label: 'No cellular coverage at site', type: 'soft', msg: 'No cellular coverage: real-time airspace apps (B4UFLY, Aloft) require connectivity. Complete all airspace checks before departing for the site. Download offline maps. Satellite communicator is strongly advisable.' },
+  { id: 'permafrost',    label: 'Permafrost ground surface', type: 'soft', msg: 'Permafrost surface: launch and landing pads may be unstable on degraded permafrost especially in thaw season. Avoid landing on wet thermokarst terrain. GPS accuracy can be affected by standing water or wet tundra at lower elevations.' },
+  { id: 'freeze-thaw',   label: 'Freeze-thaw active season', type: 'soft', msg: 'Active freeze-thaw season: ground conditions change rapidly. Standing water, ice lenses, and soft active layer can develop overnight. Scout launch site day-of. Battery performance is reduced when temperatures are near 0\u00B0C.' },
+  { id: 'refuge',        label: 'Wildlife Refuge or National Park boundary nearby', type: 'soft', msg: 'Protected area proximity: flight within a National Wildlife Refuge or National Park may require a special use permit beyond Part 107. Contact the USFWS regional office or NPS Alaska Region superintendent well in advance. Permit processing times vary from days to months.' },
+  { id: 'subsistence',   label: 'Subsistence use area', type: 'soft', msg: 'Subsistence use area: UAS operations can disturb subsistence activities including hunting, fishing, and gathering. These disturbances can have legal and community relations implications under ANILCA. Consult with the relevant subsistence resource commission if operations are planned in or near active subsistence areas.' },
+  { id: 'extreme-cold',  label: 'Extreme cold &mdash; below battery operating temperature', type: 'hard', msg: 'NO-GO &mdash; Operating temperature is below manufacturer-specified battery operating range. LiPo and LiHV batteries lose significant capacity and can deliver sudden voltage sag below 0\u00B0C for most commercial batteries (typical minimum &minus;10\u00B0C to &minus;20\u00B0C depending on chemistry and manufacturer). Override available if thermal management procedures are confirmed.' },
+  { id: 'river-ice',     label: 'River flooding or active ice conditions', type: 'soft', msg: 'River flooding or ice breakup: dynamic water and ice conditions create unpredictable drift patterns below flight altitude. Aircraft loss over water or ice is likely unrecoverable. Plan flight corridors with adequate margin over active water. Beware of ice fog over open leads in winter.' }
+];
+
+const EMERGENCY_ITEMS = [
+  { id: 'em-landing',  label: 'Emergency landing zones identified and mapped', flagOnUncheck: 'soft', flagMsg: 'Identify at least one clear emergency landing zone within reasonable range of the flight area before launching.' },
+  { id: 'em-lostlink', label: 'Lost link procedure briefed to all crew', flagOnUncheck: 'soft', flagMsg: 'Lost link procedure should be briefed: RTH altitude, RTH behavior, and manual intervention procedure.' },
+  { id: 'em-contact',  label: 'Emergency contact has site location and check-in schedule', flagOnUncheck: 'soft', flagMsg: 'For any remote operation, a designated contact off-site should have your GPS coordinates, planned flight schedule, and check-in times. Missed check-in triggers emergency response.' },
+  { id: 'em-firstaid', label: 'First aid kit accessible at site', flagOnUncheck: 'soft', flagMsg: 'Field first aid kit should be staged at the launch site for all operations.' },
+  { id: 'em-sat',      label: 'Satellite communicator or PLB available for remote sites', flagOnUncheck: 'soft', flagMsg: 'For remote sites without cellular coverage, a satellite communicator (Garmin inReach, SPOT) or personal locator beacon (PLB) is strongly advisable. A missed check-in with no communication capability can delay rescue by hours.' }
+];
+
+/* ============================================================
+   CHECKLIST SECTION DEFINITIONS
+============================================================ */
+const CHECKLIST_SECTIONS = [
+  {
+    id: 'equipment',
+    title: 'Equipment &amp; Airframe',
+    alwaysShow: true,
+    items: [
+      'Aircraft visual inspection complete (frame, props, motors, landing gear)',
+      'Props firmly seated and undamaged',
+      'Battery charge level confirmed adequate for planned flight time plus 25% reserve',
+      'Backup battery available and charged',
+      'Gimbal and camera mount secure',
+      'Lens clean and undamaged',
+      'Memory card installed and formatted',
+      'Remote ID broadcasting confirmed',
+      'Firmware current on aircraft and controller',
+      'Controller battery charged',
+      'Controller and aircraft linked and communicating'
+    ]
+  },
+  {
+    id: 'site-survey',
+    title: 'Site Survey',
+    alwaysShow: true,
+    items: [
+      'Launch and landing zone clear and level',
+      'Hazards mapped (powerlines, trees, structures)',
+      'Wind direction and speed assessed at site',
+      'Sun angle noted relative to flight path and camera',
+      'Bystanders and non-crew outside operating area',
+      'Animals or livestock in area noted'
+    ]
+  },
+  {
+    id: 'mission-params',
+    title: 'Mission Parameters',
+    alwaysShow: false,
+    showForOps: ['mapping', 'construction'],
+    items: [
+      'Flight plan loaded and verified in GCS',
+      'GSD and overlap settings confirmed',
+      'GCP targets placed and recorded if applicable',
+      'RTK or PPK base station set up if applicable',
+      'Coordinate system and datum confirmed',
+      'Site boundary polygon confirmed in flight plan'
+    ]
+  },
+  {
+    id: 'airspace-reg',
+    title: 'Airspace &amp; Regulatory',
+    alwaysShow: true,
+    items: [
+      'LAANC authorization confirmed or Class G verified',
+      'TFR check completed within 24 hours of flight',
+      'NOTAMs reviewed for area',
+      'Airspace authorization document accessible',
+      'Flight log entry started'
+    ]
+  },
+  {
+    id: 'weather',
+    title: 'Weather',
+    alwaysShow: true,
+    items: [
+      'Current wind speed within aircraft limits',
+      'Gusts below aircraft limits',
+      'Ceiling and visibility adequate (min. 3 statute miles visibility, 500 ft below clouds)',
+      'Precipitation probability below threshold',
+      'Temperature within battery operating range',
+      'Lightning not in forecast within 10 nautical miles'
+    ]
+  },
+  {
+    id: 'alaska-remote',
+    title: 'Alaska Remote Site',
+    alwaysShow: false,
+    showForAlaska: true,
+    items: [
+      'Satellite communicator tested and contact established',
+      'Check-in schedule confirmed with emergency contact',
+      'Fuel and survival gear staged if fly-in site',
+      'Wildlife awareness briefing completed for crew',
+      'Bear spray or deterrent accessible if applicable',
+      'inReach or PLB tested and functioning'
+    ]
+  },
+  {
+    id: 'prelaunch',
+    title: 'Pre-Launch',
+    alwaysShow: true,
+    items: [
+      'Final aircraft arm check complete',
+      'Compass calibration performed if prompted or new location',
+      'GPS lock confirmed &mdash; minimum 8 satellites',
+      'Home point confirmed and set correctly',
+      'RTH altitude set above tallest obstacle in flight area',
+      'Crew briefed on abort procedure',
+      'All bystanders clear of operating area',
+      'Airspace authorization active window confirmed',
+      'Pilot ready call made'
+    ]
+  }
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+const state = {
+  currentStep: 1,
+  maxStepUnlocked: 1,
+  selectedOps:     new Set(),
+  selectedAirspace: null,
+  selectedCert:    null,
+  docChecks:       new Set(),
+  siteConditions:  new Set(),
+  alaskaConditions:new Set(),
+  emergencyChecks: new Set(),
+  overrides:       { laanc: false, weather: false, cold: false },
+  flags:           [],       // { step, id, type, msg }
+  checklistState:  {},       // sectionId -> Set of checked item indices
+  phase2Active:    false,
+  alaskaToggle:    false
+};
+
+/* ============================================================
+   FLAG MANAGEMENT
+============================================================ */
+function addFlag(step, id, type, msg) {
+  // Remove existing flag with same id first
+  state.flags = state.flags.filter(f => f.id !== id);
+  if (type !== 'none') {
+    state.flags.push({ step, id, type, msg });
+  }
+  updateBanner();
+}
+
+function clearFlagsForStep(step) {
+  state.flags = state.flags.filter(f => f.step !== step);
+  updateBanner();
+}
+
+function updateBanner() {
+  const banner  = document.getElementById('status-banner');
+  const txt     = document.getElementById('banner-status-text');
+  const detail  = document.getElementById('banner-detail');
+  const flagsEl = document.getElementById('banner-flags');
+
+  const hardFlags = state.flags.filter(f => f.type === 'hard');
+  const softFlags = state.flags.filter(f => f.type === 'soft');
+
+  banner.className = '';
+  if (hardFlags.length > 0) {
+    banner.classList.add('status-nogo');
+    txt.textContent = 'NO-GO';
+    detail.textContent = hardFlags[0].msg.replace(/&mdash;/g, '\u2014').replace(/<[^>]+>/g, '').substring(0, 80) + '\u2026';
+  } else if (softFlags.length > 0) {
+    banner.classList.add('status-caution');
+    txt.textContent = 'CAUTION';
+    detail.textContent = softFlags.length + ' flag' + (softFlags.length > 1 ? 's' : '') + ' raised \u2014 review before proceeding';
+  } else {
+    banner.classList.add('status-go');
+    txt.textContent = 'GO';
+    detail.textContent = state.currentStep <= 7 ? 'No flags raised \u2014 complete all steps' : 'All clear \u2014 proceed to checklist';
+  }
+  flagsEl.textContent = hardFlags.length > 0 ? hardFlags.length + ' hard stop' + (hardFlags.length > 1 ? 's' : '') : (softFlags.length > 0 ? softFlags.length + ' caution' + (softFlags.length > 1 ? 's' : '') : '');
+}
+
+/* ============================================================
+   RENDER HELPERS
+============================================================ */
+function renderFlagBox(container, type, msg, id) {
+  let box = document.getElementById(id);
+  if (!box) {
+    box = document.createElement('div');
+    box.id = id;
+    box.className = 'flag-box';
+    container.appendChild(box);
+  }
+  box.innerHTML = '<div class="flag-label">' + (type === 'hard' ? '\u26D4 No-Go' : type === 'soft' ? '\u26A0 Caution' : '\u2713 Clear') + '</div>' + msg;
+  box.className = 'flag-box ' + type + ' visible';
+}
+
+/* ============================================================
+   STEP 01 — OPERATION TYPE
+============================================================ */
+(function initStep01() {
+  const grid = document.getElementById('ops-grid');
+  OPERATION_TYPES.forEach(op => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = 'op-' + op.id;
+    btn.innerHTML = op.label;
+    btn.onclick = function() {
+      if (state.selectedOps.has(op.id)) {
+        state.selectedOps.delete(op.id);
+        btn.classList.remove('selected');
+      } else {
+        state.selectedOps.add(op.id);
+        btn.classList.add('selected');
+      }
+      document.getElementById('btn-01').disabled = state.selectedOps.size === 0;
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+/* ============================================================
+   STEP 02 — AIRSPACE
+============================================================ */
+(function initStep02() {
+  const grid = document.getElementById('airspace-grid');
+  AIRSPACE_OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = 'air-' + opt.id;
+    btn.innerHTML = opt.label;
+    btn.onclick = function() {
+      document.querySelectorAll('#airspace-grid .option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.selectedAirspace = opt.id;
+      evaluateAirspace();
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+function evaluateAirspace() {
+  const opt = AIRSPACE_OPTIONS.find(o => o.id === state.selectedAirspace);
+  if (!opt) return;
+  const result = opt.eval(state.overrides);
+  const fc = document.getElementById('flags-02');
+  fc.innerHTML = '';
+  const fid = 'flag-air-' + opt.id;
+  renderFlagBox(fc, result.type, result.msg, fid);
+
+  const needsOverride = (state.selectedAirspace === 'classC' || state.selectedAirspace === 'classB') && !state.overrides.laanc;
+  const overrideDiv = document.getElementById('override-laanc');
+  if (needsOverride) {
+    overrideDiv.classList.add('visible');
+  } else {
+    overrideDiv.classList.remove('visible');
+  }
+
+  addFlag(2, 'airspace', result.type === 'clear' ? 'none' : result.type, result.msg);
+  document.getElementById('btn-02').disabled = result.type === 'hard';
+}
+
+function toggleOverride(key) {
+  const cbEl = document.getElementById('override-' + key + '-cb');
+  state.overrides[key] = !state.overrides[key];
+  if (state.overrides[key]) {
+    cbEl.classList.add('checked');
+  } else {
+    cbEl.classList.remove('checked');
+  }
+  // Re-evaluate relevant step
+  if (key === 'laanc') evaluateAirspace();
+  if (key === 'weather') evaluateSiteConditions();
+  if (key === 'cold') evaluateAlaskaConditions();
+}
+
+/* ============================================================
+   STEP 03 — CERTIFICATION
+============================================================ */
+(function initStep03() {
+  const grid = document.getElementById('cert-grid');
+  CERT_OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = 'cert-' + opt.id;
+    btn.innerHTML = opt.label;
+    btn.onclick = function() {
+      document.querySelectorAll('#cert-grid .option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.selectedCert = opt.id;
+      const result = opt.eval();
+      const fc = document.getElementById('flags-03');
+      fc.innerHTML = '';
+      renderFlagBox(fc, result.type, result.msg, 'flag-cert');
+      addFlag(3, 'cert', result.type === 'clear' ? 'none' : result.type, result.msg);
+      document.getElementById('btn-03').disabled = result.type === 'hard';
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+/* ============================================================
+   STEP 04 — DOCUMENTATION
+============================================================ */
+(function initStep04() {
+  const list = document.getElementById('docs-list');
+  DOCS_ITEMS.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'custom-checkbox';
+    div.id = 'docs-cb-wrap-' + item.id;
+    div.innerHTML = '<div class="cb-box"><span class="cb-check">&#10003;</span></div><span class="cb-label">' + item.label + '</span>';
+    div.onclick = function() {
+      if (state.docChecks.has(item.id)) {
+        state.docChecks.delete(item.id);
+        div.classList.remove('checked');
+      } else {
+        state.docChecks.add(item.id);
+        div.classList.add('checked');
+      }
+      evaluateDocs();
+    };
+    list.appendChild(div);
+  });
+})();
+
+function evaluateDocs() {
+  const fc = document.getElementById('flags-04');
+  fc.innerHTML = '';
+  let anyFlag = false;
+  DOCS_ITEMS.forEach(item => {
+    if (!state.docChecks.has(item.id)) {
+      anyFlag = true;
+      const fid = 'flag-doc-' + item.id;
+      renderFlagBox(fc, item.flagOnUncheck, item.flagMsg, fid);
+      addFlag(4, 'doc-' + item.id, item.flagOnUncheck, item.flagMsg);
+    } else {
+      state.flags = state.flags.filter(f => f.id !== 'doc-' + item.id);
+    }
+  });
+  if (!anyFlag) {
+    renderFlagBox(fc, 'clear', 'All documentation items verified.', 'flag-docs-clear');
+  }
+  updateBanner();
+}
+
+/* ============================================================
+   STEP 05 — SITE CONDITIONS
+============================================================ */
+(function initStep05() {
+  const grid = document.getElementById('site-grid');
+  SITE_CONDITIONS.forEach(cond => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = 'site-' + cond.id;
+    btn.innerHTML = cond.label;
+    btn.onclick = function() {
+      if (state.siteConditions.has(cond.id)) {
+        state.siteConditions.delete(cond.id);
+        btn.classList.remove('selected');
+      } else {
+        state.siteConditions.add(cond.id);
+        btn.classList.add('selected');
+      }
+      evaluateSiteConditions();
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+function evaluateSiteConditions() {
+  const fc = document.getElementById('flags-05');
+  fc.innerHTML = '';
+  clearFlagsForStep(5);
+
+  let hasWeatherHard = false;
+  state.siteConditions.forEach(id => {
+    const cond = SITE_CONDITIONS.find(c => c.id === id);
+    if (!cond) return;
+    let type = cond.type;
+    if ((id === 'high-winds' || id === 'precip') && state.overrides.weather) {
+      type = 'soft';
+    }
+    if (id === 'high-winds' || id === 'precip') {
+      if (type === 'hard') hasWeatherHard = true;
+    }
+    renderFlagBox(fc, type, cond.msg, 'flag-site-' + id);
+    addFlag(5, 'site-' + id, type, cond.msg);
+  });
+
+  const overrideDiv = document.getElementById('override-weather');
+  const hasSelectedWeather = state.siteConditions.has('high-winds') || state.siteConditions.has('precip');
+  if (hasSelectedWeather) {
+    overrideDiv.classList.add('visible');
+  } else {
+    overrideDiv.classList.remove('visible');
+  }
+
+  if (state.siteConditions.size === 0) {
+    renderFlagBox(fc, 'clear', 'No adverse site conditions flagged.', 'flag-site-clear');
+  }
+}
+
+/* ============================================================
+   STEP 06 — ALASKA CONDITIONS
+============================================================ */
+(function initStep06() {
+  const grid = document.getElementById('alaska-grid');
+  ALASKA_CONDITIONS.forEach(cond => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = 'ak-' + cond.id;
+    btn.innerHTML = cond.label;
+    btn.onclick = function() {
+      if (state.alaskaConditions.has(cond.id)) {
+        state.alaskaConditions.delete(cond.id);
+        btn.classList.remove('selected');
+      } else {
+        state.alaskaConditions.add(cond.id);
+        btn.classList.add('selected');
+      }
+      if (state.alaskaConditions.has('remote-flyin') || state.alaskaConditions.has('no-cell') ||
+          state.alaskaConditions.has('permafrost') || state.alaskaConditions.has('freeze-thaw') ||
+          state.alaskaConditions.has('refuge') || state.alaskaConditions.has('subsistence') ||
+          state.alaskaConditions.has('extreme-cold') || state.alaskaConditions.has('river-ice')) {
+        state.alaskaToggle = true;
+      } else {
+        state.alaskaToggle = false;
+      }
+      evaluateAlaskaConditions();
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+function evaluateAlaskaConditions() {
+  const fc = document.getElementById('flags-06');
+  fc.innerHTML = '';
+  clearFlagsForStep(6);
+
+  state.alaskaConditions.forEach(id => {
+    const cond = ALASKA_CONDITIONS.find(c => c.id === id);
+    if (!cond) return;
+    let type = cond.type;
+    if (id === 'extreme-cold' && state.overrides.cold) {
+      type = 'soft';
+    }
+    renderFlagBox(fc, type, cond.msg, 'flag-ak-' + id);
+    addFlag(6, 'ak-' + id, type, cond.msg);
+  });
+
+  const overrideDiv = document.getElementById('override-cold');
+  if (state.alaskaConditions.has('extreme-cold') && !state.overrides.cold) {
+    overrideDiv.classList.add('visible');
+  } else {
+    overrideDiv.classList.remove('visible');
+  }
+
+  if (state.alaskaConditions.size === 0) {
+    renderFlagBox(fc, 'clear', 'No Alaska-specific conditions flagged.', 'flag-ak-clear');
+  }
+
+  // Escalate satellite communicator flag if remote site + no sat comm
+  const remoteSet = state.alaskaConditions.has('remote-flyin') || state.alaskaConditions.has('no-cell');
+}
+
+/* ============================================================
+   STEP 07 — EMERGENCY PLANNING
+============================================================ */
+(function initStep07() {
+  const list = document.getElementById('emergency-list');
+  EMERGENCY_ITEMS.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'custom-checkbox';
+    div.id = 'em-cb-wrap-' + item.id;
+    div.innerHTML = '<div class="cb-box"><span class="cb-check">&#10003;</span></div><span class="cb-label">' + item.label + '</span>';
+    div.onclick = function() {
+      if (state.emergencyChecks.has(item.id)) {
+        state.emergencyChecks.delete(item.id);
+        div.classList.remove('checked');
+      } else {
+        state.emergencyChecks.add(item.id);
+        div.classList.add('checked');
+      }
+      evaluateEmergency();
+    };
+    list.appendChild(div);
+  });
+})();
+
+function evaluateEmergency() {
+  const fc = document.getElementById('flags-07');
+  fc.innerHTML = '';
+  let anyFlag = false;
+  EMERGENCY_ITEMS.forEach(item => {
+    if (!state.emergencyChecks.has(item.id)) {
+      anyFlag = true;
+      // Escalate satellite communicator flag at remote sites
+      let ftype = item.flagOnUncheck;
+      if (item.id === 'em-sat' && state.alaskaToggle) {
+        ftype = 'soft'; // already soft, note escalation in message
+      }
+      state.flags = state.flags.filter(f => f.id !== 'em-' + item.id);
+      if (ftype !== 'none') {
+        addFlag(7, 'em-' + item.id, ftype, item.flagMsg);
+        renderFlagBox(fc, ftype, item.flagMsg, 'flag-em-' + item.id);
+      }
+    } else {
+      state.flags = state.flags.filter(f => f.id !== 'em-' + item.id);
+      updateBanner();
+    }
+  });
+  if (!anyFlag) {
+    renderFlagBox(fc, 'clear', 'All emergency planning items complete.', 'flag-em-clear');
+  }
+}
+
+/* ============================================================
+   STEP COMMIT / PROGRESSION
+============================================================ */
+function commitStep(stepNum) {
+  // Mark step number as done
+  const sn = document.getElementById('sn-0' + stepNum);
+  if (sn) sn.classList.add('done');
+
+  // Show next step
+  const nextStep = stepNum + 1;
+  if (nextStep <= 7) {
+    const nextCard = document.getElementById('step-0' + nextStep);
+    if (nextCard) {
+      nextCard.classList.add('active');
+      setTimeout(() => nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+    state.currentStep = nextStep;
+  } else {
+    // Show phase 1 summary
+    showPhase1Summary();
+  }
+}
+
+/* ============================================================
+   PHASE 1 SUMMARY
+============================================================ */
+function showPhase1Summary() {
+  const summaryEl = document.getElementById('phase1-summary');
+  summaryEl.classList.add('active');
+  setTimeout(() => summaryEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+  const content = document.getElementById('summary-content');
+  const hardFlags = state.flags.filter(f => f.type === 'hard');
+  const softFlags = state.flags.filter(f => f.type === 'soft');
+
+  let html = '<h3>Phase 1 &mdash; Go/No-Go Summary</h3>';
+
+  // Operations
+  const opsLabels = Array.from(state.selectedOps).map(id => OPERATION_TYPES.find(o => o.id === id).label);
+  html += '<div class="summary-section"><div class="summary-section-label">Operation Type</div>' + opsLabels.join(', ') + '</div>';
+
+  // Airspace
+  if (state.selectedAirspace) {
+    const air = AIRSPACE_OPTIONS.find(o => o.id === state.selectedAirspace);
+    html += '<div class="summary-section"><div class="summary-section-label">Airspace Class</div>' + air.label + '</div>';
+  }
+
+  // Flags
+  html += '<div class="summary-section"><div class="summary-section-label">Hard Stops</div>';
+  if (hardFlags.length === 0) {
+    html += '<span class="flag-pill pill-clear">None &mdash; clear to proceed</span>';
+  } else {
+    hardFlags.forEach(f => { html += '<span class="flag-pill pill-hard">\u26D4 ' + f.id + '</span>'; });
+  }
+  html += '</div>';
+
+  html += '<div class="summary-section"><div class="summary-section-label">Active Cautions</div>';
+  if (softFlags.length === 0) {
+    html += '<span class="flag-pill pill-clear">None</span>';
+  } else {
+    softFlags.forEach(f => { html += '<span class="flag-pill pill-soft">\u26A0 ' + f.id + '</span>'; });
+  }
+  html += '</div>';
+
+  content.innerHTML = html;
+
+  // Control proceed button
+  const proceedBtn = document.getElementById('btn-to-phase2');
+  if (hardFlags.length > 0) {
+    proceedBtn.disabled = true;
+    proceedBtn.title = 'Resolve all hard stop conditions before proceeding';
+  } else {
+    proceedBtn.disabled = false;
+  }
+}
+
+/* ============================================================
+   PHASE 2 — CHECKLIST
+============================================================ */
+function startPhase2() {
+  state.phase2Active = true;
+  document.getElementById('phase2-section').classList.add('active');
+  setTimeout(() => document.getElementById('phase2-section').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+  // Show active flags carry-over
+  const flagsDiv = document.getElementById('phase2-active-flags');
+  const softFlags = state.flags.filter(f => f.type === 'soft');
+  if (softFlags.length > 0) {
+    let html = '<div style="font-size:0.78rem;color:var(--caution-text);background:rgba(122,90,26,0.25);border-left:3px solid var(--caution-text);padding:0.6rem 0.85rem;border-radius:3px;margin-bottom:0.5rem;">';
+    html += '<strong>' + softFlags.length + ' caution flag' + (softFlags.length > 1 ? 's' : '') + ' carried from Phase 1:</strong><br>';
+    softFlags.forEach(f => { html += '\u26A0 ' + f.msg.replace(/<[^>]+>/g, '').substring(0, 120) + '\u2026<br>'; });
+    html += '</div>';
+    flagsDiv.innerHTML = html;
+  }
+
+  buildChecklist();
+}
+
+function buildChecklist() {
+  const container = document.getElementById('checklist-sections');
+  container.innerHTML = '';
+  state.checklistState = {};
+
+  CHECKLIST_SECTIONS.forEach(section => {
+    // Determine visibility
+    let show = section.alwaysShow;
+    if (!show && section.showForOps) {
+      show = section.showForOps.some(op => state.selectedOps.has(op));
+    }
+    if (!show && section.showForAlaska) {
+      show = state.alaskaToggle;
+    }
+    if (!show) return;
+
+    state.checklistState[section.id] = new Set();
+
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'checklist-section expanded';
+    sectionDiv.id = 'cl-section-' + section.id;
+
+    const badge = document.createElement('span');
+    badge.className = 'section-progress-badge';
+    badge.id = 'badge-' + section.id;
+    badge.textContent = '0 / ' + section.items.length;
+
+    const toggle = document.createElement('button');
+    toggle.className = 'section-toggle';
+    toggle.innerHTML = '<span class="section-toggle-title">' + section.title + '</span>';
+    toggle.appendChild(badge);
+    const arrow = document.createElement('span');
+    arrow.className = 'section-toggle-arrow';
+    arrow.textContent = '\u25B6';
+    toggle.appendChild(arrow);
+    toggle.onclick = function() {
+      sectionDiv.classList.toggle('expanded');
+    };
+
+    const body = document.createElement('div');
+    body.className = 'section-body';
+
+    section.items.forEach((itemText, idx) => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'checklist-item';
+      itemDiv.innerHTML = '<div class="cb-box"><span class="cb-check">&#10003;</span></div><span class="cb-label">' + itemText + '</span>';
+      itemDiv.onclick = function() {
+        const checked = state.checklistState[section.id].has(idx);
+        if (checked) {
+          state.checklistState[section.id].delete(idx);
+          itemDiv.classList.remove('checked');
+        } else {
+          state.checklistState[section.id].add(idx);
+          itemDiv.classList.add('checked');
+        }
+        updateSectionBadge(section.id, section.items.length);
+        updateMasterProgress();
+      };
+      body.appendChild(itemDiv);
+    });
+
+    sectionDiv.appendChild(toggle);
+    sectionDiv.appendChild(body);
+    container.appendChild(sectionDiv);
+  });
+
+  updateMasterProgress();
+  // Add mission summary trigger button
+  const finishDiv = document.createElement('div');
+  finishDiv.style.marginTop = '1.5rem';
+  finishDiv.innerHTML = '<button class="btn-primary" onclick="showMissionSummary()">Complete Pre-Flight &amp; Generate Summary &rarr;</button>';
+  container.appendChild(finishDiv);
+}
+
+function updateSectionBadge(sectionId, total) {
+  const checked = state.checklistState[sectionId] ? state.checklistState[sectionId].size : 0;
+  const badge = document.getElementById('badge-' + sectionId);
+  if (badge) badge.textContent = checked + ' / ' + total;
+}
+
+function updateMasterProgress() {
+  let total = 0;
+  let checked = 0;
+  Object.keys(state.checklistState).forEach(sectionId => {
+    const section = CHECKLIST_SECTIONS.find(s => s.id === sectionId);
+    if (!section) return;
+    total += section.items.length;
+    checked += state.checklistState[sectionId].size;
+  });
+  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+  document.getElementById('checklist-progress-bar').style.width = pct + '%';
+  document.getElementById('checklist-progress-label').textContent = checked + ' of ' + total + ' items checked (' + pct + '%)';
+}
+
+/* ============================================================
+   MISSION SUMMARY
+============================================================ */
+function showMissionSummary() {
+  const summaryEl = document.getElementById('mission-summary');
+  summaryEl.classList.add('active');
+  setTimeout(() => summaryEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+  const now = new Date();
+  document.getElementById('timestamp').textContent = 'Pre-flight completed: ' + now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  // Summary grid
+  const grid = document.getElementById('summary-grid-content');
+  const opsLabels = Array.from(state.selectedOps).map(id => OPERATION_TYPES.find(o => o.id === id).label).join(', ');
+  const airLabel = state.selectedAirspace ? AIRSPACE_OPTIONS.find(o => o.id === state.selectedAirspace).label : 'Not selected';
+  const certLabel = state.selectedCert ? CERT_OPTIONS.find(o => o.id === state.selectedCert).label : 'Not selected';
+  const hardFlags = state.flags.filter(f => f.type === 'hard');
+  const softFlags = state.flags.filter(f => f.type === 'soft');
+
+  grid.innerHTML = [
+    ['Operation Type', opsLabels],
+    ['Airspace', airLabel],
+    ['Certification', certLabel],
+    ['Hard Stops', hardFlags.length === 0 ? 'None' : hardFlags.length + ' unresolved'],
+    ['Cautions', softFlags.length === 0 ? 'None' : softFlags.length + ' active'],
+    ['Alaska Conditions', state.alaskaToggle ? 'Yes \u2014 Alaska/remote conditions flagged' : 'None selected']
+  ].map(([label, val]) => '<div class="summary-item"><label>' + label + '</label><div class="summary-value">' + val + '</div></div>').join('');
+
+  // Flags section
+  const flagsDiv = document.getElementById('summary-flags-section');
+  if (softFlags.length > 0) {
+    let html = '<div class="summary-section-label" style="font-size:0.72rem;color:var(--text-secondary);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">Active Cautions Carried to Checklist</div>';
+    softFlags.forEach(f => {
+      html += '<div style="font-size:0.78rem;color:var(--caution-text);margin-bottom:0.3rem;">\u26A0 ' + f.msg.replace(/<[^>]+>/g, '').substring(0, 160) + '</div>';
+    });
+    flagsDiv.innerHTML = html;
+  }
+
+  // Section completion
+  const sectDiv = document.getElementById('summary-sections-status');
+  let html = '<div class="summary-section-label" style="font-size:0.72rem;color:var(--text-secondary);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">Checklist Section Completion</div>';
+  Object.keys(state.checklistState).forEach(sectionId => {
+    const section = CHECKLIST_SECTIONS.find(s => s.id === sectionId);
+    if (!section) return;
+    const checked = state.checklistState[sectionId].size;
+    const total = section.items.length;
+    const complete = checked === total;
+    html += '<div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.25rem;"><span style="color:' + (complete ? 'var(--go-green-text)' : 'var(--text-secondary)') + '">' + (complete ? '\u2713 ' : '\u25A1 ') + section.title + '</span><span style="color:var(--text-secondary)">' + checked + '/' + total + '</span></div>';
+  });
+  sectDiv.innerHTML = html;
+
+  buildPrintView();
+}
+
+/* ============================================================
+   PRINT VIEW BUILDER
+============================================================ */
+function buildPrintView() {
+  const pv = document.getElementById('print-view');
+  const now = new Date();
+  const softFlags = state.flags.filter(f => f.type === 'soft');
+  const opsLabels = Array.from(state.selectedOps).map(id => OPERATION_TYPES.find(o => o.id === id).label).join(', ');
+  const airLabel = state.selectedAirspace ? AIRSPACE_OPTIONS.find(o => o.id === state.selectedAirspace).label : 'Not selected';
+
+  let html = '<h2 style="font-size:14pt;margin-bottom:4px;">UAS Pre-Flight Summary</h2>';
+  html += '<p style="font-size:9pt;color:#555;margin-bottom:12px;">' + now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' &mdash; ' + now.toLocaleTimeString('en-US') + '</p>';
+  html += '<div class="print-section"><h3>Operation Details</h3>';
+  html += '<div class="print-row"><b>Operation Type:</b> ' + opsLabels + '</div>';
+  html += '<div class="print-row"><b>Airspace:</b> ' + airLabel + '</div>';
+  html += '</div>';
+
+  if (softFlags.length > 0) {
+    html += '<div class="print-section"><h3>Active Cautions</h3>';
+    softFlags.forEach(f => {
+      html += '<div class="print-row print-flag-soft">\u26A0 ' + f.msg.replace(/<[^>]+>/g, '') + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="print-section"><h3>Checklist Completion</h3>';
+  Object.keys(state.checklistState).forEach(sectionId => {
+    const section = CHECKLIST_SECTIONS.find(s => s.id === sectionId);
+    if (!section) return;
+    html += '<p style="font-weight:bold;font-size:10pt;margin:8px 0 4px;">' + section.title.replace(/&amp;/g, '&') + '</p>';
+    section.items.forEach((item, idx) => {
+      const done = state.checklistState[sectionId].has(idx);
+      html += '<div class="print-row"><div class="print-check' + (done ? ' done' : '') + '"></div><span>' + item.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&mdash;/g, '\u2014').replace(/&minus;/g, '\u2212') + '</span></div>';
+    });
+  });
+  html += '</div>';
+  html += '<p style="font-size:8pt;color:#888;margin-top:20px;border-top:1px solid #ccc;padding-top:6px;">MFI &mdash; Alaska Geotechnical Tools &mdash; Independent personal project. Not affiliated with Alaska DOT&amp;PF. Tool outputs are planning aids only; verify all regulatory requirements with the FAA and applicable authorities before flight.</p>';
+
+  pv.innerHTML = html;
+}
+
+/* ============================================================
+   RESTART
+============================================================ */
+function restartTool() {
+  location.reload();
+}
+</script>
+
+</body>
+</html>
