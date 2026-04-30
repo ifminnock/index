@@ -666,7 +666,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('01', '02')">Confirm Event Info &rarr;</button>
+      <button class="btnp" data-adv-cur="01" data-adv-nxt="02">Confirm Event Info &rarr;</button>
     </div>
   </div>
 </div>
@@ -732,7 +732,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('02', '03')">Confirm Speaker &rarr;</button>
+      <button class="btnp" data-adv-cur="02" data-adv-nxt="03">Confirm Speaker &rarr;</button>
     </div>
   </div>
 </div>
@@ -762,7 +762,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('03', '04')">Confirm Venue &rarr;</button>
+      <button class="btnp" data-adv-cur="03" data-adv-nxt="04">Confirm Venue &rarr;</button>
     </div>
   </div>
 </div>
@@ -794,7 +794,7 @@ body { background-color: #f5f5f5; color: #111111; }
       </div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('04', '05')">Confirm F&amp;B &rarr;</button>
+      <button class="btnp" data-adv-cur="04" data-adv-nxt="05">Confirm F&amp;B &rarr;</button>
     </div>
   </div>
 </div>
@@ -813,7 +813,7 @@ body { background-color: #f5f5f5; color: #111111; }
       <div class="frow"><label>Registration Deadline</label><input type="date" id="reg-dl"></div>
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('05', '06')">Confirm Registration &rarr;</button>
+      <button class="btnp" data-adv-cur="05" data-adv-nxt="06">Confirm Registration &rarr;</button>
     </div>
   </div>
 </div>
@@ -844,7 +844,7 @@ body { background-color: #f5f5f5; color: #111111; }
       Sponsor listed &mdash; confirm contribution amount is finalized before event.
     </div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('06', '07')">Confirm Budget &rarr;</button>
+      <button class="btnp" data-adv-cur="06" data-adv-nxt="07">Confirm Budget &rarr;</button>
     </div>
   </div>
 </div>
@@ -870,7 +870,7 @@ body { background-color: #f5f5f5; color: #111111; }
       <tbody id="rtbody"></tbody>
     </table>
     <div class="brow">
-      <button class="btnp" onclick="advStep('07', '08')">Confirm Assignments &rarr;</button>
+      <button class="btnp" data-adv-cur="07" data-adv-nxt="08">Confirm Assignments &rarr;</button>
     </div>
   </div>
 </div>
@@ -885,7 +885,7 @@ body { background-color: #f5f5f5; color: #111111; }
   <div class="cbody" id="cb08">
     <div id="ck-cont"></div>
     <div class="brow">
-      <button class="btnp" onclick="advStep('08', null)">Complete Phase 1 &rarr;</button>
+      <button class="btnp" data-adv-cur="08" data-adv-nxt="">Complete Phase 1 &rarr;</button>
     </div>
   </div>
 </div>
@@ -1665,6 +1665,20 @@ buildCklist(‘ck-cont’, CONT);
 renderNames();
 renderRoles();
 updBanner();
+
+// Wire step-advance buttons via event delegation (no inline onclick)
+document.addEventListener(‘click’, function(e) {
+var btn = e.target;
+while (btn && btn !== document) {
+if (btn.tagName === ‘BUTTON’ && btn.hasAttribute(‘data-adv-cur’)) {
+var cur = btn.getAttribute(‘data-adv-cur’);
+var nxt = btn.getAttribute(‘data-adv-nxt’) || null;
+advStep(cur, nxt);
+return;
+}
+btn = btn.parentNode;
+}
+});
 });
 </script>
 
