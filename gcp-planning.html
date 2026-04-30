@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCP Planning Aid &mdash; Alaska Geotechnical Tools</title>
+
+<!-- IBM Plex Mono -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet CSS -->
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet.Draw CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --page-bg:      #2E3A47;
+    --card-bg:      #3A4A5C;
+    --accent-orange:#D4651A;
+    --accent-grey:  #4A6070;
+    --text-primary: #E8EAEC;
+    --text-secondary:#9AAABB;
+    --row-alt:      #ECEEF1;
+    --font-mono:    'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  /* ── Header ────────────────────────────────────────────────────── */
+  header {
+    background: var(--page-bg);
+    border-bottom: 2px solid var(--accent-orange);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  header .nav-back {
+    color: var(--accent-grey);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  header .nav-back:hover { color: var(--accent-orange); }
+
+  header .module-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  header h1 {
+    color: var(--accent-orange);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    flex: 1;
+  }
+
+  /* ── Main Layout ────────────────────────────────────────────────── */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: 480px auto;
+    gap: 0;
+    height: calc(100vh - 56px - 44px); /* viewport minus header and footer */
+    min-height: 600px;
+  }
+
+  /* ── Map ────────────────────────────────────────────────────────── */
+  #map {
+    grid-column: 1;
+    grid-row: 1;
+    height: 480px;
+    width: 100%;
+    border-right: 1px solid var(--accent-grey);
+    border-bottom: 1px solid var(--accent-grey);
+    background: #1e2a35;
+  }
+
+  /* ── Sidebar ────────────────────────────────────────────────────── */
+  .sidebar {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    background: var(--card-bg);
+    border-left: 2px solid var(--accent-grey);
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .sidebar h2 {
+    color: var(--accent-orange);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--accent-grey);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.2rem;
+  }
+
+  /* ── Tab Bar ────────────────────────────────────────────────────── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--accent-grey);
+    margin-bottom: 0.6rem;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--accent-grey);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.7rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active {
+    color: var(--accent-orange);
+    border-bottom-color: var(--accent-orange);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Form Elements ──────────────────────────────────────────────── */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.6rem;
+  }
+
+  label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  select {
+    background: var(--page-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--accent-grey);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    width: 100%;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus { border-color: var(--accent-orange); }
+
+  .unit-toggle {
+    display: flex;
+    gap: 0;
+    margin-top: 0.15rem;
+  }
+  .unit-btn {
+    background: var(--page-bg);
+    border: 1px solid var(--accent-grey);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .unit-btn:first-child { border-radius: 2px 0 0 2px; }
+  .unit-btn:last-child  { border-radius: 0 2px 2px 0; border-left: none; }
+  .unit-btn.active {
+    background: var(--accent-orange);
+    color: #fff;
+    border-color: var(--accent-orange);
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────── */
+  .btn-primary {
+    background: var(--accent-orange);
+    color: #fff;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.55rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+    margin-top: 0.3rem;
+    text-transform: uppercase;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    background: var(--accent-grey);
+    color: #fff;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+    text-transform: uppercase;
+  }
+  .btn-secondary:hover { opacity: 0.85; }
+
+  /* ── Result Boxes ───────────────────────────────────────────────── */
+  .result-box {
+    background: #2a3a4a;
+    border: 1px solid var(--accent-grey);
+    border-left: 3px solid var(--accent-orange);
+    border-radius: 2px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .result-box .result-label {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .result-box .result-value {
+    color: var(--accent-orange);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .result-box .result-sub {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 0.1rem;
+  }
+
+  /* ── Flags / Warnings ───────────────────────────────────────────── */
+  .flag {
+    background: #3a2a1a;
+    border: 1px solid #a04010;
+    border-left: 3px solid #e06020;
+    border-radius: 2px;
+    padding: 0.45rem 0.65rem;
+    color: #f0a060;
+    font-size: 0.77rem;
+    line-height: 1.45;
+    margin-bottom: 0.4rem;
+  }
+  .flag::before { content: "⚠ "; }
+
+  .info-note {
+    background: #1e2e3e;
+    border: 1px solid var(--accent-grey);
+    border-radius: 2px;
+    padding: 0.4rem 0.6rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    line-height: 1.45;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── Map Info Bar (below map) ────────────────────────────────────── */
+  .map-info-bar {
+    grid-column: 1;
+    grid-row: 2;
+    background: var(--card-bg);
+    border-top: 1px solid var(--accent-grey);
+    border-right: 1px solid var(--accent-grey);
+    padding: 0.55rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+  }
+
+  .map-info-item { display: flex; flex-direction: column; gap: 0.05rem; }
+  .map-info-item .info-lbl { color: var(--text-secondary); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .map-info-item .info-val { color: var(--text-primary); font-weight: 700; }
+
+  .map-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  /* ── GCP Table ──────────────────────────────────────────────────── */
+  .gcp-table-wrap {
+    overflow-x: auto;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--accent-grey);
+    border-radius: 2px;
+    margin-top: 0.4rem;
+  }
+
+  table.gcp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+  }
+  table.gcp-table th {
+    background: var(--accent-grey);
+    color: #fff;
+    padding: 0.3rem 0.45rem;
+    text-align: left;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+  }
+  table.gcp-table td {
+    padding: 0.28rem 0.45rem;
+    border-bottom: 1px solid #2e3a47;
+    color: var(--text-secondary);
+  }
+  table.gcp-table tr:nth-child(even) td { background: #2a3540; }
+  table.gcp-table td:first-child { color: var(--accent-orange); font-weight: 700; }
+
+  /* ── Manual Coordinate Entry ────────────────────────────────────── */
+  .coord-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────────── */
+  footer {
+    background: var(--page-bg);
+    border-top: 1px solid var(--accent-grey);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* ── Leaflet popup override ─────────────────────────────────────── */
+  .leaflet-popup-content-wrapper {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--accent-orange) !important;
+    border-radius: 2px !important;
+    font-family: var(--font-mono) !important;
+    font-size: 0.78rem !important;
+  }
+  .leaflet-popup-tip { background: var(--card-bg) !important; }
+  .leaflet-popup-content strong { color: var(--accent-orange); }
+
+  /* ── Divider ────────────────────────────────────────────────────── */
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--accent-grey);
+    margin: 0.5rem 0;
+    opacity: 0.5;
+  }
+
+  /* ── Scrollbar ──────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--page-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-grey); border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────── -->
+
+<header>
+  <a href="../tool-index.html" class="nav-back">&larr; Index</a>
+  <span class="module-label">GIS Tools &mdash; Alaska Geotechnical Tools</span>
+  <h1>Ground Control Point Planning Aid</h1>
+</header>
+
+<!-- ── Main Layout ────────────────────────────────────────────────── -->
+
+<div class="main-layout">
+
+  <!-- Map -->
+
+  <div id="map"></div>
+
+  <!-- Map Info Bar -->
+
+  <div class="map-info-bar">
+    <div class="map-info-item">
+      <span class="info-lbl">Area</span>
+      <span class="info-val" id="info-area">&mdash;</span>
+    </div>
+    <div class="map-info-item">
+      <span class="info-lbl">Hectares</span>
+      <span class="info-val" id="info-ha">&mdash;</span>
+    </div>
+    <div class="map-info-item">
+      <span class="info-lbl">Perimeter</span>
+      <span class="info-val" id="info-perim">&mdash;</span>
+    </div>
+    <div class="map-info-item">
+      <span class="info-lbl">Vertices</span>
+      <span class="info-val" id="info-verts">&mdash;</span>
+    </div>
+    <div class="map-controls">
+      <button class="btn-secondary" id="btn-clear-polygon">Clear Polygon</button>
+      <button class="btn-secondary" id="btn-clear-gcps">Clear GCPs</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+
+  <div class="sidebar">
+
+```
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="tab-area">Area</button>
+  <button class="tab-btn" data-tab="tab-calc">GCP Calc</button>
+  <button class="tab-btn" data-tab="tab-points">Points</button>
+</div>
+
+<!-- TAB: Area Definition ─────────────────────────────────────── -->
+<div class="tab-panel active" id="tab-area">
+  <h2>Define Project Area</h2>
+
+  <div class="info-note">
+    Use the polygon tool on the map to draw your project boundary, or enter corner coordinates below to define a bounding rectangle.
+  </div>
+
+  <div class="field-group" style="margin-top:0.5rem;">
+    <label>Manual bounding rectangle &mdash; SW corner</label>
+    <div class="coord-grid">
+      <input type="number" id="sw-lat" placeholder="Lat (DD)" step="0.0001" min="54" max="72">
+      <input type="number" id="sw-lon" placeholder="Lon (DD)" step="0.0001" min="-180" max="-130">
+    </div>
+  </div>
+  <div class="field-group">
+    <label>Manual bounding rectangle &mdash; NE corner</label>
+    <div class="coord-grid">
+      <input type="number" id="ne-lat" placeholder="Lat (DD)" step="0.0001" min="54" max="72">
+      <input type="number" id="ne-lon" placeholder="Lon (DD)" step="0.0001" min="-180" max="-130">
+    </div>
+  </div>
+  <button class="btn-primary" id="btn-load-rect">Load Rectangle on Map</button>
+
+  <hr class="divider">
+
+  <h2 style="margin-top:0.3rem;">Area Summary</h2>
+  <div class="result-box">
+    <div class="result-label">Area (acres)</div>
+    <div class="result-value" id="res-acres">&mdash;</div>
+  </div>
+  <div class="result-box">
+    <div class="result-label">Area (hectares)</div>
+    <div class="result-value" id="res-ha">&mdash;</div>
+  </div>
+  <div class="result-box">
+    <div class="result-label">Perimeter</div>
+    <div class="result-value" id="res-perim">&mdash;</div>
+  </div>
+
+  <div class="info-note" style="margin-top:0.5rem;">
+    Coordinates in WGS84 decimal degrees (DD). Negative longitude = West.
+  </div>
+</div>
+
+<!-- TAB: GCP Calculator ──────────────────────────────────────── -->
+<div class="tab-panel" id="tab-calc">
+  <h2>GCP Parameters</h2>
+
+  <div class="field-group">
+    <label>Desired horizontal accuracy</label>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <input type="number" id="inp-accuracy" value="5" min="1" max="100" step="1" style="width:90px;">
+      <span style="color:var(--text-secondary); font-size:0.78rem;">cm</span>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Flight altitude AGL</label>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <input type="number" id="inp-altitude" value="400" min="50" max="5000" step="10" style="width:90px;">
+      <div class="unit-toggle">
+        <button class="unit-btn active" data-unit="ft" id="unit-ft">ft</button>
+        <button class="unit-btn" data-unit="m" id="unit-m">m</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Camera / sensor</label>
+    <select id="inp-camera">
+      <option value="fc6310" data-focal="8.8" data-sensor-w="13.2" data-sensor-h="8.8" data-px-w="5472" data-px-h="3648">DJI FC6310 (Phantom 4 Pro) &mdash; 20 MP</option>
+      <option value="fc220" data-focal="4.73" data-sensor-w="6.17" data-sensor-h="4.55" data-px-w="4000" data-px-h="3000">DJI FC220 (Mavic Pro) &mdash; 12 MP</option>
+      <option value="fc3170" data-focal="5.1" data-sensor-w="9.6" data-sensor-h="7.2" data-px-w="5280" data-px-h="3956">DJI FC3170 (Mavic 3) &mdash; 20 MP</option>
+      <option value="m300" data-focal="8.4" data-sensor-w="12.8" data-sensor-h="9.6" data-px-w="5472" data-px-h="4096">DJI Zenmuse P1 (M300) &mdash; 45 MP</option>
+      <option value="sony_rx1r2" data-focal="35" data-sensor-w="35.9" data-sensor-h="24.0" data-px-w="7952" data-px-h="5304">Sony RX1R II &mdash; 42 MP</option>
+      <option value="custom" data-focal="0" data-sensor-w="0" data-sensor-h="0" data-px-w="0" data-px-h="0">Custom (enter below)</option>
+    </select>
+  </div>
+
+  <div id="custom-camera-fields" style="display:none;">
+    <div class="field-group">
+      <label>Focal length (mm)</label>
+      <input type="number" id="inp-focal" value="25" step="0.1" min="1">
+    </div>
+    <div class="field-group">
+      <label>Sensor width (mm)</label>
+      <input type="number" id="inp-sensor-w" value="17.3" step="0.1" min="1">
+    </div>
+    <div class="field-group">
+      <label>Image width (pixels)</label>
+      <input type="number" id="inp-px-w" value="4000" step="100" min="100">
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>GCP pattern</label>
+    <select id="inp-pattern">
+      <option value="perimeter">Perimeter Only</option>
+      <option value="perimeter_center" selected>Perimeter + Center</option>
+      <option value="cross">Cross Pattern</option>
+      <option value="grid">Full Grid</option>
+    </select>
+  </div>
+
+  <div class="field-group">
+    <label>Minimum GCPs override (blank = auto)</label>
+    <input type="number" id="inp-min-override" placeholder="Auto" min="3" max="100" step="1">
+  </div>
+
+  <button class="btn-primary" id="btn-calculate">Calculate &amp; Place GCPs</button>
+
+  <hr class="divider">
+
+  <h2>Results</h2>
+  <div id="calc-results">
+    <div class="info-note">Draw a polygon and press Calculate to see results.</div>
+  </div>
+</div>
+
+<!-- TAB: GCP Points ──────────────────────────────────────────── -->
+<div class="tab-panel" id="tab-points">
+  <h2>GCP Point List</h2>
+
+  <div id="gcp-table-container">
+    <div class="info-note">No GCPs placed yet. Define an area and run the calculator.</div>
+  </div>
+
+  <div id="export-controls" style="display:none; margin-top:0.6rem; gap:0.4rem; flex-direction:column;">
+    <button class="btn-primary" id="btn-export-csv">Export GCP List (CSV)</button>
+    <div class="info-note" style="margin-top:0.3rem;">
+      CSV includes GCP#, Lat (DD), Lon (DD), Lat (DMS), Lon (DMS), Northing placeholder, Easting placeholder. Northing/Easting columns require post-processing coordinate conversion.
+    </div>
+  </div>
+</div>
+```
+
+  </div><!-- /sidebar -->
+
+</div><!-- /main-layout -->
+
+<!-- ── Footer ─────────────────────────────────────────────────────── -->
+
+<footer>
+  <span>Independent personal project &mdash; not affiliated with Alaska DOT&amp;PF or any government agency. Tool outputs are planning aids only.</span>
+  <span>GCP Planning Aid &mdash; Alaska Geotechnical Tools &mdash; ifminnock.github.io/index</span>
+</footer>
+
+<!-- Leaflet JS -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Leaflet.Draw JS -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── State ──────────────────────────────────────────────────────── */
+  var state = {
+    polygon: null,       // L.Polygon currently drawn
+    gcpMarkers: [],      // array of L.Marker for GCPs
+    gcpData: [],         // array of {id, lat, lon} objects
+    altitudeUnit: 'ft',  // 'ft' or 'm'
+    areaM2: 0,
+    perimeterM: 0
+  };
+
+  /* ── Map Init ───────────────────────────────────────────────────── */
+  var map = L.map('map', {
+    center: [64.0, -153.0],
+    zoom: 5,
+    zoomControl: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  /* ── Leaflet.Draw Setup ─────────────────────────────────────────── */
+  var drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
+
+  var drawControl = new L.Control.Draw({
+    draw: {
+      polygon: {
+        allowIntersection: false,
+        drawError: { color: '#e06020', message: 'Polygon edges cannot intersect.' },
+        shapeOptions: { color: '#D4651A', fillOpacity: 0.12, weight: 2 }
+      },
+      polyline: false,
+      rectangle: {
+        shapeOptions: { color: '#D4651A', fillOpacity: 0.12, weight: 2 }
+      },
+      circle: false,
+      circlemarker: false,
+      marker: false
+    },
+    edit: {
+      featureGroup: drawnItems,
+      remove: true
+    }
+  });
+  map.addControl(drawControl);
+
+  /* ── GCP Marker Icon ────────────────────────────────────────────── */
+  function makeGCPIcon(num) {
+    return L.divIcon({
+      className: '',
+      html: '<div style="background:#D4651A;color:#fff;font-family:Courier New,monospace;font-size:10px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.6);">' + num + '</div>',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -16]
+    });
+  }
+
+  /* ── Geometry Helpers ───────────────────────────────────────────── */
+
+  // Shoelace / haversine-based area in m²
+  function polygonAreaM2(latlngs) {
+    // Use L.GeometryUtil if available, else approximate with planar haversine
+    var pts = latlngs;
+    var n = pts.length;
+    if (n < 3) return 0;
+    var R = 6378137; // Earth radius m
+    var area = 0;
+    for (var i = 0; i < n; i++) {
+      var j = (i + 1) % n;
+      var lat1 = pts[i].lat * Math.PI / 180;
+      var lon1 = pts[i].lng * Math.PI / 180;
+      var lat2 = pts[j].lat * Math.PI / 180;
+      var lon2 = pts[j].lng * Math.PI / 180;
+      area += (lon2 - lon1) * (2 + Math.sin(lat1) + Math.sin(lat2));
+    }
+    area = Math.abs(area) * R * R / 2;
+    return area;
+  }
+
+  function polygonPerimeterM(latlngs) {
+    var total = 0;
+    var n = latlngs.length;
+    for (var i = 0; i < n; i++) {
+      var j = (i + 1) % n;
+      total += latlngs[i].distanceTo(latlngs[j]);
+    }
+    return total;
+  }
+
+  function m2ToAcres(m2) { return m2 / 4046.856; }
+  function m2ToHa(m2)    { return m2 / 10000; }
+  function mToFt(m)      { return m * 3.28084; }
+  function ftToM(ft)     { return ft / 3.28084; }
+
+  function formatNum(n, decimals) {
+    return n.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  // DD to DMS string
+  function ddToDMS(dd, isLat) {
+    var dir = isLat ? (dd >= 0 ? 'N' : 'S') : (dd >= 0 ? 'E' : 'W');
+    var abs = Math.abs(dd);
+    var deg = Math.floor(abs);
+    var minFull = (abs - deg) * 60;
+    var min = Math.floor(minFull);
+    var sec = ((minFull - min) * 60).toFixed(2);
+    return deg + '\u00B0' + min + '\u2032' + sec + '\u2033' + dir;
+  }
+
+  /* ── Polygon geometry update ────────────────────────────────────── */
+  function updateAreaDisplay(latlngs) {
+    state.areaM2 = polygonAreaM2(latlngs);
+    state.perimeterM = polygonPerimeterM(latlngs);
+    var acres = m2ToAcres(state.areaM2);
+    var ha    = m2ToHa(state.areaM2);
+    var perimKm = state.perimeterM / 1000;
+
+    document.getElementById('info-area').textContent  = formatNum(acres, 1) + ' ac';
+    document.getElementById('info-ha').textContent    = formatNum(ha, 2) + ' ha';
+    document.getElementById('info-perim').textContent = formatNum(perimKm, 2) + ' km';
+    document.getElementById('info-verts').textContent = latlngs.length;
+
+    document.getElementById('res-acres').textContent = formatNum(acres, 2) + ' ac';
+    document.getElementById('res-ha').textContent    = formatNum(ha, 3) + ' ha';
+    document.getElementById('res-perim').textContent = formatNum(perimKm, 3) + ' km (' + formatNum(mToFt(state.perimeterM) / 5280, 2) + ' mi)';
+  }
+
+  function clearAreaDisplay() {
+    ['info-area','info-ha','info-perim','info-verts',
+     'res-acres','res-ha','res-perim'].forEach(function(id){
+      document.getElementById(id).textContent = '\u2014';
+    });
+    state.areaM2 = 0;
+    state.perimeterM = 0;
+  }
+
+  /* ── Draw Events ────────────────────────────────────────────────── */
+  map.on(L.Draw.Event.CREATED, function (e) {
+    clearPolygon();
+    state.polygon = e.layer;
+    drawnItems.addLayer(state.polygon);
+    var latlngs = state.polygon.getLatLngs()[0];
+    updateAreaDisplay(latlngs);
+  });
+
+  map.on(L.Draw.Event.EDITED, function () {
+    if (state.polygon) {
+      var latlngs = state.polygon.getLatLngs()[0];
+      updateAreaDisplay(latlngs);
+    }
+  });
+
+  map.on(L.Draw.Event.DELETED, function () {
+    state.polygon = null;
+    clearAreaDisplay();
+  });
+
+  /* ── Clear Buttons ──────────────────────────────────────────────── */
+  document.getElementById('btn-clear-polygon').addEventListener('click', function () {
+    clearPolygon();
+    clearAreaDisplay();
+  });
+
+  document.getElementById('btn-clear-gcps').addEventListener('click', function () {
+    clearGCPs();
+  });
+
+  function clearPolygon() {
+    if (state.polygon) {
+      drawnItems.removeLayer(state.polygon);
+      state.polygon = null;
+    }
+  }
+
+  function clearGCPs() {
+    state.gcpMarkers.forEach(function (m) { map.removeLayer(m); });
+    state.gcpMarkers = [];
+    state.gcpData = [];
+    document.getElementById('gcp-table-container').innerHTML = '<div class="info-note">No GCPs placed yet. Define an area and run the calculator.</div>';
+    document.getElementById('export-controls').style.display = 'none';
+    document.getElementById('calc-results').innerHTML = '<div class="info-note">Draw a polygon and press Calculate to see results.</div>';
+  }
+
+  /* ── Manual Rectangle ───────────────────────────────────────────── */
+  document.getElementById('btn-load-rect').addEventListener('click', function () {
+    var swLat = parseFloat(document.getElementById('sw-lat').value);
+    var swLon = parseFloat(document.getElementById('sw-lon').value);
+    var neLat = parseFloat(document.getElementById('ne-lat').value);
+    var neLon = parseFloat(document.getElementById('ne-lon').value);
+
+    if (isNaN(swLat) || isNaN(swLon) || isNaN(neLat) || isNaN(neLon)) {
+      alert('Enter valid decimal degree coordinates for both corners.');
+      return;
+    }
+    if (swLat >= neLat || swLon >= neLon) {
+      alert('SW corner must have smaller latitude and longitude than NE corner.');
+      return;
+    }
+
+    clearPolygon();
+    var bounds = [[swLat, swLon],[neLat, swLon],[neLat, neLon],[swLat, neLon]];
+    state.polygon = L.polygon(bounds, { color: '#D4651A', fillOpacity: 0.12, weight: 2 });
+    drawnItems.addLayer(state.polygon);
+    map.fitBounds(state.polygon.getBounds(), { padding: [40, 40] });
+    updateAreaDisplay(state.polygon.getLatLngs()[0]);
+  });
+
+  /* ── Unit Toggle ────────────────────────────────────────────────── */
+  document.getElementById('unit-ft').addEventListener('click', function () {
+    state.altitudeUnit = 'ft';
+    document.getElementById('unit-ft').classList.add('active');
+    document.getElementById('unit-m').classList.remove('active');
+  });
+  document.getElementById('unit-m').addEventListener('click', function () {
+    state.altitudeUnit = 'm';
+    document.getElementById('unit-m').classList.add('active');
+    document.getElementById('unit-ft').classList.remove('active');
+  });
+
+  /* ── Camera dropdown custom fields ─────────────────────────────── */
+  document.getElementById('inp-camera').addEventListener('change', function () {
+    var custom = this.value === 'custom';
+    document.getElementById('custom-camera-fields').style.display = custom ? 'block' : 'none';
+  });
+
+  /* ── GSD Calculation ────────────────────────────────────────────── */
+  // GSD (cm/px) = (altitude_m * sensor_width_mm) / (focal_length_mm * image_width_px) * 100
+  function calcGSD(altM, focalMm, sensorWMm, pxW) {
+    if (!focalMm || !sensorWMm || !pxW) return null;
+    return (altM * sensorWMm) / (focalMm * pxW) * 100; // cm/px
+  }
+
+  /* ── GCP Count Logic ────────────────────────────────────────────── */
+  // Rules of thumb based on Pix4D / Agisoft guidance and photogrammetric practice:
+  // Perimeter Only: 1 GCP per ~300m perimeter, minimum 5
+  // Perimeter + Center: above + 1 center per ~20 ha, minimum 5
+  // Cross: minimum 5 arranged along diagonals
+  // Grid: 1 per ~10 ha, minimum 9
+  // Accuracy modifier: &lt;3cm accuracy → multiply density by 1.5
+  function calcGCPCount(areaM2, perimM, pattern, accuracyCm, minOverride) {
+    var ha = areaM2 / 10000;
+    var base;
+    switch (pattern) {
+      case 'perimeter':
+        base = Math.max(5, Math.ceil(perimM / 300));
+        break;
+      case 'perimeter_center':
+        base = Math.max(5, Math.ceil(perimM / 300) + Math.ceil(ha / 20));
+        break;
+      case 'cross':
+        base = Math.max(5, Math.ceil(perimM / 350) + 1);
+        break;
+      case 'grid':
+        base = Math.max(9, Math.ceil(ha / 10));
+        break;
+      default:
+        base = 5;
+    }
+    // High accuracy modifier
+    if (accuracyCm < 3) { base = Math.ceil(base * 1.5); }
+
+    if (minOverride && !isNaN(minOverride) && minOverride > base) {
+      base = minOverride;
+    }
+    return base;
+  }
+
+  /* ── Spacing Estimate ────────────────────────────────────────────── */
+  function approxSpacing(areaM2, count) {
+    // treat as sqrt of area / sqrt of count
+    return Math.sqrt(areaM2 / count);
+  }
+
+  /* ── Warning Flags ──────────────────────────────────────────────── */
+  function buildFlags(areaM2, perimM, pattern, accuracyCm, altM, gsd) {
+    var flags = [];
+    var ha = areaM2 / 10000;
+
+    if (pattern === 'perimeter' && ha > 50) {
+      flags.push('Area exceeds 50 ha &mdash; perimeter-only GCP layout may be insufficient for interior accuracy. Consider Perimeter + Center or Full Grid.');
+    }
+    if (accuracyCm < 3 && altM > 100) {
+      flags.push('Sub-3 cm accuracy requires low altitude. Consider flying at 60&ndash;80 m AGL and using RTK GPS for checkpoints.');
+    }
+    if (gsd && gsd > 5 && accuracyCm < 5) {
+      flags.push('GSD (' + gsd.toFixed(1) + ' cm/px) is coarser than target accuracy (' + accuracyCm + ' cm). Lower altitude or use a higher-resolution sensor.');
+    }
+    if (altM > 400) {
+      flags.push('Flight altitude exceeds 400 m AGL &mdash; confirm local airspace authorization (FAA Part 107 waiver may be required).');
+    }
+    return flags;
+  }
+
+  /* ── GCP Placement Algorithms ───────────────────────────────────── */
+  function getBoundingBox(latlngs) {
+    var lats = latlngs.map(function(p){ return p.lat; });
+    var lons = latlngs.map(function(p){ return p.lng; });
+    return {
+      minLat: Math.min.apply(null, lats), maxLat: Math.max.apply(null, lats),
+      minLon: Math.min.apply(null, lons), maxLon: Math.max.apply(null, lons)
+    };
+  }
+
+  function centroid(latlngs) {
+    var lat = 0, lon = 0;
+    latlngs.forEach(function(p){ lat += p.lat; lon += p.lng; });
+    return { lat: lat / latlngs.length, lon: lon / latlngs.length };
+  }
+
+  // Point-in-polygon (ray casting)
+  function pointInPolygon(lat, lon, latlngs) {
+    var inside = false;
+    var n = latlngs.length;
+    for (var i = 0, j = n - 1; i < n; j = i++) {
+      var xi = latlngs[i].lng, yi = latlngs[i].lat;
+      var xj = latlngs[j].lng, yj = latlngs[j].lat;
+      if (((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  // Distribute N points around the polygon perimeter
+  function perimeterPoints(latlngs, n) {
+    var pts = [];
+    var totalPerim = 0;
+    var segs = [];
+    var count = latlngs.length;
+    for (var i = 0; i < count; i++) {
+      var j = (i + 1) % count;
+      var d = latlngs[i].distanceTo(latlngs[j]);
+      segs.push(d);
+      totalPerim += d;
+    }
+    var spacing = totalPerim / n;
+    var dist = spacing / 2; // offset from start
+    var segIdx = 0;
+    var segDist = 0;
+    for (var k = 0; k < n; k++) {
+      // walk perimeter
+      var remaining = dist - segDist;
+      while (remaining > segs[segIdx]) {
+        remaining -= segs[segIdx];
+        segIdx = (segIdx + 1) % count;
+        segDist = 0;
+      }
+      var t = remaining / segs[segIdx];
+      var a = latlngs[segIdx];
+      var b = latlngs[(segIdx + 1) % count];
+      pts.push(L.latLng(a.lat + t * (b.lat - a.lat), a.lng + t * (b.lng - a.lng)));
+      segDist = remaining;
+      dist += spacing;
+    }
+    return pts;
+  }
+
+  // Distribute N points on a grid inside polygon
+  function gridPoints(latlngs, n, bb) {
+    // sqrt(n) x sqrt(n) candidate grid, filter to inside polygon
+    var cols = Math.ceil(Math.sqrt(n * (bb.maxLon - bb.minLon) / (bb.maxLat - bb.minLat)));
+    var rows = Math.ceil(n / cols);
+    var dLat = (bb.maxLat - bb.minLat) / (rows + 1);
+    var dLon = (bb.maxLon - bb.minLon) / (cols + 1);
+    var candidates = [];
+    for (var r = 1; r <= rows + 2; r++) {
+      for (var c = 1; c <= cols + 2; c++) {
+        var lat = bb.minLat + r * dLat;
+        var lon = bb.minLon + c * dLon;
+        if (pointInPolygon(lat, lon, latlngs)) {
+          candidates.push(L.latLng(lat, lon));
+        }
+      }
+    }
+    // If not enough inside polygon, fall back to bounding box grid
+    if (candidates.length < n) {
+      candidates = [];
+      var dL2 = (bb.maxLat - bb.minLat) / (rows + 1);
+      var dO2 = (bb.maxLon - bb.minLon) / (cols + 1);
+      for (var rr = 1; rr <= rows + 1; rr++) {
+        for (var cc = 1; cc <= cols + 1; cc++) {
+          candidates.push(L.latLng(bb.minLat + rr * dL2, bb.minLon + cc * dO2));
+        }
+      }
+    }
+    // Thin to n by even spacing
+    if (candidates.length > n) {
+      var step = candidates.length / n;
+      var sel = [];
+      for (var idx = 0; idx < n; idx++) {
+        sel.push(candidates[Math.round(idx * step)]);
+      }
+      return sel;
+    }
+    return candidates;
+  }
+
+  function placeGCPs(pattern, count, latlngs) {
+    var bb = getBoundingBox(latlngs);
+    var cen = centroid(latlngs);
+    var pts = [];
+
+    switch (pattern) {
+      case 'perimeter':
+        pts = perimeterPoints(latlngs, count);
+        break;
+
+      case 'perimeter_center': {
+        var perimCount = Math.max(4, count - Math.ceil(count / 5));
+        var centerCount = count - perimCount;
+        pts = perimeterPoints(latlngs, perimCount);
+        if (centerCount === 1) {
+          pts.push(L.latLng(cen.lat, cen.lon));
+        } else {
+          var innerPts = gridPoints(latlngs, centerCount, bb);
+          pts = pts.concat(innerPts.slice(0, centerCount));
+        }
+        break;
+      }
+
+      case 'cross': {
+        // 4 corners + center + midpoints along two diagonals
+        var midLat = (bb.minLat + bb.maxLat) / 2;
+        var midLon = (bb.minLon + bb.maxLon) / 2;
+        var crossCandidates = [
+          L.latLng(bb.minLat + (bb.maxLat - bb.minLat) * 0.1, midLon),
+          L.latLng(bb.maxLat - (bb.maxLat - bb.minLat) * 0.1, midLon),
+          L.latLng(midLat, bb.minLon + (bb.maxLon - bb.minLon) * 0.1),
+          L.latLng(midLat, bb.maxLon - (bb.maxLon - bb.minLon) * 0.1),
+          L.latLng(midLat, midLon)
+        ];
+        // fill remaining with perimeter
+        var extras = count - crossCandidates.length;
+        if (extras > 0) {
+          var perimExtra = perimeterPoints(latlngs, extras);
+          pts = crossCandidates.concat(perimExtra);
+        } else {
+          pts = crossCandidates.slice(0, count);
+        }
+        break;
+      }
+
+      case 'grid':
+        pts = gridPoints(latlngs, count, bb);
+        break;
+    }
+
+    return pts.slice(0, count);
+  }
+
+  /* ── Calculate ──────────────────────────────────────────────────── */
+  document.getElementById('btn-calculate').addEventListener('click', function () {
+    if (!state.polygon) {
+      alert('Draw a project area polygon on the map first (or load a rectangle on the Area tab).');
+      return;
+    }
+
+    var latlngs = state.polygon.getLatLngs()[0];
+    var accuracyCm = parseFloat(document.getElementById('inp-accuracy').value) || 5;
+    var altRaw     = parseFloat(document.getElementById('inp-altitude').value) || 400;
+    var altM       = state.altitudeUnit === 'ft' ? ftToM(altRaw) : altRaw;
+    var pattern    = document.getElementById('inp-pattern').value;
+    var minOvr     = parseInt(document.getElementById('inp-min-override').value, 10);
+
+    // Camera params
+    var camSel = document.getElementById('inp-camera');
+    var camOpt = camSel.options[camSel.selectedIndex];
+    var focalMm, sensorWMm, pxW;
+    if (camSel.value === 'custom') {
+      focalMm  = parseFloat(document.getElementById('inp-focal').value);
+      sensorWMm= parseFloat(document.getElementById('inp-sensor-w').value);
+      pxW      = parseFloat(document.getElementById('inp-px-w').value);
+    } else {
+      focalMm  = parseFloat(camOpt.getAttribute('data-focal'));
+      sensorWMm= parseFloat(camOpt.getAttribute('data-sensor-w'));
+      pxW      = parseFloat(camOpt.getAttribute('data-px-w'));
+    }
+
+    var gsd = calcGSD(altM, focalMm, sensorWMm, pxW);
+    var count = calcGCPCount(state.areaM2, state.perimeterM, pattern, accuracyCm, isNaN(minOvr) ? 0 : minOvr);
+    var spacing = approxSpacing(state.areaM2, count);
+    var flags = buildFlags(state.areaM2, state.perimeterM, pattern, accuracyCm, altM, gsd);
+
+    // Clear old GCPs
+    clearGCPs();
+
+    // Place GCPs
+    var pts = placeGCPs(pattern, count, latlngs);
+    state.gcpData = [];
+
+    pts.forEach(function (pt, i) {
+      var num = i + 1;
+      var label = 'GCP-' + (num < 10 ? '0' + num : '' + num);
+      var latDD = pt.lat.toFixed(7);
+      var lonDD = pt.lng.toFixed(7);
+      var latDMS = ddToDMS(pt.lat, true);
+      var lonDMS = ddToDMS(pt.lng, false);
+
+      state.gcpData.push({ id: label, lat: pt.lat, lon: pt.lng });
+
+      var marker = L.marker(pt, { icon: makeGCPIcon(num) });
+      marker.bindPopup(
+        '<strong>' + label + '</strong><br>' +
+        'Lat: ' + latDD + ' (' + latDMS + ')<br>' +
+        'Lon: ' + lonDD + ' (' + lonDMS + ')<br>' +
+        '<span style="color:var(--text-secondary)">Northing/Easting: field to be populated post-survey</span>'
+      );
+      marker.addTo(map);
+      state.gcpMarkers.push(marker);
+    });
+
+    // Render results panel
+    var altFt = state.altitudeUnit === 'ft' ? altRaw : mToFt(altM);
+    var altDisplay = formatNum(altFt, 0) + ' ft (' + formatNum(altM, 0) + ' m) AGL';
+    var gsdDisplay = gsd ? gsd.toFixed(2) + ' cm/px' : 'N/A';
+    var spacingDisplay = formatNum(spacing, 0) + ' m (' + formatNum(mToFt(spacing), 0) + ' ft)';
+
+    var flagHTML = flags.map(function(f){ return '<div class="flag">' + f + '</div>'; }).join('');
+
+    document.getElementById('calc-results').innerHTML =
+      '<div class="result-box"><div class="result-label">Recommended GCPs</div><div class="result-value">' + count + '</div></div>' +
+      '<div class="result-box"><div class="result-label">Est. GSD at altitude</div><div class="result-value">' + gsdDisplay + '</div></div>' +
+      '<div class="result-box"><div class="result-label">Approx. GCP spacing</div><div class="result-value">' + spacingDisplay + '</div><div class="result-sub">Based on area / count</div></div>' +
+      '<div class="result-box"><div class="result-label">Flight altitude</div><div class="result-value">' + altDisplay + '</div></div>' +
+      '<div class="result-box"><div class="result-label">Pattern</div><div class="result-value" style="font-size:0.85rem;">' + pattern.replace('_', ' + ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }) + '</div></div>' +
+      (flagHTML ? '<hr class="divider">' + flagHTML : '') +
+      '<div class="info-note" style="margin-top:0.3rem;">GCP counts are planning estimates. Confirm with project photogrammetrist and accuracy requirements.</div>';
+
+    // Build GCP table
+    var rows = state.gcpData.map(function(g){
+      return '<tr><td>' + g.id + '</td><td>' + g.lat.toFixed(6) + '</td><td>' + g.lon.toFixed(6) + '</td><td>' + ddToDMS(g.lat, true) + '</td><td>' + ddToDMS(g.lon, false) + '</td></tr>';
+    }).join('');
+
+    document.getElementById('gcp-table-container').innerHTML =
+      '<div class="gcp-table-wrap"><table class="gcp-table"><thead><tr><th>GCP</th><th>Lat (DD)</th><th>Lon (DD)</th><th>Lat (DMS)</th><th>Lon (DMS)</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+
+    document.getElementById('export-controls').style.display = 'flex';
+
+    // Switch to calc tab to show results
+    switchTab('tab-calc');
+  });
+
+  /* ── CSV Export ─────────────────────────────────────────────────── */
+  document.getElementById('btn-export-csv').addEventListener('click', function () {
+    if (!state.gcpData.length) { return; }
+    var lines = ['GCP_ID,Latitude_DD,Longitude_DD,Latitude_DMS,Longitude_DMS,Northing_m,Easting_m'];
+    state.gcpData.forEach(function(g){
+      lines.push([
+        g.id,
+        g.lat.toFixed(7),
+        g.lon.toFixed(7),
+        '"' + ddToDMS(g.lat, true) + '"',
+        '"' + ddToDMS(g.lon, false) + '"',
+        '',
+        ''
+      ].join(','));
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'GCP_Plan.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ── Tab Switching ──────────────────────────────────────────────── */
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelector('[data-tab="' + id + '"]').classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ switchTab(this.getAttribute('data-tab')); });
+  });
+
+  /* ── Invalidate map size after layout settles ───────────────────── */
+  setTimeout(function(){ map.invalidateSize(); }, 200);
+
+})();
+</script>
+
+</body>
+</html>
