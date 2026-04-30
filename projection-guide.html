@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Projection Reference Guide — MFI Alaska Geo Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–page-bg:    #2E3A47;
+–card-bg:    #3A4A5C;
+–accent:     #D4651A;
+–grey-blue:  #4A6070;
+–text-1:     #E8EAEC;
+–text-2:     #9AAABB;
+–row-alt:    #344455;
+–font:       ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+}
+
+html, body {
+height: 100%;
+background: var(–page-bg);
+color: var(–text-1);
+font-family: var(–font);
+font-size: 0.92rem;
+line-height: 1.55;
+}
+
+/* ── HEADER ── */
+header {
+background: var(–page-bg);
+border-bottom: 2px solid var(–accent);
+padding: 0.75rem 1.5rem;
+display: flex;
+align-items: baseline;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+header a.back {
+color: var(–text-2);
+text-decoration: none;
+font-size: 0.82rem;
+white-space: nowrap;
+transition: color 0.15s;
+}
+header a.back:hover { color: var(–accent); }
+header .title-block { flex: 1; }
+header .module-label {
+font-size: 0.72rem;
+color: var(–text-2);
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+header h1 {
+font-size: 1.25rem;
+color: var(–accent);
+font-weight: 700;
+line-height: 1.2;
+}
+
+/* ── THREE-COLUMN LAYOUT ── */
+.app-shell {
+display: grid;
+grid-template-columns: 240px 1fr 280px;
+height: calc(100vh - 60px);
+overflow: hidden;
+}
+
+/* ── LEFT COLUMN — projection list ── */
+.col-list {
+background: var(–card-bg);
+border-right: 1px solid var(–grey-blue);
+overflow-y: auto;
+padding: 0;
+}
+.family-header {
+background: var(–page-bg);
+color: var(–text-2);
+font-size: 0.68rem;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 0.55rem 0.9rem 0.35rem;
+border-bottom: 1px solid var(–grey-blue);
+position: sticky;
+top: 0;
+z-index: 1;
+}
+.proj-item {
+padding: 0.6rem 0.9rem;
+cursor: pointer;
+border-bottom: 1px solid rgba(74,96,112,0.35);
+color: var(–text-1);
+font-size: 0.82rem;
+line-height: 1.3;
+transition: background 0.12s, color 0.12s;
+user-select: none;
+}
+.proj-item:hover {
+background: rgba(212,101,26,0.15);
+color: var(–text-1);
+}
+.proj-item.active {
+background: rgba(212,101,26,0.22);
+color: var(–accent);
+border-left: 3px solid var(–accent);
+padding-left: calc(0.9rem - 3px);
+}
+.proj-item .proj-tag {
+font-size: 0.65rem;
+color: var(–text-2);
+display: block;
+margin-top: 0.1rem;
+}
+.proj-item.active .proj-tag { color: rgba(212,101,26,0.75); }
+
+/* ── CENTER COLUMN — detail ── */
+.col-detail {
+overflow-y: auto;
+padding: 1.5rem;
+background: var(–page-bg);
+}
+.col-detail h2 {
+color: var(–accent);
+font-size: 1.2rem;
+margin-bottom: 0.35rem;
+}
+.col-detail .proj-subtitle {
+color: var(–text-2);
+font-size: 0.78rem;
+margin-bottom: 1.1rem;
+letter-spacing: 0.04em;
+}
+.thumbnail-wrap {
+display: inline-block;
+cursor: zoom-in;
+border: 1px solid var(–grey-blue);
+border-radius: 3px;
+overflow: hidden;
+margin-bottom: 1.2rem;
+transition: border-color 0.15s;
+background: #1e2a35;
+}
+.thumbnail-wrap:hover { border-color: var(–accent); }
+.thumbnail-wrap svg { display: block; }
+.zoom-hint {
+font-size: 0.68rem;
+color: var(–text-2);
+margin-bottom: 1.2rem;
+margin-top: -0.8rem;
+}
+
+.section-block { margin-bottom: 1.2rem; }
+.section-block h3 {
+font-size: 0.78rem;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(–accent);
+margin-bottom: 0.4rem;
+border-bottom: 1px solid var(–grey-blue);
+padding-bottom: 0.2rem;
+}
+.section-block p {
+color: var(–text-1);
+font-size: 0.87rem;
+line-height: 1.6;
+}
+
+/* ── RIGHT COLUMN — metadata card ── */
+.col-meta {
+background: var(–card-bg);
+border-left: 1px solid var(–grey-blue);
+overflow-y: auto;
+padding: 1.2rem 1rem;
+}
+.meta-card h3 {
+font-size: 0.72rem;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+color: var(–accent);
+margin-bottom: 0.8rem;
+border-bottom: 1px solid var(–grey-blue);
+padding-bottom: 0.3rem;
+}
+.meta-row {
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 0.3rem 0.7rem;
+margin-bottom: 0.55rem;
+align-items: start;
+}
+.meta-label {
+font-size: 0.7rem;
+color: var(–text-2);
+text-transform: uppercase;
+letter-spacing: 0.06em;
+white-space: nowrap;
+padding-top: 0.05rem;
+}
+.meta-value {
+font-size: 0.82rem;
+color: var(–text-1);
+line-height: 1.4;
+}
+.meta-value.epsg code {
+background: var(–page-bg);
+color: var(–accent);
+padding: 0.05em 0.3em;
+border-radius: 2px;
+font-size: 0.78rem;
+display: inline-block;
+margin: 0.1em 0.15em 0.1em 0;
+}
+.alaska-note {
+margin-top: 1rem;
+background: rgba(212,101,26,0.1);
+border-left: 3px solid var(–accent);
+padding: 0.6rem 0.75rem;
+border-radius: 0 3px 3px 0;
+}
+.alaska-note .ak-label {
+font-size: 0.68rem;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(–accent);
+margin-bottom: 0.3rem;
+}
+.alaska-note p {
+font-size: 0.8rem;
+color: var(–text-1);
+line-height: 1.5;
+}
+.distortion-bar {
+margin-top: 0.5rem;
+}
+.distort-label {
+font-size: 0.68rem;
+color: var(–text-2);
+text-transform: uppercase;
+letter-spacing: 0.06em;
+margin-bottom: 0.3rem;
+}
+.distort-pill {
+display: inline-block;
+background: var(–grey-blue);
+color: var(–text-1);
+font-size: 0.7rem;
+padding: 0.15em 0.5em;
+border-radius: 2px;
+margin: 0.15em 0.2em 0.15em 0;
+line-height: 1.3;
+}
+.distort-pill.high { background: rgba(180,60,30,0.7); }
+.distort-pill.med  { background: rgba(180,140,30,0.6); }
+.distort-pill.low  { background: rgba(60,130,80,0.55); }
+
+/* ── LIGHTBOX ── */
+.lightbox {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(10,16,22,0.88);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox-inner {
+position: relative;
+background: #1e2a35;
+border: 1px solid var(–grey-blue);
+border-radius: 4px;
+padding: 0.5rem;
+}
+.lightbox-inner svg { display: block; }
+.lb-close {
+position: absolute;
+top: -0.6rem;
+right: -0.6rem;
+width: 1.5rem;
+height: 1.5rem;
+background: var(–accent);
+color: #fff;
+border: none;
+border-radius: 50%;
+cursor: pointer;
+font-size: 0.85rem;
+line-height: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: var(–font);
+font-weight: 700;
+}
+.lb-close:hover { background: #b5541a; }
+
+/* ── FOOTER ── */
+footer {
+background: var(–page-bg);
+border-top: 1px solid var(–grey-blue);
+padding: 0.55rem 1.5rem;
+font-size: 0.7rem;
+color: var(–text-2);
+display: flex;
+gap: 2rem;
+flex-wrap: wrap;
+}
+
+/* ── SCROLLBAR STYLING ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(–page-bg); }
+::-webkit-scrollbar-thumb { background: var(–grey-blue); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(–accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+.app-shell {
+grid-template-columns: 1fr;
+grid-template-rows: auto auto auto;
+height: auto;
+overflow: visible;
+}
+.col-list  { max-height: 280px; border-right: none; border-bottom: 1px solid var(–grey-blue); }
+.col-detail { height: auto; }
+.col-meta  { border-left: none; border-top: 1px solid var(–grey-blue); }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <a href="../tool-index.html" class="back">&#8592; Index</a>
+  <div class="title-block">
+    <div class="module-label">GIS Tools &mdash; Alaska Geotechnical Tools</div>
+    <h1>Map Projection Reference Guide</h1>
+  </div>
+</header>
+
+<div class="app-shell">
+  <div class="col-list" id="projList"></div>
+  <div class="col-detail" id="projDetail"></div>
+  <div class="col-meta"  id="projMeta"></div>
+</div>
+
+<footer>
+  <span>Independent personal project &mdash; not affiliated with Alaska DOT&PF or any government agency. Tool outputs are reference aids only.</span>
+  <span>Ian Minnock, CPG, PMP, PMI-ACP &mdash; ifminnock.github.io/index</span>
+</footer>
+
+<!-- Lightbox -->
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner" id="lbInner">
+    <button class="lb-close" id="lbClose">&#x2715;</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  SVG GRATICULE GENERATOR
+//  Produces characteristic grid shape for each projection
+// ============================================================
+
+function makeSVG(type, w, h) {
+  // Returns an SVG string for the given projection type
+  const ns = 'http://www.w3.org/2000/svg';
+  let paths = '';
+  const bg   = '#1e2a35';
+  const grid = '#2E6080';
+  const land = '#2A4A3C';
+  const eq   = '#D4651A';
+
+  // helper: clamp
+  function cl(v, mn, mx) { return Math.max(mn, Math.min(mx, v)); }
+
+  // ── MERCATOR / WEB MERCATOR ──
+  if (type === 'mercator') {
+    const mx = w * 0.1, my = h * 0.05;
+    const iw = w - mx*2, ih = h - my*2;
+    let p = '';
+    // meridians (straight vertical)
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const x = mx + (lon + 180) / 360 * iw;
+      p += `M ${x} ${my} L ${x} ${my+ih} `;
+    }
+    // parallels — Mercator: lat spacing grows toward poles
+    for (let lat = -80; lat <= 80; lat += 30) {
+      const y = my + ih/2 - (Math.log(Math.tan(Math.PI/4 + lat*Math.PI/360)) / Math.log(Math.tan(Math.PI/4 + 80*Math.PI/360))) * (ih/2);
+      p += `M ${mx} ${y} L ${mx+iw} ${y} `;
+    }
+    paths = `<rect x="${mx}" y="${my}" width="${iw}" height="${ih}" fill="${land}" opacity="0.18"/>
+             <path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${mx}" y1="${my+ih/2}" x2="${mx+iw}" y2="${my+ih/2}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── TRANSVERSE MERCATOR / UTM ──
+  else if (type === 'transverse_mercator') {
+    // Narrow vertical strip — TM has low distortion near central meridian only
+    const cx = w/2;
+    let p = '';
+    // Show curved meridians bowing away
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const dx = (lon / 180) * (w * 0.46);
+      const bow = Math.abs(dx) * 0.25;
+      p += `M ${cx+dx} ${h*0.05} Q ${cx+dx+bow} ${h/2} ${cx+dx} ${h*0.95} `;
+    }
+    // straight parallels
+    for (let lat = -90; lat <= 90; lat += 30) {
+      const y = h/2 - (lat/90)*(h*0.45);
+      p += `M ${w*0.05} ${y} L ${w*0.95} ${y} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${w*0.05}" y1="${h/2}" x2="${w*0.95}" y2="${h/2}" stroke="${eq}" stroke-width="1.2"/>
+             <rect x="${w/2-18}" y="${h*0.05}" width="36" height="${h*0.9}" fill="${eq}" opacity="0.08"/>`;
+  }
+
+  // ── PLATE CARREE ──
+  else if (type === 'plate_carree') {
+    const mx = w*0.08, my = h*0.08;
+    const iw = w-mx*2, ih = h-my*2;
+    let p = '';
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const x = mx + (lon+180)/360*iw;
+      p += `M ${x} ${my} L ${x} ${my+ih} `;
+    }
+    for (let lat = -90; lat <= 90; lat += 30) {
+      const y = my + (90-lat)/180*ih;
+      p += `M ${mx} ${y} L ${mx+iw} ${y} `;
+    }
+    paths = `<rect x="${mx}" y="${my}" width="${iw}" height="${ih}" fill="${land}" opacity="0.18"/>
+             <path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${mx}" y1="${my+ih/2}" x2="${mx+iw}" y2="${my+ih/2}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── ALBERS EQUAL AREA CONIC ──
+  else if (type === 'albers') {
+    const cx = w/2, cy = h*1.2;
+    const r1 = h*0.95, r2 = h*1.45;
+    let p = '';
+    // arcs
+    for (let i = 0; i <= 5; i++) {
+      const r = r1 + (r2-r1)*i/5;
+      const a1 = -65 * Math.PI/180;
+      const a2 = -115 * Math.PI/180;
+      const x1 = cx + r*Math.sin(-a1), y1 = cy - r*Math.cos(-a1);
+      const x2 = cx + r*Math.sin(-a2), y2 = cy - r*Math.cos(-a2);
+      p += `M ${x1} ${y1} A ${r} ${r} 0 0 0 ${x2} ${y2} `;
+    }
+    // radial lines
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const a = (lon/360)*2*Math.PI;
+      const x1 = cx + r1*Math.sin(a), y1 = cy - r1*Math.cos(a);
+      const x2 = cx + r2*Math.sin(a), y2 = cy - r2*Math.cos(a);
+      p += `M ${x1} ${y1} L ${x2} ${y2} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>`;
+  }
+
+  // ── LAMBERT CONFORMAL CONIC ──
+  else if (type === 'lcc') {
+    const cx = w/2, cy = h*1.35;
+    const r1 = h*0.85, r2 = h*1.55;
+    let p = '';
+    for (let i = 0; i <= 5; i++) {
+      const r = r1 + (r2-r1)*i/5;
+      const span = 70 * Math.PI/180;
+      const x1 = cx + r*Math.sin(-span), y1 = cy - r*Math.cos(-span);
+      const x2 = cx + r*Math.sin(span),  y2 = cy - r*Math.cos(span);
+      p += `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} `;
+    }
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const a = (lon/360)*2*Math.PI * 0.55;
+      const x1 = cx + r1*Math.sin(a), y1 = cy - r1*Math.cos(a);
+      const x2 = cx + r2*Math.sin(a), y2 = cy - r2*Math.cos(a);
+      p += `M ${x1} ${y1} L ${x2} ${y2} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>`;
+  }
+
+  // ── POLYCONIC ──
+  else if (type === 'polyconic') {
+    const cx = w/2;
+    let p = '';
+    // each parallel is a different small circle arc (bowed differently)
+    for (let lat = -60; lat <= 60; lat += 20) {
+      const y0 = h/2 - (lat/90)*(h*0.42);
+      const bow = (1 - Math.abs(lat)/90) * w * 0.18;
+      p += `M ${cx - w*0.44} ${y0 + bow*0.15} Q ${cx} ${y0 - bow*0.35} ${cx + w*0.44} ${y0 + bow*0.15} `;
+    }
+    // meridians curve outward
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const dx = (lon/180) * w*0.44;
+      const bow2 = Math.abs(dx) * 0.12;
+      p += `M ${cx+dx} ${h*0.07} Q ${cx+dx - Math.sign(dx)*bow2} ${h/2} ${cx+dx} ${h*0.93} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${w*0.06}" y1="${h/2}" x2="${w*0.94}" y2="${h/2}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── STEREOGRAPHIC ──
+  else if (type === 'stereographic') {
+    const cx = w/2, cy = h/2;
+    let p = '';
+    // circular parallels expanding outward
+    for (let i = 1; i <= 5; i++) {
+      const r = i * (Math.min(w,h)*0.085);
+      p += `M ${cx+r} ${cy} A ${r} ${r} 0 1 0 ${cx-r} ${cy} A ${r} ${r} 0 1 0 ${cx+r} ${cy} `;
+    }
+    // straight meridians radiating from center
+    for (let a = 0; a < 360; a += 30) {
+      const rad = a * Math.PI/180;
+      p += `M ${cx} ${cy} L ${cx + Math.cos(rad)*w*0.46} ${cy + Math.sin(rad)*h*0.46} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <circle cx="${cx}" cy="${cy}" r="3" fill="${eq}"/>`;
+  }
+
+  // ── ORTHOGRAPHIC ──
+  else if (type === 'orthographic') {
+    const cx = w/2, cy = h/2;
+    const R = Math.min(w,h)*0.42;
+    let p = '';
+    p += `M ${cx+R} ${cy} A ${R} ${R} 0 1 0 ${cx-R} ${cy} A ${R} ${R} 0 1 0 ${cx+R} ${cy} `;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      const ry = R * Math.sin(lat*Math.PI/180);
+      const rx2 = R * Math.cos(lat*Math.PI/180);
+      if (lat !== 0) {
+        p += `M ${cx+rx2} ${cy-ry} A ${rx2} ${R*0.12} 0 1 0 ${cx-rx2} ${cy-ry} A ${rx2} ${R*0.12} 0 1 0 ${cx+rx2} ${cy-ry} `;
+      }
+    }
+    for (let lon = -180; lon < 180; lon += 30) {
+      const a = lon * Math.PI/180;
+      const rx3 = R * Math.abs(Math.cos(a));
+      p += `M ${cx + R*Math.sin(a)} ${cy-R} A ${rx3} ${R} 0 0 1 ${cx + R*Math.sin(a)} ${cy+R} `;
+    }
+    paths = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${land}" opacity="0.2"/>
+             <path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${eq}" stroke-width="1.5"/>
+             <line x1="${cx-R}" y1="${cy}" x2="${cx+R}" y2="${cy}" stroke="${eq}" stroke-width="1.0" opacity="0.6"/>`;
+  }
+
+  // ── AZIMUTHAL EQUIDISTANT ──
+  else if (type === 'azimuthal_equidist') {
+    const cx = w/2, cy = h/2;
+    let p = '';
+    for (let i = 1; i <= 5; i++) {
+      const r = i * (Math.min(w,h) * 0.085);
+      p += `M ${cx+r} ${cy} A ${r} ${r} 0 1 0 ${cx-r} ${cy} A ${r} ${r} 0 1 0 ${cx+r} ${cy} `;
+    }
+    for (let a = 0; a < 360; a += 30) {
+      const rad = a * Math.PI/180;
+      const R = Math.min(w,h)*0.44;
+      p += `M ${cx} ${cy} L ${cx + Math.cos(rad)*R} ${cy + Math.sin(rad)*R} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*0.44}" fill="none" stroke="${grid}" stroke-width="1.2"/>
+             <circle cx="${cx}" cy="${cy}" r="3" fill="${eq}"/>`;
+  }
+
+  // ── LAMBERT AZIMUTHAL EQUAL AREA ──
+  else if (type === 'laea') {
+    const cx = w/2, cy = h/2;
+    let p = '';
+    for (let i = 1; i <= 5; i++) {
+      const r = i * (Math.min(w,h) * 0.085);
+      p += `M ${cx+r} ${cy} A ${r} ${r} 0 1 0 ${cx-r} ${cy} A ${r} ${r} 0 1 0 ${cx+r} ${cy} `;
+    }
+    for (let a = 0; a < 360; a += 30) {
+      const rad = a * Math.PI/180;
+      const R = Math.min(w,h)*0.44;
+      p += `M ${cx} ${cy} L ${cx + Math.cos(rad)*R} ${cy + Math.sin(rad)*R} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*0.44}" fill="none" stroke="${eq}" stroke-width="1.4"/>
+             <circle cx="${cx}" cy="${cy}" r="3" fill="${eq}"/>`;
+  }
+
+  // ── GNOMONIC ──
+  else if (type === 'gnomonic') {
+    const cx = w/2, cy = h/2;
+    let p = '';
+    // small view circle (only < 90deg from center)
+    const R = Math.min(w,h)*0.42;
+    // parallels are hyperbolas — approximate with compressed circles
+    for (let i = 1; i <= 4; i++) {
+      const r = i * R / 4.2;
+      p += `M ${cx+r} ${cy} A ${r} ${r} 0 1 0 ${cx-r} ${cy} A ${r} ${r} 0 1 0 ${cx+r} ${cy} `;
+    }
+    // straight line meridians
+    for (let a = 0; a < 360; a += 30) {
+      const rad = a * Math.PI/180;
+      p += `M ${cx} ${cy} L ${cx + Math.cos(rad)*R} ${cy + Math.sin(rad)*R} `;
+    }
+    paths = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${land}" opacity="0.12" stroke="${eq}" stroke-width="1.2"/>
+             <path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <circle cx="${cx}" cy="${cy}" r="3" fill="${eq}"/>`;
+  }
+
+  // ── MOLLWEIDE ──
+  else if (type === 'mollweide') {
+    const cx = w/2, cy = h/2;
+    const a = w*0.45, b = h*0.44;
+    let p = '';
+    p += `M ${cx+a} ${cy} A ${a} ${b} 0 1 0 ${cx-a} ${cy} A ${a} ${b} 0 1 0 ${cx+a} ${cy} `;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      const fy = b * Math.sin(lat*Math.PI/180) * 1.25;
+      const fx = a * Math.cos(Math.asin(cl(fy/b, -1, 1)));
+      p += `M ${cx-fx} ${cy-fy} L ${cx+fx} ${cy-fy} `;
+    }
+    for (let lon = -180; lon < 180; lon += 30) {
+      const xf = (lon/180) * a;
+      p += `M ${xf+cx} ${cy-b} A ${a*0.1} ${b} 0 0 1 ${xf+cx} ${cy+b} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <ellipse cx="${cx}" cy="${cy}" rx="${a}" ry="${b}" fill="none" stroke="${eq}" stroke-width="1.4"/>
+             <line x1="${cx-a}" y1="${cy}" x2="${cx+a}" y2="${cy}" stroke="${eq}" stroke-width="1.0"/>`;
+  }
+
+  // ── ROBINSON ──
+  else if (type === 'robinson') {
+    const cx = w/2, cy = h/2;
+    const W = w*0.44, H = h*0.44;
+    // Robinson table approximate Y and X-width factors
+    const rTab = [
+      [90,0.532,0.0],[80,0.605,0.62],[70,0.660,0.747],[60,0.700,0.828],
+      [50,0.731,0.888],[40,0.754,0.933],[30,0.768,0.967],[20,0.776,0.988],
+      [10,0.779,0.999],[0,0.779,1.0]
+    ];
+    // parallels
+    let p = '';
+    for (let i = 0; i < rTab.length; i++) {
+      const [lat, yf, xf] = rTab[i];
+      const y = cy - yf*H; const x2 = xf*W;
+      p += `M ${cx-x2} ${y} L ${cx+x2} ${y} `;
+      if (lat > 0) { p += `M ${cx-x2} ${cy+yf*H} L ${cx+x2} ${cy+yf*H} `; }
+    }
+    // meridians curve slightly
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const xf2 = lon/180;
+      let pts = '';
+      for (let i = rTab.length-1; i >= 0; i--) {
+        const [lat2, yf2, xf3] = rTab[i];
+        const x3 = cx + xf2*xf3*W;
+        const y3 = cy - yf2*H;
+        pts += (i === rTab.length-1 ? `M ${x3} ${y3}` : ` L ${x3} ${y3}`);
+      }
+      for (let i = 1; i < rTab.length; i++) {
+        const [lat3, yf3, xf4] = rTab[i];
+        const x4 = cx + xf2*xf4*W;
+        const y4 = cy + yf3*H;
+        pts += ` L ${x4} ${y4}`;
+      }
+      p += pts + ' ';
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${cx - W}" y1="${cy}" x2="${cx + W}" y2="${cy}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── WINKEL TRIPEL ──
+  else if (type === 'winkel_tripel') {
+    const cx = w/2, cy = h/2;
+    const W = w*0.44, H = h*0.42;
+    let p = '';
+    // Approximation: similar to Aitoff but slightly less bowed
+    for (let lat = -90; lat <= 90; lat += 30) {
+      const yp = (lat/90) * H;
+      const xw = W * Math.cos(lat*Math.PI/180 * 0.5);
+      p += `M ${cx-xw} ${cy-yp} L ${cx+xw} ${cy-yp} `;
+    }
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const pts2 = [];
+      for (let lat2 = -90; lat2 <= 90; lat2 += 10) {
+        const sinc_arg = Math.cos(lat2*Math.PI/180) * Math.cos(lon*Math.PI/360);
+        const sinc_val = Math.abs(sinc_arg) < 0.001 ? 1 : Math.asin(cl(sinc_arg,-1,1)) / sinc_arg;
+        const xp = cx + (lon*Math.PI/360) * Math.cos(lat2*Math.PI/180) * sinc_val * W * 0.95
+                      + (lon/180) * W * 0.5;
+        const xavg = xp / 2;
+        const yp2 = cy - (lat2/90)*H;
+        pts2.push(`${cx + (lon/180)*W*0.75 + Math.cos(lat2*Math.PI/180)*(lon/180)*W*0.18} ${yp2}`);
+      }
+      p += `M ${pts2.join(' L ')} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.75" fill="none"/>
+             <line x1="${cx-W*0.96}" y1="${cy}" x2="${cx+W*0.96}" y2="${cy}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── GOODE'S HOMOLOSINE ──
+  else if (type === 'goodes') {
+    const cx = w/2, cy = h/2;
+    const W = w*0.44, H = h*0.44;
+    let p = '';
+    // Two ellipses — interrupted projection (lobes)
+    const lobes = [-0.52, -0.15, 0.22, 0.6];
+    for (const lo of lobes) {
+      const lx = cx + lo*W*1.2;
+      p += `M ${lx+W*0.26} ${cy} A ${W*0.26} ${H*0.44} 0 1 0 ${lx-W*0.26} ${cy} A ${W*0.26} ${H*0.44} 0 1 0 ${lx+W*0.26} ${cy} `;
+      for (let lat2 = -60; lat2 <= 60; lat2 += 30) {
+        const yp = (lat2/90)*H*0.44;
+        const xw2 = W*0.24*Math.cos(lat2*Math.PI/180);
+        p += `M ${lx-xw2} ${cy-yp} L ${lx+xw2} ${cy-yp} `;
+      }
+    }
+    p += `M ${cx-W} ${cy} L ${cx+W} ${cy} `;
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${cx-W}" y1="${cy}" x2="${cx+W}" y2="${cy}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── ALASKA STATE PLANE ──
+  else if (type === 'alaska_sp') {
+    // Oblique Mercator feel — zones shown as narrow bands
+    const cx = w/2, cy = h/2;
+    let p = '';
+    const zones = [-0.55, -0.22, 0.11, 0.44];
+    for (let i = 0; i < zones.length; i++) {
+      const ox = cx + zones[i]*w*0.4;
+      const tilt = (i - 1.5) * 0.15;
+      for (let lat3 = -60; lat3 <= 60; lat3 += 20) {
+        const y0 = cy - (lat3/90)*h*0.42;
+        p += `M ${ox - w*0.06} ${y0 + tilt*h*0.3} L ${ox + w*0.06} ${y0 - tilt*h*0.3} `;
+      }
+      p += `M ${ox} ${h*0.06} L ${ox} ${h*0.94} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.8" fill="none"/>
+             <line x1="${w*0.06}" y1="${cy}" x2="${w*0.94}" y2="${cy}" stroke="${eq}" stroke-width="1.2"/>`;
+  }
+
+  // ── ALASKA ALBERS (EPSG:3338) ──
+  else if (type === 'alaska_albers') {
+    // Conic centred on ~154°W, standard parallels 55°N & 65°N
+    const cx = w*0.52, cy = h*1.1;
+    const r1 = h*0.75, r2 = h*1.2;
+    let p = '';
+    for (let i = 0; i <= 5; i++) {
+      const r = r1 + (r2-r1)*i/5;
+      const span = 62 * Math.PI/180;
+      const x1 = cx + r*Math.sin(-span), y1 = cy - r*Math.cos(-span);
+      const x2 = cx + r*Math.sin(span),  y2 = cy - r*Math.cos(span);
+      p += `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} `;
+    }
+    for (let lon = -210; lon <= -100; lon += 20) {
+      const a = ((lon+154)/180)*Math.PI * 0.9;
+      const x1 = cx + r1*Math.sin(a), y1 = cy - r1*Math.cos(a);
+      const x2 = cx + r2*Math.sin(a), y2 = cy - r2*Math.cos(a);
+      p += `M ${x1} ${y1} L ${x2} ${y2} `;
+    }
+    paths = `<path d="${p}" stroke="${grid}" stroke-width="0.9" fill="none"/>
+             <path d="${p.split('M').slice(0,4).map(s => 'M'+s).join('')}" stroke="${eq}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
+  }
+
+  // fallback rectangle
+  else {
+    paths = `<rect x="${w*0.08}" y="${h*0.08}" width="${w*0.84}" height="${h*0.84}" fill="none" stroke="${grid}" stroke-width="0.8"/>`;
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <rect width="${w}" height="${h}" fill="${bg}"/>
+    ${paths}
+  </svg>`;
+}
+
+// ============================================================
+//  PROJECTION DATA
+// ============================================================
+const PROJECTIONS = [
+  // ── CYLINDRICAL ─────────────────────────────────────────
+  {
+    id: 'mercator',
+    family: 'Cylindrical',
+    name: 'Mercator',
+    subtitle: 'Cylindrical &mdash; Conformal',
+    classification: 'Conformal',
+    svg: 'mercator',
+    construction: 'A mathematically derived cylinder is wrapped around a sphere tangent at the equator. Meridians become equally spaced vertical lines; parallels are horizontal lines whose spacing increases logarithmically toward the poles to preserve local shape. Any straight line on the map is a rhumb line (line of constant compass bearing).',
+    distortion: 'Shapes are locally correct (conformal) but area is massively exaggerated at high latitudes. Greenland appears comparable in size to Africa despite being ~14× smaller. The poles cannot be shown.',
+    useCases: 'Marine navigation; Web tiling base maps; equatorial regional maps. Poor choice for thematic area comparison.',
+    epsg: ['EPSG:4326 (geographic)', 'EPSG:3395 (World Mercator)'],
+    distortionTags: [{label:'Area — HIGH poleward', cls:'high'},{label:'Shape — Preserved locally',cls:'low'},{label:'Distance — Only along equator',cls:'med'}],
+    alaska: 'Inappropriate for Alaska work. Grossly exaggerates Alaska\'s size and distorts area relationships. Useful only if overlaying data on a Mercator web tile base.',
+  },
+  {
+    id: 'web_mercator',
+    family: 'Cylindrical',
+    name: 'Web Mercator',
+    subtitle: 'Cylindrical &mdash; Pseudo-Conformal',
+    classification: 'Pseudo-Conformal',
+    svg: 'mercator',
+    construction: 'A spherical variant of Mercator applied to an ellipsoidal Earth, treating the WGS 84 ellipsoid as a sphere for projection math but retaining ellipsoidal geodetic coordinates. This introduces a small non-conformality at large scales. Used universally in web tile services (Google Maps, OpenStreetMap, Esri basemaps).',
+    distortion: 'Same severe area distortion as Mercator, plus a small conformality error from treating the ellipsoid as a sphere. Scale errors up to ~0.3% across normal usage ranges. Not suitable for accurate distance, area, or bearing measurements.',
+    useCases: 'Web mapping and tile services; display-only base maps; any context where alignment with web tile providers is required.',
+    epsg: ['EPSG:3857', 'EPSG:900913 (deprecated Google alias)'],
+    distortionTags: [{label:'Area — HIGH poleward',cls:'high'},{label:'Shape — Approx. preserved',cls:'med'},{label:'Conformality — Broken at large scale',cls:'med'}],
+    alaska: 'Standard for web basemaps in GIS workflows. Accept it as a display background but never use it as an analysis CRS for Alaska work. Transform to EPSG:3338 or appropriate State Plane zone before any area or distance computation.',
+  },
+  {
+    id: 'transverse_mercator',
+    family: 'Cylindrical',
+    name: 'Transverse Mercator',
+    subtitle: 'Cylindrical &mdash; Conformal (rotated)',
+    classification: 'Conformal',
+    svg: 'transverse_mercator',
+    construction: 'The Mercator cylinder is rotated 90° so it is tangent to a meridian rather than the equator. This produces low distortion in a narrow north&ndash;south strip centered on the central meridian. Meridians are no longer straight lines (except the central meridian); parallels are also curves. The foundation of UTM and most state plane zones.',
+    distortion: 'Near-zero distortion within ~3° of the central meridian. Shape preserved (conformal). Distortion grows rapidly east&ndash;west; unsuitable for wide east&ndash;west extents.',
+    useCases: 'Foundation for UTM zones; national grid systems; narrow north&ndash;south country maps; cadastral survey.',
+    epsg: ['Zone-dependent (see UTM entry)'],
+    distortionTags: [{label:'Shape — Preserved (conformal)',cls:'low'},{label:'Area — Low near CM',cls:'low'},{label:'Distance — Grows E&ndash;W',cls:'med'}],
+    alaska: 'UTM zones 2N&ndash;6N cover Alaska (see UTM entry). State Plane zones for Alaska also use Transverse Mercator or Oblique Mercator depending on zone geometry.',
+  },
+  {
+    id: 'utm',
+    family: 'Cylindrical',
+    name: 'Universal Transverse Mercator (UTM)',
+    subtitle: 'Cylindrical &mdash; Conformal zone system',
+    classification: 'Conformal',
+    svg: 'transverse_mercator',
+    construction: 'The globe is divided into 60 longitudinal zones each 6° wide. Within each zone, a Transverse Mercator projection is applied with a central meridian at the zone\'s center and a scale factor of 0.9996 (slightly reduced from 1) to distribute distortion across the zone. Coordinates are given as Easting (false origin 500,000 m) and Northing (0 m at equator for north zones).',
+    distortion: 'Low distortion within each zone. Scale error &lt;1:1,000 within ±3° of the central meridian. Distortion increases toward zone edges; cross-zone computations require careful handling.',
+    useCases: 'Standard coordinate system for field survey; GIS data exchange; military mapping; any work within a single or adjacent zone pair.',
+    epsg: ['Zone 2N: EPSG:32602','Zone 3N: EPSG:32603','Zone 4N: EPSG:32604','Zone 5N: EPSG:32605','Zone 6N: EPSG:32606'],
+    distortionTags: [{label:'Shape — Preserved (conformal)',cls:'low'},{label:'Area — Low within zone',cls:'low'},{label:'Scale factor: 0.9996',cls:'low'}],
+    alaska: 'Alaska spans UTM Zones 2N through 6N. Zone 6N (central meridian 147°W) covers Anchorage and the Matanuska&ndash;Susitna Valley. Zone 5N covers Southeast Alaska. Zone 4N covers the Alaska Peninsula and western Kodiak. Zone 3N and 2N cover the western Aleutians. Use the appropriate zone for project work; stitch zones with care in wide-coverage datasets.',
+  },
+  {
+    id: 'plate_carree',
+    family: 'Cylindrical',
+    name: 'Plate Carr&eacute;e (Geographic)',
+    subtitle: 'Cylindrical &mdash; Equidistant',
+    classification: 'Equidistant (along meridians)',
+    svg: 'plate_carree',
+    construction: 'The simplest projection: longitude is mapped directly to x and latitude directly to y with equal linear scale on both axes. The result is a rectangle twice as wide as it is tall. No mathematical transformation beyond the coordinate assignment itself.',
+    distortion: 'Area and shape are severely distorted except near the equator. Meridians and parallels form a regular grid but the aspect ratio of cells distorts rapidly toward poles. Used primarily as a data storage format, not a display projection.',
+    useCases: 'Default CRS for raw geographic (lat/lon) data storage; satellite image rasters; global datasets where the storage simplicity outweighs display quality.',
+    epsg: ['EPSG:4326 (WGS 84 geographic)','EPSG:4269 (NAD 83 geographic)'],
+    distortionTags: [{label:'Area — Severe poleward',cls:'high'},{label:'Shape — Distorted',cls:'high'},{label:'Simple — Linear scale on meridians',cls:'low'}],
+    alaska: 'EPSG:4326 is the default CRS for most GPS data and raw survey exports. Always reproject to an analysis CRS (EPSG:3338 or UTM zone) before computing areas, distances, or slopes in Alaska.',
+  },
+
+  // ── CONIC ──────────────────────────────────────────────
+  {
+    id: 'albers',
+    family: 'Conic',
+    name: 'Albers Equal-Area Conic',
+    subtitle: 'Conic &mdash; Equal-Area',
+    classification: 'Equal-Area',
+    svg: 'albers',
+    construction: 'A cone intersects the globe at two standard parallels. The cone is unrolled into a flat fan shape. Meridians are straight lines radiating from a pole; parallels are arcs of concentric circles. The spacing of parallels is adjusted to preserve area: where the cone intersects the globe, the east&ndash;west scale is reduced while north&ndash;south scale is increased proportionally. Area is exactly preserved everywhere.',
+    distortion: 'No area distortion anywhere. Shape distortion increases away from the standard parallels but is small within the zone between them. Directions and distances are approximate except along standard parallels.',
+    useCases: 'Thematic area maps of mid-latitude regions; US national maps; any context requiring accurate area comparison. Standard choice for lower 48 US statistics maps.',
+    epsg: ['EPSG:5070 (Contiguous US Albers)','EPSG:3338 (Alaska Albers)'],
+    distortionTags: [{label:'Area — Exactly preserved',cls:'low'},{label:'Shape — Small between std. parallels',cls:'low'},{label:'Direction — Approximate',cls:'med'}],
+    alaska: 'EPSG:3338 (Alaska Albers, standard parallels 55°N & 65°N) is the recommended equal-area CRS for statewide Alaska GIS analysis. Use for area calculations, thematic mapping, and any dataset spanning the full state.',
+  },
+  {
+    id: 'lcc',
+    family: 'Conic',
+    name: 'Lambert Conformal Conic',
+    subtitle: 'Conic &mdash; Conformal',
+    classification: 'Conformal',
+    svg: 'lcc',
+    construction: 'Similar cone construction to Albers but spacing of parallels is adjusted to preserve shape (conformality) rather than area. Two standard parallels are chosen bracketing the region of interest; the cone intersects the globe along these lines. Within the zone, angles are preserved exactly and scale distortion is minimized.',
+    distortion: 'Shape exactly preserved everywhere (conformal). Area distortion increases away from the standard parallels. Suitable for east&ndash;west oriented regions.',
+    useCases: 'Aviation charts; NOAA coastal charts; mid-latitude regional maps; US state plane zones for east&ndash;west states; North American aeronautical sectional charts.',
+    epsg: ['Zone-dependent — many US State Plane zones use LCC'],
+    distortionTags: [{label:'Shape — Exactly preserved',cls:'low'},{label:'Area — Moderate away from std. par.',cls:'med'},{label:'Scale — Low between std. parallels',cls:'low'}],
+    alaska: 'Alaska State Plane zones use Oblique Mercator or Transverse Mercator depending on zone orientation, not LCC. However, LCC is commonly encountered in Alaska aviation charts and regional NOAA products. Standard parallels typically set near 55°N and 65°N for Alaska-extent maps.',
+  },
+  {
+    id: 'polyconic',
+    family: 'Conic',
+    name: 'Polyconic',
+    subtitle: 'Conic &mdash; Neither conformal nor equal-area',
+    classification: 'Compromise (neither)',
+    svg: 'polyconic',
+    construction: 'Uses a different cone for each parallel: each parallel is mapped to the arc of a cone tangent at that latitude. The central meridian is straight; all other meridians are curves. This produces a distinctive "ungrouped" grid where parallels are circular arcs of different radii centered at different points on the central meridian.',
+    distortion: 'Neither conformal nor equal-area. Low distortion near the central meridian; significant distortion toward edges. Historically used for large-scale topographic mapping before better projections were routinely computed.',
+    useCases: 'Historical USGS topographic quads (pre-1960s); some cadastral survey. Largely superseded by Transverse Mercator for topographic work.',
+    epsg: ['No standard EPSG; defined by central meridian and false origin'],
+    distortionTags: [{label:'Shape — Moderate near CM',cls:'med'},{label:'Area — Moderate near CM',cls:'med'},{label:'Historical use only',cls:'med'}],
+    alaska: 'Occasionally encountered in old Alaska survey records and pre-1960s USGS quad maps. Not used in modern Alaska GIS workflows. If encountered, transform to a current CRS before analysis.',
+  },
+
+  // ── AZIMUTHAL ──────────────────────────────────────────
+  {
+    id: 'stereographic',
+    family: 'Azimuthal',
+    name: 'Stereographic',
+    subtitle: 'Azimuthal &mdash; Conformal',
+    classification: 'Conformal',
+    svg: 'stereographic',
+    construction: 'Projection is computed from the antipodal point of the tangent point on the sphere to a tangent plane. Each point on the globe is connected to the antipodal origin; where that line pierces the tangent plane is the projected location. The result is a conformal azimuthal projection where circles on the sphere map to circles on the plane.',
+    distortion: 'Shape exactly preserved (conformal). Area distortion increases away from the center point. The entire globe can be shown in one hemisphere but the far hemisphere is severely distorted in area.',
+    useCases: 'Polar maps (the polar stereographic is the standard for Arctic/Antarctic work); UPS coordinate system; geological mapping of polar regions.',
+    epsg: ['EPSG:3413 (NSIDC Arctic Stereographic)','EPSG:3031 (Antarctic Polar Stereographic)','EPSG:32661 (UPS North)'],
+    distortionTags: [{label:'Shape — Exactly preserved',cls:'low'},{label:'Area — Grows from center',cls:'high'},{label:'Circles mapped to circles',cls:'low'}],
+    alaska: 'The Arctic Polar Stereographic (EPSG:3413) is standard for Arctic Ocean and sea ice analyses involving Alaska\'s northern coastline. Used in NSIDC sea ice products and Arctic climate datasets. Less appropriate for land-based Alaska work than EPSG:3338.',
+  },
+  {
+    id: 'orthographic',
+    family: 'Azimuthal',
+    name: 'Orthographic',
+    subtitle: 'Azimuthal &mdash; Neither conformal nor equal-area',
+    classification: 'Perspective (compromise)',
+    svg: 'orthographic',
+    construction: 'Parallel projection rays from an infinite distance cast the globe onto a tangent plane. This replicates the view of Earth from an extremely distant point in space. Only one hemisphere is visible. Constructed by computing orthogonal projections of each surface point onto the tangent plane.',
+    distortion: 'Neither conformal nor equal-area. Area is compressed toward the edges of the hemisphere; objects near the limb appear foreshortened. Not suitable for measurement.',
+    useCases: 'Globe visualization and illustration; cartographic aesthetics; locator diagrams. Purely presentational.',
+    epsg: ['Not standardized &mdash; defined by center lat/lon'],
+    distortionTags: [{label:'Area — Severe at hemisphere edge',cls:'high'},{label:'Shape — Compressed at edge',cls:'high'},{label:'Visual/presentation only',cls:'med'}],
+    alaska: 'Useful for locator maps and context diagrams showing Alaska\'s position relative to the Arctic Circle or Pacific. Not used for analytical work.',
+  },
+  {
+    id: 'azimuthal_equidist',
+    family: 'Azimuthal',
+    name: 'Azimuthal Equidistant',
+    subtitle: 'Azimuthal &mdash; Equidistant from center',
+    classification: 'Equidistant (from center)',
+    svg: 'azimuthal_equidist',
+    construction: 'Distances from the center point to any other point on the globe are preserved exactly; all directions from the center are also correct. Constructed by computing the great-circle distance and azimuth from the center to each globe point, then plotting at that distance and direction on the plane.',
+    distortion: 'Distances and directions from the center point are exact. Shape and area distortion increase away from the center. The antipodal point is mapped to the outer perimeter as a circle.',
+    useCases: 'Air-distance diagrams; telecommunications range maps; seismic wave travel-time maps; maps centered on a specific city.',
+    epsg: ['Not standardized &mdash; defined by center point'],
+    distortionTags: [{label:'Distance from center &mdash; Exact',cls:'low'},{label:'Direction from center &mdash; Exact',cls:'low'},{label:'Shape &mdash; Distorted away from center',cls:'med'}],
+    alaska: 'Can be centered on Anchorage or Fairbanks for range/distance diagrams. Not used as a standard analytical CRS in Alaska geotechnical work.',
+  },
+  {
+    id: 'laea',
+    family: 'Azimuthal',
+    name: 'Lambert Azimuthal Equal-Area',
+    subtitle: 'Azimuthal &mdash; Equal-Area',
+    classification: 'Equal-Area',
+    svg: 'laea',
+    construction: 'The globe is projected onto a tangent plane such that area is exactly preserved everywhere. The scale factor at any point equals 1/(scale factor in the perpendicular direction), balancing compression and stretching. Directions from the center point are correct; distances are not preserved except from the center.',
+    distortion: 'Area exactly preserved everywhere. Shape distortion increases away from the center point but is modest within ~30° of center. Not conformal; shapes are stretched radially near the perimeter.',
+    useCases: 'Continental-scale equal-area maps; statistical thematic maps; biological and geological area analyses.',
+    epsg: ['EPSG:3574 (North Pole LAEA)','EPSG:102017 (North Pole LAEA &mdash; ESRI)'],
+    distortionTags: [{label:'Area — Exactly preserved',cls:'low'},{label:'Shape — Moderate away from center',cls:'med'},{label:'Direction from center — Exact',cls:'low'}],
+    alaska: 'Used for pan-Arctic analyses including Alaska. EPSG:3338 (Albers) is generally preferred for Alaska-specific work due to its optimized standard parallels, but LAEA is appropriate for circum-Arctic comparisons.',
+  },
+  {
+    id: 'gnomonic',
+    family: 'Azimuthal',
+    name: 'Gnomonic',
+    subtitle: 'Azimuthal &mdash; Great circles as straight lines',
+    classification: 'Neither (unique property)',
+    svg: 'gnomonic',
+    construction: 'Projection rays emanate from the center of the Earth (not a surface or antipodal point) to a tangent plane. This geometry means every great circle on the globe maps to a straight line on the projection. However, the projection is only valid within one hemisphere from the center; areas approaching 90° from center project to infinity.',
+    distortion: 'Extreme area and shape distortion except near the center. Cannot show more than one hemisphere. Not conformal or equal-area.',
+    useCases: 'Navigation route planning (great circle routes appear straight); seismic wave path visualization; radio wave propagation planning.',
+    epsg: ['Not standardized &mdash; defined by center point'],
+    distortionTags: [{label:'Great circles &mdash; Straight lines',cls:'low'},{label:'Area &mdash; Severe distortion',cls:'high'},{label:'Shape &mdash; Severely distorted',cls:'high'}],
+    alaska: 'Used in Alaska for great-circle navigation route planning over the Pacific and Arctic. Historical use in transpacific and polar aviation routes.',
+  },
+
+  // ── PSEUDOCYLINDRICAL / COMPROMISE ───────────────────
+  {
+    id: 'mollweide',
+    family: 'Pseudocylindrical',
+    name: 'Mollweide',
+    subtitle: 'Pseudocylindrical &mdash; Equal-Area',
+    classification: 'Equal-Area',
+    svg: 'mollweide',
+    construction: 'An elliptical equal-area projection where the world is mapped to an ellipse. The central meridian and the equator are straight lines; all other meridians are elliptical curves; parallels are straight horizontal lines with spacing determined by an equal-area constraint solved iteratively. Total area of the ellipse equals the surface area of the sphere.',
+    distortion: 'Area exactly preserved everywhere. Shape distortion is severe near the outer edges (high latitudes and far from the central meridian). The elliptical boundary is a distortion-free equal-area envelope.',
+    useCases: 'World thematic maps requiring accurate area comparison; global biogeography and climatology maps.',
+    epsg: ['Not standardized in standard EPSG registry'],
+    distortionTags: [{label:'Area — Exactly preserved',cls:'low'},{label:'Shape — Severe at outer edges',cls:'high'},{label:'Compact elliptical boundary',cls:'low'}],
+    alaska: 'Occasionally used in global thematic maps where Alaska appears. Not appropriate for Alaska-specific analysis. At global scale, Alaska\'s representation is reasonably accurate in area.',
+  },
+  {
+    id: 'robinson',
+    family: 'Pseudocylindrical',
+    name: 'Robinson',
+    subtitle: 'Pseudocylindrical &mdash; Compromise',
+    classification: 'Compromise (neither conformal nor equal-area)',
+    svg: 'robinson',
+    construction: 'Defined by lookup tables of X- and Y-coordinates for each 5° increment of latitude (the Robinson table), with values interpolated between tabulated latitudes. Arthur Robinson designed it graphically in 1963 to minimize the overall visual impression of distortion, trading off conformality and equal-area for an aesthetically balanced world view. Meridians are curved; poles are lines, not points.',
+    distortion: 'Neither conformal nor equal-area. Distortion is spread across the map rather than concentrated. Area errors reach ~60% near poles. Shape distortion is moderate and visually acceptable across most of the world.',
+    useCases: 'General-purpose world maps; atlases; classroom maps. Replaced the Mercator for world reference maps at National Geographic from 1988&ndash;1998.',
+    epsg: ['Not standardized in EPSG'],
+    distortionTags: [{label:'Area — Moderate distortion',cls:'med'},{label:'Shape — Moderate distortion',cls:'med'},{label:'Visual balance — Optimized',cls:'low'}],
+    alaska: 'Used in world reference maps. Alaska appears slightly exaggerated in area compared to its true size. Not suitable for Alaska analysis; use EPSG:3338.',
+  },
+  {
+    id: 'winkel_tripel',
+    family: 'Pseudocylindrical',
+    name: 'Winkel Tripel',
+    subtitle: 'Pseudocylindrical &mdash; Compromise',
+    classification: 'Compromise (neither conformal nor equal-area)',
+    svg: 'winkel_tripel',
+    construction: 'A mean (arithmetic average) of the Aitoff projection and the Plate Carr&eacute;e. "Tripel" refers to Winkel\'s goal of minimizing three distortions: area, direction, and distance, simultaneously. Computed by averaging the x,y coordinates of the two component projections at each point. Meridians are gentle curves; poles are lines shorter than the equator.',
+    distortion: 'Neither conformal nor equal-area but minimizes the overall sum of distortions. The Winkel Tripel has the lowest mean area and shape distortion of major compromise world projections. Adopted by National Geographic in 1998.',
+    useCases: 'World reference maps; atlases; general cartography requiring the best overall compromise. National Geographic standard world map projection.',
+    epsg: ['Not standardized in EPSG'],
+    distortionTags: [{label:'Overall distortion &mdash; Minimized',cls:'low'},{label:'Area &mdash; Small moderate error',cls:'med'},{label:'Shape &mdash; Small moderate error',cls:'med'}],
+    alaska: 'Used in National Geographic world maps; Alaska representation is among the least distorted of world projections. Not an analysis CRS.',
+  },
+  {
+    id: 'goodes',
+    family: 'Pseudocylindrical',
+    name: "Goode's Homolosine",
+    subtitle: 'Pseudocylindrical &mdash; Equal-Area, Interrupted',
+    classification: 'Equal-Area (interrupted)',
+    svg: 'goodes',
+    construction: 'A composite of two equal-area projections: Sinusoidal between 40.7°N/S (where it is more accurate) and Mollweide at higher latitudes. The map is "interrupted" — the outer meridians are cut and each ocean or landmass lobe is independently centered on its own central meridian. Seams appear in the oceans (for land-centered versions) or in continents (for ocean-centered versions).',
+    distortion: 'Area exactly preserved everywhere. Shape distortion at the lobes\' outer edges. The interruptions eliminate the severe shearing distortion that would otherwise occur far from any central meridian.',
+    useCases: 'Global thematic maps of land area or ocean area; ecology and biogeography; area-accurate world reference maps.',
+    epsg: ['Not standardized in EPSG'],
+    distortionTags: [{label:'Area — Exactly preserved',cls:'low'},{label:'Interrupted — Shape breaks at seams',cls:'med'},{label:'Continuity — Broken',cls:'high'}],
+    alaska: 'Alaska may appear across a seam in some versions of this projection. Not used in Alaskan analysis or fieldwork.',
+  },
+
+  // ── ALASKA-SPECIFIC ────────────────────────────────────
+  {
+    id: 'alaska_sp',
+    family: 'Alaska-Specific',
+    name: 'Alaska State Plane Zones 2&ndash;5',
+    subtitle: 'Oblique Mercator / Transverse Mercator &mdash; Conformal zone system',
+    classification: 'Conformal (by zone)',
+    svg: 'alaska_sp',
+    construction: 'Alaska State Plane is divided into 10 zones (FIPS 5001&ndash;5010). Zones 1 (Panhandle) and 4 use Transverse Mercator. Zones 2, 3, 5&ndash;9 use Oblique Mercator, which orients the cylinder at an oblique angle suited to Alaska\'s geography stretching across multiple meridian bands. Zone 10 covers the Aleutian Islands using a Transverse Mercator. Each zone has its own central meridian (or oblique axis), scale factor, and false origin.',
+    distortion: 'Low distortion within each zone. Conformal (shape-preserving) everywhere. Scale errors typically &lt;1:10,000 within zone boundaries. Cross-zone stitching introduces distortion if coordinates are not transformed.',
+    useCases: 'Large-scale engineering survey; cadastral mapping; DOT&PF right-of-way and alignment surveys; highway and bridge design in Alaska.',
+    epsg: ['Zone 2: EPSG:26932 (NAD 83)','Zone 3: EPSG:26933 (NAD 83)','Zone 4: EPSG:26934 (NAD 83)','Zone 5: EPSG:26935 (NAD 83)'],
+    distortionTags: [{label:'Shape — Exactly preserved',cls:'low'},{label:'Scale — Low within zone',cls:'low'},{label:'Cross-zone — Transform required',cls:'med'}],
+    alaska: 'Commonly used for Alaska DOT&PF project-level work: highway alignments, bridge sites, right-of-way mapping, and large-scale geotechnical investigations. Zone 4 covers the Anchorage/MatSu area and is most frequently encountered in southcentral Alaska engineering projects. Verify zone selection for project location before committing survey control.',
+  },
+  {
+    id: 'alaska_albers',
+    family: 'Alaska-Specific',
+    name: 'Alaska Albers (EPSG:3338)',
+    subtitle: 'Conic &mdash; Equal-Area &mdash; Alaska standard',
+    classification: 'Equal-Area',
+    svg: 'alaska_albers',
+    construction: 'Albers Equal-Area Conic optimized for Alaska with standard parallels at 55°N and 65°N, central meridian at 154°W, and origin at 50°N. This configuration minimizes distortion across the main body of Alaska from Southeast through the Brooks Range while keeping the Aleutian chain reasonably well-represented. Defined on the NAD 83 datum.',
+    distortion: 'Area exactly preserved statewide. Shape distortion is very low between the standard parallels (55°N&ndash;65°N), which bracket the densely populated and most actively developed portion of the state. Scale error is less than 1.25% anywhere in the state.',
+    useCases: 'Statewide GIS analysis; area and distance computations across Alaska; USGS Alaska datasets; DOT&PF statewide planning data; all geotechnical work spanning multiple DOT&PF regions.',
+    epsg: ['EPSG:3338 (NAD 83 / Alaska Albers)'],
+    distortionTags: [{label:'Area — Exactly preserved',cls:'low'},{label:'Shape — Excellent between 55&ndash;65°N',cls:'low'},{label:'Scale error — &lt;1.25% statewide',cls:'low'}],
+    alaska: 'The recommended default CRS for statewide Alaska GIS work. Used by USGS, state agencies, and most Alaska academic research. For geotechnical investigations, use EPSG:3338 for any spatial analysis spanning more than one region. For project-level work at engineering scale, switch to the appropriate UTM zone or Alaska State Plane zone.',
+  },
+];
+
+// Group projections by family for left-column rendering
+const FAMILIES = ['Cylindrical','Conic','Azimuthal','Pseudocylindrical','Alaska-Specific'];
+
+// ============================================================
+//  RENDER LEFT COLUMN
+// ============================================================
+function renderList() {
+  const el = document.getElementById('projList');
+  let html = '';
+  for (const fam of FAMILIES) {
+    const items = PROJECTIONS.filter(p => p.family === fam);
+    if (!items.length) continue;
+    html += `<div class="family-header">${fam}</div>`;
+    for (const p of items) {
+      html += `<div class="proj-item" data-id="${p.id}" onclick="selectProj('${p.id}')">
+        ${p.name}
+        <span class="proj-tag">${p.classification}</span>
+      </div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+// ============================================================
+//  RENDER CENTER + RIGHT COLUMNS
+// ============================================================
+let currentId = null;
+
+function selectProj(id) {
+  if (currentId === id) return;
+  currentId = id;
+
+  // Update active state in list
+  document.querySelectorAll('.proj-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+
+  const p = PROJECTIONS.find(x => x.id === id);
+  if (!p) return;
+
+  // ── CENTER ──
+  const thumbSVG = makeSVG(p.svg, 200, 150);
+  document.getElementById('projDetail').innerHTML = `
+    <h2>${p.name}</h2>
+    <div class="proj-subtitle">${p.subtitle}</div>
+    <div class="thumbnail-wrap" onclick="openLightbox('${p.svg}')">
+      ${thumbSVG}
+    </div>
+    <p class="zoom-hint">&#128269; Click graticule to enlarge</p>
+    <div class="section-block">
+      <h3>Construction</h3>
+      <p>${p.construction}</p>
+    </div>
+    <div class="section-block">
+      <h3>Distortion Characteristics</h3>
+      <p>${p.distortion}</p>
+    </div>
+    <div class="section-block">
+      <h3>Canonical Use Cases</h3>
+      <p>${p.useCases}</p>
+    </div>
+  `;
+
+  // ── RIGHT ──
+  const epsgHTML = p.epsg.map(e => `<code>${e}</code>`).join(' ');
+  const pillHTML = p.distortionTags.map(t =>
+    `<span class="distort-pill ${t.cls}">${t.label}</span>`
+  ).join('');
+
+  const akHTML = p.alaska
+    ? `<div class="alaska-note"><div class="ak-label">&#9660; Alaska Relevance</div><p>${p.alaska}</p></div>`
+    : '';
+
+  document.getElementById('projMeta').innerHTML = `
+    <div class="meta-card">
+      <h3>Quick Reference</h3>
+      <div class="meta-row">
+        <span class="meta-label">Family</span>
+        <span class="meta-value">${p.family}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Type</span>
+        <span class="meta-value">${p.classification}</span>
+      </div>
+      <div class="distortion-bar">
+        <div class="distort-label">Distortion Profile</div>
+        ${pillHTML}
+      </div>
+      <div class="meta-row" style="margin-top:0.8rem">
+        <span class="meta-label">EPSG</span>
+        <span class="meta-value epsg">${epsgHTML}</span>
+      </div>
+      ${akHTML}
+    </div>
+  `;
+}
+
+// ============================================================
+//  LIGHTBOX
+// ============================================================
+function openLightbox(svgType) {
+  const lb = document.getElementById('lightbox');
+  const inner = document.getElementById('lbInner');
+  // Remove old SVG if present
+  const old = inner.querySelector('svg');
+  if (old) old.remove();
+  const big = makeSVG(svgType, 600, 450);
+  inner.insertAdjacentHTML('beforeend', big);
+  lb.classList.add('open');
+}
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+document.getElementById('lbClose').addEventListener('click', function() {
+  document.getElementById('lightbox').classList.remove('open');
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+renderList();
+selectProj('mercator');
+</script>
+
+</body>
+</html>
