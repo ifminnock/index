@@ -672,7 +672,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 02: Speaker Status -->
-<div class="card c-locked" id="c02">
+<div class="card c-locked c-shut" id="c02">
   <div class="chdr" onclick="flipCard('02')">
     <span class="cnum">02</span>
     <span class="ctitle">Speaker Status</span>
@@ -738,7 +738,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 03: Venue & Logistics -->
-<div class="card c-locked" id="c03">
+<div class="card c-locked c-shut" id="c03">
   <div class="chdr" onclick="flipCard('03')">
     <span class="cnum">03</span>
     <span class="ctitle">Venue &amp; Logistics</span>
@@ -768,7 +768,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 04: Food & Beverage -->
-<div class="card c-locked" id="c04">
+<div class="card c-locked c-shut" id="c04">
   <div class="chdr" onclick="flipCard('04')">
     <span class="cnum">04</span>
     <span class="ctitle">Food &amp; Beverage</span>
@@ -800,7 +800,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 05: Registration & Communications -->
-<div class="card c-locked" id="c05">
+<div class="card c-locked c-shut" id="c05">
   <div class="chdr" onclick="flipCard('05')">
     <span class="cnum">05</span>
     <span class="ctitle">Registration &amp; Communications</span>
@@ -819,7 +819,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 06: Budget & Finance -->
-<div class="card c-locked" id="c06">
+<div class="card c-locked c-shut" id="c06">
   <div class="chdr" onclick="flipCard('06')">
     <span class="cnum">06</span>
     <span class="ctitle">Budget &amp; Finance <span style="color: #D4651A; font-size: 0.7rem;">[VP Finance]</span></span>
@@ -850,7 +850,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 07: Volunteers & Board Assignments -->
-<div class="card c-locked" id="c07">
+<div class="card c-locked c-shut" id="c07">
   <div class="chdr" onclick="flipCard('07')">
     <span class="cnum">07</span>
     <span class="ctitle">Volunteers &amp; Board Assignments</span>
@@ -876,7 +876,7 @@ body { background-color: #f5f5f5; color: #111111; }
 </div>
 
 <!-- STEP 08: Day-of Contingencies -->
-<div class="card c-locked" id="c08">
+<div class="card c-locked c-shut" id="c08">
   <div class="chdr" onclick="flipCard('08')">
     <span class="cnum">08</span>
     <span class="ctitle">Day-of Contingencies</span>
@@ -1256,7 +1256,7 @@ function advStep(cur, nxt) {
   card.classList.add('c-done', 'c-shut');
   if (nxt) {
     var nc = document.getElementById('c' + nxt);
-    nc.classList.remove('c-locked');
+    nc.classList.remove('c-locked', 'c-shut');
     nc.classList.add('c-active');
     setTimeout(function() { nc.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 80);
   } else {
