@@ -218,7 +218,6 @@ body{background-color:#f5f5f5;color:#111;}
 
   <div id="p1">
 
-```
 <div class="card ca" id="c01">
   <div class="chdr" id="hdr01"><span class="cnum">01</span><span class="ctit">Event Information</span><span class="ccar" id="car01">&#9660;</span></div>
   <div class="cbody" id="cb01">
@@ -396,7 +395,6 @@ body{background-color:#f5f5f5;color:#111;}
     </div>
   </div>
 </div>
-```
 
   </div>
 
@@ -747,20 +745,16 @@ function buildP2() {
           makeHtml('span',{'class':'clnt','data-ntog':it.id},'+ Notes')+
           makeHtml('div',{'class':'clnw','id':'note-'+it.id},
             '<textarea placeholder="Notes..." data-note="'+it.id+'"></textarea>')));
-
-```
-}
-var div=document.createElement('div');
-div.className='cls'; div.id='sec-'+sect.id;
-div.innerHTML=makeHtml('div',{'class':'clh','data-sect':sect.id},
-  makeHtml('span',{'class':'clt'},sect.title)+
-  makeHtml('span',{'class':'clct','id':'sct-'+sect.id},'0 of '+items.length)+
-  makeHtml('span',{'class':'clcar'},'&#9660;'))+
-  makeHtml('div',{'class':'clbdy'},rows);
-cont.appendChild(div);
-```
-
-}
+    }
+    var div=document.createElement('div');
+    div.className='cls'; div.id='sec-'+sect.id;
+    div.innerHTML=makeHtml('div',{'class':'clh','data-sect':sect.id},
+      makeHtml('span',{'class':'clt'},sect.title)+
+      makeHtml('span',{'class':'clct','id':'sct-'+sect.id},'0 of '+items.length)+
+      makeHtml('span',{'class':'clcar'},'&#9660;'))+
+      makeHtml('div',{'class':'clbdy'},rows);
+    cont.appendChild(div);
+  }
 buildMission(); updP2();
 }
 
