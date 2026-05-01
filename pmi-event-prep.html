@@ -421,7 +421,6 @@ body{background-color:#f5f5f5;color:#111;}
 (function() {
 "use strict";
 
-// ── STATE ──────────────────────────────────────────────────────────────────
 var S = {
   fmt:null, sp:null, spOvr:false, av:[], pdu:null, layout:null,
   fb:false, alc:false, spons:false,
@@ -429,7 +428,6 @@ var S = {
   roles:{}, checks:{}, p2:{}, p2Built:false
 };
 
-// ── CHECK DATA ─────────────────────────────────────────────────────────────
 var VENUE=[
   {id:'v1',lbl:'Venue booking confirmed in writing',sev:'h',note:'No written confirmation = hard stop.'},
   {id:'v2',lbl:'Venue contact name and phone number on file',sev:'s'},
@@ -555,12 +553,9 @@ var CL=[
   ]}
 ];
 
-// ── HELPERS ────────────────────────────────────────────────────────────────
 function el(id){ return document.getElementById(id); }
 function show(id){ var e=el(id); if(e){e.classList.remove('hidden');} }
 function hide(id){ var e=el(id); if(e){e.classList.add('hidden');} }
-function cls(id,c){ var e=el(id); if(e){e.classList.add(c);} }
-function uncls(id,c){ var e=el(id); if(e){e.classList.remove(c);} }
 
 function makeHtml(tag, attrs, inner) {
   var a = '';
@@ -568,20 +563,19 @@ function makeHtml(tag, attrs, inner) {
   return '<' + tag + a + '>' + inner + '</' + tag + '>';
 }
 
-// ── CHECKLIST BUILDER ──────────────────────────────────────────────────────
 function buildCklist(cid, data) {
   var c = el(cid);
   if (!c) return;
   var h = '';
   for (var i = 0; i < data.length; i++) {
     var d = data[i];
-    var badge = d.sev === 'h' ? makeHtml('span',{class:'bdg bh'},'HARD STOP')
-              : d.sev === 'f' ? makeHtml('span',{class:'bdg bf'},'FINANCE')
-              : makeHtml('span',{class:'bdg bs'},'SOFT FLAG');
-    var note = d.note ? makeHtml('span',{class:'cknote'},d.note) : '';
-    h += makeHtml('div',{class:'cki','data-ck':d.id},
-           makeHtml('div',{class:'ckb',id:'ckb-'+d.id},'') +
-           makeHtml('span',{class:'cklbl'},d.lbl+badge+note));
+    var badge = d.sev === 'h' ? makeHtml('span',{'class':'bdg bh'},'HARD STOP')
+              : d.sev === 'f' ? makeHtml('span',{'class':'bdg bf'},'FINANCE')
+              : makeHtml('span',{'class':'bdg bs'},'SOFT FLAG');
+    var note = d.note ? makeHtml('span',{'class':'cknote'},d.note) : '';
+    h += makeHtml('div',{'class':'cki','data-ck':d.id},
+           makeHtml('div',{'class':'ckb','id':'ckb-'+d.id},'') +
+           makeHtml('span',{'class':'cklbl'},d.lbl+badge+note));
   }
   c.innerHTML = h;
 }
@@ -593,30 +587,12 @@ function togCk(id) {
   updBanner();
 }
 
-// ── OPTION GROUPS ──────────────────────────────────────────────────────────
-function pickGroup(groupId, val, stateKey) {
-  var g = el(groupId);
-  if (!g) return;
-  var items = g.getElementsByClassName('optb');
-  for (var i = 0; i < items.length; i++) { items[i].classList.remove('on'); }
-  S[stateKey] = val;
-  updBanner();
-}
-
-// ── TOGGLE SWITCH ──────────────────────────────────────────────────────────
-function flipTog(id) {
-  var t = el(id);
-  if (t) t.classList.toggle('on');
-}
-
-// ── CARD COLLAPSE ──────────────────────────────────────────────────────────
 function flipCard(n) {
   var c = el('c'+n);
   if (!c || c.classList.contains('cl')) return;
   c.classList.toggle('cs');
 }
 
-// ── STEP ADVANCE ──────────────────────────────────────────────────────────
 function advStep(cur, nxt) {
   var dbg = el('dbg');
   if (dbg) { dbg.textContent = 'advStep fired: cur='+cur+' nxt='+nxt; dbg.style.display='block'; }
@@ -652,7 +628,6 @@ function advStep(cur, nxt) {
   updBanner();
 }
 
-// ── FLAGS ──────────────────────────────────────────────────────────────────
 function daysOut() {
   var inp = el('ev-date');
   if (!inp || !inp.value) return 999;
@@ -678,19 +653,19 @@ function getFlags() {
 function updBanner() {
   var f=getFlags();
   var bn=el('banner'), msg=el('bmsg'), sub=el('bsub');
+  if(!bn||!msg||!sub)return;
   bn.classList.remove('ba','bw','bg');
   if(f.h.length>0){bn.classList.add('ba');msg.textContent='ACTION REQUIRED \u2014 '+f.h.length+' hard stop'+(f.h.length>1?'s':'')+' unresolved';sub.textContent=f.h[0];}
   else if(f.s.length>0){bn.classList.add('bw');msg.textContent='ATTENTION \u2014 '+f.s.length+' item'+(f.s.length>1?'s':'')+' flagged for review';sub.textContent=f.s[0];}
   else{bn.classList.add('bg');msg.textContent='READY \u2014 All critical items confirmed';sub.textContent='';}
 }
 
-// ── NAMES ──────────────────────────────────────────────────────────────────
 function renderNames() {
   var p=el('npills'); if(!p)return;
   var h='';
   for(var i=0;i<S.names.length;i++){
-    h+=makeHtml('div',{class:'npill'},
-       S.names[i]+makeHtml('span',{class:'nx','data-ni':i},'&#10005;'));
+    h+=makeHtml('div',{'class':'npill'},
+       S.names[i]+makeHtml('span',{'class':'nx','data-ni':i},'&#10005;'));
   }
   p.innerHTML=h;
 }
@@ -707,7 +682,6 @@ function delName(idx) {
   renderNames(); renderRoles();
 }
 
-// ── ROLES ──────────────────────────────────────────────────────────────────
 function renderRoles() {
   var tb=el('rtbody'); if(!tb)return;
   var isV=(S.fmt==='virtual'||S.fmt==='hybrid');
@@ -720,7 +694,7 @@ function renderRoles() {
     for(var j=0;j<S.names.length;j++){
       opts+='<option value="'+S.names[j]+'"'+(S.names[j]===a.own?' selected':'')+'>'+S.names[j]+'</option>';
     }
-    h+='<tr><td>'+r.lbl+(r.note?makeHtml('span',{class:'rnote'},r.note):'')+(r.crit?' <span class="bdg bs" style="font-size:.62rem;">CRITICAL</span>':'')+'</td>'
+    h+='<tr><td>'+r.lbl+(r.note?makeHtml('span',{'class':'rnote'},r.note):'')+(r.crit?' <span class="bdg bs" style="font-size:.62rem;">CRITICAL</span>':'')+'</td>'
       +'<td><select data-role="'+r.key+'">'+opts+'</select></td>'
       +'<td><div class="sbtns">'
       +'<button class="sb'+(a.st==='a'?' sa':'')+'" data-rst="'+r.key+'" data-stv="a">Assigned</button>'
@@ -731,7 +705,6 @@ function renderRoles() {
   tb.innerHTML=h;
 }
 
-// ── PHASE 1 SUMMARY ────────────────────────────────────────────────────────
 function buildSummary() {
   var f=getFlags(), tot=f.h.length+f.s.length;
   var pct=Math.min(100,Math.max(0,100-f.h.length*20-f.s.length*2));
@@ -751,7 +724,6 @@ function buildSummary() {
   pm.textContent=f.h.length>0?'Resolve all hard stops before proceeding.':'';
 }
 
-// ── PHASE 2 ────────────────────────────────────────────────────────────────
 function doP2() {
   if(!S.p2Built){buildP2();S.p2Built=true;}
   gotoPhase(2);
@@ -767,24 +739,24 @@ function buildP2() {
     var rows='';
     for(var ri=0;ri<items.length;ri++){
       var it=items[ri], own=getOwner(it.role);
-      rows+=makeHtml('div',{class:'cli'},
-        makeHtml('div',{class:'ckb',id:'p2k-'+it.id,'data-p2':it.id},'')+
-        makeHtml('div',{class:'clib'},
-          makeHtml('div',{class:'clit'},it.lbl)+
-          (own?makeHtml('div',{class:'clio'},'\u25ba '+own):'')+
-          makeHtml('span',{class:'clnt','data-ntog':it.id},'+ Notes')+
-          makeHtml('div',{class:'clnw',id:'note-'+it.id},
+      rows+=makeHtml('div',{'class':'cli'},
+        makeHtml('div',{'class':'ckb','id':'p2k-'+it.id,'data-p2':it.id},'')+
+        makeHtml('div',{'class':'clib'},
+          makeHtml('div',{'class':'clit'},it.lbl)+
+          (own?makeHtml('div',{'class':'clio'},'\u25ba '+own):'')+
+          makeHtml('span',{'class':'clnt','data-ntog':it.id},'+ Notes')+
+          makeHtml('div',{'class':'clnw','id':'note-'+it.id},
             '<textarea placeholder="Notes..." data-note="'+it.id+'"></textarea>')));
 
 ```
 }
 var div=document.createElement('div');
 div.className='cls'; div.id='sec-'+sect.id;
-div.innerHTML=makeHtml('div',{class:'clh','data-sect':sect.id},
-  makeHtml('span',{class:'clt'},sect.title)+
-  makeHtml('span',{class:'clct',id:'sct-'+sect.id},'0 of '+items.length)+
-  makeHtml('span',{class:'clcar'},'&#9660;'))+
-  makeHtml('div',{class:'clbdy'},rows);
+div.innerHTML=makeHtml('div',{'class':'clh','data-sect':sect.id},
+  makeHtml('span',{'class':'clt'},sect.title)+
+  makeHtml('span',{'class':'clct','id':'sct-'+sect.id},'0 of '+items.length)+
+  makeHtml('span',{'class':'clcar'},'&#9660;'))+
+  makeHtml('div',{'class':'clbdy'},rows);
 cont.appendChild(div);
 ```
 
@@ -820,28 +792,26 @@ function gv(id){var e=el(id);return e?e.value:’’;}
 var fm={‘in-person’:‘In-Person Only’,‘virtual’:‘Virtual Only’,‘hybrid’:‘Hybrid’};
 var f=getFlags();
 var h=’’
-+’<div class="sr2"><span class="sk">Event</span><span class="sv">’+(gv(‘ev-name’)||’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Date</span><span class="sv">’+(gv(‘ev-date’)||’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Time</span><span class="sv">’+(gv(‘ev-start’)||’—’)+’ – ‘+(gv(‘ev-end’)||’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Venue</span><span class="sv">’+(gv(‘ev-venue’)||’—’)+’</span></div>’
++’<div class="sr2"><span class="sk">Event</span><span class="sv">’+(gv(‘ev-name’)||’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Date</span><span class="sv">’+(gv(‘ev-date’)||’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Time</span><span class="sv">’+(gv(‘ev-start’)||’\u2014’)+’ \u2013 ‘+(gv(‘ev-end’)||’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Venue</span><span class="sv">’+(gv(‘ev-venue’)||’\u2014’)+’</span></div>’
 +’<div class="sr2"><span class="sk">Speaker</span><span class="sv">’+(gv(‘sp-name’)||‘Not assigned’)+’</span></div>’
 +’<div class="sr2"><span class="sk">Format</span><span class="sv">’+(fm[S.fmt]||‘Not specified’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Expected Attendance</span><span class="sv">’+(gv(‘ev-att’)||’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Registrations</span><span class="sv">’+(gv(‘reg-cnt’)||’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Est. Cost</span><span class="sv">’+(gv(‘bud-cost’)?’$’+Number(gv(‘bud-cost’)).toLocaleString():’—’)+’</span></div>’
-+’<div class="sr2"><span class="sk">Projected Revenue</span><span class="sv">’+(gv(‘bud-rev’)?’$’+Number(gv(‘bud-rev’)).toLocaleString():’—’)+’</span></div>’
++’<div class="sr2"><span class="sk">Expected Attendance</span><span class="sv">’+(gv(‘ev-att’)||’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Registrations</span><span class="sv">’+(gv(‘reg-cnt’)||’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Est. Cost</span><span class="sv">’+(gv(‘bud-cost’)?’$’+Number(gv(‘bud-cost’)).toLocaleString():’\u2014’)+’</span></div>’
++’<div class="sr2"><span class="sk">Projected Revenue</span><span class="sv">’+(gv(‘bud-rev’)?’$’+Number(gv(‘bud-rev’)).toLocaleString():’\u2014’)+’</span></div>’
 +’<div class="sr2"><span class="sk">Soft Flags Carried</span><span class="sv">’+f.s.length+’</span></div>’
 +’<div class="sr2" style="font-size:.71rem;color:#9AAABB;margin-top:.28rem;"><span>Generated: ‘+new Date().toLocaleString()+’</span></div>’;
 el(‘miss-body’).innerHTML=h;
 }
 
-// ── PHASE SWITCH ───────────────────────────────────────────────────────────
 function gotoPhase(n) {
 if(n===1){show(‘p1’);hide(‘p2’);el(‘t1’).classList.add(‘on’);el(‘t2’).classList.remove(‘on’);}
 else{hide(‘p1’);show(‘p2’);el(‘t1’).classList.remove(‘on’);el(‘t2’).classList.add(‘on’);el(‘t2’).disabled=false;}
 }
 
-// ── INIT & EVENT WIRING ────────────────────────────────────────────────────
 document.addEventListener(‘DOMContentLoaded’, function() {
 
 buildCklist(‘ck-venue’,VENUE);
@@ -853,7 +823,6 @@ renderNames();
 renderRoles();
 updBanner();
 
-// Step advance buttons
 el(‘btn01’).addEventListener(‘click’, function(){ advStep(‘01’,‘02’); });
 el(‘btn02’).addEventListener(‘click’, function(){ advStep(‘02’,‘03’); });
 el(‘btn03’).addEventListener(‘click’, function(){ advStep(‘03’,‘04’); });
@@ -863,26 +832,22 @@ el(‘btn06’).addEventListener(‘click’, function(){ advStep(‘06’,‘07
 el(‘btn07’).addEventListener(‘click’, function(){ advStep(‘07’,‘08’); });
 el(‘btn08’).addEventListener(‘click’, function(){ advStep(‘08’,null); });
 
-// Phase 2 proceed & nav
 el(‘btn-p2’).addEventListener(‘click’, function(){ doP2(); });
 el(‘btn-print’).addEventListener(‘click’, function(){ window.print(); });
 el(‘btn-top’).addEventListener(‘click’, function(){ gotoPhase(1); });
 
-// Phase tabs
 el(‘t1’).addEventListener(‘click’, function(){ gotoPhase(1); });
 el(‘t2’).addEventListener(‘click’, function(){ gotoPhase(2); });
 
-// Card headers
 for(var n=1;n<=8;n++){
 (function(num){
-var h=el(‘hdr0’+num); if(h){h.addEventListener(‘click’,function(){flipCard(‘0’+num);});}
+var pad = num<10 ? ‘0’+num : ‘’+num;
+var h=el(‘hdr’+pad);
+if(h){h.addEventListener(‘click’,function(){flipCard(pad);});}
 })(n);
 }
 
-// Format options
-var fmtMap={
-‘fmt-ip’:‘in-person’,‘fmt-vt’:‘virtual’,‘fmt-hy’:‘hybrid’
-};
+var fmtMap={‘fmt-ip’:‘in-person’,‘fmt-vt’:‘virtual’,‘fmt-hy’:‘hybrid’};
 for(var fid in fmtMap){
 (function(fid2,fval){
 var btn=el(fid2);
@@ -894,7 +859,6 @@ btn.classList.add(‘on’); S.fmt=fval; renderRoles(); updBanner();
 })(fid,fmtMap[fid]);
 }
 
-// Speaker status options
 var spMap={‘sp-sg’:‘signed’,‘sp-vb’:‘verbal’,‘sp-tn’:‘tentative’,‘sp-no’:‘none’};
 for(var sid in spMap){
 (function(sid2,sval){
@@ -913,14 +877,12 @@ updBanner();
 })(sid,spMap[sid]);
 }
 
-// Speaker override toggle
 el(‘tog-sp-ovr’).addEventListener(‘click’,function(){
 el(‘tog-sp-ovr’).classList.toggle(‘on’);
 S.spOvr=el(‘tog-sp-ovr’).classList.contains(‘on’);
 updBanner();
 });
 
-// AV pills
 var avMap={‘av-proj’:‘projector’,‘av-mic’:‘microphone’,‘av-lap’:‘lapel’,‘av-clk’:‘clicker’,‘av-wb’:‘whiteboard’,‘av-no’:‘none’};
 for(var aid in avMap){
 (function(aid2,aval){
@@ -934,7 +896,6 @@ else if(!btn.classList.contains(‘on’)&&idx>=0){S.av.splice(idx,1);}
 })(aid,avMap[aid]);
 }
 
-// PDU options
 var pduMap={‘pdu-te’:‘technical’,‘pdu-ld’:‘leadership’,‘pdu-st’:‘strategic’,‘pdu-co’:‘combination’};
 for(var pid in pduMap){
 (function(pid2,pval){
@@ -949,7 +910,6 @@ else{el(‘pdu-split’).classList.add(‘hidden’);}
 })(pid,pduMap[pid]);
 }
 
-// Layout options
 var lyMap={‘ly-th’:‘theater’,‘ly-cl’:‘classroom’,‘ly-ro’:‘rounds’,‘ly-rc’:‘reception’,‘ly-us’:‘ushape’,‘ly-cu’:‘custom’};
 for(var lid in lyMap){
 (function(lid2,lval){
@@ -964,7 +924,6 @@ else{el(‘layout-custom’).classList.add(‘hidden’);}
 })(lid,lyMap[lid]);
 }
 
-// FB toggle
 el(‘tog-fb’).addEventListener(‘click’,function(){
 el(‘tog-fb’).classList.toggle(‘on’);
 S.fb=el(‘tog-fb’).classList.contains(‘on’);
@@ -972,14 +931,12 @@ if(S.fb){el(‘fb-det’).classList.remove(‘hidden’);}else{el(‘fb-det’).
 updBanner();
 });
 
-// Alcohol toggle
 el(‘tog-alc’).addEventListener(‘click’,function(){
 el(‘tog-alc’).classList.toggle(‘on’);
 S.alc=el(‘tog-alc’).classList.contains(‘on’);
 if(S.alc){el(‘alc-ntc’).classList.remove(‘hidden’);}else{el(‘alc-ntc’).classList.add(‘hidden’);}
 });
 
-// Sponsor toggle
 el(‘tog-spons’).addEventListener(‘click’,function(){
 el(‘tog-spons’).classList.toggle(‘on’);
 S.spons=el(‘tog-spons’).classList.contains(‘on’);
@@ -988,24 +945,19 @@ else{el(‘spons-det’).classList.add(‘hidden’);el(‘spons-ntc’).classLi
 updBanner();
 });
 
-// Speaker travel toggle
 el(‘tog-travel’).addEventListener(‘click’,function(){ el(‘tog-travel’).classList.toggle(‘on’); });
 
-// Add name button + enter key
 el(‘btn-addname’).addEventListener(‘click’, addName);
 el(‘new-name’).addEventListener(‘keydown’,function(e){if(e.key===‘Enter’){e.preventDefault();addName();}});
 
-// Checklist item clicks (delegated from p1 and p2)
 document.addEventListener(‘click’, function(e) {
 var t = e.target;
-// Check items
 var ckp = t.closest ? t.closest(’.cki’) : null;
-if (!ckp) { var p=t; while(p&&p!==document){if(p.className&&p.className.indexOf(‘cki’)>=0){ckp=p;break;}p=p.parentNode;} }
+if (!ckp) { var p=t; while(p&&p!==document){if(p.className&&typeof p.className===‘string’&&p.className.indexOf(‘cki’)>=0){ckp=p;break;}p=p.parentNode;} }
 if (ckp) {
 var cid = ckp.getAttribute(‘data-ck’);
 if (cid) { togCk(cid); return; }
 }
-// Checkbox in p2
 var p2k = t.getAttribute ? t.getAttribute(‘data-p2’) : null;
 if (p2k) {
 if(!S.p2[p2k]){S.p2[p2k]={done:false,notes:’’};}
@@ -1013,23 +965,18 @@ S.p2[p2k].done=!S.p2[p2k].done;
 if(S.p2[p2k].done){t.classList.add(‘on’);}else{t.classList.remove(‘on’);}
 updP2(); return;
 }
-// Notes toggle
 var ntog = t.getAttribute ? t.getAttribute(‘data-ntog’) : null;
 if (ntog) { var nw=el(‘note-’+ntog); if(nw){nw.classList.toggle(‘on’);} return; }
-// Section collapse
 var sect = t.getAttribute ? t.getAttribute(‘data-sect’) : null;
 if (!sect) { var p2=t; while(p2&&p2!==document){if(p2.getAttribute&&p2.getAttribute(‘data-sect’)){sect=p2.getAttribute(‘data-sect’);break;}p2=p2.parentNode;} }
 if (sect) { var se=el(‘sec-’+sect); if(se){se.classList.toggle(‘cs’);} return; }
-// Delete name pill
 var ni = t.getAttribute ? t.getAttribute(‘data-ni’) : null;
 if (ni !== null && ni !== undefined) { delName(parseInt(ni,10)); return; }
-// Role owner select
 if (t.tagName===‘SELECT’ && t.getAttribute(‘data-role’)) {
 var rk=t.getAttribute(‘data-role’);
 if(!S.roles[rk]){S.roles[rk]={own:’’,st:’’};}
 S.roles[rk].own=t.value; updBanner(); return;
 }
-// Role status buttons
 var rk2 = t.getAttribute ? t.getAttribute(‘data-rst’) : null;
 if (rk2) {
 var stv=t.getAttribute(‘data-stv’);
@@ -1042,7 +989,6 @@ updBanner(); return;
 }
 });
 
-// Notes textarea input
 document.addEventListener(‘input’, function(e) {
 var t=e.target;
 if(t.tagName===‘TEXTAREA’&&t.getAttribute(‘data-note’)){
@@ -1055,9 +1001,9 @@ S.p2[id].notes=t.value;
 var dbg=el(‘dbg’);
 if(dbg){dbg.textContent=‘JS loaded OK - DOMContentLoaded fired’;dbg.style.display=‘block’;}
 
-}); // end DOMContentLoaded
+});
 
-})(); // end IIFE
+})();
 </script>
 
 </body>
