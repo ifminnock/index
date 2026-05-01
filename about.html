@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — MFI | Ian Minnock</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page-bg:       #2E3A47;
+    --card-bg:       #3A4A5C;
+    --accent-orange: #D4651A;
+    --accent-grey:   #4A6070;
+    --text-primary:  #E8EAEC;
+    --text-secondary:#9AAABB;
+  }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–page-bg);
+color: var(–text-primary);
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.95rem;
+line-height: 1.6;
+min-height: 100vh;
+}
+
+/* HEADER */
+header {
+background: var(–page-bg);
+border-bottom: 2px solid var(–accent-orange);
+padding: 1rem 2rem;
+display: flex;
+align-items: center;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+header a.back {
+color: var(–text-secondary);
+text-decoration: none;
+font-size: 0.85rem;
+letter-spacing: 0.05em;
+transition: color 0.2s;
+white-space: nowrap;
+}
+header a.back:hover { color: var(–accent-orange); }
+header .header-title { flex: 1; }
+header .header-title h1 {
+font-size: 1.3rem;
+font-weight: 700;
+color: var(–accent-orange);
+letter-spacing: 0.04em;
+}
+header .header-title p {
+font-size: 0.78rem;
+color: var(–text-secondary);
+margin-top: 0.15rem;
+letter-spacing: 0.06em;
+}
+
+/* MAIN */
+main {
+max-width: 1100px;
+margin: 0 auto;
+padding: 2.5rem 2rem 4rem;
+}
+
+/* PROFILE SELECTOR STRIP */
+.profile-selector {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+margin-bottom: 0;
+}
+.profile-btn {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-bottom: 3px solid transparent;
+color: var(–text-secondary);
+font-family: inherit;
+font-size: 0.78rem;
+font-weight: 700;
+letter-spacing: 0.06em;
+padding: 0.5rem 1rem;
+border-radius: 3px 3px 0 0;
+cursor: pointer;
+transition: color 0.15s, border-bottom-color 0.15s, background 0.15s;
+text-transform: uppercase;
+display: flex;
+align-items: center;
+gap: 0.4rem;
+margin-bottom: -1px; /* merge into card border */
+}
+.profile-btn:hover {
+color: var(–text-primary);
+background: #42526a;
+}
+.profile-btn.active {
+color: var(–accent-orange);
+border-bottom-color: var(–accent-orange);
+background: var(–card-bg);
+border-left-color: var(–accent-grey);
+border-right-color: var(–accent-grey);
+border-top-color: var(–accent-grey);
+}
+.profile-btn .btn-emoji { font-size: 1rem; }
+
+/* BIO CARD */
+.bio-card {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-left: 4px solid var(–accent-orange);
+border-radius: 0 4px 4px 4px;
+display: grid;
+grid-template-columns: 200px 1fr;
+gap: 2rem;
+padding: 2rem;
+margin-bottom: 2.5rem;
+align-items: start;
+}
+
+/* HEADSHOT */
+.headshot-block {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.75rem;
+}
+.headshot-frame {
+width: 180px;
+height: 220px;
+border: 2px solid var(–accent-grey);
+border-radius: 4px;
+overflow: hidden;
+background: var(–page-bg);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+position: relative;
+}
+.headshot-frame img.profile-photo {
+width: 100%;
+height: 100%;
+object-fit: cover;
+object-position: top center;
+display: block;
+}
+.headshot-placeholder-inner {
+display: none;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 0.4rem;
+color: var(–text-secondary);
+font-size: 0.7rem;
+text-align: center;
+padding: 0.75rem;
+width: 100%;
+height: 100%;
+position: absolute;
+top: 0; left: 0;
+}
+.headshot-placeholder-inner span { font-size: 2.5rem; }
+
+.name-block { text-align: center; }
+.name-block .full-name {
+font-size: 1rem;
+font-weight: 700;
+color: var(–text-primary);
+line-height: 1.3;
+}
+.name-block .certs {
+font-size: 0.7rem;
+color: var(–accent-orange);
+margin-top: 0.25rem;
+letter-spacing: 0.08em;
+}
+.name-block .role-tag {
+font-size: 0.7rem;
+color: var(–text-secondary);
+margin-top: 0.2rem;
+}
+
+/* BIO TEXT */
+.bio-text h2 {
+font-size: 1.05rem;
+font-weight: 700;
+color: var(–accent-orange);
+letter-spacing: 0.05em;
+margin-bottom: 0.75rem;
+text-transform: uppercase;
+}
+.bio-text p {
+color: var(–text-primary);
+margin-bottom: 0.9rem;
+line-height: 1.65;
+}
+.bio-text p:last-child { margin-bottom: 0; }
+
+/* INTEREST GRID */
+.section-label {
+font-size: 0.78rem;
+color: var(–text-secondary);
+letter-spacing: 0.1em;
+text-transform: uppercase;
+margin-bottom: 1rem;
+border-bottom: 1px solid var(–accent-grey);
+padding-bottom: 0.4rem;
+}
+.interest-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+gap: 1rem;
+margin-bottom: 2.5rem;
+}
+.interest-card {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-radius: 4px;
+padding: 1rem 1.1rem;
+transition: border-color 0.2s, transform 0.15s;
+}
+.interest-card:hover {
+border-color: var(–accent-orange);
+transform: translateY(-2px);
+}
+.interest-card .icon { font-size: 1.5rem; margin-bottom: 0.4rem; display: block; }
+.interest-card h3 {
+font-size: 0.85rem;
+font-weight: 700;
+color: var(–accent-orange);
+margin-bottom: 0.35rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+}
+.interest-card p { font-size: 0.78rem; color: var(–text-secondary); line-height: 1.55; }
+
+/* GALLERY LINK */
+.gallery-link-block {
+background: var(–card-bg);
+border: 1px solid var(–accent-grey);
+border-left: 4px solid var(–accent-grey);
+border-radius: 4px;
+padding: 1.25rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+margin-bottom: 2.5rem;
+flex-wrap: wrap;
+transition: border-left-color 0.2s;
+}
+.gallery-link-block:hover { border-left-color: var(–accent-orange); }
+.gallery-link-block .glb-text h3 {
+font-size: 0.95rem;
+font-weight: 700;
+color: var(–text-primary);
+margin-bottom: 0.25rem;
+}
+.gallery-link-block .glb-text p { font-size: 0.78rem; color: var(–text-secondary); }
+.gallery-link-block a {
+background: var(–accent-grey);
+color: var(–text-primary);
+text-decoration: none;
+font-size: 0.82rem;
+font-weight: 700;
+letter-spacing: 0.06em;
+padding: 0.55rem 1.1rem;
+border-radius: 3px;
+white-space: nowrap;
+transition: background 0.2s;
+}
+.gallery-link-block a:hover { background: var(–accent-orange); }
+
+/* CREDENTIALS */
+.cred-list { list-style: none; margin-bottom: 2.5rem; }
+.cred-list li {
+display: flex;
+gap: 1rem;
+align-items: baseline;
+padding: 0.45rem 0;
+border-bottom: 1px solid rgba(74,96,112,0.4);
+font-size: 0.82rem;
+}
+.cred-list li:last-child { border-bottom: none; }
+.cred-list .cred-year {
+color: var(–accent-orange);
+min-width: 55px;
+font-weight: 700;
+letter-spacing: 0.04em;
+}
+.cred-list .cred-body { color: var(–text-primary); }
+.cred-list .cred-body small {
+color: var(–text-secondary);
+font-size: 0.72rem;
+display: block;
+}
+
+/* FOOTER */
+footer {
+background: var(–page-bg);
+border-top: 1px solid var(–accent-grey);
+padding: 1.25rem 2rem;
+font-size: 0.72rem;
+color: var(–text-secondary);
+line-height: 1.6;
+text-align: center;
+}
+footer a { color: var(–accent-orange); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* RESPONSIVE */
+@media (max-width: 650px) {
+.bio-card { grid-template-columns: 1fr; }
+.headshot-block { flex-direction: row; align-items: flex-start; gap: 1rem; }
+.headshot-frame { width: 110px; height: 135px; flex-shrink: 0; }
+.name-block { text-align: left; }
+header { padding: 0.85rem 1rem; }
+main { padding: 1.5rem 1rem 3rem; }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <a class="back" href="tool-index.html">&#8592; Index</a>
+  <div class="header-title">
+    <h1>About</h1>
+    <p>MFI &#8212; Alaska Geotechnical Tools &nbsp;|&nbsp; ifminnock.github.io/index</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- PROFILE SELECTOR -->
+
+  <div class="profile-selector" id="profile-selector">
+    <button class="profile-btn active" data-profile="ian"      onclick="switchProfile('ian')">
+      <span class="btn-emoji">&#x1F9D1;&#x200D;&#x1F52C;</span> Ian
+    </button>
+    <button class="profile-btn"        data-profile="tina"     onclick="switchProfile('tina')">
+      <span class="btn-emoji">&#x1F6F8;</span> Tina
+    </button>
+    <button class="profile-btn"        data-profile="sculptor" onclick="switchProfile('sculptor')">
+      <span class="btn-emoji">&#x1F5FF;</span> Sculptor
+    </button>
+    <button class="profile-btn"        data-profile="cat1"     onclick="switchProfile('cat1')">
+      <span class="btn-emoji">&#x1F408;</span> Cat #1
+    </button>
+    <button class="profile-btn"        data-profile="cat2"     onclick="switchProfile('cat2')">
+      <span class="btn-emoji">&#x1F408;&#x200D;&#x2B1B;</span> Cat #2
+    </button>
+  </div>
+
+  <!-- BIO CARD -->
+
+  <div class="bio-card" id="bio-card">
+    <div class="headshot-block">
+      <div class="headshot-frame" id="headshot-frame">
+        <!-- Real photo: place headshot-ian.jpg (etc.) in repo root.
+             If file not found, onerror hides the img and shows the emoji fallback. -->
+        <img class="profile-photo" id="profile-photo"
+             src="headshot-ian.jpg" alt="Ian Minnock"
+             onerror="this.style.display='none'; document.getElementById('photo-fallback').style.display='flex';">
+        <div class="headshot-placeholder-inner" id="photo-fallback">
+          <span id="fallback-emoji">&#x1F9D1;&#x200D;&#x1F52C;</span>
+          <div>Photo coming soon</div>
+        </div>
+      </div>
+      <div class="name-block">
+        <div class="full-name"  id="profile-name">Ian Fox Minnock</div>
+        <div class="certs"      id="profile-certs">CPG &nbsp;&#183;&nbsp; PMP &nbsp;&#183;&nbsp; PMI-ACP</div>
+        <div class="role-tag"   id="profile-role">Anchorage, AK</div>
+      </div>
+    </div>
+
+```
+<div class="bio-text">
+  <h2 id="bio-heading">Who I Am</h2>
+  <div id="bio-body">
+    <p>
+      Geologist, project manager, data nerd, and generalist problem-solver based in Anchorage, Alaska.
+      Over a decade of field and office experience in geotechnical investigation, environmental work,
+      and applied research &#8212; from permafrost embankments in the Arctic to asteroid porosity studies
+      presented at GSA. My work sits at the intersection of subsurface uncertainty and infrastructure decisions,
+      and I care a lot about making complex technical information accessible and usable in the field.
+    </p>
+    <p>
+      When I&#8217;m not on a drill site or writing reports, I&#8217;m probably running trails, running a tabletop
+      RPG campaign, building something on a 3D printer, or chasing down some obscure dataset that
+      probably doesn&#8217;t have a good visualization yet. This site is where the technical tools live &#8212;
+      built for engineers and technicians working in Alaska&#8217;s challenging environments, and freely available.
+      Everything here is a personal project and a perpetual work-in-progress.
+    </p>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- IAN-SPECIFIC EXTRAS (interests / gallery / credentials) -->
+
+  <div id="ian-extras">
+
+```
+<div class="section-label">// Beyond the Office</div>
+<div class="interest-grid">
+  <div class="interest-card">
+    <span class="icon">&#x1FA90;</span>
+    <h3>Planetary Science</h3>
+    <p>Co-authored research on asteroid porosity and internal structure presented at GSA 2015.
+       Ongoing interest in planetary geology and small body science.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F5A8;</span>
+    <h3>3D Printing &amp; Fabrication</h3>
+    <p>FDM printing for tools, terrain, and prototypes. Part of a broader interest in making
+       physical things &#8212; especially when a part doesn&#8217;t exist yet.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F3B2;</span>
+    <h3>TTRPG Game Mastering</h3>
+    <p>Running tabletop RPG campaigns &#8212; world-building, improvisational storytelling, and keeping
+       a table of grown adults on the rails just long enough. Mostly.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F3C3;</span>
+    <h3>Running &amp; Fitness</h3>
+    <p>Trail running in and around Anchorage. Consistent training as a counterweight to desk work &#8212;
+       and an excuse to be outside in weather that everyone else is complaining about.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F5FA;</span>
+    <h3>GIS &amp; Remote Sensing</h3>
+    <p>Spatial data analysis, drone operations (FAA Part 107 certified), and mapping applications
+       for geotechnical and environmental projects.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F4D0;</span>
+    <h3>Applied Mathematics</h3>
+    <p>Currently completing a Mathematics for Engineers specialization &#8212; finite difference methods,
+       numerical analysis, and the math underlying the thaw consolidation models on this site.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F916;</span>
+    <h3>AI &amp; Data Tools</h3>
+    <p>Using AI to accelerate geotechnical workflows, build interactive field tools, and explore
+       what happens when language models and domain expertise work together honestly.</p>
+  </div>
+  <div class="interest-card">
+    <span class="icon">&#x1F396;</span>
+    <h3>Veteran &amp; Volunteer</h3>
+    <p>US Army Reserve veteran. Currently VP of Administration for PMI Alaska Chapter, VP of AIPG
+       Alaska Section, and keeping a homeowners association from descending into chaos.</p>
+  </div>
+</div>
+
+<div class="gallery-link-block">
+  <div class="glb-text">
+    <h3>&#x1F4F8; Field Photo Gallery</h3>
+    <p>Drill sites, core photos, remote Alaska, field conditions &#8212; the real environment these tools are built for.</p>
+  </div>
+  <a href="gallery.html">View Gallery &#8594;</a>
+</div>
+
+<div class="section-label">// Selected Credentials &amp; Milestones</div>
+<ul class="cred-list">
+  <li><span class="cred-year">2026</span><span class="cred-body">PMI-ACP &#8212; Agile Certified Practitioner<small>Project Management Institute</small></span></li>
+  <li><span class="cred-year">2025</span><span class="cred-body">CPG &#8212; Certified Professional Geologist<small>American Institute of Professional Geologists</small></span></li>
+  <li><span class="cred-year">2025</span><span class="cred-body">PMP &#8212; Project Management Professional<small>Project Management Institute</small></span></li>
+  <li><span class="cred-year">2025</span><span class="cred-body">PMI Alaska Chapter &#8212; Alaska Representative, PMI Global Conference<small>Leadership Institute, November 2025</small></span></li>
+  <li><span class="cred-year">2025</span><span class="cred-body">Mathematics for Engineers Specialization &#8212; Enrolled<small>Hong Kong University of Science and Technology (HKUST)</small></span></li>
+  <li><span class="cred-year">2023</span><span class="cred-body">Remote Pilot Certification &#8212; FAA Part 107</span></li>
+  <li><span class="cred-year">2023</span><span class="cred-body">Bridging Research Conference &#8212; co-author, driver behavior on two-lane highways<small>Remote presentation</small></span></li>
+  <li><span class="cred-year">2022</span><span class="cred-body">OSHA 30-Hour General Industry Safety Supervisor</span></li>
+  <li><span class="cred-year">2017</span><span class="cred-body">BS Geological Sciences &#8212; University of Alaska Anchorage</span></li>
+  <li><span class="cred-year">2015</span><span class="cred-body">GSA Annual Meeting &#8212; co-author, asteroid porosity research<small>Geological Society of America, Baltimore MD</small></span></li>
+</ul>
+```
+
+  </div><!-- /#ian-extras -->
+
+</main>
+
+<footer>
+  <p>
+    This site is an independent personal project by Ian and Tina Minnock and is not affiliated with, endorsed by,
+    or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities, any government agency,
+    or any employer. References to agency specifications are for informational purposes only.
+    All tool outputs are design aids and should be verified by a qualified professional before use.
+  </p>
+  <p style="margin-top:0.5rem;">
+    <a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a>
+    &nbsp;&#183;&nbsp; v2.0 April 2026
+    &nbsp;&#183;&nbsp; <a href="tool-index.html">&#8592; Tool Index</a>
+  </p>
+</footer>
+
+<script>
+// ── Profile data ─────────────────────────────────────────────────────────────
+// To use a real photo: place the image file in your repo root alongside about.html
+// and update the `photo` field below to match the filename.
+// Supported formats: .jpg, .png, .webp — any browser-renderable image.
+// If the file is not found, the emoji fallback shows automatically via onerror.
+//
+// Example repo layout:
+//   about.html
+//   headshot-ian.jpg      <- Ian's photo
+//   headshot-tina.jpg     <- Tina's photo (add when ready)
+//   headshot-cat1.jpg     <- Cat photo (optional — or leave as emoji)
+
+var profiles = {
+  ian: {
+    photo:   'headshot-ian.jpg',
+    alt:     'Ian Minnock',
+    emoji:   '&#x1F9D1;&#x200D;&#x1F52C;',
+    name:    'Ian Fox Minnock',
+    certs:   'CPG &nbsp;&#183;&nbsp; PMP &nbsp;&#183;&nbsp; PMI-ACP',
+    role:    'Anchorage, AK',
+    heading: 'Who I Am',
+    bio: '<p>Geologist, project manager, data nerd, and generalist problem-solver based in Anchorage, Alaska. Over a decade of field and office experience in geotechnical investigation, environmental work, and applied research &#8212; from permafrost embankments in the Arctic to asteroid porosity studies presented at GSA. My work sits at the intersection of subsurface uncertainty and infrastructure decisions, and I care a lot about making complex technical information accessible and usable in the field.</p><p>When I&#8217;m not on a drill site or writing reports, I&#8217;m probably running trails, running a tabletop RPG campaign, building something on a 3D printer, or chasing down some obscure dataset that probably doesn&#8217;t have a good visualization yet. This site is where the technical tools live &#8212; built for engineers and technicians working in Alaska&#8217;s challenging environments, and freely available. Everything here is a personal project and a perpetual work-in-progress.</p>',
+    extras:  true
+  },
+  tina: {
+    photo:   'headshot-tina.jpg',
+    alt:     'Tina Minnock',
+    emoji:   '&#x1F6F8;',
+    name:    'Tina Minnock',
+    certs:   'GIS &nbsp;&#183;&nbsp; Remote Sensing &nbsp;&#183;&nbsp; Drone Ops',
+    role:    'Anchorage, AK',
+    heading: 'Who I Am',
+    bio: '<p>[Placeholder &#8212; Tina&#8217;s bio goes here.]</p><p>GIS specialist, remote sensing analyst, and drone operations lead for MFI. Handles spatial data, aerial surveys, and the mapping side of the house. Contributions to the site TBD &#8212; watch this space.</p>',
+    extras:  false
+  },
+  sculptor: {
+    photo:   'headshot-sculptor.jpg',
+    alt:     '3D Sculptor',
+    emoji:   '&#x1F5FF;',
+    name:    '[Name &#8212; Placeholder]',
+    certs:   '3D Sculpting &nbsp;&#183;&nbsp; Digital Fabrication',
+    role:    'Contractor / Collaborator',
+    heading: 'Who I Am',
+    bio: '<p>[Placeholder &#8212; bio goes here.]</p><p>Digital sculptor and 3D fabrication collaborator. Works with MFI on physical prototypes, terrain models, and things that start as ideas and end up as objects. Bio and details to be filled in.</p>',
+    extras:  false
+  },
+  cat1: {
+    photo:   'headshot-cat1.jpg',
+    alt:     'Cat #1',
+    emoji:   '&#x1F408;',
+    name:    '[Cat Name &#8212; Placeholder]',
+    certs:   'Napping &nbsp;&#183;&nbsp; Knocking Things Over',
+    role:    'Chief Morale Officer',
+    heading: 'Who I Am',
+    bio: '<p>[Placeholder &#8212; update with actual name and achievements.]</p><p>Senior staff member with unmatched dedication to occupying keyboards at critical moments. Extensive field experience sitting in boxes. Certifications pending. Has never filed a report on time but maintains excellent morale. Supervises all remote work sessions from a position of supreme indifference.</p>',
+    extras:  false
+  },
+  cat2: {
+    photo:   'headshot-cat2.jpg',
+    alt:     'Cat #2',
+    emoji:   '&#x1F408;&#x200D;&#x2B1B;',
+    name:    '[Cat Name &#8212; Placeholder]',
+    certs:   'Chaos Management &nbsp;&#183;&nbsp; Surveillance',
+    role:    'Director of Operational Disruption',
+    heading: 'Who I Am',
+    bio: '<p>[Placeholder &#8212; update with actual name and achievements.]</p><p>Junior staff member with a demonstrated aptitude for identifying the worst possible moment to demand attention. Specializes in risk assessment (mostly for houseplants), strategic 3AM vocalizations, and unsolicited peer review of ongoing work. Promoted rapidly through the ranks due to sheer persistence.</p>',
+    extras:  false
+  }
+};
+
+function switchProfile(key) {
+  var p = profiles[key];
+  if (!p) return;
+
+  // Selector button states
+  document.querySelectorAll('.profile-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.profile === key);
+  });
+
+  // Photo swap
+  var img      = document.getElementById('profile-photo');
+  var fallback = document.getElementById('photo-fallback');
+  var emoji    = document.getElementById('fallback-emoji');
+
+  // Reset visibility before loading new src
+  img.style.display      = 'block';
+  fallback.style.display = 'none';
+  emoji.innerHTML        = p.emoji;
+  img.alt                = p.alt;
+
+  img.onerror = function() {
+    this.style.display      = 'none';
+    fallback.style.display  = 'flex';
+  };
+  img.src = p.photo;
+
+  // Name / certs / role
+  document.getElementById('profile-name').innerHTML  = p.name;
+  document.getElementById('profile-certs').innerHTML = p.certs;
+  document.getElementById('profile-role').innerHTML  = p.role;
+
+  // Bio
+  document.getElementById('bio-heading').textContent = p.heading;
+  document.getElementById('bio-body').innerHTML      = p.bio;
+
+  // Ian-only extras
+  document.getElementById('ian-extras').style.display = p.extras ? 'block' : 'none';
+}
+
+// Initial render
+switchProfile('ian');
+</script>
+
+</body>
+</html>
