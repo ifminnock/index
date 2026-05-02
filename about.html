@@ -4,33 +4,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About — MFI | Ian Minnock</title>
+<title>About &#8212; MFI | Ian Minnock</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --page-bg:       #2E3A47;
-    --card-bg:       #3A4A5C;
-    --accent-orange: #D4651A;
-    --accent-grey:   #4A6070;
-    --text-primary:  #E8EAEC;
-    --text-secondary:#9AAABB;
-  }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background: var(–page-bg);
-color: var(–text-primary);
+background: #2E3A47;
+color: #E8EAEC;
 font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
 font-size: 0.95rem;
 line-height: 1.6;
 min-height: 100vh;
 }
 
-/* HEADER */
+/* ── HEADER ── */
 header {
-background: var(–page-bg);
-border-bottom: 2px solid var(–accent-orange);
+background: #2E3A47;
+border-bottom: 2px solid #D4651A;
 padding: 1rem 2rem;
 display: flex;
 align-items: center;
@@ -38,36 +29,36 @@ gap: 1.5rem;
 flex-wrap: wrap;
 }
 header a.back {
-color: var(–text-secondary);
+color: #9AAABB;
 text-decoration: none;
 font-size: 0.85rem;
 letter-spacing: 0.05em;
 transition: color 0.2s;
 white-space: nowrap;
 }
-header a.back:hover { color: var(–accent-orange); }
+header a.back:hover { color: #D4651A; }
 header .header-title { flex: 1; }
 header .header-title h1 {
 font-size: 1.3rem;
 font-weight: 700;
-color: var(–accent-orange);
+color: #D4651A;
 letter-spacing: 0.04em;
 }
 header .header-title p {
 font-size: 0.78rem;
-color: var(–text-secondary);
+color: #9AAABB;
 margin-top: 0.15rem;
 letter-spacing: 0.06em;
 }
 
-/* MAIN */
+/* ── MAIN ── */
 main {
 max-width: 1100px;
 margin: 0 auto;
 padding: 2.5rem 2rem 4rem;
 }
 
-/* PROFILE SELECTOR STRIP */
+/* ── PROFILE SELECTOR STRIP ── */
 .profile-selector {
 display: flex;
 gap: 0.5rem;
@@ -75,11 +66,11 @@ flex-wrap: wrap;
 margin-bottom: 0;
 }
 .profile-btn {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
+background: #3A4A5C;
+border: 1px solid #4A6070;
 border-bottom: 3px solid transparent;
-color: var(–text-secondary);
-font-family: inherit;
+color: #9AAABB;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
 font-size: 0.78rem;
 font-weight: 700;
 letter-spacing: 0.06em;
@@ -91,50 +82,52 @@ text-transform: uppercase;
 display: flex;
 align-items: center;
 gap: 0.4rem;
-margin-bottom: -1px; /* merge into card border */
+margin-bottom: -1px;
 }
 .profile-btn:hover {
-color: var(–text-primary);
+color: #E8EAEC;
 background: #42526a;
 }
 .profile-btn.active {
-color: var(–accent-orange);
-border-bottom-color: var(–accent-orange);
-background: var(–card-bg);
-border-left-color: var(–accent-grey);
-border-right-color: var(–accent-grey);
-border-top-color: var(–accent-grey);
+color: #D4651A;
+border-bottom-color: #D4651A;
+background: #3A4A5C;
+border-left-color: #4A6070;
+border-right-color: #4A6070;
+border-top-color: #4A6070;
 }
 .profile-btn .btn-emoji { font-size: 1rem; }
 
-/* BIO CARD */
+/* ── BIO CARD ── */
 .bio-card {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
-border-left: 4px solid var(–accent-orange);
+background: #3A4A5C;
+border: 1px solid #4A6070;
+border-left: 4px solid #D4651A;
 border-radius: 0 4px 4px 4px;
 display: grid;
-grid-template-columns: 200px 1fr;
+grid-template-columns: 210px 1fr;
 gap: 2rem;
 padding: 2rem;
 margin-bottom: 2.5rem;
 align-items: start;
+width: 100%;
 }
 
-/* HEADSHOT */
+/* ── HEADSHOT ── */
 .headshot-block {
 display: flex;
 flex-direction: column;
 align-items: center;
 gap: 0.75rem;
+min-width: 0;
 }
 .headshot-frame {
 width: 180px;
 height: 220px;
-border: 2px solid var(–accent-grey);
+border: 2px solid #4A6070;
 border-radius: 4px;
 overflow: hidden;
-background: var(–page-bg);
+background: #2E3A47;
 display: flex;
 align-items: center;
 justify-content: center;
@@ -154,60 +147,65 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 gap: 0.4rem;
-color: var(–text-secondary);
+color: #9AAABB;
 font-size: 0.7rem;
 text-align: center;
 padding: 0.75rem;
 width: 100%;
 height: 100%;
 position: absolute;
-top: 0; left: 0;
+top: 0;
+left: 0;
 }
 .headshot-placeholder-inner span { font-size: 2.5rem; }
 
-.name-block { text-align: center; }
+.name-block { text-align: center; width: 100%; }
 .name-block .full-name {
 font-size: 1rem;
 font-weight: 700;
-color: var(–text-primary);
+color: #E8EAEC;
 line-height: 1.3;
 }
 .name-block .certs {
 font-size: 0.7rem;
-color: var(–accent-orange);
+color: #D4651A;
 margin-top: 0.25rem;
 letter-spacing: 0.08em;
 }
 .name-block .role-tag {
 font-size: 0.7rem;
-color: var(–text-secondary);
+color: #9AAABB;
 margin-top: 0.2rem;
 }
 
-/* BIO TEXT */
+/* ── BIO TEXT ── */
+.bio-text {
+min-width: 0;
+flex: 1;
+}
 .bio-text h2 {
 font-size: 1.05rem;
 font-weight: 700;
-color: var(–accent-orange);
+color: #D4651A;
 letter-spacing: 0.05em;
 margin-bottom: 0.75rem;
 text-transform: uppercase;
 }
 .bio-text p {
-color: var(–text-primary);
+color: #E8EAEC;
 margin-bottom: 0.9rem;
 line-height: 1.65;
 }
 .bio-text p:last-child { margin-bottom: 0; }
 
-/* INTEREST GRID */
+/* ── INTEREST GRID ── */
 .section-label {
 font-size: 0.78rem;
-color: var(–text-secondary);
+color: #9AAABB;
 letter-spacing: 0.1em;
 text-transform: uppercase;
 margin-bottom: 1rem;
-border-bottom: 1px solid var(–accent-grey);
+border-bottom: 1px solid #4A6070;
 padding-bottom: 0.4rem;
 }
 .interest-grid {
@@ -217,32 +215,32 @@ gap: 1rem;
 margin-bottom: 2.5rem;
 }
 .interest-card {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
+background: #3A4A5C;
+border: 1px solid #4A6070;
 border-radius: 4px;
 padding: 1rem 1.1rem;
 transition: border-color 0.2s, transform 0.15s;
 }
 .interest-card:hover {
-border-color: var(–accent-orange);
+border-color: #D4651A;
 transform: translateY(-2px);
 }
 .interest-card .icon { font-size: 1.5rem; margin-bottom: 0.4rem; display: block; }
 .interest-card h3 {
 font-size: 0.85rem;
 font-weight: 700;
-color: var(–accent-orange);
+color: #D4651A;
 margin-bottom: 0.35rem;
 letter-spacing: 0.04em;
 text-transform: uppercase;
 }
-.interest-card p { font-size: 0.78rem; color: var(–text-secondary); line-height: 1.55; }
+.interest-card p { font-size: 0.78rem; color: #9AAABB; line-height: 1.55; }
 
-/* GALLERY LINK */
+/* ── GALLERY LINK ── */
 .gallery-link-block {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
-border-left: 4px solid var(–accent-grey);
+background: #3A4A5C;
+border: 1px solid #4A6070;
+border-left: 4px solid #4A6070;
 border-radius: 4px;
 padding: 1.25rem 1.5rem;
 display: flex;
@@ -253,17 +251,17 @@ margin-bottom: 2.5rem;
 flex-wrap: wrap;
 transition: border-left-color 0.2s;
 }
-.gallery-link-block:hover { border-left-color: var(–accent-orange); }
+.gallery-link-block:hover { border-left-color: #D4651A; }
 .gallery-link-block .glb-text h3 {
 font-size: 0.95rem;
 font-weight: 700;
-color: var(–text-primary);
+color: #E8EAEC;
 margin-bottom: 0.25rem;
 }
-.gallery-link-block .glb-text p { font-size: 0.78rem; color: var(–text-secondary); }
+.gallery-link-block .glb-text p { font-size: 0.78rem; color: #9AAABB; }
 .gallery-link-block a {
-background: var(–accent-grey);
-color: var(–text-primary);
+background: #4A6070;
+color: #E8EAEC;
 text-decoration: none;
 font-size: 0.82rem;
 font-weight: 700;
@@ -272,10 +270,11 @@ padding: 0.55rem 1.1rem;
 border-radius: 3px;
 white-space: nowrap;
 transition: background 0.2s;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
 }
-.gallery-link-block a:hover { background: var(–accent-orange); }
+.gallery-link-block a:hover { background: #D4651A; }
 
-/* CREDENTIALS */
+/* ── CREDENTIALS ── */
 .cred-list { list-style: none; margin-bottom: 2.5rem; }
 .cred-list li {
 display: flex;
@@ -287,35 +286,42 @@ font-size: 0.82rem;
 }
 .cred-list li:last-child { border-bottom: none; }
 .cred-list .cred-year {
-color: var(–accent-orange);
+color: #D4651A;
 min-width: 55px;
 font-weight: 700;
 letter-spacing: 0.04em;
+flex-shrink: 0;
 }
-.cred-list .cred-body { color: var(–text-primary); }
+.cred-list .cred-body { color: #E8EAEC; }
 .cred-list .cred-body small {
-color: var(–text-secondary);
+color: #9AAABB;
 font-size: 0.72rem;
 display: block;
 }
 
-/* FOOTER */
+/* ── FOOTER ── */
 footer {
-background: var(–page-bg);
-border-top: 1px solid var(–accent-grey);
+background: #2E3A47;
+border-top: 1px solid #4A6070;
 padding: 1.25rem 2rem;
 font-size: 0.72rem;
-color: var(–text-secondary);
+color: #9AAABB;
 line-height: 1.6;
 text-align: center;
 }
-footer a { color: var(–accent-orange); text-decoration: none; }
+footer a { color: #D4651A; text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
-/* RESPONSIVE */
-@media (max-width: 650px) {
-.bio-card { grid-template-columns: 1fr; }
-.headshot-block { flex-direction: row; align-items: flex-start; gap: 1rem; }
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+.bio-card {
+grid-template-columns: 1fr;
+}
+.headshot-block {
+flex-direction: row;
+align-items: flex-start;
+gap: 1rem;
+}
 .headshot-frame { width: 110px; height: 135px; flex-shrink: 0; }
 .name-block { text-align: left; }
 header { padding: 0.85rem 1rem; }
@@ -340,19 +346,19 @@ main { padding: 1.5rem 1rem 3rem; }
 
   <div class="profile-selector" id="profile-selector">
     <button class="profile-btn active" data-profile="ian"      onclick="switchProfile('ian')">
-      <span class="btn-emoji">&#x1F9D1;&#x200D;&#x1F52C;</span> Ian
+      <span class="btn-emoji">&#x1F9D9;</span> Ian
     </button>
     <button class="profile-btn"        data-profile="tina"     onclick="switchProfile('tina')">
-      <span class="btn-emoji">&#x1F6F8;</span> Tina
+      <span class="btn-emoji">&#x1F6F8;</span> [CLASSIFIED]
     </button>
     <button class="profile-btn"        data-profile="sculptor" onclick="switchProfile('sculptor')">
       <span class="btn-emoji">&#x1F5FF;</span> Sculptor
     </button>
     <button class="profile-btn"        data-profile="cat1"     onclick="switchProfile('cat1')">
-      <span class="btn-emoji">&#x1F408;</span> Cat #1
+      <span class="btn-emoji">&#x1F336;</span> Chili Pepper
     </button>
     <button class="profile-btn"        data-profile="cat2"     onclick="switchProfile('cat2')">
-      <span class="btn-emoji">&#x1F408;&#x200D;&#x2B1B;</span> Cat #2
+      <span class="btn-emoji">&#x1F451;</span> King Stubbs
     </button>
   </div>
 
@@ -360,14 +366,12 @@ main { padding: 1.5rem 1rem 3rem; }
 
   <div class="bio-card" id="bio-card">
     <div class="headshot-block">
-      <div class="headshot-frame" id="headshot-frame">
-        <!-- Real photo: place headshot-ian.jpg (etc.) in repo root.
-             If file not found, onerror hides the img and shows the emoji fallback. -->
+      <div class="headshot-frame">
         <img class="profile-photo" id="profile-photo"
              src="headshot-ian.jpg" alt="Ian Minnock"
              onerror="this.style.display='none'; document.getElementById('photo-fallback').style.display='flex';">
         <div class="headshot-placeholder-inner" id="photo-fallback">
-          <span id="fallback-emoji">&#x1F9D1;&#x200D;&#x1F52C;</span>
+          <span id="fallback-emoji">&#x1F9D9;</span>
           <div>Photo coming soon</div>
         </div>
       </div>
@@ -385,7 +389,7 @@ main { padding: 1.5rem 1rem 3rem; }
     <p>
       Geologist, project manager, data nerd, and generalist problem-solver based in Anchorage, Alaska.
       Over a decade of field and office experience in geotechnical investigation, environmental work,
-      and applied research &#8212; from permafrost embankments in the Arctic to asteroid porosity studies
+      and applied research &#8212; from permafrost work in the Arctic to asteroid porosity studies
       presented at GSA. My work sits at the intersection of subsurface uncertainty and infrastructure decisions,
       and I care a lot about making complex technical information accessible and usable in the field.
     </p>
@@ -402,7 +406,7 @@ main { padding: 1.5rem 1rem 3rem; }
 
   </div>
 
-  <!-- IAN-SPECIFIC EXTRAS (interests / gallery / credentials) -->
+  <!-- IAN-SPECIFIC EXTRAS -->
 
   <div id="ian-extras">
 
@@ -467,7 +471,7 @@ main { padding: 1.5rem 1rem 3rem; }
   <a href="gallery.html">View Gallery &#8594;</a>
 </div>
 
-<div class="section-label">// Selected Credentials &amp; Milestones</div>
+<div class="section-label">// Credentials &amp; Milestones</div>
 <ul class="cred-list">
   <li><span class="cred-year">2026</span><span class="cred-body">PMI-ACP &#8212; Agile Certified Practitioner<small>Project Management Institute</small></span></li>
   <li><span class="cred-year">2025</span><span class="cred-body">CPG &#8212; Certified Professional Geologist<small>American Institute of Professional Geologists</small></span></li>
@@ -479,6 +483,12 @@ main { padding: 1.5rem 1rem 3rem; }
   <li><span class="cred-year">2022</span><span class="cred-body">OSHA 30-Hour General Industry Safety Supervisor</span></li>
   <li><span class="cred-year">2017</span><span class="cred-body">BS Geological Sciences &#8212; University of Alaska Anchorage</span></li>
   <li><span class="cred-year">2015</span><span class="cred-body">GSA Annual Meeting &#8212; co-author, asteroid porosity research<small>Geological Society of America, Baltimore MD</small></span></li>
+  <li><span class="cred-year">2014</span><span class="cred-body">Distinguished Honor Graduate &#8212; Mortuary Affairs Specialty Course<small>US Army, Fort Buchanan, Puerto Rico</small></span></li>
+  <li><span class="cred-year">2013</span><span class="cred-body">Enrolled &#8212; University of Alaska Anchorage, Geological Sciences</span></li>
+  <li><span class="cred-year">2011</span><span class="cred-body">Army Achievement Medal<small>US Army Reserve</small></span></li>
+  <li><span class="cred-year">2011</span><span class="cred-body">Warrior Leadership Course (WLC) Graduate<small>US Army Reserve &#8212; foundational NCO leadership development</small></span></li>
+  <li><span class="cred-year">2010</span><span class="cred-body">Distinguished Honor Graduate &#8212; Carpentry &amp; Masonry Course<small>US Army, NCTC Gulfport, MS</small></span></li>
+  <li><span class="cred-year">2009</span><span class="cred-body">Enlisted &#8212; US Army Reserve<small>Wailuku, HI</small></span></li>
 </ul>
 ```
 
@@ -488,7 +498,7 @@ main { padding: 1.5rem 1rem 3rem; }
 
 <footer>
   <p>
-    This site is an independent personal project by Ian and Tina Minnock and is not affiliated with, endorsed by,
+    This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by,
     or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities, any government agency,
     or any employer. References to agency specifications are for informational purposes only.
     All tool outputs are design aids and should be verified by a qualified professional before use.
@@ -501,41 +511,36 @@ main { padding: 1.5rem 1rem 3rem; }
 </footer>
 
 <script>
-// ── Profile data ─────────────────────────────────────────────────────────────
+// Profile data
 // To use a real photo: place the image file in your repo root alongside about.html
-// and update the `photo` field below to match the filename.
-// Supported formats: .jpg, .png, .webp — any browser-renderable image.
+// and update the `photo` field to match the filename (e.g. "headshot-ian.jpg").
 // If the file is not found, the emoji fallback shows automatically via onerror.
-//
-// Example repo layout:
-//   about.html
-//   headshot-ian.jpg      <- Ian's photo
-//   headshot-tina.jpg     <- Tina's photo (add when ready)
-//   headshot-cat1.jpg     <- Cat photo (optional — or leave as emoji)
 
 var profiles = {
   ian: {
     photo:   'headshot-ian.jpg',
     alt:     'Ian Minnock',
-    emoji:   '&#x1F9D1;&#x200D;&#x1F52C;',
+    emoji:   '&#x1F9D9;',
     name:    'Ian Fox Minnock',
     certs:   'CPG &nbsp;&#183;&nbsp; PMP &nbsp;&#183;&nbsp; PMI-ACP',
     role:    'Anchorage, AK',
     heading: 'Who I Am',
-    bio: '<p>Geologist, project manager, data nerd, and generalist problem-solver based in Anchorage, Alaska. Over a decade of field and office experience in geotechnical investigation, environmental work, and applied research &#8212; from permafrost embankments in the Arctic to asteroid porosity studies presented at GSA. My work sits at the intersection of subsurface uncertainty and infrastructure decisions, and I care a lot about making complex technical information accessible and usable in the field.</p><p>When I&#8217;m not on a drill site or writing reports, I&#8217;m probably running trails, running a tabletop RPG campaign, building something on a 3D printer, or chasing down some obscure dataset that probably doesn&#8217;t have a good visualization yet. This site is where the technical tools live &#8212; built for engineers and technicians working in Alaska&#8217;s challenging environments, and freely available. Everything here is a personal project and a perpetual work-in-progress.</p>',
+    bio: '<p>Geologist, project manager, data nerd, and generalist problem-solver based in Anchorage, Alaska. Over a decade of field and office experience in geotechnical investigation, environmental work, and applied research &#8212; from permafrost work in the Arctic to asteroid porosity studies presented at GSA. My work sits at the intersection of subsurface uncertainty and infrastructure decisions, and I care a lot about making complex technical information accessible and usable in the field.</p><p>When I&#8217;m not on a drill site or writing reports, I&#8217;m probably running trails, running a tabletop RPG campaign, building something on a 3D printer, or chasing down some obscure dataset that probably doesn&#8217;t have a good visualization yet. This site is where the technical tools live &#8212; built for engineers and technicians working in Alaska&#8217;s challenging environments, and freely available. Everything here is a personal project and a perpetual work-in-progress.</p>',
     extras:  true
   },
+
   tina: {
     photo:   'headshot-tina.jpg',
-    alt:     'Tina Minnock',
+    alt:     '[REDACTED]',
     emoji:   '&#x1F6F8;',
-    name:    'Tina Minnock',
-    certs:   'GIS &nbsp;&#183;&nbsp; Remote Sensing &nbsp;&#183;&nbsp; Drone Ops',
-    role:    'Anchorage, AK',
-    heading: 'Who I Am',
-    bio: '<p>[Placeholder &#8212; Tina&#8217;s bio goes here.]</p><p>GIS specialist, remote sensing analyst, and drone operations lead for MFI. Handles spatial data, aerial surveys, and the mapping side of the house. Contributions to the site TBD &#8212; watch this space.</p>',
+    name:    '[REDACTED]',
+    certs:   'GIS &nbsp;&#183;&nbsp; Remote Sensing &nbsp;&#183;&nbsp; Eyes in the Sky',
+    role:    'Clearance Level: Need-to-Know',
+    heading: 'Personnel File',
+    bio: '<p>Identity and background information on this operative are restricted pending review by the appropriate oversight committee. What we can confirm: spatial analysis capabilities are exceptional, drone operations are conducted with precision, and the associated paperwork is always filed correctly.</p><p>Further details are available on a strict need-to-know basis. If you are reading this, you do not need to know. Please close this tab and have a great day.</p>',
     extras:  false
   },
+
   sculptor: {
     photo:   'headshot-sculptor.jpg',
     alt:     '3D Sculptor',
@@ -547,26 +552,28 @@ var profiles = {
     bio: '<p>[Placeholder &#8212; bio goes here.]</p><p>Digital sculptor and 3D fabrication collaborator. Works with MFI on physical prototypes, terrain models, and things that start as ideas and end up as objects. Bio and details to be filled in.</p>',
     extras:  false
   },
+
   cat1: {
     photo:   'headshot-cat1.jpg',
-    alt:     'Cat #1',
-    emoji:   '&#x1F408;',
-    name:    '[Cat Name &#8212; Placeholder]',
-    certs:   'Napping &nbsp;&#183;&nbsp; Knocking Things Over',
+    alt:     'Princess Chili Pepper',
+    emoji:   '&#x1F336;',
+    name:    'Princess Chili Pepper',
+    certs:   'Treats &nbsp;&#183;&nbsp; Napping &nbsp;&#183;&nbsp; Selective Tolerance',
     role:    'Chief Morale Officer',
     heading: 'Who I Am',
-    bio: '<p>[Placeholder &#8212; update with actual name and achievements.]</p><p>Senior staff member with unmatched dedication to occupying keyboards at critical moments. Extensive field experience sitting in boxes. Certifications pending. Has never filed a report on time but maintains excellent morale. Supervises all remote work sessions from a position of supreme indifference.</p>',
+    bio: '<p>Princess Chili Pepper is a senior black-and-white cat of distinguished character and unpredictable temperament. Found in a snow dump as a kitten &#8212; tail slightly abbreviated by circumstance, dignity entirely intact &#8212; she has since established herself as the uncontested authority in the household. She is gentle, when she decides to be. She is also spicy. These states can change without notice.</p><p>Her professional interests include sleeping in inconvenient locations, demanding treats with escalating urgency, and tolerating the presence of King Stubbopulous Michaels under formal protest. Despite holding the title of Princess, she outranks everyone. This is not up for discussion.</p>',
     extras:  false
   },
+
   cat2: {
     photo:   'headshot-cat2.jpg',
-    alt:     'Cat #2',
-    emoji:   '&#x1F408;&#x200D;&#x2B1B;',
-    name:    '[Cat Name &#8212; Placeholder]',
-    certs:   'Chaos Management &nbsp;&#183;&nbsp; Surveillance',
+    alt:     'King Stubbopulous Michaels',
+    emoji:   '&#x1F451;',
+    name:    'King Stubbopulous Michaels',
+    certs:   'Chaos &nbsp;&#183;&nbsp; Vocalization &nbsp;&#183;&nbsp; Ambition',
     role:    'Director of Operational Disruption',
     heading: 'Who I Am',
-    bio: '<p>[Placeholder &#8212; update with actual name and achievements.]</p><p>Junior staff member with a demonstrated aptitude for identifying the worst possible moment to demand attention. Specializes in risk assessment (mostly for houseplants), strategic 3AM vocalizations, and unsolicited peer review of ongoing work. Promoted rapidly through the ranks due to sheer persistence.</p>',
+    bio: '<p>King Stubbopulous Michaels is a young dark tabby of tremendous energy, considerable volume, and absolute conviction in the importance of whatever he is currently doing. He arrived into the household with the confidence of someone who has read the briefing materials and disagreed with all of them.</p><p>His reign is active, enthusiastic, and frequently 3AM. He holds the title of King, which he considers both accurate and modest. Princess Chili Pepper disagrees with this assessment and outranks him. He is working on it.</p>',
     extras:  false
   }
 };
@@ -575,42 +582,33 @@ function switchProfile(key) {
   var p = profiles[key];
   if (!p) return;
 
-  // Selector button states
   document.querySelectorAll('.profile-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.profile === key);
   });
 
-  // Photo swap
   var img      = document.getElementById('profile-photo');
   var fallback = document.getElementById('photo-fallback');
   var emoji    = document.getElementById('fallback-emoji');
 
-  // Reset visibility before loading new src
   img.style.display      = 'block';
   fallback.style.display = 'none';
   emoji.innerHTML        = p.emoji;
   img.alt                = p.alt;
 
   img.onerror = function() {
-    this.style.display      = 'none';
-    fallback.style.display  = 'flex';
+    this.style.display     = 'none';
+    fallback.style.display = 'flex';
   };
   img.src = p.photo;
 
-  // Name / certs / role
   document.getElementById('profile-name').innerHTML  = p.name;
   document.getElementById('profile-certs').innerHTML = p.certs;
   document.getElementById('profile-role').innerHTML  = p.role;
-
-  // Bio
   document.getElementById('bio-heading').textContent = p.heading;
   document.getElementById('bio-body').innerHTML      = p.bio;
-
-  // Ian-only extras
   document.getElementById('ian-extras').style.display = p.extras ? 'block' : 'none';
 }
 
-// Initial render
 switchProfile('ian');
 </script>
 
