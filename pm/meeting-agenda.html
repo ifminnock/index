@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PM02 — Meeting Agenda Builder</title>
+<title>PM02 &mdash; Meeting Agenda Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -12,407 +11,245 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background-color: #2E3A47;
-color: #E8EAEC;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.9rem;
-line-height: 1.55;
-min-height: 100vh;
+  background-color: #2E3A47;
+  color: #E8EAEC;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  min-height: 100vh;
 }
-
 .page-wrapper {
-background-color: #2E3A47;
-min-height: 100vh;
-display: flex;
-flex-direction: column;
+  background-color: #2E3A47;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-
-/* ── HEADER ── */
 header {
-background-color: #2E3A47;
-border-bottom: 2px solid #D4651A;
-padding: 1.5rem;
-margin: 0;
-width: 100%;
+  background-color: #2E3A47;
+  border-bottom: 2px solid #D4651A;
+  padding: 1.5rem;
+  width: 100%;
 }
-header .breadcrumb { font-size: 0.8rem; color: #9AAABB; margin-bottom: 0.5rem; }
-header .breadcrumb a { color: #9AAABB; text-decoration: none; }
-header .breadcrumb a:hover { color: #D4651A; }
-header .title-row { display: flex; align-items: baseline; gap: 1rem; }
-header .module-id { font-size: 0.85rem; color: #D4651A; font-weight: 700; }
+.breadcrumb { font-size: 0.8rem; color: #9AAABB; margin-bottom: 0.5rem; }
+.breadcrumb a { color: #9AAABB; text-decoration: none; }
+.breadcrumb a:hover { color: #D4651A; }
+.title-row { display: flex; align-items: baseline; gap: 1rem; }
+.module-id { font-size: 0.85rem; color: #D4651A; font-weight: 700; }
 header h1 { margin: 0; font-size: 1.4rem; color: #E8EAEC; font-weight: 700; }
-header .subtitle { margin: 0.5rem 0 0; font-size: 0.85rem; color: #9AAABB; }
+.subtitle { margin: 0.5rem 0 0; font-size: 0.85rem; color: #9AAABB; }
 
-/* ── MAIN CONTENT ── */
 .main-content {
-background-color: #2E3A47;
-max-width: 960px;
-margin: 0 auto;
-padding: 1.5rem;
-width: 100%;
-flex: 1;
+  background-color: #2E3A47;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  width: 100%;
+  flex: 1;
 }
 
-/* ── DRAFT BAR ── */
 .draft-bar {
-background-color: #3A4A5C;
-border: 1px solid #4A6070;
-border-radius: 4px;
-padding: 0.6rem 1rem;
-display: flex;
-align-items: center;
-gap: 0.75rem;
-margin-bottom: 1.25rem;
-flex-wrap: wrap;
+  background-color: #3A4A5C;
+  border: 1px solid #4A6070;
+  border-radius: 4px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
 }
-.draft-bar span { font-size: 0.78rem; color: #9AAABB; flex: 1; }
-.draft-status { font-size: 0.75rem; color: #6BA84A; }
+.draft-bar span { font-size: 0.78rem; color: #9AAABB; }
+#draftStatus { color: #6BA84A; }
 
-/* ── SECTION PANELS ── */
+.phase-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.phase-card {
+  background-color: #3A4A5C;
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  border-top: 3px solid #4A6070;
+}
+.phase-card.active-phase { border-top-color: #D4651A; }
+.phase-title { font-size: 0.78rem; font-weight: 700; color: #D4651A; text-transform: uppercase; letter-spacing: 0.05em; }
+.phase-sub { font-size: 0.7rem; color: #9AAABB; margin-top: 0.15rem; line-height: 1.35; }
+
 .section-panel {
-background-color: #3A4A5C;
-border-radius: 4px;
-margin-bottom: 1.25rem;
-overflow: hidden;
+  background-color: #3A4A5C;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
 }
-
 .section-toggle {
-background-color: #3A4A5C;
-border: none;
-width: 100%;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0.85rem 1rem;
-cursor: pointer;
-color: #E8EAEC;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.9rem;
-font-weight: 700;
-border-bottom: 1px solid #4A6070;
+  background-color: #3A4A5C;
+  border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  color: #E8EAEC;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-bottom: 1px solid #4A6070;
 }
 .section-toggle:hover { background-color: #4A6070; }
-.section-toggle .toggle-label { display: flex; align-items: center; gap: 0.6rem; }
-.section-toggle .section-tag { font-size: 0.72rem; color: #D4651A; font-weight: 700; }
-.toggle-arrow { font-size: 0.75rem; color: #9AAABB; transition: transform 0.2s; }
-.toggle-arrow.open { transform: rotate(180deg); }
-
-.section-body {
-background-color: #3A4A5C;
-padding: 1rem;
-}
+.toggle-label { display: flex; align-items: center; gap: 0.6rem; }
+.section-tag { font-size: 0.72rem; color: #D4651A; font-weight: 700; }
+.toggle-arrow { font-size: 0.75rem; color: #9AAABB; display: inline-block; }
+.section-body { background-color: #3A4A5C; padding: 1rem; }
 .section-body.hidden { display: none; }
 
-/* ── FORM GRID ── */
-.form-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 0.85rem;
-}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
 .form-grid .full { grid-column: 1 / -1; }
-
 .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
-.field-label {
-font-size: 0.75rem;
-color: #9AAABB;
-font-weight: 700;
-text-transform: uppercase;
-letter-spacing: 0.04em;
-}
-.field-hint { font-size: 0.72rem; color: #4A6070; }
+.field-label { font-size: 0.75rem; color: #9AAABB; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.field-hint { font-size: 0.72rem; color: #4A6070; font-weight: 400; text-transform: none; }
 
-input[type=“text”],
-input[type=“date”],
-input[type=“time”],
-input[type=“number”],
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
 select,
 textarea {
-background-color: #3A4A5C;
-color: #E8EAEC;
-border: 1px solid #4A6070;
-border-radius: 3px;
-padding: 0.45rem 0.6rem;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.85rem;
-width: 100%;
-transition: border-color 0.15s;
+  background-color: #2E3A47;
+  color: #E8EAEC;
+  border: 1px solid #4A6070;
+  border-radius: 3px;
+  padding: 0.45rem 0.6rem;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.85rem;
+  width: 100%;
+  transition: border-color 0.15s;
 }
-input[type=“text”]:focus,
-input[type=“date”]:focus,
-input[type=“time”]:focus,
-input[type=“number”]:focus,
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="number"]:focus,
 select:focus,
-textarea:focus {
-outline: none;
-border-color: #D4651A;
-border-width: 2px;
-}
-input[type=“number”] { -moz-appearance: textfield; }
+textarea:focus { outline: none; border-color: #D4651A; border-width: 2px; }
 textarea { resize: vertical; min-height: 70px; }
-select option { background-color: #3A4A5C; color: #E8EAEC; }
+select option { background-color: #2E3A47; color: #E8EAEC; }
 
-/* ── MEETING RULES ── */
-.rules-grid {
-display: flex;
-flex-direction: column;
-gap: 0.5rem;
-margin-top: 0.4rem;
-}
+.rules-grid { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.4rem; }
 .rule-toggle {
-display: flex;
-align-items: flex-start;
-gap: 0.6rem;
-cursor: pointer;
-padding: 0.5rem 0.6rem;
-border-radius: 3px;
-border: 1px solid #4A6070;
-background-color: #2E3A47;
-transition: background-color 0.15s;
+  display: flex; align-items: flex-start; gap: 0.6rem; cursor: pointer;
+  padding: 0.5rem 0.6rem; border-radius: 3px;
+  border: 1px solid #4A6070; background-color: #2E3A47; transition: border-color 0.15s;
 }
 .rule-toggle:hover { background-color: #3A4A5C; }
-.rule-toggle.active { border-color: #D4651A; background-color: #2E3A47; }
-.rule-toggle input[type=“checkbox”] { margin-top: 0.15rem; accent-color: #D4651A; flex-shrink: 0; }
+.rule-toggle.active { border-color: #D4651A; }
+.rule-toggle input[type="checkbox"] { margin-top: 0.15rem; accent-color: #D4651A; flex-shrink: 0; width: auto; }
 .rule-text { font-size: 0.82rem; color: #E8EAEC; line-height: 1.4; }
 
-/* ── TIMING SUMMARY ── */
-.timing-summary {
-display: flex;
-gap: 1rem;
-margin-bottom: 0.85rem;
-flex-wrap: wrap;
-}
-.timing-badge {
-background-color: #2E3A47;
-border: 1px solid #4A6070;
-border-radius: 3px;
-padding: 0.4rem 0.8rem;
-font-size: 0.8rem;
-}
+.timing-summary { display: flex; gap: 1rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
+.timing-badge { background-color: #2E3A47; border: 1px solid #4A6070; border-radius: 3px; padding: 0.4rem 0.8rem; font-size: 0.8rem; }
 .timing-badge .tl { color: #9AAABB; font-size: 0.72rem; display: block; }
-.timing-badge .tv { font-weight: 700; }
+.timing-badge .tv { font-weight: 700; color: #E8EAEC; }
 .timing-badge.ok .tv { color: #6BA84A; }
 .timing-badge.warn .tv { color: #D4651A; }
 
 .timing-warning-box {
-background-color: rgba(212, 101, 26, 0.15);
-border-left: 4px solid #D4651A;
-border-radius: 0 3px 3px 0;
-padding: 0.6rem 0.85rem;
-font-size: 0.82rem;
-color: #E8EAEC;
-margin-bottom: 0.85rem;
-display: none;
+  background-color: rgba(212,101,26,0.15);
+  border-left: 4px solid #D4651A;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  color: #E8EAEC;
+  margin-bottom: 0.85rem;
+  display: none;
 }
 .timing-warning-box.visible { display: block; }
 
-/* ── AGENDA TABLE ── */
 .agenda-table-wrap { overflow-x: auto; margin-bottom: 0.85rem; }
-
-table.agenda-table {
-width: 100%;
-border-collapse: collapse;
-font-size: 0.82rem;
-min-width: 800px;
-}
+table.agenda-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 820px; }
 table.agenda-table th {
-background-color: #4A6070;
-color: #E8EAEC;
-padding: 0.5rem 0.6rem;
-text-align: left;
-font-size: 0.72rem;
-text-transform: uppercase;
-letter-spacing: 0.04em;
-white-space: nowrap;
-font-weight: 700;
+  background-color: #4A6070; color: #E8EAEC; padding: 0.5rem 0.6rem;
+  text-align: left; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.04em; white-space: nowrap; font-weight: 700;
 }
-table.agenda-table td {
-padding: 0.4rem 0.5rem;
-vertical-align: top;
-border-bottom: 1px solid #2E3A47;
-}
+table.agenda-table td { padding: 0.4rem 0.5rem; vertical-align: top; border-bottom: 1px solid #2E3A47; }
 table.agenda-table tbody tr:nth-child(odd) td { background-color: #3A4A5C; }
 table.agenda-table tbody tr:nth-child(even) td { background-color: #2E3A47; }
-table.agenda-table tbody tr.timing-over td { background-color: rgba(212, 101, 26, 0.2) !important; }
-table.agenda-table tbody tr.timing-over td .time-val { color: #D4651A; font-weight: 700; }
-
-.agenda-table input[type=“text”],
-.agenda-table input[type=“number”],
+table.agenda-table tbody tr.timing-over td { background-color: rgba(212,101,26,0.2) !important; }
+table.agenda-table tbody tr.timing-over .time-val { color: #D4651A; font-weight: 700; }
+.agenda-table input[type="text"],
+.agenda-table input[type="number"],
 .agenda-table select,
-.agenda-table textarea {
-background-color: #2E3A47;
-border-color: #4A6070;
-font-size: 0.8rem;
-padding: 0.35rem 0.45rem;
-}
-.agenda-table textarea { min-height: 50px; }
-.agenda-table input[type=“number”] { width: 60px; }
+.agenda-table textarea { font-size: 0.8rem; padding: 0.35rem 0.45rem; }
+.agenda-table input[type="number"] { width: 60px; }
+.agenda-table textarea { min-height: 52px; }
+.item-num { font-weight: 700; color: #D4651A; font-size: 0.85rem; display: block; text-align: center; padding-top: 0.3rem; }
+.time-val { font-size: 0.8rem; color: #9AAABB; white-space: nowrap; display: block; text-align: center; padding-top: 0.3rem; }
 
-.item-num {
-font-weight: 700;
-color: #D4651A;
-font-size: 0.85rem;
-padding-top: 0.3rem;
-display: block;
-text-align: center;
-}
-.time-val {
-font-size: 0.8rem;
-color: #9AAABB;
-white-space: nowrap;
-display: block;
-padding-top: 0.3rem;
-text-align: center;
-}
-
-.materials-check-list {
-display: flex;
-flex-direction: column;
-gap: 0.25rem;
-max-height: 100px;
-overflow-y: auto;
-}
-.materials-check-list label {
-display: flex;
-align-items: flex-start;
-gap: 0.35rem;
-font-size: 0.75rem;
-color: #E8EAEC;
-cursor: pointer;
-line-height: 1.3;
-}
-.materials-check-list input[type=“checkbox”] { accent-color: #D4651A; margin-top: 0.1rem; flex-shrink: 0; }
+.mat-check-list { display: flex; flex-direction: column; gap: 0.25rem; max-height: 100px; overflow-y: auto; }
+.mat-check-list label { display: flex; align-items: flex-start; gap: 0.35rem; font-size: 0.75rem; color: #E8EAEC; cursor: pointer; line-height: 1.3; }
+.mat-check-list input[type="checkbox"] { accent-color: #D4651A; margin-top: 0.1rem; flex-shrink: 0; width: auto; }
 .no-materials { font-size: 0.72rem; color: #4A6070; font-style: italic; }
 
-/* ── ACTION ITEMS / PARKING LOT CARDS ── */
-.item-card {
-background-color: #2E3A47;
-border: 1px solid #4A6070;
-border-radius: 3px;
-padding: 0.75rem;
-margin-bottom: 0.6rem;
-}
-.item-card-grid {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 0.6rem;
-margin-bottom: 0.5rem;
-}
+.item-card { background-color: #2E3A47; border: 1px solid #4A6070; border-radius: 3px; padding: 0.75rem; margin-bottom: 0.6rem; }
+.item-card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
 .item-card-grid .full { grid-column: 1 / -1; }
-
-.park-card-grid {
-display: grid;
-grid-template-columns: 2fr 1fr;
-gap: 0.6rem;
-margin-bottom: 0.5rem;
-}
+.park-card-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
 .park-card-grid .full { grid-column: 1 / -1; }
 
-/* ── BUTTONS ── */
 .btn {
-background-color: #D4651A;
-color: #E8EAEC;
-border: none;
-border-radius: 3px;
-padding: 0.45rem 0.9rem;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.82rem;
-font-weight: 700;
-cursor: pointer;
-transition: background-color 0.15s;
-text-transform: uppercase;
-letter-spacing: 0.04em;
+  background-color: #D4651A; color: #E8EAEC; border: none; border-radius: 3px;
+  padding: 0.45rem 0.9rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
+  text-transform: uppercase; letter-spacing: 0.04em;
 }
 .btn:hover { background-color: #b85516; }
-
 .btn-secondary {
-background-color: #4A6070;
-color: #E8EAEC;
-border: none;
-border-radius: 3px;
-padding: 0.45rem 0.9rem;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.82rem;
-font-weight: 700;
-cursor: pointer;
-transition: background-color 0.15s;
-text-transform: uppercase;
-letter-spacing: 0.04em;
+  background-color: #4A6070; color: #E8EAEC; border: none; border-radius: 3px;
+  padding: 0.45rem 0.9rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
+  text-transform: uppercase; letter-spacing: 0.04em;
 }
 .btn-secondary:hover { background-color: #3a4f5c; }
-
 .btn-danger {
-background-color: #D64A4A;
-color: #E8EAEC;
-border: none;
-border-radius: 3px;
-padding: 0.35rem 0.6rem;
-font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
-font-size: 0.75rem;
-font-weight: 700;
-cursor: pointer;
-transition: background-color 0.15s;
+  background-color: #D64A4A; color: #E8EAEC; border: none; border-radius: 3px;
+  padding: 0.35rem 0.6rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
 }
 .btn-danger:hover { background-color: #b83a3a; }
-
-.btn-sm {
-padding: 0.3rem 0.65rem;
-font-size: 0.75rem;
-}
-
-.action-row {
-display: flex;
-gap: 0.6rem;
-align-items: center;
-flex-wrap: wrap;
-margin-top: 0.75rem;
-}
+.btn-sm { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
+.action-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; }
 
 .export-row {
-display: flex;
-gap: 0.75rem;
-align-items: center;
-flex-wrap: wrap;
-margin-bottom: 1.5rem;
-background-color: #3A4A5C;
-padding: 1rem;
-border-radius: 4px;
+  display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
+  margin-bottom: 1.5rem; background-color: #3A4A5C; padding: 1rem; border-radius: 4px;
 }
 .export-row label { font-size: 0.8rem; color: #9AAABB; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
-.export-row input[type=“checkbox”] { accent-color: #D4651A; width: auto; }
+.export-row input[type="checkbox"] { accent-color: #D4651A; width: auto; }
 
-/* ── FOOTER ── */
 footer {
-background-color: #2E3A47;
-border-top: 1px solid #4A6070;
-padding: 1rem 1.5rem;
-font-size: 0.75rem;
-color: #9AAABB;
-display: flex;
-flex-wrap: wrap;
-gap: 1rem;
-justify-content: space-between;
-margin-top: 2rem;
+  background-color: #2E3A47;
+  border-top: 1px solid #4A6070;
+  padding: 1rem 1.5rem;
+  font-size: 0.75rem;
+  color: #9AAABB;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: 2rem;
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 640px) {
-.form-grid { grid-template-columns: 1fr; }
-.item-card-grid { grid-template-columns: 1fr; }
-.park-card-grid { grid-template-columns: 1fr; }
-.timing-summary { flex-direction: column; }
-}
-
-/* ── PRINT / PDF HIDDEN ── */
-@media print {
-.btn, .btn-secondary, .btn-danger, .draft-bar, .export-row { display: none !important; }
+  .form-grid { grid-template-columns: 1fr; }
+  .item-card-grid { grid-template-columns: 1fr; }
+  .park-card-grid { grid-template-columns: 1fr; }
+  .phase-strip { grid-template-columns: 1fr; }
 }
 </style>
-
 </head>
 <body>
 <div class="page-wrapper">
-
-<!-- ── HEADER ── -->
 
 <header>
   <div class="breadcrumb">
@@ -424,28 +261,42 @@ margin-top: 2rem;
     <span class="module-id">PM02</span>
     <h1>Meeting Agenda Builder</h1>
   </div>
-  <p class="subtitle">Structured agenda planning with timeboxing, action tracking, and PDF export</p>
+  <p class="subtitle">Structured agenda planning with timeboxing, action tracking, and PDF export &mdash; READY / REACH / RAP facilitation framework</p>
 </header>
-
-<!-- ── MAIN ── -->
 
 <div class="main-content">
 
-  <!-- Draft bar -->
-
   <div class="draft-bar">
-    <span>Draft auto-saved to browser storage</span>
-    <span class="draft-status" id="draftStatus">&#8212;</span>
+    <span>Draft auto-saved to browser</span>
+    <span id="draftStatus">&mdash;</span>
     <button class="btn-secondary btn-sm" onclick="loadDraft()">Load Draft</button>
     <button class="btn-secondary btn-sm" onclick="clearDraft()">Clear Draft</button>
   </div>
 
-  <!-- ══ MEETING HEADER ══ -->
+  <!-- READY / REACH / RAP reference strip -->
+  <div class="phase-strip">
+    <div class="phase-card active-phase">
+      <div class="phase-title">READY &mdash; Setting the Foundation</div>
+      <div class="phase-sub">Roles &amp; Responsibilities &middot; Expectations &amp; Engagement &middot; Agenda &amp; Alignment &middot; Define Purpose &middot; Your Logistics</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-title">REACH &mdash; Guiding the Process</div>
+      <div class="phase-sub">Review &amp; Open &middot; Explore &middot; Assess &middot; Conclude &middot; Highlight &amp; Close</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-title">RAP &mdash; Learning &amp; Improving</div>
+      <div class="phase-sub">Retrospect &middot; Assign &middot; Progress Track</div>
+    </div>
+  </div>
 
+  <!-- ══ MEETING DETAILS (READY) ══ -->
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('headerBody', this)">
-      <span class="toggle-label"><span class="section-tag">HDR</span> Meeting Details</span>
-      <span class="toggle-arrow open" id="arrowHeaderBody">&#9650;</span>
+      <span class="toggle-label">
+        <span class="section-tag">READY</span>
+        Meeting Details &amp; Facilitation Setup
+      </span>
+      <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="headerBody">
       <div class="form-grid">
@@ -456,12 +307,12 @@ margin-top: 2rem;
         <div class="field-group">
           <label class="field-label" for="meetingType">Meeting Type</label>
           <select id="meetingType" onchange="saveDraftDebounced()">
-            <option value="General Meeting">General Meeting</option>
-            <option value="Project Meeting">Project Meeting</option>
-            <option value="Board Meeting">Board Meeting</option>
-            <option value="Committee Meeting">Committee Meeting</option>
-            <option value="Client Meeting">Client Meeting</option>
-            <option value="Other">Other</option>
+            <option>General Meeting</option>
+            <option>Project Meeting</option>
+            <option>Board Meeting</option>
+            <option>Committee Meeting</option>
+            <option>Client Meeting</option>
+            <option>Other</option>
           </select>
         </div>
         <div class="field-group">
@@ -477,107 +328,117 @@ margin-top: 2rem;
           <input type="time" id="endTime" oninput="recalcTimes(); saveDraftDebounced()">
         </div>
         <div class="field-group full">
-          <label class="field-label" for="attendees">Attendees <span class="field-hint">(comma-separated)</span></label>
+          <label class="field-label" for="facilitator">Facilitator <span class="field-hint">(READY: Roles &amp; Responsibilities)</span></label>
+          <input type="text" id="facilitator" placeholder="e.g., Alice Smith" oninput="saveDraftDebounced()">
+        </div>
+        <div class="field-group full">
+          <label class="field-label" for="attendees">Attendees <span class="field-hint">(comma-separated; auto-populates owner dropdowns)</span></label>
           <textarea id="attendees" rows="2" placeholder="Alice Smith, Bob Jones, Carol White" oninput="updateAttendees(); saveDraftDebounced()"></textarea>
         </div>
         <div class="field-group full">
-          <label class="field-label" for="materials">Materials / References <span class="field-hint">(one per line)</span></label>
+          <label class="field-label" for="materials">Materials / References <span class="field-hint">(one per line; selectable per agenda item)</span></label>
           <textarea id="materials" rows="3" placeholder="Q3 Budget Report&#10;Draft Minutes 2026-04-15&#10;https://drive.example.com/doc123" oninput="updateMaterials(); saveDraftDebounced()"></textarea>
+        </div>
+        <div class="field-group full">
+          <label class="field-label" for="meetingPurpose">Purpose &amp; Desired Outcomes <span class="field-hint">(READY: Define Purpose &mdash; the clear &#8220;why&#8221;)</span></label>
+          <textarea id="meetingPurpose" rows="2" placeholder="Articulate the clear purpose and specific outcomes expected from this meeting..." oninput="saveDraftDebounced()"></textarea>
         </div>
       </div>
 
-```
-  <!-- Meeting Rules -->
-  <div style="margin-top:1rem;">
-    <div class="field-label" style="margin-bottom:0.5rem;">Meeting Rules <span class="field-hint">(toggle to include in agenda)</span></div>
-    <div class="rules-grid" id="rulesGrid">
-      <label class="rule-toggle" onclick="toggleRule(this)">
-        <input type="checkbox" onchange="saveDraftDebounced()">
-        <span class="rule-text">Timeboxed&#8202;&#8212;&#8202;each agenda item has a fixed duration; we move to parking lot if time expires</span>
-      </label>
-      <label class="rule-toggle" onclick="toggleRule(this)">
-        <input type="checkbox" onchange="saveDraftDebounced()">
-        <span class="rule-text">Decisions recorded&#8202;&#8212;&#8202;each motion includes who moved, who seconded, and vote tally (if applicable)</span>
-      </label>
-      <label class="rule-toggle" onclick="toggleRule(this)">
-        <input type="checkbox" onchange="saveDraftDebounced()">
-        <span class="rule-text">One speaker at a time&#8202;&#8212;&#8202;questions held until clarification round</span>
-      </label>
-      <label class="rule-toggle" onclick="toggleRule(this)">
-        <input type="checkbox" onchange="saveDraftDebounced()">
-        <span class="rule-text">Parking lot enforced&#8202;&#8212;&#8202;off-topic items go to parking lot for discussion later</span>
-      </label>
-      <label class="rule-toggle" onclick="toggleRule(this)">
-        <input type="checkbox" onchange="saveDraftDebounced()">
-        <span class="rule-text">Action items captured&#8202;&#8212;&#8202;owner and due date assigned before item close</span>
-      </label>
+      <div style="margin-top:1rem;">
+        <div class="field-label" style="margin-bottom:0.5rem;">
+          Meeting Rules <span class="field-hint">(READY: Expectations &amp; Engagement &mdash; toggle to include in printout)</span>
+        </div>
+        <div class="rules-grid" id="rulesGrid">
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">Timeboxed &mdash; each agenda item has a fixed duration; we move to parking lot if time expires</span>
+          </label>
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">Decisions recorded &mdash; each motion includes who moved, who seconded, and vote tally (if applicable)</span>
+          </label>
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">One speaker at a time &mdash; questions held until clarification round</span>
+          </label>
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">Parking lot enforced &mdash; off-topic items go to parking lot for discussion later</span>
+          </label>
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">Action items captured &mdash; owner and due date assigned before item close</span>
+          </label>
+          <label class="rule-toggle">
+            <input type="checkbox" onchange="onRuleChange(this)">
+            <span class="rule-text">Psychological safety &mdash; all voices contribute meaningfully; open communication expected</span>
+          </label>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-```
 
-  </div>
-
-  <!-- ══ AGENDA ITEMS ══ -->
-
+  <!-- ══ AGENDA ITEMS (REACH) ══ -->
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('agendaBody', this)">
-      <span class="toggle-label"><span class="section-tag">AGD</span> Agenda Items</span>
-      <span class="toggle-arrow open" id="arrowAgendaBody">&#9650;</span>
+      <span class="toggle-label">
+        <span class="section-tag">REACH</span>
+        Agenda Items &amp; Timeboxing
+      </span>
+      <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="agendaBody">
-      <!-- Timing summary -->
       <div class="timing-summary">
-        <div class="timing-badge" id="badgeTotal">
+        <div class="timing-badge">
           <span class="tl">Total Agenda Time</span>
           <span class="tv" id="totalMins">0 min</span>
         </div>
-        <div class="timing-badge" id="badgeMeetingDur">
+        <div class="timing-badge">
           <span class="tl">Meeting Duration</span>
-          <span class="tv" id="meetingDurVal">&#8212;</span>
+          <span class="tv" id="meetingDurVal">&mdash;</span>
         </div>
-        <div class="timing-badge ok" id="badgeBuffer">
+        <div class="timing-badge" id="badgeBuffer">
           <span class="tl">Buffer Remaining</span>
-          <span class="tv" id="bufferVal">&#8212;</span>
+          <span class="tv" id="bufferVal">&mdash;</span>
         </div>
       </div>
       <div class="timing-warning-box" id="timingWarning"></div>
-
-```
-  <div class="agenda-table-wrap">
-    <table class="agenda-table">
-      <thead>
-        <tr>
-          <th style="width:36px;">#</th>
-          <th style="min-width:180px;">Topic</th>
-          <th style="min-width:130px;">Owner / Presenter</th>
-          <th style="width:64px;">Min</th>
-          <th style="width:72px;">Start</th>
-          <th style="width:72px;">End</th>
-          <th style="min-width:150px;">Materials</th>
-          <th style="min-width:180px;">Notes</th>
-          <th style="width:52px;">Del</th>
-        </tr>
-      </thead>
-      <tbody id="agendaTbody"></tbody>
-    </table>
-  </div>
-  <div class="action-row">
-    <button class="btn" onclick="addAgendaItem()">+ Add Item</button>
-  </div>
-</div>
-```
-
+      <div class="agenda-table-wrap">
+        <table class="agenda-table">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th style="min-width:175px;">Topic</th>
+              <th style="min-width:130px;">Owner / Presenter</th>
+              <th style="width:62px;">Min</th>
+              <th style="width:76px;">Start</th>
+              <th style="width:76px;">End</th>
+              <th style="min-width:145px;">Materials</th>
+              <th style="min-width:175px;">Notes / Decisions</th>
+              <th style="width:50px;">Del</th>
+            </tr>
+          </thead>
+          <tbody id="agendaTbody"></tbody>
+        </table>
+      </div>
+      <div class="action-row">
+        <button class="btn" onclick="addAgendaItem()">+ Add Item</button>
+      </div>
+    </div>
   </div>
 
-  <!-- ══ ACTION ITEMS ══ -->
-
+  <!-- ══ ACTION ITEMS (RAP: Assign) ══ -->
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('actionBody', this)">
-      <span class="toggle-label"><span class="section-tag">ACT</span> Action Items</span>
-      <span class="toggle-arrow open" id="arrowActionBody">&#9650;</span>
+      <span class="toggle-label">
+        <span class="section-tag">RAP &mdash; Assign</span>
+        Action Items
+      </span>
+      <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="actionBody">
+      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Capture open items from previous meetings or assign new ones during this session. Owner and due date required before item close.</p>
       <div id="actionList"></div>
       <div class="action-row">
         <button class="btn" onclick="addActionItem()">+ Add Action Item</button>
@@ -585,14 +446,45 @@ margin-top: 2rem;
     </div>
   </div>
 
-  <!-- ══ PARKING LOT ══ -->
+  <!-- ══ RETROSPECT (RAP: Retrospect) ══ -->
+  <div class="section-panel">
+    <button class="section-toggle" onclick="toggleSection('retroBody', this)">
+      <span class="toggle-label">
+        <span class="section-tag">RAP &mdash; Retrospect</span>
+        Meeting Retrospective
+      </span>
+      <span class="toggle-arrow">&#9660;</span>
+    </button>
+    <div class="section-body hidden" id="retroBody">
+      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Review what worked, what to improve, and key learnings for future sessions. Fill out after the meeting closes.</p>
+      <div class="form-grid">
+        <div class="field-group full">
+          <label class="field-label" for="retroWorked">What Worked Well</label>
+          <textarea id="retroWorked" rows="3" placeholder="Capture what went well in this meeting..." oninput="saveDraftDebounced()"></textarea>
+        </div>
+        <div class="field-group full">
+          <label class="field-label" for="retroImprove">Areas for Improvement</label>
+          <textarea id="retroImprove" rows="3" placeholder="What could be done better next time..." oninput="saveDraftDebounced()"></textarea>
+        </div>
+        <div class="field-group full">
+          <label class="field-label" for="retroLearnings">Key Learnings</label>
+          <textarea id="retroLearnings" rows="2" placeholder="Document key learnings for future sessions..." oninput="saveDraftDebounced()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- ══ PARKING LOT ══ -->
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('parkBody', this)">
-      <span class="toggle-label"><span class="section-tag">PLT</span> Parking Lot</span>
-      <span class="toggle-arrow open" id="arrowParkBody">&#9650;</span>
+      <span class="toggle-label">
+        <span class="section-tag">PLT</span>
+        Parking Lot
+      </span>
+      <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="parkBody">
+      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Off-topic or deferred items raised during the meeting. Quick-add to keep discussion on track.</p>
       <div id="parkList"></div>
       <div class="action-row">
         <button class="btn" onclick="addParkItem()">+ Add to Parking Lot</button>
@@ -601,733 +493,869 @@ margin-top: 2rem;
   </div>
 
   <!-- ══ EXPORT ══ -->
-
   <div class="export-row">
     <button class="btn" onclick="exportPDF()">&#8595; Export PDF</button>
     <label><input type="checkbox" id="exportBW"> Export B&amp;W</label>
-    <span style="font-size:0.78rem; color:#9AAABB;">Generates a print-ready agenda with all sections</span>
+    <span style="font-size:0.78rem;color:#9AAABB;">Generates a print-ready agenda including all sections</span>
   </div>
 
-</div><!-- /main-content -->
-
-<!-- ── FOOTER ── -->
+</div>
 
 <footer>
   <span>PM02 &mdash; Meeting Agenda Builder</span>
   <span>Independent personal project &mdash; not affiliated with any government agency or employer</span>
   <span>Ian Minnock, CPG, PMP, PMI-ACP &mdash; ian.minnock@mfimpact.com</span>
-  <span>v1.0 &mdash; May 2026</span>
+  <span>v1.1 &mdash; May 2026</span>
 </footer>
 
-</div><!-- /page-wrapper -->
+</div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────────────
-let agendaItems = [];   // [{id, topic, owner, duration, materialsChecked:[], notes}]
-let actionItems = [];   // [{id, text, owner, dueDate, status, notes}]
-let parkItems   = [];   // [{id, topic, reason, notes}]
-let nextId = 1;
+/* ───────────────────────────────────────────────────
+   STATE — plain ES5-compatible vars
+─────────────────────────────────────────────────── */
+var agendaItems = [];
+var actionItems = [];
+var parkItems   = [];
+var nextId = 1;
 
-// ── UTILITY ───────────────────────────────────────────────────
-function pad(n){ return String(n).padStart(2,'0'); }
+/* ───────────────────────────────────────────────────
+   UTILITY
+─────────────────────────────────────────────────── */
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
 
 function timeToMins(t){
   if(!t) return null;
-  const [h,m] = t.split(':').map(Number);
-  return h*60+m;
+  var parts = t.split(':');
+  if(parts.length < 2) return null;
+  var h = parseInt(parts[0], 10);
+  var m = parseInt(parts[1], 10);
+  if(isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
 }
 
-function minsToTime(m){
-  if(m===null||isNaN(m)) return '--:--';
-  const h = Math.floor(m/60)%24;
-  const mm = m%60;
-  const ampm = h>=12?'PM':'AM';
-  const h12 = h%12||12;
-  return h12+':'+pad(mm)+' '+ampm;
+function minsTo12(tm){
+  if(tm === null || isNaN(tm)) return '--:--';
+  var h = Math.floor(tm / 60) % 24;
+  var m = tm % 60;
+  var ap = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12;
+  if(h12 === 0) h12 = 12;
+  return h12 + ':' + pad2(m) + ' ' + ap;
 }
 
-function formatDateDisplay(d){
+function fmtDate(d){
   if(!d) return '';
-  const [y,mo,day] = d.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[parseInt(mo,10)-1]+' '+parseInt(day,10)+', '+y;
+  var p = d.split('-');
+  if(p.length < 3) return d;
+  var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mo[parseInt(p[1],10)-1] + ' ' + parseInt(p[2],10) + ', ' + p[0];
 }
 
-// ── SECTION TOGGLE ─────────────────────────────────────────────
-function toggleSection(id, btn){
-  const body = document.getElementById(id);
-  const arrow = btn.querySelector('.toggle-arrow');
-  body.classList.toggle('hidden');
-  arrow.classList.toggle('open');
+function esc(s){
+  if(s === null || s === undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── RULE TOGGLE ────────────────────────────────────────────────
-function toggleRule(label){
-  label.classList.toggle('active');
+/* ───────────────────────────────────────────────────
+   SECTION TOGGLE
+─────────────────────────────────────────────────── */
+function toggleSection(bodyId, btn){
+  var body  = document.getElementById(bodyId);
+  var arrow = btn.querySelector('.toggle-arrow');
+  if(body.classList.contains('hidden')){
+    body.classList.remove('hidden');
+    arrow.innerHTML = '&#9650;';
+  } else {
+    body.classList.add('hidden');
+    arrow.innerHTML = '&#9660;';
+  }
+}
+
+/* ───────────────────────────────────────────────────
+   MEETING RULES
+─────────────────────────────────────────────────── */
+function onRuleChange(cb){
+  var lbl = cb.closest ? cb.closest('.rule-toggle') : cb.parentNode;
+  if(cb.checked){ lbl.classList.add('active'); }
+  else { lbl.classList.remove('active'); }
   saveDraftDebounced();
 }
 
-// ── ATTENDEES ─────────────────────────────────────────────────
+/* ───────────────────────────────────────────────────
+   ATTENDEES
+─────────────────────────────────────────────────── */
 function getAttendees(){
-  const raw = document.getElementById('attendees').value;
-  return raw.split(',').map(s=>s.trim()).filter(Boolean);
+  var raw = document.getElementById('attendees').value;
+  return raw.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s !== ''; });
 }
 
 function updateAttendees(){
-  const list = getAttendees();
-  document.querySelectorAll('.owner-select').forEach(sel=>{
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">-- Unassigned --</option>';
-    list.forEach(a=>{
-      const o = document.createElement('option');
-      o.value = a; o.textContent = a;
-      if(a===cur) o.selected = true;
-      sel.appendChild(o);
-    });
-    if(cur && list.includes(cur)) sel.value = cur;
-  });
+  var list = getAttendees();
+  var sels = document.querySelectorAll('.owner-select');
+  for(var i = 0; i < sels.length; i++){
+    var sel = sels[i];
+    var cur = sel.value;
+    while(sel.firstChild) sel.removeChild(sel.firstChild);
+    var blank = document.createElement('option');
+    blank.value = ''; blank.textContent = '-- Unassigned --';
+    sel.appendChild(blank);
+    for(var j = 0; j < list.length; j++){
+      var opt = document.createElement('option');
+      opt.value = list[j]; opt.textContent = list[j];
+      if(list[j] === cur) opt.selected = true;
+      sel.appendChild(opt);
+    }
+    if(cur !== '' && indexOf(list, cur) >= 0) sel.value = cur;
+  }
 }
 
-// ── MATERIALS ─────────────────────────────────────────────────
+function indexOf(arr, val){
+  for(var i = 0; i < arr.length; i++){ if(arr[i] === val) return i; }
+  return -1;
+}
+
+/* ───────────────────────────────────────────────────
+   MATERIALS
+─────────────────────────────────────────────────── */
 function getMaterials(){
-  const raw = document.getElementById('materials').value;
-  return raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  var raw = document.getElementById('materials').value;
+  return raw.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s !== ''; });
 }
 
 function updateMaterials(){
-  const mats = getMaterials();
-  document.querySelectorAll('.mat-check-list').forEach(container=>{
-    const itemId = parseInt(container.dataset.itemid,10);
-    const item = agendaItems.find(i=>i.id===itemId);
-    const checked = item ? item.materialsChecked : [];
-    renderMaterialChecks(container, mats, checked, itemId);
-  });
+  var mats = getMaterials();
+  var containers = document.querySelectorAll('.mat-check-list');
+  for(var i = 0; i < containers.length; i++){
+    var c = containers[i];
+    var iid = parseInt(c.getAttribute('data-itemid'), 10);
+    var item = findById(agendaItems, iid);
+    var chk = item ? (item.materialsChecked || []) : [];
+    renderMats(c, mats, chk, iid);
+  }
   saveDraftDebounced();
 }
 
-function renderMaterialChecks(container, mats, checked, itemId){
-  if(!mats.length){
-    container.innerHTML = '<span class="no-materials">No materials listed</span>';
-    return;
+function renderMats(container, mats, checked, itemId){
+  while(container.firstChild) container.removeChild(container.firstChild);
+  if(!mats || mats.length === 0){
+    var sp = document.createElement('span');
+    sp.className = 'no-materials'; sp.textContent = 'No materials listed';
+    container.appendChild(sp); return;
   }
-  container.innerHTML = '';
-  mats.forEach((m,i)=>{
-    const lbl = document.createElement('label');
-    const cb  = document.createElement('input');
+  for(var i = 0; i < mats.length; i++){
+    var lbl = document.createElement('label');
+    var cb  = document.createElement('input');
     cb.type = 'checkbox';
-    cb.checked = checked.includes(m);
-    cb.onchange = ()=>{ updateItemMaterials(itemId); saveDraftDebounced(); };
-    const sp = document.createElement('span');
-    sp.textContent = m;
-    lbl.appendChild(cb);
-    lbl.appendChild(sp);
+    cb.checked = indexOf(checked, mats[i]) >= 0;
+    cb.setAttribute('data-mat', mats[i]);
+    cb.setAttribute('data-iid', itemId);
+    cb.onchange = makeSyncMats(itemId);
+    var txt = document.createElement('span');
+    txt.textContent = mats[i];
+    lbl.appendChild(cb); lbl.appendChild(txt);
     container.appendChild(lbl);
-  });
+  }
 }
 
-function updateItemMaterials(itemId){
-  const item = agendaItems.find(i=>i.id===itemId);
+function makeSyncMats(itemId){
+  return function(){ syncMats(itemId); saveDraftDebounced(); };
+}
+
+function syncMats(itemId){
+  var item = findById(agendaItems, itemId);
   if(!item) return;
-  const mats = getMaterials();
-  const container = document.querySelector('.mat-check-list[data-itemid="'+itemId+'"]');
-  if(!container) return;
-  const checked = [];
-  container.querySelectorAll('input[type="checkbox"]').forEach((cb,idx)=>{
-    if(cb.checked && mats[idx]) checked.push(mats[idx]);
-  });
-  item.materialsChecked = checked;
+  var c = document.querySelector('.mat-check-list[data-itemid="'+itemId+'"]');
+  if(!c) return;
+  var cbs = c.querySelectorAll('input[type="checkbox"]');
+  var result = [];
+  for(var i = 0; i < cbs.length; i++){
+    if(cbs[i].checked) result.push(cbs[i].getAttribute('data-mat'));
+  }
+  item.materialsChecked = result;
 }
 
-// ── AGENDA ITEMS ──────────────────────────────────────────────
+function findById(arr, id){
+  for(var i = 0; i < arr.length; i++){ if(arr[i].id === id) return arr[i]; }
+  return null;
+}
+
+/* ───────────────────────────────────────────────────
+   AGENDA ITEMS
+─────────────────────────────────────────────────── */
 function addAgendaItem(data){
-  const id = nextId++;
-  const item = {
-    id,
-    topic: data?.topic||'',
-    owner: data?.owner||'',
-    duration: data?.duration||0,
-    materialsChecked: data?.materialsChecked||[],
-    notes: data?.notes||''
+  var id = nextId++;
+  var item = {
+    id: id,
+    topic: data ? (data.topic || '') : '',
+    owner: data ? (data.owner || '') : '',
+    duration: data ? (parseInt(data.duration, 10) || 0) : 0,
+    materialsChecked: data ? (data.materialsChecked || []) : [],
+    notes: data ? (data.notes || '') : ''
   };
   agendaItems.push(item);
-  renderAgendaRow(item);
+  buildAgendaRow(item);
+  renumber();
   recalcTimes();
   updateAttendees();
-  updateMaterials();
+  var mats = getMaterials();
+  var c = document.querySelector('.mat-check-list[data-itemid="'+id+'"]');
+  if(c) renderMats(c, mats, item.materialsChecked, id);
   saveDraftDebounced();
 }
 
-function renderAgendaRow(item){
-  const tbody = document.getElementById('agendaTbody');
-  const tr = document.createElement('tr');
-  tr.id = 'row-'+item.id;
-  tr.innerHTML = buildRowHTML(item);
+function buildAgendaRow(item){
+  var tbody = document.getElementById('agendaTbody');
+  var tr = document.createElement('tr');
+  tr.id = 'row-' + item.id;
+
+  var attendees = getAttendees();
+  var iid = item.id;
+
+  // # cell
+  var td0 = document.createElement('td');
+  var numSp = document.createElement('span');
+  numSp.className = 'item-num'; numSp.id = 'num-' + iid; numSp.textContent = '?';
+  td0.appendChild(numSp);
+
+  // Topic cell
+  var td1 = document.createElement('td');
+  var inpTopic = document.createElement('input');
+  inpTopic.type = 'text'; inpTopic.value = item.topic; inpTopic.placeholder = 'Topic...';
+  inpTopic.onchange = makeFieldUpdater(iid, 'topic');
+  inpTopic.oninput  = makeFieldUpdater(iid, 'topic');
+  td1.appendChild(inpTopic);
+
+  // Owner cell
+  var td2 = document.createElement('td');
+  var selOwner = document.createElement('select');
+  selOwner.className = 'owner-select';
+  var blankOpt = document.createElement('option'); blankOpt.value = ''; blankOpt.textContent = '-- --';
+  selOwner.appendChild(blankOpt);
+  for(var i = 0; i < attendees.length; i++){
+    var opt = document.createElement('option');
+    opt.value = attendees[i]; opt.textContent = attendees[i];
+    if(attendees[i] === item.owner) opt.selected = true;
+    selOwner.appendChild(opt);
+  }
+  selOwner.onchange = makeFieldUpdater(iid, 'owner');
+  td2.appendChild(selOwner);
+
+  // Duration cell
+  var td3 = document.createElement('td');
+  var inpDur = document.createElement('input');
+  inpDur.type = 'number'; inpDur.min = '0';
+  inpDur.value = item.duration > 0 ? item.duration : '';
+  inpDur.placeholder = '0';
+  inpDur.onchange = makeDurUpdater(iid);
+  inpDur.oninput  = makeDurUpdater(iid);
+  td3.appendChild(inpDur);
+
+  // Start time display
+  var td4 = document.createElement('td');
+  var startSp = document.createElement('span');
+  startSp.className = 'time-val'; startSp.id = 'start-' + iid; startSp.textContent = '--:--';
+  td4.appendChild(startSp);
+
+  // End time display
+  var td5 = document.createElement('td');
+  var endSp = document.createElement('span');
+  endSp.className = 'time-val'; endSp.id = 'end-' + iid; endSp.textContent = '--:--';
+  td5.appendChild(endSp);
+
+  // Materials
+  var td6 = document.createElement('td');
+  var matDiv = document.createElement('div');
+  matDiv.className = 'mat-check-list'; matDiv.setAttribute('data-itemid', iid);
+  var noMat = document.createElement('span'); noMat.className = 'no-materials'; noMat.textContent = 'No materials listed';
+  matDiv.appendChild(noMat);
+  td6.appendChild(matDiv);
+
+  // Notes
+  var td7 = document.createElement('td');
+  var ta = document.createElement('textarea');
+  ta.placeholder = 'Notes, decisions, motions...'; ta.value = item.notes;
+  ta.onchange = makeFieldUpdater(iid, 'notes');
+  ta.oninput  = makeFieldUpdater(iid, 'notes');
+  td7.appendChild(ta);
+
+  // Delete
+  var td8 = document.createElement('td');
+  var delBtn = document.createElement('button');
+  delBtn.className = 'btn-danger'; delBtn.textContent = '\u2715';
+  delBtn.onclick = makeDelAgenda(iid);
+  td8.appendChild(delBtn);
+
+  tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
+  tr.appendChild(td3); tr.appendChild(td4); tr.appendChild(td5);
+  tr.appendChild(td6); tr.appendChild(td7); tr.appendChild(td8);
   tbody.appendChild(tr);
-  renumberItems();
 }
 
-function buildRowHTML(item){
-  const attendees = getAttendees();
-  const ownerOpts = '<option value="">-- --</option>'+attendees.map(a=>'<option value="'+escAttr(a)+'"'+(a===item.owner?' selected':'')+'>'+escHTML(a)+'</option>').join('');
-  return `
-    <td><span class="item-num" id="num-${item.id}">?</span></td>
-    <td><input type="text" value="${escAttr(item.topic)}" placeholder="Topic..." oninput="updateField(${item.id},'topic',this.value); saveDraftDebounced()"></td>
-    <td><select class="owner-select" onchange="updateField(${item.id},'owner',this.value); saveDraftDebounced()">${ownerOpts}</select></td>
-    <td><input type="number" min="0" value="${item.duration||''}" placeholder="0" oninput="updateField(${item.id},'duration',parseInt(this.value)||0); recalcTimes(); saveDraftDebounced()"></td>
-    <td><span class="time-val" id="start-${item.id}">--:--</span></td>
-    <td><span class="time-val" id="end-${item.id}">--:--</span></td>
-    <td><div class="materials-check-list mat-check-list" data-itemid="${item.id}"><span class="no-materials">No materials listed</span></div></td>
-    <td><textarea placeholder="Notes, decisions, motions..." oninput="updateField(${item.id},'notes',this.value); saveDraftDebounced()">${escHTML(item.notes)}</textarea></td>
-
-```
-<td><button class="btn-danger" onclick="deleteAgendaItem(${item.id})">&#10005;</button></td>
-```
-
-`;
+function makeFieldUpdater(id, field){
+  return function(){ setAgendaField(id, field, this.value); saveDraftDebounced(); };
+}
+function makeDurUpdater(id){
+  return function(){ setAgendaField(id, 'duration', parseInt(this.value,10)||0); recalcTimes(); saveDraftDebounced(); };
+}
+function makeDelAgenda(id){
+  return function(){ deleteAgendaItem(id); };
 }
 
-function updateField(id, field, val){
-const item = agendaItems.find(i=>i.id===id);
-if(item) item[field] = val;
+function setAgendaField(id, field, val){
+  var item = findById(agendaItems, id);
+  if(item) item[field] = val;
 }
 
 function deleteAgendaItem(id){
-agendaItems = agendaItems.filter(i=>i.id!==id);
-const row = document.getElementById(‘row-’+id);
-if(row) row.remove();
-renumberItems();
-recalcTimes();
-saveDraftDebounced();
-}
-
-function renumberItems(){
-agendaItems.forEach((item,idx)=>{
-const el = document.getElementById(‘num-’+item.id);
-if(el) el.textContent = idx+1;
-});
-}
-
-// ── TIMING ────────────────────────────────────────────────────
-function recalcTimes(){
-const startMins = timeToMins(document.getElementById(‘startTime’).value);
-const endMins   = timeToMins(document.getElementById(‘endTime’).value);
-
-let cursor = startMins;
-let total  = 0;
-let overrun = false;
-
-agendaItems.forEach(item=>{
-const d = parseInt(item.duration)||0;
-total += d;
-
-```
-const row = document.getElementById('row-'+item.id);
-const startEl = document.getElementById('start-'+item.id);
-const endEl   = document.getElementById('end-'+item.id);
-
-if(startMins!==null){
-  const itemStart = cursor;
-  const itemEnd   = cursor+d;
-  if(startEl) startEl.textContent = minsToTime(itemStart);
-  if(endEl)   endEl.textContent   = minsToTime(itemEnd);
-
-  if(endMins!==null && itemEnd > endMins){
-    if(row) row.classList.add('timing-over');
-    overrun = true;
-  } else {
-    if(row) row.classList.remove('timing-over');
+  var newArr = [];
+  for(var i = 0; i < agendaItems.length; i++){
+    if(agendaItems[i].id !== id) newArr.push(agendaItems[i]);
   }
-  cursor = itemEnd;
-} else {
-  if(startEl) startEl.textContent = '--:--';
-  if(endEl)   endEl.textContent   = '--:--';
-  if(row) row.classList.remove('timing-over');
-}
-```
-
-});
-
-// Badges
-document.getElementById(‘totalMins’).textContent = total+’ min’;
-
-if(startMins!==null && endMins!==null){
-const meetDur = endMins - startMins;
-const buffer  = meetDur - total;
-document.getElementById(‘meetingDurVal’).textContent = meetDur+’ min’;
-
-```
-const bufEl = document.getElementById('bufferVal');
-const bufBadge = document.getElementById('badgeBuffer');
-bufEl.textContent = (buffer>=0?'+':'')+buffer+' min';
-bufBadge.className = 'timing-badge '+(buffer>=0?'ok':'warn');
-
-const warnBox = document.getElementById('timingWarning');
-if(overrun || buffer<0){
-  const over = Math.abs(Math.min(buffer,0));
-  warnBox.textContent = '\u26A0 Agenda exceeds meeting end time by '+over+' min. Review durations or extend end time.';
-  warnBox.classList.add('visible');
-} else {
-  warnBox.classList.remove('visible');
-}
-```
-
-} else {
-document.getElementById(‘meetingDurVal’).textContent = ‘\u2014’;
-document.getElementById(‘bufferVal’).textContent     = ‘\u2014’;
-document.getElementById(‘badgeBuffer’).className     = ‘timing-badge’;
-document.getElementById(‘timingWarning’).classList.remove(‘visible’);
-}
+  agendaItems = newArr;
+  var row = document.getElementById('row-' + id);
+  if(row && row.parentNode) row.parentNode.removeChild(row);
+  renumber();
+  recalcTimes();
+  saveDraftDebounced();
 }
 
-// ── ACTION ITEMS ──────────────────────────────────────────────
+function renumber(){
+  for(var i = 0; i < agendaItems.length; i++){
+    var el = document.getElementById('num-' + agendaItems[i].id);
+    if(el) el.textContent = i + 1;
+  }
+}
+
+/* ───────────────────────────────────────────────────
+   TIMING
+─────────────────────────────────────────────────── */
+function recalcTimes(){
+  var sm = timeToMins(document.getElementById('startTime').value);
+  var em = timeToMins(document.getElementById('endTime').value);
+  var cursor = sm;
+  var total = 0;
+  var overrun = false;
+
+  for(var i = 0; i < agendaItems.length; i++){
+    var item = agendaItems[i];
+    var dur  = parseInt(item.duration, 10) || 0;
+    total += dur;
+    var row = document.getElementById('row-' + item.id);
+    var s   = document.getElementById('start-' + item.id);
+    var e   = document.getElementById('end-'   + item.id);
+
+    if(sm !== null){
+      var iend = cursor + dur;
+      if(s) s.textContent = minsTo12(cursor);
+      if(e) e.textContent = minsTo12(iend);
+      if(em !== null && iend > em){
+        if(row) row.classList.add('timing-over'); overrun = true;
+      } else {
+        if(row) row.classList.remove('timing-over');
+      }
+      cursor = iend;
+    } else {
+      if(s) s.textContent = '--:--';
+      if(e) e.textContent = '--:--';
+      if(row) row.classList.remove('timing-over');
+    }
+  }
+
+  document.getElementById('totalMins').textContent = total + ' min';
+
+  var bufBadge = document.getElementById('badgeBuffer');
+  var bufEl    = document.getElementById('bufferVal');
+  var durEl    = document.getElementById('meetingDurVal');
+  var warnBox  = document.getElementById('timingWarning');
+
+  if(sm !== null && em !== null){
+    var meet = em - sm;
+    var buf  = meet - total;
+    durEl.textContent = meet + ' min';
+    bufEl.textContent = (buf >= 0 ? '+' : '') + buf + ' min';
+    bufBadge.className = 'timing-badge ' + (buf >= 0 ? 'ok' : 'warn');
+    if(overrun || buf < 0){
+      warnBox.textContent = '\u26A0 Agenda exceeds meeting end time by ' + Math.abs(Math.min(buf,0)) + ' min.';
+      warnBox.classList.add('visible');
+    } else { warnBox.classList.remove('visible'); }
+  } else {
+    durEl.textContent = '\u2014'; bufEl.textContent = '\u2014';
+    bufBadge.className = 'timing-badge'; warnBox.classList.remove('visible');
+  }
+}
+
+/* ───────────────────────────────────────────────────
+   ACTION ITEMS
+─────────────────────────────────────────────────── */
 function addActionItem(data){
-const id = nextId++;
-const item = {id, text:data?.text||’’, owner:data?.owner||’’, dueDate:data?.dueDate||’’, status:data?.status||‘Open’, notes:data?.notes||’’};
-actionItems.push(item);
-renderActionCard(item);
-updateAttendees();
-saveDraftDebounced();
+  var id = nextId++;
+  var item = {
+    id: id,
+    text:    data ? (data.text    || '') : '',
+    owner:   data ? (data.owner   || '') : '',
+    dueDate: data ? (data.dueDate || '') : '',
+    status:  data ? (data.status  || 'Open') : 'Open',
+    notes:   data ? (data.notes   || '') : ''
+  };
+  actionItems.push(item);
+  buildActionCard(item);
+  updateAttendees();
+  saveDraftDebounced();
 }
 
-function renderActionCard(item){
-const list = document.getElementById(‘actionList’);
-const div = document.createElement(‘div’);
-div.className = ‘item-card’;
-div.id = ‘act-’+item.id;
+function buildActionCard(item){
+  var list = document.getElementById('actionList');
+  var div  = document.createElement('div');
+  div.className = 'item-card'; div.id = 'act-' + item.id;
 
-const attendees = getAttendees();
-const ownerOpts = ‘<option value="">– Unassigned –</option>’+attendees.map(a=>’<option value=”’+escAttr(a)+’”’+(a===item.owner?’ selected’:’’)+’>’+escHTML(a)+’</option>’).join(’’);
+  var attendees = getAttendees();
+  var statuses  = ['Open','In Progress','Completed','Blocked','Deferred'];
+  var iid = item.id;
 
-div.innerHTML = `<div class="item-card-grid"> <div class="field-group full"> <label class="field-label">Action Item</label> <input type="text" value="${escAttr(item.text)}" placeholder="What needs to happen..." oninput="updateAct(${item.id},'text',this.value); saveDraftDebounced()"> </div> <div class="field-group"> <label class="field-label">Owner</label> <select class="owner-select" onchange="updateAct(${item.id},'owner',this.value); saveDraftDebounced()">${ownerOpts}</select> </div> <div class="field-group"> <label class="field-label">Due Date</label> <input type="date" value="${escAttr(item.dueDate)}" onchange="updateAct(${item.id},'dueDate',this.value); saveDraftDebounced()"> </div> <div class="field-group"> <label class="field-label">Status</label> <select onchange="updateAct(${item.id},'status',this.value); saveDraftDebounced()"> ${['Open','In Progress','Completed','Blocked','Deferred'].map(s=>'<option'+(s===item.status?' selected':'')+'>'+s+'</option>').join('')} </select> </div> <div class="field-group full"> <label class="field-label">Notes</label> <textarea rows="2" placeholder="Additional notes..." oninput="updateAct(${item.id},'notes',this.value); saveDraftDebounced()">${escHTML(item.notes)}</textarea> </div> </div> <button class="btn-danger" onclick="deleteActionItem(${item.id})">&#10005; Remove</button>`;
-list.appendChild(div);
+  var grid = document.createElement('div');
+  grid.className = 'item-card-grid';
+
+  // Text
+  var fg1 = document.createElement('div'); fg1.className = 'field-group full';
+  var lbl1 = document.createElement('label'); lbl1.className = 'field-label'; lbl1.textContent = 'Action Item';
+  var inp1 = document.createElement('input'); inp1.type = 'text'; inp1.value = item.text; inp1.placeholder = 'What needs to happen...';
+  inp1.oninput = makeActUpdater(iid, 'text');
+  fg1.appendChild(lbl1); fg1.appendChild(inp1); grid.appendChild(fg1);
+
+  // Owner
+  var fg2 = document.createElement('div'); fg2.className = 'field-group';
+  var lbl2 = document.createElement('label'); lbl2.className = 'field-label'; lbl2.textContent = 'Owner';
+  var sel2 = document.createElement('select'); sel2.className = 'owner-select';
+  var b2 = document.createElement('option'); b2.value = ''; b2.textContent = '-- Unassigned --'; sel2.appendChild(b2);
+  for(var i = 0; i < attendees.length; i++){
+    var o = document.createElement('option'); o.value = attendees[i]; o.textContent = attendees[i];
+    if(attendees[i] === item.owner) o.selected = true; sel2.appendChild(o);
+  }
+  sel2.onchange = makeActUpdater(iid, 'owner');
+  fg2.appendChild(lbl2); fg2.appendChild(sel2); grid.appendChild(fg2);
+
+  // Due Date
+  var fg3 = document.createElement('div'); fg3.className = 'field-group';
+  var lbl3 = document.createElement('label'); lbl3.className = 'field-label'; lbl3.textContent = 'Due Date';
+  var inp3 = document.createElement('input'); inp3.type = 'date'; inp3.value = item.dueDate;
+  inp3.onchange = makeActUpdater(iid, 'dueDate');
+  fg3.appendChild(lbl3); fg3.appendChild(inp3); grid.appendChild(fg3);
+
+  // Status
+  var fg4 = document.createElement('div'); fg4.className = 'field-group';
+  var lbl4 = document.createElement('label'); lbl4.className = 'field-label'; lbl4.textContent = 'Status';
+  var sel4 = document.createElement('select');
+  for(var j = 0; j < statuses.length; j++){
+    var os = document.createElement('option'); os.textContent = statuses[j];
+    if(statuses[j] === item.status) os.selected = true; sel4.appendChild(os);
+  }
+  sel4.onchange = makeActUpdater(iid, 'status');
+  fg4.appendChild(lbl4); fg4.appendChild(sel4); grid.appendChild(fg4);
+
+  // Notes
+  var fg5 = document.createElement('div'); fg5.className = 'field-group full';
+  var lbl5 = document.createElement('label'); lbl5.className = 'field-label'; lbl5.textContent = 'Notes';
+  var ta5 = document.createElement('textarea'); ta5.rows = 2; ta5.value = item.notes; ta5.placeholder = 'Additional notes...';
+  ta5.oninput = makeActUpdater(iid, 'notes');
+  fg5.appendChild(lbl5); fg5.appendChild(ta5); grid.appendChild(fg5);
+
+  div.appendChild(grid);
+  var delBtn = document.createElement('button'); delBtn.className = 'btn-danger';
+  delBtn.textContent = '\u2715 Remove'; delBtn.onclick = makeDelAction(iid);
+  div.appendChild(delBtn);
+  list.appendChild(div);
 }
 
-function updateAct(id,field,val){ const i=actionItems.find(x=>x.id===id); if(i) i[field]=val; }
+function makeActUpdater(id, field){
+  return function(){ setActionField(id, field, this.value); saveDraftDebounced(); };
+}
+function makeDelAction(id){ return function(){ deleteActionItem(id); }; }
 
+function setActionField(id, field, val){
+  var item = findById(actionItems, id); if(item) item[field] = val;
+}
 function deleteActionItem(id){
-actionItems = actionItems.filter(i=>i.id!==id);
-const el = document.getElementById(‘act-’+id);
-if(el) el.remove();
-saveDraftDebounced();
+  var n = []; for(var i=0;i<actionItems.length;i++){ if(actionItems[i].id!==id) n.push(actionItems[i]); }
+  actionItems = n;
+  var el = document.getElementById('act-'+id); if(el && el.parentNode) el.parentNode.removeChild(el);
+  saveDraftDebounced();
 }
 
-// ── PARKING LOT ───────────────────────────────────────────────
+/* ───────────────────────────────────────────────────
+   PARKING LOT
+─────────────────────────────────────────────────── */
 function addParkItem(data){
-const id = nextId++;
-const item = {id, topic:data?.topic||’’, reason:data?.reason||‘Out of scope’, notes:data?.notes||’’};
-parkItems.push(item);
-renderParkCard(item);
-saveDraftDebounced();
+  var id = nextId++;
+  var item = {id:id, topic:data?(data.topic||''):'', reason:data?(data.reason||'Out of scope'):'Out of scope', notes:data?(data.notes||''):''};
+  parkItems.push(item);
+  buildParkCard(item);
+  saveDraftDebounced();
 }
 
-function renderParkCard(item){
-const list = document.getElementById(‘parkList’);
-const div = document.createElement(‘div’);
-div.className = ‘item-card’;
-div.id = ‘park-’+item.id;
+function buildParkCard(item){
+  var list = document.getElementById('parkList');
+  var div  = document.createElement('div');
+  div.className = 'item-card'; div.id = 'park-' + item.id;
+  var reasons = ['Out of scope','Time limit exceeded','Needs more data','Blocked','Other'];
+  var iid = item.id;
 
-const reasons = [‘Out of scope’,‘Time limit exceeded’,‘Needs more data’,‘Blocked’,‘Other’];
-const reasonOpts = reasons.map(r=>’<option’+(r===item.reason?’ selected’:’’)+’>’+r+’</option>’).join(’’);
+  var grid = document.createElement('div'); grid.className = 'park-card-grid';
 
-div.innerHTML = `<div class="park-card-grid"> <div class="field-group full"> <label class="field-label">Parked Topic</label> <textarea rows="2" placeholder="Describe the topic or issue raised..." oninput="updatePark(${item.id},'topic',this.value); saveDraftDebounced()">${escHTML(item.topic)}</textarea> </div> <div class="field-group"> <label class="field-label">Reason for Parking</label> <select onchange="updatePark(${item.id},'reason',this.value); saveDraftDebounced()">${reasonOpts}</select> </div> <div class="field-group full"> <label class="field-label">Notes</label> <textarea rows="2" placeholder="Any follow-up context..." oninput="updatePark(${item.id},'notes',this.value); saveDraftDebounced()">${escHTML(item.notes)}</textarea> </div> </div> <button class="btn-danger" onclick="deleteParkItem(${item.id})">&#10005; Remove</button>`;
-list.appendChild(div);
+  var fg1 = document.createElement('div'); fg1.className = 'field-group full';
+  var l1 = document.createElement('label'); l1.className = 'field-label'; l1.textContent = 'Parked Topic';
+  var ta1 = document.createElement('textarea'); ta1.rows = 2; ta1.value = item.topic; ta1.placeholder = 'Describe the topic...';
+  ta1.oninput = makeParkUpdater(iid, 'topic');
+  fg1.appendChild(l1); fg1.appendChild(ta1); grid.appendChild(fg1);
+
+  var fg2 = document.createElement('div'); fg2.className = 'field-group';
+  var l2 = document.createElement('label'); l2.className = 'field-label'; l2.textContent = 'Reason';
+  var sel2 = document.createElement('select');
+  for(var i=0;i<reasons.length;i++){
+    var o=document.createElement('option'); o.textContent=reasons[i];
+    if(reasons[i]===item.reason) o.selected=true; sel2.appendChild(o);
+  }
+  sel2.onchange = makeParkUpdater(iid, 'reason');
+  fg2.appendChild(l2); fg2.appendChild(sel2); grid.appendChild(fg2);
+
+  var fg3 = document.createElement('div'); fg3.className = 'field-group full';
+  var l3 = document.createElement('label'); l3.className = 'field-label'; l3.textContent = 'Notes';
+  var ta3 = document.createElement('textarea'); ta3.rows = 2; ta3.value = item.notes; ta3.placeholder = 'Follow-up context...';
+  ta3.oninput = makeParkUpdater(iid, 'notes');
+  fg3.appendChild(l3); fg3.appendChild(ta3); grid.appendChild(fg3);
+
+  div.appendChild(grid);
+  var delBtn = document.createElement('button'); delBtn.className = 'btn-danger';
+  delBtn.textContent = '\u2715 Remove'; delBtn.onclick = makeDelPark(iid);
+  div.appendChild(delBtn);
+  list.appendChild(div);
 }
 
-function updatePark(id,field,val){ const i=parkItems.find(x=>x.id===id); if(i) i[field]=val; }
-
+function makeParkUpdater(id, field){ return function(){ setParkField(id,field,this.value); saveDraftDebounced(); }; }
+function makeDelPark(id){ return function(){ deleteParkItem(id); }; }
+function setParkField(id,field,val){ var item=findById(parkItems,id); if(item) item[field]=val; }
 function deleteParkItem(id){
-parkItems = parkItems.filter(i=>i.id!==id);
-const el = document.getElementById(‘park-’+id);
-if(el) el.remove();
-saveDraftDebounced();
+  var n=[]; for(var i=0;i<parkItems.length;i++){ if(parkItems[i].id!==id) n.push(parkItems[i]); }
+  parkItems=n;
+  var el=document.getElementById('park-'+id); if(el&&el.parentNode) el.parentNode.removeChild(el);
+  saveDraftDebounced();
 }
 
-// ── ESCAPE HELPERS ────────────────────────────────────────────
-function escHTML(s){
-if(!s) return ‘’;
-return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
-}
-function escAttr(s){
-if(!s) return ‘’;
-return String(s).replace(/”/g,’"’);
-}
-
-// ── LOCAL STORAGE ─────────────────────────────────────────────
-let saveTimer = null;
-function saveDraftDebounced(){
-clearTimeout(saveTimer);
-saveTimer = setTimeout(saveDraft, 800);
-}
+/* ───────────────────────────────────────────────────
+   LOCAL STORAGE
+─────────────────────────────────────────────────── */
+var saveTimer = null;
+function saveDraftDebounced(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 900); }
 
 function saveDraft(){
-try{
-const rules = [];
-document.querySelectorAll(’#rulesGrid .rule-toggle’).forEach((lbl,i)=>{
-rules.push(lbl.querySelector(‘input’).checked);
-});
-const draft = {
-meetingTitle: document.getElementById(‘meetingTitle’).value,
-meetingType:  document.getElementById(‘meetingType’).value,
-meetingDate:  document.getElementById(‘meetingDate’).value,
-startTime:    document.getElementById(‘startTime’).value,
-endTime:      document.getElementById(‘endTime’).value,
-attendees:    document.getElementById(‘attendees’).value,
-materials:    document.getElementById(‘materials’).value,
-rules,
-agendaItems,
-actionItems,
-parkItems,
-nextId
-};
-localStorage.setItem(‘pm02_draft’, JSON.stringify(draft));
-const ts = new Date().toLocaleTimeString([], {hour:‘2-digit’,minute:‘2-digit’});
-document.getElementById(‘draftStatus’).textContent = ’Saved ’+ts;
-} catch(e){ console.warn(‘Draft save failed’, e); }
+  try{
+    var ruleChecks = [];
+    var lbls = document.querySelectorAll('#rulesGrid .rule-toggle');
+    for(var i=0;i<lbls.length;i++) ruleChecks.push(lbls[i].querySelector('input').checked);
+
+    var draft = {
+      meetingTitle:   document.getElementById('meetingTitle').value,
+      meetingType:    document.getElementById('meetingType').value,
+      meetingDate:    document.getElementById('meetingDate').value,
+      startTime:      document.getElementById('startTime').value,
+      endTime:        document.getElementById('endTime').value,
+      facilitator:    document.getElementById('facilitator').value,
+      attendees:      document.getElementById('attendees').value,
+      materials:      document.getElementById('materials').value,
+      meetingPurpose: document.getElementById('meetingPurpose').value,
+      retroWorked:    document.getElementById('retroWorked').value,
+      retroImprove:   document.getElementById('retroImprove').value,
+      retroLearnings: document.getElementById('retroLearnings').value,
+      ruleChecks: ruleChecks,
+      agendaItems: agendaItems,
+      actionItems: actionItems,
+      parkItems: parkItems,
+      nextId: nextId
+    };
+    localStorage.setItem('pm02_draft', JSON.stringify(draft));
+    var ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('draftStatus').textContent = 'Saved ' + ts;
+  } catch(e){ console.warn('Draft save failed', e); }
 }
 
 function loadDraft(){
-try{
-const raw = localStorage.getItem(‘pm02_draft’);
-if(!raw){ alert(‘No saved draft found.’); return; }
-const d = JSON.parse(raw);
-document.getElementById(‘meetingTitle’).value = d.meetingTitle||’’;
-document.getElementById(‘meetingType’).value  = d.meetingType||‘General Meeting’;
-document.getElementById(‘meetingDate’).value  = d.meetingDate||’’;
-document.getElementById(‘startTime’).value    = d.startTime||’’;
-document.getElementById(‘endTime’).value      = d.endTime||’’;
-document.getElementById(‘attendees’).value    = d.attendees||’’;
-document.getElementById(‘materials’).value    = d.materials||’’;
+  try{
+    var raw = localStorage.getItem('pm02_draft');
+    if(!raw){ alert('No saved draft found.'); return; }
+    var d = JSON.parse(raw);
 
-```
-if(d.rules){
-  document.querySelectorAll('#rulesGrid .rule-toggle').forEach((lbl,i)=>{
-    const cb = lbl.querySelector('input');
-    cb.checked = !!d.rules[i];
-    if(cb.checked) lbl.classList.add('active');
-    else lbl.classList.remove('active');
-  });
-}
+    document.getElementById('meetingTitle').value   = d.meetingTitle   || '';
+    document.getElementById('meetingType').value    = d.meetingType    || 'General Meeting';
+    document.getElementById('meetingDate').value    = d.meetingDate    || '';
+    document.getElementById('startTime').value      = d.startTime      || '';
+    document.getElementById('endTime').value        = d.endTime        || '';
+    document.getElementById('facilitator').value    = d.facilitator    || '';
+    document.getElementById('attendees').value      = d.attendees      || '';
+    document.getElementById('materials').value      = d.materials      || '';
+    document.getElementById('meetingPurpose').value = d.meetingPurpose || '';
+    document.getElementById('retroWorked').value    = d.retroWorked    || '';
+    document.getElementById('retroImprove').value   = d.retroImprove   || '';
+    document.getElementById('retroLearnings').value = d.retroLearnings || '';
 
-agendaItems = []; actionItems = []; parkItems = [];
-nextId = d.nextId||1;
-document.getElementById('agendaTbody').innerHTML = '';
-document.getElementById('actionList').innerHTML  = '';
-document.getElementById('parkList').innerHTML    = '';
+    if(d.ruleChecks){
+      var lbls = document.querySelectorAll('#rulesGrid .rule-toggle');
+      for(var i=0;i<lbls.length;i++){
+        var cb = lbls[i].querySelector('input');
+        cb.checked = !!d.ruleChecks[i];
+        if(cb.checked) lbls[i].classList.add('active'); else lbls[i].classList.remove('active');
+      }
+    }
 
-(d.agendaItems||[]).forEach(item=>{ agendaItems.push(item); renderAgendaRow(item); });
-(d.actionItems||[]).forEach(item=>{ actionItems.push(item); renderActionCard(item); });
-(d.parkItems||[]).forEach(item=>{ parkItems.push(item); renderParkCard(item); });
+    agendaItems=[]; actionItems=[]; parkItems=[];
+    nextId = d.nextId || 1;
+    document.getElementById('agendaTbody').innerHTML = '';
+    document.getElementById('actionList').innerHTML  = '';
+    document.getElementById('parkList').innerHTML    = '';
 
-updateAttendees();
-updateMaterials();
-recalcTimes();
-renumberItems();
+    var mats = getMaterials();
+    if(d.agendaItems){
+      for(var j=0;j<d.agendaItems.length;j++){
+        var ai = d.agendaItems[j];
+        agendaItems.push(ai); buildAgendaRow(ai);
+        var c = document.querySelector('.mat-check-list[data-itemid="'+ai.id+'"]');
+        if(c) renderMats(c, mats, ai.materialsChecked||[], ai.id);
+      }
+    }
+    if(d.actionItems){ for(var k=0;k<d.actionItems.length;k++){ actionItems.push(d.actionItems[k]); buildActionCard(d.actionItems[k]); } }
+    if(d.parkItems){   for(var p=0;p<d.parkItems.length;p++){   parkItems.push(d.parkItems[p]);     buildParkCard(d.parkItems[p]);   } }
 
-// Restore material checkbox states
-agendaItems.forEach(item=>{
-  const container = document.querySelector('.mat-check-list[data-itemid="'+item.id+'"]');
-  if(!container) return;
-  const mats = getMaterials();
-  renderMaterialChecks(container, mats, item.materialsChecked||[], item.id);
-});
-
-document.getElementById('draftStatus').textContent = 'Draft loaded';
-```
-
-} catch(e){ alert(’Failed to load draft: ’+e.message); }
+    updateAttendees(); renumber(); recalcTimes();
+    document.getElementById('draftStatus').textContent = 'Draft loaded';
+  } catch(e){ alert('Failed to load draft: ' + e.message); }
 }
 
 function clearDraft(){
-if(!confirm(‘Clear saved draft? This cannot be undone.’)) return;
-localStorage.removeItem(‘pm02_draft’);
-document.getElementById(‘draftStatus’).textContent = ‘Draft cleared’;
+  if(!confirm('Clear saved draft? This cannot be undone.')) return;
+  localStorage.removeItem('pm02_draft');
+  document.getElementById('draftStatus').textContent = 'Cleared';
 }
 
-// ── PDF EXPORT ────────────────────────────────────────────────
+/* ───────────────────────────────────────────────────
+   PDF EXPORT
+─────────────────────────────────────────────────── */
 function exportPDF(){
-const { jsPDF } = window.jspdf;
-if(!jsPDF){ alert(‘PDF library not loaded. Check CDN connection.’); return; }
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF library not loaded. Internet connection required for CDN.'); return;
+  }
+  var jsPDF = window.jspdf.jsPDF;
+  var bw = document.getElementById('exportBW').checked;
 
-const bw = document.getElementById(‘exportBW’).checked;
-const title   = document.getElementById(‘meetingTitle’).value || ‘Meeting Agenda’;
-const mType   = document.getElementById(‘meetingType’).value;
-const mDate   = formatDateDisplay(document.getElementById(‘meetingDate’).value) || document.getElementById(‘meetingDate’).value || ‘’;
-const mStart  = document.getElementById(‘startTime’).value;
-const mEnd    = document.getElementById(‘endTime’).value;
-const atts    = document.getElementById(‘attendees’).value;
-const mats    = document.getElementById(‘materials’).value;
+  var title   = document.getElementById('meetingTitle').value || 'Meeting Agenda';
+  var mType   = document.getElementById('meetingType').value;
+  var mDate   = document.getElementById('meetingDate').value;
+  var mStart  = document.getElementById('startTime').value;
+  var mEnd    = document.getElementById('endTime').value;
+  var facil   = document.getElementById('facilitator').value;
+  var atts    = document.getElementById('attendees').value;
+  var matsRaw = document.getElementById('materials').value;
+  var purpose = document.getElementById('meetingPurpose').value;
+  var retW    = document.getElementById('retroWorked').value;
+  var retI    = document.getElementById('retroImprove').value;
+  var retL    = document.getElementById('retroLearnings').value;
 
-const timeRange = (mStart && mEnd) ? minsToTime(timeToMins(mStart))+’\u2013’+minsToTime(timeToMins(mEnd)) : (mStart ? minsToTime(timeToMins(mStart)) : ‘’);
+  var sm = timeToMins(mStart);
+  var em = timeToMins(mEnd);
+  var timeRange = sm !== null ? minsTo12(sm) : '';
+  if(sm !== null && em !== null) timeRange += ' \u2013 ' + minsTo12(em);
 
-const doc = new jsPDF({ unit:‘pt’, format:‘letter’, orientation:‘portrait’ });
-const PW = doc.internal.pageSize.getWidth();
-const PH = doc.internal.pageSize.getHeight();
-const ML = 54, MR = PW-54, MTR = 54;
-const CONTENT_W = MR-ML;
+  var doc = new jsPDF({unit:'pt',format:'letter',orientation:'portrait'});
+  var PW = doc.internal.pageSize.getWidth();
+  var PH = doc.internal.pageSize.getHeight();
+  var ML = 54, MR = PW - 54, CW = MR - ML;
 
-// Colors
-const C = bw ? {
-accent:[0,0,0], header:[80,80,80], text:[20,20,20],
-meta:[100,100,100], rule:[180,180,180], tableHead:[100,100,100],
-tableHeadText:[255,255,255], row1:[240,240,240], row2:[255,255,255],
-rowText:[20,20,20], warn:[180,80,0], ok:[40,120,20]
-} : {
-accent:[212,101,26], header:[74,96,112], text:[30,40,50],
-meta:[100,120,140], rule:[74,96,112], tableHead:[74,96,112],
-tableHeadText:[232,234,236], row1:[58,74,92], row2:[46,58,71],
-rowText:[232,234,236], warn:[212,101,26], ok:[107,168,74]
-};
+  // Color sets
+  var ac,hd,bd,mt,rl,th,thT,ro,re,rT,wc,oc;
+  if(bw){
+    ac=[0,0,0]; hd=[70,70,70]; bd=[20,20,20]; mt=[120,120,120]; rl=[180,180,180];
+    th=[100,100,100]; thT=[255,255,255]; ro=[240,240,240]; re=[255,255,255]; rT=[20,20,20];
+    wc=[140,70,0]; oc=[40,110,20];
+  } else {
+    ac=[212,101,26]; hd=[74,96,112]; bd=[30,40,50]; mt=[100,120,140]; rl=[74,96,112];
+    th=[74,96,112]; thT=[232,234,236]; ro=[58,74,92]; re=[46,58,71]; rT=[232,234,236];
+    wc=[212,101,26]; oc=[107,168,74];
+  }
 
-let y = MTR;
+  var y = 54;
 
-function addPage(){
-doc.addPage();
-y = MTR;
-addFooter();
-}
+  function chkY(need){ if(y + need > PH - 60){ doc.addPage(); y = 54; } }
 
-function checkY(need){
-if(y+need > PH-54) addPage();
-}
+  function secHdr(label){
+    chkY(24);
+    doc.setFontSize(11); doc.setFont('helvetica','bold');
+    doc.setTextColor(ac[0],ac[1],ac[2]);
+    doc.text(label, ML, y); y += 4;
+    doc.setDrawColor(ac[0],ac[1],ac[2]); doc.setLineWidth(0.8);
+    doc.line(ML, y, MR, y); y += 10;
+  }
 
-function addFooter(){
-const pg = doc.internal.getCurrentPageInfo().pageNumber;
-doc.setFontSize(8); doc.setTextColor(…C.meta);
-doc.text(’Meeting Agenda \u2014 ‘+title+’ \u2014 ’+mDate, ML, PH-30);
-doc.text(’Page ’+pg, MR, PH-30, {align:‘right’});
-doc.setDrawColor(…C.rule);
-doc.setLineWidth(0.5);
-doc.line(ML, PH-38, MR, PH-38);
-}
+  function miniHdr(label){
+    doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.setTextColor(hd[0],hd[1],hd[2]);
+    doc.text(label, ML, y); y += 4;
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(bd[0],bd[1],bd[2]);
+  }
 
-// ── Title block ──
-doc.setFillColor(…C.accent);
-doc.rect(ML, y, CONTENT_W, 3, ‘F’);
-y += 10;
+  // Title block
+  doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(ML,y,CW,4,'F'); y += 12;
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.setTextColor(ac[0],ac[1],ac[2]); doc.text(title,ML,y); y += 8;
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(hd[0],hd[1],hd[2]);
+  var meta = mType;
+  if(mDate) meta += '   \u00B7   ' + fmtDate(mDate);
+  if(timeRange) meta += '   \u00B7   ' + timeRange;
+  doc.text(meta,ML,y); y += 14;
 
-doc.setFontSize(18); doc.setFont(‘helvetica’,‘bold’);
-doc.setTextColor(…C.accent);
-doc.text(title, ML, y);
-y += 6;
+  if(facil){ miniHdr('FACILITATOR'); doc.text(facil,ML,y); y+=13; }
 
-doc.setFontSize(10); doc.setFont(‘helvetica’,‘normal’);
-doc.setTextColor(…C.header);
-doc.text(mType + (mDate ? ’   \u00B7   ’ + mDate : ‘’) + (timeRange ? ’   \u00B7   ’+timeRange : ‘’), ML, y);
-y += 14;
+  if(atts){
+    miniHdr('ATTENDEES');
+    var al = doc.splitTextToSize(atts,CW);
+    for(var i=0;i<al.length;i++){ chkY(13); doc.text(al[i],ML,y); y+=13; }
+  }
 
-// ── Attendees ──
-if(atts){
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.header);
-doc.text(‘ATTENDEES’, ML, y); y += 4;
-doc.setFont(‘helvetica’,‘normal’); doc.setTextColor(…C.text);
-const attLines = doc.splitTextToSize(atts, CONTENT_W);
-attLines.forEach(l=>{ checkY(13); doc.text(l, ML, y); y+=13; });
-}
+  if(purpose){
+    y+=2; miniHdr('PURPOSE & DESIRED OUTCOMES');
+    var pl = doc.splitTextToSize(purpose,CW);
+    for(var pi=0;pi<pl.length;pi++){ chkY(13); doc.text(pl[pi],ML,y); y+=13; }
+  }
 
-// ── Materials ──
-if(mats){
-y += 4;
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.header);
-doc.text(‘MATERIALS / REFERENCES’, ML, y); y += 4;
-doc.setFont(‘helvetica’,‘normal’); doc.setTextColor(…C.text);
-mats.split(’\n’).filter(Boolean).forEach(m=>{
-checkY(13);
-doc.text(’\u2022 ’+m, ML+8, y); y+=13;
-});
-}
+  if(matsRaw){
+    y+=2; miniHdr('MATERIALS / REFERENCES');
+    var ml2 = matsRaw.split('\n').filter(function(s){ return s.trim()!==''; });
+    for(var mi=0;mi<ml2.length;mi++){ chkY(13); doc.text('\u2022 '+ml2[mi].trim(),ML+8,y); y+=13; }
+  }
 
-// ── Meeting Rules ──
-const activeRules = [];
-document.querySelectorAll(’#rulesGrid .rule-toggle’).forEach(lbl=>{
-if(lbl.querySelector(‘input’).checked){
-activeRules.push(lbl.querySelector(’.rule-text’).textContent);
-}
-});
-if(activeRules.length){
-y += 4;
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.header);
-doc.text(‘MEETING RULES’, ML, y); y += 4;
-doc.setFont(‘helvetica’,‘normal’); doc.setTextColor(…C.text);
-activeRules.forEach(r=>{
-const lines = doc.splitTextToSize(’\u2022 ’+r, CONTENT_W-8);
-lines.forEach(l=>{ checkY(13); doc.text(l, ML+8, y); y+=13; });
-});
-}
-
-y += 6;
-doc.setDrawColor(…C.rule); doc.setLineWidth(0.5);
-doc.line(ML, y, MR, y); y += 12;
-
-// ── Agenda Table ──
-doc.setFontSize(11); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.accent);
-doc.text(‘AGENDA’, ML, y); y += 8;
-
-// Timing summary line
-const totalMin = agendaItems.reduce((s,i)=>s+(parseInt(i.duration)||0),0);
-const startM   = timeToMins(document.getElementById(‘startTime’).value);
-const endM     = timeToMins(document.getElementById(‘endTime’).value);
-let bufStr = ‘’;
-if(startM!==null && endM!==null){
-const buf = (endM-startM)-totalMin;
-bufStr = ’   Buffer: ‘+(buf>=0?’+’:’’)+buf+’ min’;
-doc.setFontSize(8); doc.setFont(‘helvetica’,‘normal’);
-doc.setTextColor(buf>=0?…(C.ok):…(C.warn));
-doc.text(‘Total: ‘+totalMin+’ min’+bufStr, ML, y);
-y += 10;
-}
-
-if(agendaItems.length){
-const tableBody = agendaItems.map((item,idx)=>{
-const startMins2 = (startM!==null) ? startM + agendaItems.slice(0,idx).reduce((s,i)=>s+(parseInt(i.duration)||0),0) : null;
-const endMins2   = startMins2!==null ? startMins2+(parseInt(item.duration)||0) : null;
-const timeStr    = (startMins2!==null) ? minsToTime(startMins2)+’ \u2013 ‘+minsToTime(endMins2) : ‘–’;
-const matsStr    = (item.materialsChecked||[]).join(’; ‘);
-return [
-String(idx+1),
-item.topic||’’,
-item.owner||’’,
-(item.duration||0)+’ min’,
-timeStr,
-matsStr,
-item.notes||’’
-];
-});
-
-```
-doc.autoTable({
-  startY: y,
-  head: [['#','Topic','Owner','Min','Time','Materials','Notes']],
-  body: tableBody,
-  margin: {left:ML, right:54},
-  styles: {
-    font:'helvetica', fontSize:8, cellPadding:4,
-    textColor: bw ? [20,20,20] : [232,234,236],
-    fillColor: bw ? [255,255,255] : [46,58,71],
-    lineColor: bw ? [180,180,180] : [74,96,112],
-    lineWidth: 0.3
-  },
-  headStyles: {
-    fillColor: C.tableHead,
-    textColor: C.tableHeadText,
-    fontStyle:'bold', fontSize:7, halign:'left'
-  },
-  alternateRowStyles: {
-    fillColor: bw ? [242,242,242] : [58,74,92],
-    textColor: bw ? [20,20,20] : [232,234,236]
-  },
-  columnStyles: {
-    0:{cellWidth:18, halign:'center'},
-    1:{cellWidth:90},
-    2:{cellWidth:70},
-    3:{cellWidth:28, halign:'center'},
-    4:{cellWidth:68},
-    5:{cellWidth:70},
-    6:{cellWidth:'auto'}
-  },
-  didParseCell: function(data){
-    // Flag overrun rows
-    if(data.section==='body'){
-      const item = agendaItems[data.row.index];
-      if(item && endM!==null){
-        const si = (startM!==null) ? startM + agendaItems.slice(0,data.row.index).reduce((s,i)=>s+(parseInt(i.duration)||0),0) : null;
-        const ei = si!==null ? si+(parseInt(item.duration)||0) : null;
-        if(ei!==null && ei>endM){
-          data.cell.styles.textColor = C.warn;
-        }
-      }
+  var activeRules = [];
+  var rLbls = document.querySelectorAll('#rulesGrid .rule-toggle');
+  for(var ri=0;ri<rLbls.length;ri++){
+    if(rLbls[ri].querySelector('input').checked) activeRules.push(rLbls[ri].querySelector('.rule-text').textContent);
+  }
+  if(activeRules.length){
+    y+=2; miniHdr('MEETING RULES');
+    for(var rli=0;rli<activeRules.length;rli++){
+      var rl2 = doc.splitTextToSize('\u2022 '+activeRules[rli],CW-8);
+      for(var rln=0;rln<rl2.length;rln++){ chkY(13); doc.text(rl2[rln],ML+8,y); y+=13; }
     }
   }
-});
-y = doc.lastAutoTable.finalY + 14;
-```
 
-} else {
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘italic’); doc.setTextColor(…C.meta);
-doc.text(‘No agenda items defined.’, ML, y); y+=14;
+  // Agenda
+  secHdr('AGENDA (REACH)');
+  var tot=0; for(var ti=0;ti<agendaItems.length;ti++) tot+=(parseInt(agendaItems[ti].duration,10)||0);
+  if(sm!==null && em!==null){
+    var buf2=(em-sm)-tot;
+    if(buf2>=0){ doc.setTextColor(oc[0],oc[1],oc[2]); } else { doc.setTextColor(wc[0],wc[1],wc[2]); }
+    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.text('Total: '+tot+' min   Buffer: '+(buf2>=0?'+':'')+buf2+' min',ML,y); y+=12;
+  }
+
+  if(agendaItems.length){
+    var tbody2=[];
+    for(var agi=0;agi<agendaItems.length;agi++){
+      var ag=agendaItems[agi];
+      var cur2=sm;
+      if(cur2!==null){ for(var pv=0;pv<agi;pv++) cur2+=(parseInt(agendaItems[pv].duration,10)||0); }
+      var agEnd2=cur2!==null?cur2+(parseInt(ag.duration,10)||0):null;
+      tbody2.push([String(agi+1),ag.topic||'',ag.owner||'',(parseInt(ag.duration,10)||0)+' min',
+        cur2!==null?minsTo12(cur2)+' \u2013 '+minsTo12(agEnd2):'--',
+        (ag.materialsChecked||[]).join('; '), ag.notes||'']);
+    }
+    doc.autoTable({startY:y,
+      head:[['#','Topic','Owner','Min','Time','Materials','Notes']],
+      body:tbody2,
+      margin:{left:ML,right:54},
+      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
+      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
+      alternateRowStyles:{fillColor:ro,textColor:rT},
+      columnStyles:{0:{cellWidth:18,halign:'center'},1:{cellWidth:82},2:{cellWidth:66},3:{cellWidth:28,halign:'center'},4:{cellWidth:72},5:{cellWidth:66},6:{cellWidth:'auto'}},
+      didParseCell:function(data){
+        if(data.section==='body'&&em!==null&&sm!==null){
+          var it=agendaItems[data.row.index];
+          if(it){ var c3=sm; for(var p2=0;p2<data.row.index;p2++) c3+=(parseInt(agendaItems[p2].duration,10)||0);
+            if(c3+(parseInt(it.duration,10)||0)>em) data.cell.styles.textColor=wc; }
+        }
+      }
+    });
+    y=doc.lastAutoTable.finalY+16;
+  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No agenda items.',ML,y);y+=16; }
+
+  // Action items
+  chkY(30); secHdr('ACTION ITEMS (RAP \u2014 Assign)');
+  var openA=actionItems.filter(function(i){ return ['Open','In Progress','Blocked','Deferred'].indexOf(i.status)>=0; });
+  if(openA.length){
+    doc.autoTable({startY:y,
+      head:[['Action Item','Owner','Due Date','Status','Notes']],
+      body:openA.map(function(i){ return [i.text,i.owner,fmtDate(i.dueDate)||i.dueDate,i.status,i.notes]; }),
+      margin:{left:ML,right:54},
+      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
+      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
+      alternateRowStyles:{fillColor:ro,textColor:rT},
+      columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:72},2:{cellWidth:62},3:{cellWidth:56},4:{cellWidth:80}}
+    });
+    y=doc.lastAutoTable.finalY+16;
+  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No open action items.',ML,y);y+=16; }
+
+  // Parking lot
+  chkY(30); secHdr('PARKING LOT');
+  if(parkItems.length){
+    doc.autoTable({startY:y,
+      head:[['Topic','Reason','Notes']],
+      body:parkItems.map(function(i){ return [i.topic,i.reason,i.notes]; }),
+      margin:{left:ML,right:54},
+      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
+      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
+      alternateRowStyles:{fillColor:ro,textColor:rT},
+      columnStyles:{0:{cellWidth:120},1:{cellWidth:90},2:{cellWidth:'auto'}}
+    });
+    y=doc.lastAutoTable.finalY+16;
+  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No items in parking lot.',ML,y);y+=16; }
+
+  // Retrospective
+  if(retW||retI||retL){
+    chkY(30); secHdr('RETROSPECTIVE (RAP \u2014 Retrospect)');
+    var retRows=[];
+    if(retW) retRows.push(['What Worked Well',retW]);
+    if(retI) retRows.push(['Areas for Improvement',retI]);
+    if(retL) retRows.push(['Key Learnings',retL]);
+    doc.autoTable({startY:y,
+      body:retRows,
+      margin:{left:ML,right:54},
+      styles:{font:'helvetica',fontSize:8,cellPadding:5,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
+      alternateRowStyles:{fillColor:ro,textColor:rT},
+      columnStyles:{0:{cellWidth:100,fontStyle:'bold',textColor:bw?[50,50,50]:[212,101,26]},1:{cellWidth:'auto'}}
+    });
+    y=doc.lastAutoTable.finalY+16;
+  }
+
+  // Page footers
+  var total2 = doc.internal.getNumberOfPages();
+  for(var pg=1;pg<=total2;pg++){
+    doc.setPage(pg);
+    doc.setFontSize(8); doc.setTextColor(mt[0],mt[1],mt[2]);
+    doc.text('Meeting Agenda \u2014 '+title+(mDate?' \u2014 '+fmtDate(mDate):''), ML, PH-30);
+    doc.text('Page '+pg+' of '+total2, MR, PH-30, {align:'right'});
+    doc.setDrawColor(rl[0],rl[1],rl[2]); doc.setLineWidth(0.5); doc.line(ML,PH-38,MR,PH-38);
+  }
+
+  var safe=(title||'Meeting_Agenda').replace(/[^a-zA-Z0-9_\- ]/g,'_');
+  doc.save(safe+(mDate?'_'+mDate.replace(/-/g,''):'')+'.pdf');
 }
 
-// ── Action Items ──
-checkY(30);
-doc.setDrawColor(…C.rule); doc.line(ML,y,MR,y); y+=12;
-doc.setFontSize(11); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.accent);
-doc.text(‘ACTION ITEMS’, ML, y); y+=8;
-
-const openActs = actionItems.filter(i=>[‘Open’,‘In Progress’,‘Blocked’,‘Deferred’].includes(i.status));
-if(openActs.length){
-doc.autoTable({
-startY: y,
-head: [[‘Action Item’,‘Owner’,‘Due Date’,‘Status’,‘Notes’]],
-body: openActs.map(i=>[i.text, i.owner, formatDateDisplay(i.dueDate)||i.dueDate, i.status, i.notes]),
-margin:{left:ML,right:54},
-styles:{font:‘helvetica’,fontSize:8,cellPadding:4,
-textColor:bw?[20,20,20]:[232,234,236],
-fillColor:bw?[255,255,255]:[46,58,71],
-lineColor:bw?[180,180,180]:[74,96,112], lineWidth:0.3},
-headStyles:{fillColor:C.tableHead,textColor:C.tableHeadText,fontStyle:‘bold’,fontSize:7},
-alternateRowStyles:{fillColor:bw?[242,242,242]:[58,74,92],textColor:bw?[20,20,20]:[232,234,236]},
-columnStyles:{0:{cellWidth:‘auto’},1:{cellWidth:70},2:{cellWidth:60},3:{cellWidth:55},4:{cellWidth:80}}
-});
-y = doc.lastAutoTable.finalY+14;
-} else {
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘italic’); doc.setTextColor(…C.meta);
-doc.text(‘No open action items.’, ML, y); y+=14;
-}
-
-// ── Parking Lot ──
-checkY(30);
-doc.setDrawColor(…C.rule); doc.line(ML,y,MR,y); y+=12;
-doc.setFontSize(11); doc.setFont(‘helvetica’,‘bold’); doc.setTextColor(…C.accent);
-doc.text(‘PARKING LOT’, ML, y); y+=8;
-
-if(parkItems.length){
-doc.autoTable({
-startY: y,
-head: [[‘Topic’,‘Reason’,‘Notes’]],
-body: parkItems.map(i=>[i.topic, i.reason, i.notes]),
-margin:{left:ML,right:54},
-styles:{font:‘helvetica’,fontSize:8,cellPadding:4,
-textColor:bw?[20,20,20]:[232,234,236],
-fillColor:bw?[255,255,255]:[46,58,71],
-lineColor:bw?[180,180,180]:[74,96,112], lineWidth:0.3},
-headStyles:{fillColor:C.tableHead,textColor:C.tableHeadText,fontStyle:‘bold’,fontSize:7},
-alternateRowStyles:{fillColor:bw?[242,242,242]:[58,74,92],textColor:bw?[20,20,20]:[232,234,236]},
-columnStyles:{0:{cellWidth:120},1:{cellWidth:90},2:{cellWidth:‘auto’}}
-});
-y = doc.lastAutoTable.finalY+14;
-} else {
-doc.setFontSize(9); doc.setFont(‘helvetica’,‘italic’); doc.setTextColor(…C.meta);
-doc.text(‘No items in parking lot.’, ML, y); y+=14;
-}
-
-// Add footer to all pages
-const totalPages = doc.internal.getNumberOfPages();
-for(let p=1; p<=totalPages; p++){
-doc.setPage(p);
-const pg = p;
-doc.setFontSize(8); doc.setTextColor(…C.meta);
-doc.text(’Meeting Agenda \u2014 ‘+title+’ \u2014 ’+mDate, ML, PH-30);
-doc.text(’Page ‘+pg+’ of ’+totalPages, MR, PH-30, {align:‘right’});
-doc.setDrawColor(…C.rule); doc.setLineWidth(0.5);
-doc.line(ML, PH-38, MR, PH-38);
-}
-
-const safeName = (title||‘Meeting_Agenda’).replace(/[^a-zA-Z0-9_- ]/g,’*’);
-doc.save(safeName+’*’+((document.getElementById(‘meetingDate’).value||’’).replace(/-/g,’’))+’.pdf’);
-}
-
-// ── INIT ──────────────────────────────────────────────────────
-document.addEventListener(‘DOMContentLoaded’, ()=>{
-// Default a first agenda item so the table isn’t empty
-addAgendaItem();
-addAgendaItem();
-// Try auto-loading draft
-try{
-if(localStorage.getItem(‘pm02_draft’)) {
-loadDraft();
-}
-} catch(e){}
+/* ───────────────────────────────────────────────────
+   INIT
+─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function(){
+  var hasDraft = false;
+  try{ hasDraft = !!localStorage.getItem('pm02_draft'); } catch(e){}
+  if(hasDraft){ loadDraft(); }
+  else { addAgendaItem(); addAgendaItem(); }
 });
 </script>
-
 </body>
 </html>
