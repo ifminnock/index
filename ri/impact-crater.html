@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RI03 — Impact Crater Scaling Calculator | MFI Geotechnical Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+body {
+  background: #2E3A47;
+  color: #E8EAEC;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: #D4651A; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── HEADER ── */
+header {
+  background: #2E3A47;
+  border-bottom: 2px solid #D4651A;
+  padding: 1.2rem 2rem 1rem;
+}
+.breadcrumb {
+  font-size: 0.8rem;
+  color: #9AAABB;
+  margin-bottom: 0.5rem;
+}
+.breadcrumb a { color: #9AAABB; }
+.breadcrumb a:hover { color: #D4651A; }
+.module-id {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #D4651A;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+header h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #E8EAEC;
+  line-height: 1.2;
+}
+.subtitle {
+  font-size: 0.8rem;
+  color: #9AAABB;
+  margin-top: 0.25rem;
+}
+
+/* ── MAIN LAYOUT ── */
+main {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── FRAMING NOTE ── */
+.framing-note {
+  background: #3A4A5C;
+  border-left: 3px solid #D4651A;
+  padding: 0.8rem 1rem;
+  font-size: 0.82rem;
+  color: #9AAABB;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.framing-note strong { color: #E8EAEC; }
+
+/* ── GRID ── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 800px) {
+  .tool-grid { grid-template-columns: 1fr; }
+}
+
+/* ── CARDS ── */
+.card {
+  background: #3A4A5C;
+  border: 1px solid #4A6070;
+  padding: 1.2rem;
+}
+.card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #D4651A;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #4A6070;
+}
+
+/* ── FORM ELEMENTS ── */
+.field-group {
+  margin-bottom: 0.9rem;
+}
+label {
+  display: block;
+  font-size: 0.78rem;
+  color: #9AAABB;
+  margin-bottom: 0.3rem;
+}
+label span.req { color: #D4651A; }
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  background: #2E3A47;
+  border: 1px solid #4A6070;
+  color: #E8EAEC;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.88rem;
+  padding: 0.45rem 0.6rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
+  border-color: #D4651A;
+}
+select option { background: #2E3A47; }
+.field-hint {
+  font-size: 0.72rem;
+  color: #9AAABB;
+  margin-top: 0.2rem;
+}
+
+/* ── GRAVITY PRESETS ── */
+.preset-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.preset-btn {
+  background: #4A6070;
+  color: #E8EAEC;
+  border: none;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.72rem;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.preset-btn:hover { background: #D4651A; }
+
+/* ── CALCULATE BUTTON ── */
+.calc-btn {
+  background: #D4651A;
+  color: #fff;
+  border: none;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  width: 100%;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+  margin-top: 0.5rem;
+}
+.calc-btn:hover { background: #b8541a; }
+
+/* ── RESULTS ── */
+.results-card {
+  background: #3A4A5C;
+  border: 1px solid #4A6070;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.results-card .card-title { margin-bottom: 1rem; }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.result-box {
+  background: #2E3A47;
+  border: 1px solid #4A6070;
+  padding: 0.7rem 0.8rem;
+}
+.result-label {
+  font-size: 0.72rem;
+  color: #9AAABB;
+  margin-bottom: 0.2rem;
+}
+.result-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #D4651A;
+  line-height: 1.2;
+}
+.result-sub {
+  font-size: 0.72rem;
+  color: #9AAABB;
+  margin-top: 0.15rem;
+}
+
+/* Pi-group display */
+.pi-row {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin: 0.8rem 0;
+}
+.pi-box {
+  background: #2E3A47;
+  border: 1px solid #4A6070;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.8rem;
+}
+.pi-box .pi-label { color: #9AAABB; font-size: 0.72rem; }
+.pi-box .pi-val { color: #D4651A; font-weight: 700; }
+
+.uncertainty-note {
+  font-size: 0.75rem;
+  color: #9AAABB;
+  background: #2E3A47;
+  border-left: 2px solid #4A6070;
+  padding: 0.5rem 0.8rem;
+  margin-top: 0.8rem;
+  font-style: italic;
+}
+
+.results-placeholder {
+  color: #4A6070;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+/* ── COLLAPSIBLE SECTIONS ── */
+.collapsible-header {
+  background: #2E3A47;
+  border: 1px solid #4A6070;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #D4651A;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  user-select: none;
+  margin-bottom: 0;
+}
+.collapsible-header:hover { background: #3A4A5C; }
+.collapsible-toggle { font-size: 0.9rem; color: #9AAABB; }
+.collapsible-body {
+  background: #3A4A5C;
+  border: 1px solid #4A6070;
+  border-top: none;
+  padding: 1.2rem;
+  display: none;
+}
+.collapsible-body.open { display: block; }
+.collapsible-wrap { margin-bottom: 1.5rem; }
+
+/* ── GEOTECHNICAL PANEL ── */
+.geo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.geo-box {
+  background: #2E3A47;
+  border: 1px solid #4A6070;
+  padding: 0.7rem 0.8rem;
+}
+.geo-label { font-size: 0.72rem; color: #9AAABB; margin-bottom: 0.2rem; }
+.geo-value { font-size: 0.95rem; font-weight: 700; color: #D4651A; }
+.geo-sub { font-size: 0.7rem; color: #9AAABB; margin-top: 0.15rem; }
+
+.pga-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-top: 0.8rem;
+}
+.pga-table th {
+  background: #2E3A47;
+  color: #9AAABB;
+  font-weight: 700;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid #4A6070;
+}
+.pga-table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid #2E3A47;
+  color: #E8EAEC;
+}
+.pga-table tr:nth-child(even) td { background: #2E3A47; }
+.pga-table .pga-val { color: #D4651A; font-weight: 700; }
+.pga-note {
+  font-size: 0.72rem;
+  color: #9AAABB;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* ── REFERENCE TABLE ── */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.ref-table th {
+  background: #2E3A47;
+  color: #9AAABB;
+  font-weight: 700;
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+  border-bottom: 2px solid #D4651A;
+  white-space: nowrap;
+}
+.ref-table td {
+  padding: 0.4rem 0.7rem;
+  border-bottom: 1px solid #2E3A47;
+  color: #E8EAEC;
+  vertical-align: top;
+}
+.ref-table tr:nth-child(even) td { background: #2E3A47; }
+.ref-table .crater-name { color: #D4651A; font-weight: 700; }
+.ref-table .notes-col { color: #9AAABB; font-size: 0.75rem; }
+
+/* ── FOOTER ── */
+footer {
+  background: #2E3A47;
+  border-top: 1px solid #4A6070;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  font-size: 0.72rem;
+  color: #9AAABB;
+}
+footer span { display: block; }
+
+/* ── CUSTOM INPUT TOGGLE ── */
+.custom-field { display: none; margin-top: 0.5rem; }
+.custom-field.visible { display: block; }
+```
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="breadcrumb"><a href="research-index.html">&#8592; Research &amp; AI</a></div>
+  <div class="module-id">RI03</div>
+  <h1>Impact Crater Scaling Calculator</h1>
+  <p class="subtitle">Pi-group scaling laws &#8212; Holsapple (1993) / Melosh (1989)</p>
+</header>
+
+<main>
+
+  <div class="framing-note">
+    <strong>Geotechnical connection:</strong> Pi-group scaling is the same dimensional analysis framework
+    applied to dynamic loading in geotechnical engineering&#8212;penetration resistance, pile driving energy,
+    and blast-induced ground deformation all follow analogous scaling laws. Impact cratering simply extends
+    this to hypervelocity regimes where material response governs crater morphology the same way soil
+    strength governs bearing capacity under dynamic loads.
+  </div>
+
+  <div class="tool-grid">
+
+```
+<!-- LEFT: INPUTS -->
+<div>
+  <div class="card">
+    <div class="card-title">Impactor Parameters</div>
+
+    <div class="field-group">
+      <label>Diameter (m)</label>
+      <input type="number" id="imp-diameter" value="50" min="0.001" step="any">
+    </div>
+
+    <div class="field-group">
+      <label>Velocity (km/s)
+        <span class="field-hint" style="display:inline; margin-left:0.5rem;">11&#8211;70 km/s typical; Earth escape &#8776; 11.2 km/s</span>
+      </label>
+      <input type="number" id="imp-velocity" value="20" min="0.1" step="any">
+    </div>
+
+    <div class="field-group">
+      <label>Density (kg/m&#179;)</label>
+      <select id="imp-density-sel" onchange="handleImpDensity()">
+        <option value="3000">Rocky / Chondrite (~3,000)</option>
+        <option value="7800">Iron / Metalite (~7,800)</option>
+        <option value="500">Cometary / Icy (~500)</option>
+        <option value="custom">Custom</option>
+      </select>
+      <div class="custom-field" id="imp-density-custom">
+        <input type="number" id="imp-density-val" value="3000" min="1" step="any" placeholder="kg/m&#179;">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Impact Angle (degrees from horizontal)
+        <span class="field-hint" style="display:inline; margin-left:0.5rem;">45&#176; is most probable</span>
+      </label>
+      <input type="number" id="imp-angle" value="45" min="1" max="90" step="any">
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;">
+    <div class="card-title">Target &amp; Environment</div>
+
+    <div class="field-group">
+      <label>Target Material</label>
+      <select id="target-sel" onchange="handleTarget()">
+        <option value="sand">Loose Sand / Regolith</option>
+        <option value="rock">Competent Rock</option>
+        <option value="porous">Porous Rock</option>
+        <option value="ice">Water / Ice</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+
+    <div id="target-fields">
+      <div class="field-group">
+        <label>Target Density (kg/m&#179;)</label>
+        <input type="number" id="tgt-density" value="1700" min="1" step="any">
+      </div>
+      <div class="field-group">
+        <label>Strength Y (Pa) &#8212; 0 for purely gravity-dominated</label>
+        <input type="number" id="tgt-strength" value="0" min="0" step="any">
+      </div>
+      <div class="field-group">
+        <label>Porosity (0&#8211;1)</label>
+        <input type="number" id="tgt-porosity" value="0.35" min="0" max="1" step="0.01">
+      </div>
+    </div>
+
+    <div class="field-group" style="margin-top:0.8rem;">
+      <label>Gravity (m/s&#178;)</label>
+      <input type="number" id="gravity" value="9.81" min="0.01" step="any">
+      <div class="preset-row">
+        <button class="preset-btn" onclick="setGravity(9.81)">Earth</button>
+        <button class="preset-btn" onclick="setGravity(1.62)">Moon</button>
+        <button class="preset-btn" onclick="setGravity(3.72)">Mars</button>
+        <button class="preset-btn" onclick="setGravity(0.28)">Ceres</button>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">&#9654; Calculate</button>
+  </div>
+</div>
+
+<!-- RIGHT: RESULTS -->
+<div>
+  <div class="results-card" id="results-panel">
+    <div class="card-title">RI03 &#8212; Output</div>
+    <div class="results-placeholder" id="results-placeholder">
+      Set parameters and click Calculate to generate crater estimates.
+    </div>
+    <div id="results-content" style="display:none;">
+
+      <div class="result-grid" id="result-boxes"></div>
+
+      <div style="font-size:0.78rem; color:#9AAABB; margin:0.6rem 0 0.3rem;">Pi-Group Values</div>
+      <div class="pi-row" id="pi-boxes"></div>
+
+      <div class="uncertainty-note">
+        Outputs are first-order estimates. Holsapple (1993) pi-group scaling carries ~factor-of-2 uncertainty.
+        Validate against known craters before applying to research contexts.
+      </div>
+
+    </div>
+  </div>
+</div>
+```
+
+  </div><!-- /tool-grid -->
+
+  <!-- GEOTECHNICAL ANALOG PANEL -->
+
+  <div class="collapsible-wrap">
+    <div class="collapsible-header" onclick="toggleSection('geo-body', this)">
+      Geotechnical Analog &#8212; Dynamic Loading &amp; Ground Motion
+      <span class="collapsible-toggle" id="geo-toggle">&#9660;</span>
+    </div>
+    <div class="collapsible-body" id="geo-body">
+      <div id="geo-placeholder" style="color:#4A6070; font-size:0.85rem; padding:0.5rem 0;">
+        Run a calculation first to populate this panel.
+      </div>
+      <div id="geo-content" style="display:none;">
+        <div class="geo-grid" id="geo-boxes"></div>
+        <div style="font-size:0.78rem; color:#9AAABB; margin:0.8rem 0 0.4rem; font-weight:700;">
+          Peak Ground Acceleration Estimates
+        </div>
+        <table class="pga-table">
+          <thead>
+            <tr>
+              <th>Distance</th>
+              <th>PGA (g)</th>
+              <th>Interpretation</th>
+            </tr>
+          </thead>
+          <tbody id="pga-tbody"></tbody>
+        </table>
+        <div class="pga-note">
+          PGA estimates use simplified empirical scaling (PGA_g &#8776; 0.1 &#215; (E/E&#8320;)^(1/3) / r^1.7).
+          Flagged as rough estimate only&#8212;not for engineering design. Atkinson-Boore GMPEs should be
+          used for formal seismic hazard assessment.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCE CRATERS -->
+
+  <div class="collapsible-wrap">
+    <div class="collapsible-header" onclick="toggleSection('ref-body', this)">
+      Reference Craters &#8212; Scale Comparison
+      <span class="collapsible-toggle" id="ref-toggle">&#9660;</span>
+    </div>
+    <div class="collapsible-body" id="ref-body">
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>Crater</th>
+            <th>Body</th>
+            <th>Diameter</th>
+            <th>Impactor Est.</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="crater-name">Barringer (Meteor Crater)</td>
+            <td>Earth</td>
+            <td>1.2 km</td>
+            <td>~50 m iron</td>
+            <td class="notes-col">Arizona, USA; best-preserved simple crater</td>
+          </tr>
+          <tr>
+            <td class="crater-name">Chicxulub</td>
+            <td>Earth</td>
+            <td>~180 km</td>
+            <td>~10 km rocky</td>
+            <td class="notes-col">K-Pg boundary; Yucatan, Mexico</td>
+          </tr>
+          <tr>
+            <td class="crater-name">Tycho</td>
+            <td>Moon</td>
+            <td>85 km</td>
+            <td>~4 km</td>
+            <td class="notes-col">Ray crater; ~108 Ma</td>
+          </tr>
+          <tr>
+            <td class="crater-name">Hellas Planitia</td>
+            <td>Mars</td>
+            <td>~2,300 km</td>
+            <td>~400 km</td>
+            <td class="notes-col">Ancient impact basin; deepest point on Mars</td>
+          </tr>
+          <tr>
+            <td class="crater-name">Vredefort</td>
+            <td>Earth</td>
+            <td>~300 km</td>
+            <td>~15 km</td>
+            <td class="notes-col">South Africa; oldest confirmed impact structure</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>RI03 &#8212; Impact Crater Scaling Calculator</span>
+  <span>Independent personal project &#8212; not affiliated with any government agency or employer</span>
+  <span>Ian Minnock, CPG, PMP, PMI-ACP &#8212; ian.minnock@mfimpact.com</span>
+  <span>v1.0 &#8212; May 2026</span>
+</footer>
+
+<script>
+  // ── TARGET PRESETS ──
+  var TARGET_PRESETS = {
+    sand:   { density: 1700,  strength: 0,      porosity: 0.35, K1: 0.20, mu: 0.55 },
+    rock:   { density: 2700,  strength: 5e7,    porosity: 0.05, K1: 0.132, mu: 0.41 },
+    porous: { density: 2000,  strength: 1e6,    porosity: 0.25, K1: 0.20, mu: 0.55 },
+    ice:    { density: 917,   strength: 1e5,    porosity: 0.02, K1: 0.2,  mu: 0.55 },
+    custom: { density: 2700,  strength: 5e7,    porosity: 0.05, K1: 0.132, mu: 0.41 }
+  };
+
+  function handleTarget() {
+    var sel = document.getElementById('target-sel').value;
+    if (sel === 'custom') return;
+    var p = TARGET_PRESETS[sel];
+    document.getElementById('tgt-density').value   = p.density;
+    document.getElementById('tgt-strength').value  = p.strength;
+    document.getElementById('tgt-porosity').value  = p.porosity;
+  }
+
+  function handleImpDensity() {
+    var sel = document.getElementById('imp-density-sel').value;
+    var cf  = document.getElementById('imp-density-custom');
+    if (sel === 'custom') {
+      cf.classList.add('visible');
+    } else {
+      cf.classList.remove('visible');
+      document.getElementById('imp-density-val').value = sel;
+    }
+  }
+
+  function setGravity(val) {
+    document.getElementById('gravity').value = val;
+  }
+
+  function toggleSection(bodyId, header) {
+    var body = document.getElementById(bodyId);
+    var isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    // find the toggle span inside header
+    var tog = header.querySelector('.collapsible-toggle');
+    if (tog) tog.textContent = isOpen ? '\u25BC' : '\u25B2';
+  }
+
+  // ── FORMATTING HELPERS ──
+  function fmt(n, dec) {
+    if (n === null || isNaN(n)) return 'N/A';
+    return n.toFixed(dec !== undefined ? dec : 3);
+  }
+  function fmtSci(n) {
+    if (n === null || isNaN(n)) return 'N/A';
+    return n.toExponential(3);
+  }
+  function fmtNum(n) {
+    if (n === null || isNaN(n)) return 'N/A';
+    if (Math.abs(n) >= 1e9)  return (n / 1e9).toFixed(2) + ' Gt';
+    if (Math.abs(n) >= 1e6)  return (n / 1e6).toFixed(2) + ' Mt';
+    if (Math.abs(n) >= 1e3)  return (n / 1e3).toFixed(2) + ' kt';
+    return n.toFixed(2) + ' t';
+  }
+
+  // ── MAIN CALCULATION ──
+  function calculate() {
+    var PI = Math.PI;
+
+    // Inputs
+    var d_i   = parseFloat(document.getElementById('imp-diameter').value);
+    var v_kms = parseFloat(document.getElementById('imp-velocity').value);
+    var sel_d = document.getElementById('imp-density-sel').value;
+    var rho_i = sel_d === 'custom'
+                  ? parseFloat(document.getElementById('imp-density-val').value)
+                  : parseFloat(sel_d);
+    var theta_deg = parseFloat(document.getElementById('imp-angle').value);
+    var g     = parseFloat(document.getElementById('gravity').value);
+
+    var tsel  = document.getElementById('target-sel').value;
+    var rho_t = parseFloat(document.getElementById('tgt-density').value);
+    var Y     = parseFloat(document.getElementById('tgt-strength').value);
+
+    if (isNaN(d_i) || isNaN(v_kms) || isNaN(rho_i) || isNaN(theta_deg) ||
+        isNaN(g)   || isNaN(rho_t) || isNaN(Y)) {
+      alert('Please fill in all numeric fields before calculating.');
+      return;
+    }
+
+    // Derived target scaling constants
+    var preset = TARGET_PRESETS[tsel] || TARGET_PRESETS.rock;
+    var K1 = preset.K1;
+    var mu = preset.mu;
+
+    var v   = v_kms * 1000;           // m/s
+    var a   = d_i / 2;                // impactor radius (m)
+    var theta = theta_deg * PI / 180; // radians
+
+    // Impactor mass
+    var vol_i = (4/3) * PI * Math.pow(a, 3);
+    var m_i   = rho_i * vol_i;
+
+    // Kinetic energy
+    var KE    = 0.5 * m_i * Math.pow(v, 2);
+
+    // Pi groups
+    var Pi2   = 1.61 * g * a / Math.pow(v, 2);
+    var Pi3   = Y   / (rho_t * Math.pow(v, 2));
+
+    // Transient volume (gravity-dominated; strength correction applied if Pi3 significant)
+    var Pi2_eff = Pi2 + Pi3;   // combined pi group
+    var exp_grav = -3 * mu / (2 + mu);
+    var V_t   = K1 * (m_i / rho_t) * Math.pow(Pi2_eff, exp_grav);
+
+    // Pi_V
+    var Pi_V  = rho_t * V_t / m_i;
+
+    // Transient radius (simplified spherical)
+    var R_t   = Math.pow(3 * V_t / PI, 1/3);
+    var D_t   = 2 * R_t;
+
+    // Angle correction (sin(theta)^0.33)
+    var angle_corr = Math.pow(Math.sin(theta), 0.33);
+    D_t = D_t * angle_corr;
+    V_t = V_t * angle_corr;
+
+    // Simple-to-complex transition (Earth reference; scale by gravity)
+    var D_sc  = 4000 * (9.81 / g);
+
+    // Final crater diameter
+    var D_f;
+    if (D_t < D_sc) {
+      D_f = D_t;  // simple crater
+    } else {
+      D_f = D_t * Math.pow(D_t / D_sc, 0.13);  // complex crater collapse
+    }
+
+    // Depth, ejecta
+    var depth = 0.2 * D_f;
+    var R_ej  = 2.3 * (D_f / 2);
+    var V_ej  = 0.114 * Math.pow(D_f, 3);
+
+    // Energy conversions
+    var TNT_J    = 4.184e9;
+    var tnt_eq_t = KE / TNT_J;           // tonnes TNT
+    var tnt_kt   = tnt_eq_t / 1000;
+    var tnt_mt   = tnt_kt  / 1000;
+    var tsar_mt  = 50;                   // Tsar Bomba ~50 MT
+    var tsar_frac = tnt_mt / tsar_mt;
+
+    // Seismic Mw: log10(E) = 1.5*Mw + 4.8  =>  Mw = (log10(E) - 4.8) / 1.5
+    var Mw = (Math.log10(KE) - 4.8) / 1.5;
+
+    // PGA estimates at 1, 10, 100 km
+    var E0 = 1e15;  // reference energy (J)
+    function pga_g(r_km) {
+      var r = r_km * 1000;
+      return 0.1 * Math.pow(KE / E0, 1/3) / Math.pow(r, 1.7) * Math.pow(1000, 1.7);
+    }
+    var pga1   = pga_g(1);
+    var pga10  = pga_g(10);
+    var pga100 = pga_g(100);
+
+    // ── RENDER RESULTS ──
+    document.getElementById('results-placeholder').style.display = 'none';
+    document.getElementById('results-content').style.display = 'block';
+
+    var rb = document.getElementById('result-boxes');
+    rb.innerHTML = [
+      box('Transient Crater Diameter',
+          D_t >= 1000 ? fmt(D_t/1000,3)+' km' : fmt(D_t,1)+' m',
+          D_t >= 1000 ? '('+fmt(D_t,0)+' m)' : '('+fmt(D_t/1000,3)+' km)'),
+      box('Final Crater Diameter',
+          D_f >= 1000 ? fmt(D_f/1000,3)+' km' : fmt(D_f,1)+' m',
+          D_f >= D_sc ? 'Complex crater (gravity collapse applied)' : 'Simple crater morphology'),
+      box('Crater Depth',
+          depth >= 1000 ? fmt(depth/1000,3)+' km' : fmt(depth,1)+' m',
+          'Depth/diameter ~0.2 (simple craters)'),
+      box('Ejecta Blanket Radius',
+          R_ej >= 1000 ? fmt(R_ej/1000,3)+' km' : fmt(R_ej,1)+' m',
+          'Outer limit approximation'),
+      box('Ejecta Volume',
+          fmtSci(V_ej)+' m&#179;',
+          'Approximate; scales as D_f&#179;'),
+      box('Kinetic Energy',
+          fmtSci(KE)+' J',
+          fmtNum(tnt_eq_t)+' TNT equivalent'),
+      box('TNT Equivalent',
+          tnt_mt >= 1 ? fmt(tnt_mt,2)+' MT' : fmt(tnt_kt,3)+' kT',
+          tsar_frac >= 0.01
+            ? fmt(tsar_frac,3)+'&#215; Tsar Bomba (50 MT)'
+            : fmt(tnt_kt,4)+' kT vs. Tsar Bomba 50,000 kT'),
+      box('Seismic Equivalent Mw',
+          'M<sub>w</sub> '+fmt(Mw,1),
+          'log&#8321;&#8320;(E) = 1.5&#8201;M<sub>w</sub> + 4.8')
+    ].join('');
+
+    var pb = document.getElementById('pi-boxes');
+    pb.innerHTML = piBox('&#960;&#8322; (gravity)', Pi2.toExponential(3))
+                 + piBox('&#960;&#8323; (strength)', Pi3.toExponential(3))
+                 + piBox('&#960;_V (volume)', Pi_V.toExponential(3))
+                 + piBox('Angle corr.', fmt(angle_corr,4));
+
+    // ── GEO PANEL ──
+    document.getElementById('geo-placeholder').style.display = 'none';
+    document.getElementById('geo-content').style.display = 'block';
+
+    var gb = document.getElementById('geo-boxes');
+    gb.innerHTML = [
+      gbox('Kinetic Energy', fmtSci(KE)+' J', ''),
+      gbox('TNT Equivalent',
+           tnt_mt >= 1 ? fmt(tnt_mt,2)+' megatonnes' : fmt(tnt_kt,3)+' kilotonnes',
+           tsar_frac >= 0.01 ? fmt(tsar_frac,3)+'&#215; Tsar Bomba (50 MT)' : 'Tsar Bomba fraction: '+tsar_frac.toExponential(2)),
+      gbox('Seismic M<sub>w</sub>', fmt(Mw,1),
+           'M<sub>w</sub> 6.0 &#8776; 1 kT TNT; M<sub>w</sub> 9.0 &#8776; Sumatra 2004'),
+      gbox('Impactor Mass', fmtSci(m_i)+' kg', 'Volume '+fmtSci(vol_i)+' m&#179;')
+    ].join('');
+
+    function pgaLabel(p) {
+      if (p > 1.0) return 'Extreme &#8212; structural collapse';
+      if (p > 0.5) return 'Severe &#8212; major structural damage';
+      if (p > 0.1) return 'Strong &#8212; significant damage possible';
+      if (p > 0.02) return 'Moderate &#8212; light damage';
+      if (p > 0.003) return 'Light &#8212; felt by most';
+      return 'Minor &#8212; barely perceptible';
+    }
+    document.getElementById('pga-tbody').innerHTML = [
+      ['1 km',  pga1],
+      ['10 km', pga10],
+      ['100 km',pga100]
+    ].map(function(row) {
+      return '<tr><td>'+row[0]+'</td>'
+           + '<td class="pga-val">'+row[1].toExponential(2)+' g</td>'
+           + '<td>'+pgaLabel(row[1])+'</td></tr>';
+    }).join('');
+  }
+
+  // ── COMPONENT BUILDERS ──
+  function box(label, value, sub) {
+    return '<div class="result-box">'
+         + '<div class="result-label">'+label+'</div>'
+         + '<div class="result-value">'+value+'</div>'
+         + (sub ? '<div class="result-sub">'+sub+'</div>' : '')
+         + '</div>';
+  }
+  function piBox(label, val) {
+    return '<div class="pi-box">'
+         + '<div class="pi-label">'+label+'</div>'
+         + '<div class="pi-val">'+val+'</div>'
+         + '</div>';
+  }
+  function gbox(label, val, sub) {
+    return '<div class="geo-box">'
+         + '<div class="geo-label">'+label+'</div>'
+         + '<div class="geo-value">'+val+'</div>'
+         + (sub ? '<div class="geo-sub">'+sub+'</div>' : '')
+         + '</div>';
+  }
+</script>
+
+</body>
+</html>
