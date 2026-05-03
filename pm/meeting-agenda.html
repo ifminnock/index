@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,7 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   background-color: #2E3A47;
   color: #E8EAEC;
@@ -18,17 +18,13 @@ body {
   line-height: 1.55;
   min-height: 100vh;
 }
-.page-wrapper {
-  background-color: #2E3A47;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+.page-wrapper { background-color: #2E3A47; min-height: 100vh; display: flex; flex-direction: column; }
+
 header {
-  background-color: #2E3A47;
-  border-bottom: 2px solid #D4651A;
-  padding: 1.5rem;
-  width: 100%;
+background-color: #2E3A47;
+border-bottom: 2px solid #D4651A;
+padding: 1.5rem;
+width: 100%;
 }
 .breadcrumb { font-size: 0.8rem; color: #9AAABB; margin-bottom: 0.5rem; }
 .breadcrumb a { color: #9AAABB; text-decoration: none; }
@@ -39,214 +35,195 @@ header h1 { margin: 0; font-size: 1.4rem; color: #E8EAEC; font-weight: 700; }
 .subtitle { margin: 0.5rem 0 0; font-size: 0.85rem; color: #9AAABB; }
 
 .main-content {
-  background-color: #2E3A47;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  width: 100%;
-  flex: 1;
+background-color: #2E3A47;
+max-width: 980px;
+margin: 0 auto;
+padding: 1.5rem;
+width: 100%;
+flex: 1;
 }
 
+/* ── READY/REACH/RAP reference strip ── */
+.rrr-strip {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 0.5rem;
+margin-bottom: 1.5rem;
+}
+.rrr-card {
+background-color: #3A4A5C;
+border-radius: 4px;
+padding: 0.65rem 0.85rem;
+border-top: 3px solid #4A6070;
+}
+.rrr-title { font-size: 0.75rem; font-weight: 700; color: #D4651A; text-transform: uppercase; letter-spacing: 0.06em; }
+.rrr-items { font-size: 0.7rem; color: #9AAABB; margin-top: 0.25rem; line-height: 1.5; }
+.rrr-items span { display: block; }
+.rrr-items span::before { content: ’\2022  ’; color: #4A6070; }
+
+/* ── DRAFT BAR ── */
 .draft-bar {
-  background-color: #3A4A5C;
-  border: 1px solid #4A6070;
-  border-radius: 4px;
-  padding: 0.6rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-radius: 4px;
+padding: 0.6rem 1rem;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+margin-bottom: 1.25rem;
+flex-wrap: wrap;
 }
-.draft-bar span { font-size: 0.78rem; color: #9AAABB; }
-#draftStatus { color: #6BA84A; }
+.draft-bar > span { font-size: 0.78rem; color: #9AAABB; }
+#draftStatus { color: #6BA84A; min-width: 100px; }
 
-.phase-strip {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-.phase-card {
-  background-color: #3A4A5C;
-  border-radius: 4px;
-  padding: 0.6rem 0.8rem;
-  border-top: 3px solid #4A6070;
-}
-.phase-card.active-phase { border-top-color: #D4651A; }
-.phase-title { font-size: 0.78rem; font-weight: 700; color: #D4651A; text-transform: uppercase; letter-spacing: 0.05em; }
-.phase-sub { font-size: 0.7rem; color: #9AAABB; margin-top: 0.15rem; line-height: 1.35; }
-
-.section-panel {
-  background-color: #3A4A5C;
-  border-radius: 4px;
-  margin-bottom: 1.25rem;
-  overflow: hidden;
-}
+/* ── SECTION PANELS ── */
+.section-panel { background-color: #3A4A5C; border-radius: 4px; margin-bottom: 1.25rem; overflow: hidden; }
 .section-toggle {
-  background-color: #3A4A5C;
-  border: none;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1rem;
-  cursor: pointer;
-  color: #E8EAEC;
-  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.9rem;
-  font-weight: 700;
-  border-bottom: 1px solid #4A6070;
+background-color: #3A4A5C; border: none; width: 100%;
+display: flex; align-items: center; justify-content: space-between;
+padding: 0.85rem 1rem; cursor: pointer; color: #E8EAEC;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.9rem; font-weight: 700; border-bottom: 1px solid #4A6070;
 }
 .section-toggle:hover { background-color: #4A6070; }
 .toggle-label { display: flex; align-items: center; gap: 0.6rem; }
 .section-tag { font-size: 0.72rem; color: #D4651A; font-weight: 700; }
-.toggle-arrow { font-size: 0.75rem; color: #9AAABB; display: inline-block; }
+.toggle-arrow { font-size: 0.75rem; color: #9AAABB; }
 .section-body { background-color: #3A4A5C; padding: 1rem; }
 .section-body.hidden { display: none; }
 
+/* ── FORMS ── */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
 .form-grid .full { grid-column: 1 / -1; }
 .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
 .field-label { font-size: 0.75rem; color: #9AAABB; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
-.field-hint { font-size: 0.72rem; color: #4A6070; font-weight: 400; text-transform: none; }
+.field-hint { font-size: 0.72rem; color: #4A6070; font-weight: 400; text-transform: none; letter-spacing: 0; }
 
-input[type="text"],
-input[type="date"],
-input[type="time"],
-input[type="number"],
-select,
-textarea {
-  background-color: #2E3A47;
-  color: #E8EAEC;
-  border: 1px solid #4A6070;
-  border-radius: 3px;
-  padding: 0.45rem 0.6rem;
-  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.85rem;
-  width: 100%;
-  transition: border-color 0.15s;
+input[type=“text”], input[type=“date”], input[type=“time”], input[type=“number”], select, textarea {
+background-color: #2E3A47; color: #E8EAEC; border: 1px solid #4A6070;
+border-radius: 3px; padding: 0.45rem 0.6rem;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.85rem; width: 100%; transition: border-color 0.15s;
 }
-input[type="text"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="number"]:focus,
-select:focus,
-textarea:focus { outline: none; border-color: #D4651A; border-width: 2px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #D4651A; border-width: 2px; }
 textarea { resize: vertical; min-height: 70px; }
 select option { background-color: #2E3A47; color: #E8EAEC; }
 
-.rules-grid { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.4rem; }
+/* ── MEETING RULES ── */
+.rules-grid { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.4rem; }
 .rule-toggle {
-  display: flex; align-items: flex-start; gap: 0.6rem; cursor: pointer;
-  padding: 0.5rem 0.6rem; border-radius: 3px;
-  border: 1px solid #4A6070; background-color: #2E3A47; transition: border-color 0.15s;
+display: flex; align-items: flex-start; gap: 0.6rem; cursor: pointer;
+padding: 0.5rem 0.6rem; border-radius: 3px;
+border: 1px solid #4A6070; background-color: #2E3A47; transition: border-color 0.15s;
 }
 .rule-toggle:hover { background-color: #3A4A5C; }
 .rule-toggle.active { border-color: #D4651A; }
-.rule-toggle input[type="checkbox"] { margin-top: 0.15rem; accent-color: #D4651A; flex-shrink: 0; width: auto; }
+.rule-toggle input[type=“checkbox”] { margin-top: 0.15rem; accent-color: #D4651A; flex-shrink: 0; width: auto; }
 .rule-text { font-size: 0.82rem; color: #E8EAEC; line-height: 1.4; }
 
+/* ── TIMING ── */
 .timing-summary { display: flex; gap: 1rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
-.timing-badge { background-color: #2E3A47; border: 1px solid #4A6070; border-radius: 3px; padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+.timing-badge { background-color: #2E3A47; border: 1px solid #4A6070; border-radius: 3px; padding: 0.4rem 0.8rem; }
 .timing-badge .tl { color: #9AAABB; font-size: 0.72rem; display: block; }
-.timing-badge .tv { font-weight: 700; color: #E8EAEC; }
+.timing-badge .tv { font-weight: 700; color: #E8EAEC; font-size: 0.85rem; }
 .timing-badge.ok .tv { color: #6BA84A; }
 .timing-badge.warn .tv { color: #D4651A; }
-
 .timing-warning-box {
-  background-color: rgba(212,101,26,0.15);
-  border-left: 4px solid #D4651A;
-  padding: 0.6rem 0.85rem;
-  font-size: 0.82rem;
-  color: #E8EAEC;
-  margin-bottom: 0.85rem;
-  display: none;
+background-color: rgba(212,101,26,0.15); border-left: 4px solid #D4651A;
+padding: 0.6rem 0.85rem; font-size: 0.82rem; color: #E8EAEC;
+margin-bottom: 0.85rem; display: none;
 }
 .timing-warning-box.visible { display: block; }
 
+/* ── AGENDA TABLE ── */
 .agenda-table-wrap { overflow-x: auto; margin-bottom: 0.85rem; }
-table.agenda-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 820px; }
+table.agenda-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 860px; }
 table.agenda-table th {
-  background-color: #4A6070; color: #E8EAEC; padding: 0.5rem 0.6rem;
-  text-align: left; font-size: 0.72rem; text-transform: uppercase;
-  letter-spacing: 0.04em; white-space: nowrap; font-weight: 700;
+background-color: #4A6070; color: #E8EAEC; padding: 0.5rem 0.6rem;
+text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; font-weight: 700;
 }
 table.agenda-table td { padding: 0.4rem 0.5rem; vertical-align: top; border-bottom: 1px solid #2E3A47; }
 table.agenda-table tbody tr:nth-child(odd) td { background-color: #3A4A5C; }
 table.agenda-table tbody tr:nth-child(even) td { background-color: #2E3A47; }
 table.agenda-table tbody tr.timing-over td { background-color: rgba(212,101,26,0.2) !important; }
 table.agenda-table tbody tr.timing-over .time-val { color: #D4651A; font-weight: 700; }
-.agenda-table input[type="text"],
-.agenda-table input[type="number"],
-.agenda-table select,
-.agenda-table textarea { font-size: 0.8rem; padding: 0.35rem 0.45rem; }
-.agenda-table input[type="number"] { width: 60px; }
+.agenda-table input[type=“text”], .agenda-table input[type=“number”],
+.agenda-table select, .agenda-table textarea { font-size: 0.8rem; padding: 0.35rem 0.45rem; }
+.agenda-table input[type=“number”] { width: 60px; }
 .agenda-table textarea { min-height: 52px; }
-.item-num { font-weight: 700; color: #D4651A; font-size: 0.85rem; display: block; text-align: center; padding-top: 0.3rem; }
-.time-val { font-size: 0.8rem; color: #9AAABB; white-space: nowrap; display: block; text-align: center; padding-top: 0.3rem; }
+.item-num { font-weight: 700; color: #D4651A; font-size: 0.85rem; display: block; text-align: center; padding-top: 0.25rem; }
+.time-val { font-size: 0.8rem; color: #9AAABB; white-space: nowrap; display: block; text-align: center; padding-top: 0.25rem; }
 
+/* Decision checkbox in table */
+.decision-check-wrap { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.35rem; }
+.decision-check-wrap input[type=“checkbox”] { accent-color: #D4651A; width: auto; flex-shrink: 0; }
+.decision-check-wrap label { font-size: 0.75rem; color: #9AAABB; cursor: pointer; white-space: nowrap; }
+
+/* Materials */
 .mat-check-list { display: flex; flex-direction: column; gap: 0.25rem; max-height: 100px; overflow-y: auto; }
 .mat-check-list label { display: flex; align-items: flex-start; gap: 0.35rem; font-size: 0.75rem; color: #E8EAEC; cursor: pointer; line-height: 1.3; }
-.mat-check-list input[type="checkbox"] { accent-color: #D4651A; margin-top: 0.1rem; flex-shrink: 0; width: auto; }
+.mat-check-list input[type=“checkbox”] { accent-color: #D4651A; margin-top: 0.1rem; flex-shrink: 0; width: auto; }
 .no-materials { font-size: 0.72rem; color: #4A6070; font-style: italic; }
 
+/* ── ACTION / PARK CARDS ── */
 .item-card { background-color: #2E3A47; border: 1px solid #4A6070; border-radius: 3px; padding: 0.75rem; margin-bottom: 0.6rem; }
 .item-card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
 .item-card-grid .full { grid-column: 1 / -1; }
 .park-card-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
 .park-card-grid .full { grid-column: 1 / -1; }
 
+/* ── BUTTONS ── */
 .btn {
-  background-color: #D4651A; color: #E8EAEC; border: none; border-radius: 3px;
-  padding: 0.45rem 0.9rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
-  text-transform: uppercase; letter-spacing: 0.04em;
+background-color: #D4651A; color: #E8EAEC; border: none; border-radius: 3px;
+padding: 0.45rem 0.9rem; font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
+text-transform: uppercase; letter-spacing: 0.04em;
 }
 .btn:hover { background-color: #b85516; }
 .btn-secondary {
-  background-color: #4A6070; color: #E8EAEC; border: none; border-radius: 3px;
-  padding: 0.45rem 0.9rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
-  text-transform: uppercase; letter-spacing: 0.04em;
+background-color: #4A6070; color: #E8EAEC; border: none; border-radius: 3px;
+padding: 0.45rem 0.9rem; font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
+text-transform: uppercase; letter-spacing: 0.04em;
 }
 .btn-secondary:hover { background-color: #3a4f5c; }
 .btn-danger {
-  background-color: #D64A4A; color: #E8EAEC; border: none; border-radius: 3px;
-  padding: 0.35rem 0.6rem; font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
+background-color: #D64A4A; color: #E8EAEC; border: none; border-radius: 3px;
+padding: 0.35rem 0.6rem; font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background-color 0.15s;
 }
 .btn-danger:hover { background-color: #b83a3a; }
 .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
 .action-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; }
 
 .export-row {
-  display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
-  margin-bottom: 1.5rem; background-color: #3A4A5C; padding: 1rem; border-radius: 4px;
+display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
+margin-bottom: 1.5rem; background-color: #3A4A5C; padding: 1rem; border-radius: 4px;
 }
 .export-row label { font-size: 0.8rem; color: #9AAABB; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
-.export-row input[type="checkbox"] { accent-color: #D4651A; width: auto; }
+.export-row input[type=“checkbox”] { accent-color: #D4651A; width: auto; }
+
+/* ── RETROSPECTIVE NOTE ── */
+.retro-note {
+background-color: #2E3A47; border: 1px dashed #4A6070; border-radius: 3px;
+padding: 0.65rem 0.85rem; font-size: 0.78rem; color: #9AAABB; margin-bottom: 0.85rem;
+line-height: 1.5;
+}
 
 footer {
-  background-color: #2E3A47;
-  border-top: 1px solid #4A6070;
-  padding: 1rem 1.5rem;
-  font-size: 0.75rem;
-  color: #9AAABB;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
-  margin-top: 2rem;
+background-color: #2E3A47; border-top: 1px solid #4A6070;
+padding: 1rem 1.5rem; font-size: 0.75rem; color: #9AAABB;
+display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; margin-top: 2rem;
 }
 
 @media (max-width: 640px) {
-  .form-grid { grid-template-columns: 1fr; }
-  .item-card-grid { grid-template-columns: 1fr; }
-  .park-card-grid { grid-template-columns: 1fr; }
-  .phase-strip { grid-template-columns: 1fr; }
+.form-grid { grid-template-columns: 1fr; }
+.item-card-grid { grid-template-columns: 1fr; }
+.park-card-grid { grid-column: 1fr; }
+.rrr-strip { grid-template-columns: 1fr; }
 }
 </style>
+
 </head>
 <body>
 <div class="page-wrapper">
@@ -261,7 +238,7 @@ footer {
     <span class="module-id">PM02</span>
     <h1>Meeting Agenda Builder</h1>
   </div>
-  <p class="subtitle">Structured agenda planning with timeboxing, action tracking, and PDF export &mdash; READY / REACH / RAP facilitation framework</p>
+  <p class="subtitle">Structured agenda planning with timeboxing, decision capture, and PDF export</p>
 </header>
 
 <div class="main-content">
@@ -273,29 +250,44 @@ footer {
     <button class="btn-secondary btn-sm" onclick="clearDraft()">Clear Draft</button>
   </div>
 
-  <!-- READY / REACH / RAP reference strip -->
-  <div class="phase-strip">
-    <div class="phase-card active-phase">
-      <div class="phase-title">READY &mdash; Setting the Foundation</div>
-      <div class="phase-sub">Roles &amp; Responsibilities &middot; Expectations &amp; Engagement &middot; Agenda &amp; Alignment &middot; Define Purpose &middot; Your Logistics</div>
+  <!-- READY / REACH / RAP reference strip — UI only, never in PDF -->
+
+  <div class="rrr-strip">
+    <div class="rrr-card">
+      <div class="rrr-title">READY &mdash; Before the Meeting</div>
+      <div class="rrr-items">
+        <span>Roles &amp; Responsibilities</span>
+        <span>Expectations &amp; Engagement</span>
+        <span>Agenda &amp; Alignment</span>
+        <span>Define Purpose &amp; Outcomes</span>
+        <span>Your Logistics</span>
+      </div>
     </div>
-    <div class="phase-card">
-      <div class="phase-title">REACH &mdash; Guiding the Process</div>
-      <div class="phase-sub">Review &amp; Open &middot; Explore &middot; Assess &middot; Conclude &middot; Highlight &amp; Close</div>
+    <div class="rrr-card">
+      <div class="rrr-title">REACH &mdash; During the Meeting</div>
+      <div class="rrr-items">
+        <span>Review &amp; Open</span>
+        <span>Explore (structured discussion)</span>
+        <span>Assess (options vs. criteria)</span>
+        <span>Conclude (decisions &amp; ownership)</span>
+        <span>Highlight &amp; Close</span>
+      </div>
     </div>
-    <div class="phase-card">
-      <div class="phase-title">RAP &mdash; Learning &amp; Improving</div>
-      <div class="phase-sub">Retrospect &middot; Assign &middot; Progress Track</div>
+    <div class="rrr-card">
+      <div class="rrr-title">RAP &mdash; After the Meeting</div>
+      <div class="rrr-items">
+        <span>Retrospect (what worked / improve)</span>
+        <span>Assign (ownership &amp; next steps)</span>
+        <span>Progress Track (check-in rhythm)</span>
+      </div>
     </div>
   </div>
 
-  <!-- ══ MEETING DETAILS (READY) ══ -->
+  <!-- ══ MEETING DETAILS ══ -->
+
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('headerBody', this)">
-      <span class="toggle-label">
-        <span class="section-tag">READY</span>
-        Meeting Details &amp; Facilitation Setup
-      </span>
+      <span class="toggle-label"><span class="section-tag">HDR</span> Meeting Details</span>
       <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="headerBody">
@@ -327,65 +319,50 @@ footer {
           <label class="field-label" for="endTime">End Time</label>
           <input type="time" id="endTime" oninput="recalcTimes(); saveDraftDebounced()">
         </div>
-        <div class="field-group full">
-          <label class="field-label" for="facilitator">Facilitator <span class="field-hint">(READY: Roles &amp; Responsibilities)</span></label>
-          <input type="text" id="facilitator" placeholder="e.g., Alice Smith" oninput="saveDraftDebounced()">
+        <div class="field-group">
+          <label class="field-label" for="facilitator">Facilitator</label>
+          <input type="text" id="facilitator" placeholder="Name of meeting facilitator" oninput="saveDraftDebounced()">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="noteTaker">Note-Taker</label>
+          <input type="text" id="noteTaker" placeholder="Name of note-taker" oninput="saveDraftDebounced()">
         </div>
         <div class="field-group full">
           <label class="field-label" for="attendees">Attendees <span class="field-hint">(comma-separated; auto-populates owner dropdowns)</span></label>
           <textarea id="attendees" rows="2" placeholder="Alice Smith, Bob Jones, Carol White" oninput="updateAttendees(); saveDraftDebounced()"></textarea>
         </div>
         <div class="field-group full">
-          <label class="field-label" for="materials">Materials / References <span class="field-hint">(one per line; selectable per agenda item)</span></label>
+          <label class="field-label" for="materials">Materials / References <span class="field-hint">(one per line)</span></label>
           <textarea id="materials" rows="3" placeholder="Q3 Budget Report&#10;Draft Minutes 2026-04-15&#10;https://drive.example.com/doc123" oninput="updateMaterials(); saveDraftDebounced()"></textarea>
         </div>
         <div class="field-group full">
-          <label class="field-label" for="meetingPurpose">Purpose &amp; Desired Outcomes <span class="field-hint">(READY: Define Purpose &mdash; the clear &#8220;why&#8221;)</span></label>
-          <textarea id="meetingPurpose" rows="2" placeholder="Articulate the clear purpose and specific outcomes expected from this meeting..." oninput="saveDraftDebounced()"></textarea>
+          <label class="field-label" for="meetingPurpose">Purpose &amp; Desired Outcomes</label>
+          <textarea id="meetingPurpose" rows="2" placeholder="The clear &#8220;why&#8221; behind this meeting and the specific outcomes expected..." oninput="saveDraftDebounced()"></textarea>
         </div>
       </div>
 
-      <div style="margin-top:1rem;">
-        <div class="field-label" style="margin-bottom:0.5rem;">
-          Meeting Rules <span class="field-hint">(READY: Expectations &amp; Engagement &mdash; toggle to include in printout)</span>
-        </div>
-        <div class="rules-grid" id="rulesGrid">
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">Timeboxed &mdash; each agenda item has a fixed duration; we move to parking lot if time expires</span>
-          </label>
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">Decisions recorded &mdash; each motion includes who moved, who seconded, and vote tally (if applicable)</span>
-          </label>
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">One speaker at a time &mdash; questions held until clarification round</span>
-          </label>
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">Parking lot enforced &mdash; off-topic items go to parking lot for discussion later</span>
-          </label>
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">Action items captured &mdash; owner and due date assigned before item close</span>
-          </label>
-          <label class="rule-toggle">
-            <input type="checkbox" onchange="onRuleChange(this)">
-            <span class="rule-text">Psychological safety &mdash; all voices contribute meaningfully; open communication expected</span>
-          </label>
-        </div>
-      </div>
+```
+  <div style="margin-top:1rem;">
+    <div class="field-label" style="margin-bottom:0.5rem;">Meeting Rules <span class="field-hint">(toggle to include in printed agenda)</span></div>
+    <div class="rules-grid" id="rulesGrid">
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">Timeboxed &mdash; each agenda item has a fixed duration; items move to parking lot if time expires</span></label>
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">Decisions recorded &mdash; each motion includes who moved, who seconded, and vote tally (if applicable)</span></label>
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">One speaker at a time &mdash; questions held until clarification round</span></label>
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">Parking lot enforced &mdash; off-topic items deferred for later discussion</span></label>
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">Action items captured &mdash; owner and due date assigned before item closes</span></label>
+      <label class="rule-toggle"><input type="checkbox" onchange="onRuleChange(this)"><span class="rule-text">Psychological safety &mdash; all voices contribute meaningfully; open communication expected</span></label>
     </div>
   </div>
+</div>
+```
 
-  <!-- ══ AGENDA ITEMS (REACH) ══ -->
+  </div>
+
+  <!-- ══ AGENDA ITEMS ══ -->
+
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('agendaBody', this)">
-      <span class="toggle-label">
-        <span class="section-tag">REACH</span>
-        Agenda Items &amp; Timeboxing
-      </span>
+      <span class="toggle-label"><span class="section-tag">AGD</span> Agenda Items</span>
       <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="agendaBody">
@@ -404,63 +381,102 @@ footer {
         </div>
       </div>
       <div class="timing-warning-box" id="timingWarning"></div>
-      <div class="agenda-table-wrap">
-        <table class="agenda-table">
-          <thead>
-            <tr>
-              <th style="width:36px;">#</th>
-              <th style="min-width:175px;">Topic</th>
-              <th style="min-width:130px;">Owner / Presenter</th>
-              <th style="width:62px;">Min</th>
-              <th style="width:76px;">Start</th>
-              <th style="width:76px;">End</th>
-              <th style="min-width:145px;">Materials</th>
-              <th style="min-width:175px;">Notes / Decisions</th>
-              <th style="width:50px;">Del</th>
-            </tr>
-          </thead>
-          <tbody id="agendaTbody"></tbody>
-        </table>
-      </div>
-      <div class="action-row">
-        <button class="btn" onclick="addAgendaItem()">+ Add Item</button>
-      </div>
-    </div>
+
+```
+  <div class="agenda-table-wrap">
+    <table class="agenda-table">
+      <thead>
+        <tr>
+          <th style="width:34px;">#</th>
+          <th style="min-width:170px;">Topic</th>
+          <th style="width:60px;">Type</th>
+          <th style="min-width:120px;">Owner</th>
+          <th style="width:58px;">Min</th>
+          <th style="width:74px;">Start</th>
+          <th style="width:74px;">End</th>
+          <th style="min-width:130px;">Materials</th>
+          <th style="min-width:160px;">Notes</th>
+          <th style="width:80px;">Decision?</th>
+          <th style="width:48px;">Del</th>
+        </tr>
+      </thead>
+      <tbody id="agendaTbody"></tbody>
+    </table>
+  </div>
+  <div class="action-row">
+    <button class="btn" onclick="addAgendaItem()">+ Add Item</button>
+    <button class="btn-secondary btn-sm" onclick="addBookendItems()" title="Add Review &amp; Open + Highlight &amp; Close items">+ Add Opening &amp; Closing Items</button>
+  </div>
+</div>
+```
+
   </div>
 
-  <!-- ══ ACTION ITEMS (RAP: Assign) ══ -->
+  <!-- ══ ACTION ITEMS ══ -->
+
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('actionBody', this)">
-      <span class="toggle-label">
-        <span class="section-tag">RAP &mdash; Assign</span>
-        Action Items
-      </span>
+      <span class="toggle-label"><span class="section-tag">ACT</span> Action Items</span>
       <span class="toggle-arrow">&#9650;</span>
     </button>
     <div class="section-body" id="actionBody">
-      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Capture open items from previous meetings or assign new ones during this session. Owner and due date required before item close.</p>
+      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Capture open items from previous meetings or assign new ones during this session.</p>
       <div id="actionList"></div>
+      <div class="form-grid" style="margin-top:0.85rem;border-top:1px solid #4A6070;padding-top:0.85rem;">
+        <div class="field-group">
+          <label class="field-label" for="nextCheckin">Next Check-in Date</label>
+          <input type="date" id="nextCheckin" oninput="saveDraftDebounced()">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="checkinRhythm">Check-in Rhythm</label>
+          <select id="checkinRhythm" onchange="saveDraftDebounced()">
+            <option value="">-- Select --</option>
+            <option>Daily standup</option>
+            <option>Weekly</option>
+            <option>Bi-weekly</option>
+            <option>Monthly</option>
+            <option>At next scheduled meeting</option>
+            <option>Ad hoc / as needed</option>
+          </select>
+        </div>
+      </div>
       <div class="action-row">
         <button class="btn" onclick="addActionItem()">+ Add Action Item</button>
       </div>
     </div>
   </div>
 
-  <!-- ══ RETROSPECT (RAP: Retrospect) ══ -->
+  <!-- ══ PARKING LOT ══ -->
+
+  <div class="section-panel">
+    <button class="section-toggle" onclick="toggleSection('parkBody', this)">
+      <span class="toggle-label"><span class="section-tag">PLT</span> Parking Lot</span>
+      <span class="toggle-arrow">&#9650;</span>
+    </button>
+    <div class="section-body" id="parkBody">
+      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Off-topic or deferred items raised during the meeting. Quick-add to keep discussion on track.</p>
+      <div id="parkList"></div>
+      <div class="action-row">
+        <button class="btn" onclick="addParkItem()">+ Add to Parking Lot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RETROSPECTIVE ══ -->
+
   <div class="section-panel">
     <button class="section-toggle" onclick="toggleSection('retroBody', this)">
-      <span class="toggle-label">
-        <span class="section-tag">RAP &mdash; Retrospect</span>
-        Meeting Retrospective
-      </span>
+      <span class="toggle-label"><span class="section-tag">RET</span> Retrospective</span>
       <span class="toggle-arrow">&#9660;</span>
     </button>
     <div class="section-body hidden" id="retroBody">
-      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Review what worked, what to improve, and key learnings for future sessions. Fill out after the meeting closes.</p>
+      <div class="retro-note">
+        Complete after the meeting &mdash; typically during minutes preparation or within a few days. The PDF includes blank space for handwritten notes if completing on paper.
+      </div>
       <div class="form-grid">
         <div class="field-group full">
           <label class="field-label" for="retroWorked">What Worked Well</label>
-          <textarea id="retroWorked" rows="3" placeholder="Capture what went well in this meeting..." oninput="saveDraftDebounced()"></textarea>
+          <textarea id="retroWorked" rows="3" placeholder="Capture what went well..." oninput="saveDraftDebounced()"></textarea>
         </div>
         <div class="field-group full">
           <label class="field-label" for="retroImprove">Areas for Improvement</label>
@@ -474,888 +490,784 @@ footer {
     </div>
   </div>
 
-  <!-- ══ PARKING LOT ══ -->
-  <div class="section-panel">
-    <button class="section-toggle" onclick="toggleSection('parkBody', this)">
-      <span class="toggle-label">
-        <span class="section-tag">PLT</span>
-        Parking Lot
-      </span>
-      <span class="toggle-arrow">&#9650;</span>
-    </button>
-    <div class="section-body" id="parkBody">
-      <p style="font-size:0.8rem;color:#9AAABB;margin-bottom:0.85rem;">Off-topic or deferred items raised during the meeting. Quick-add to keep discussion on track.</p>
-      <div id="parkList"></div>
-      <div class="action-row">
-        <button class="btn" onclick="addParkItem()">+ Add to Parking Lot</button>
-      </div>
-    </div>
-  </div>
+  <!-- EXPORT -->
 
-  <!-- ══ EXPORT ══ -->
   <div class="export-row">
     <button class="btn" onclick="exportPDF()">&#8595; Export PDF</button>
     <label><input type="checkbox" id="exportBW"> Export B&amp;W</label>
-    <span style="font-size:0.78rem;color:#9AAABB;">Generates a print-ready agenda including all sections</span>
+    <span style="font-size:0.78rem;color:#9AAABB;">Generates a print-ready agenda with write-in space for notes and decisions</span>
   </div>
 
-</div>
+</div><!-- /main-content -->
 
 <footer>
   <span>PM02 &mdash; Meeting Agenda Builder</span>
   <span>Independent personal project &mdash; not affiliated with any government agency or employer</span>
   <span>Ian Minnock, CPG, PMP, PMI-ACP &mdash; ian.minnock@mfimpact.com</span>
-  <span>v1.1 &mdash; May 2026</span>
+  <span>v1.2 &mdash; May 2026</span>
 </footer>
-
 </div>
 
 <script>
-/* ───────────────────────────────────────────────────
-   STATE — plain ES5-compatible vars
-─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
 var agendaItems = [];
 var actionItems = [];
 var parkItems   = [];
 var nextId = 1;
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    UTILITY
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 
 function timeToMins(t){
   if(!t) return null;
-  var parts = t.split(':');
-  if(parts.length < 2) return null;
-  var h = parseInt(parts[0], 10);
-  var m = parseInt(parts[1], 10);
-  if(isNaN(h) || isNaN(m)) return null;
-  return h * 60 + m;
+  var p = t.split(':');
+  if(p.length < 2) return null;
+  var h = parseInt(p[0],10), m = parseInt(p[1],10);
+  return (isNaN(h)||isNaN(m)) ? null : h*60+m;
 }
 
 function minsTo12(tm){
-  if(tm === null || isNaN(tm)) return '--:--';
-  var h = Math.floor(tm / 60) % 24;
-  var m = tm % 60;
-  var ap = h >= 12 ? 'PM' : 'AM';
-  var h12 = h % 12;
-  if(h12 === 0) h12 = 12;
-  return h12 + ':' + pad2(m) + ' ' + ap;
+  if(tm===null||isNaN(tm)) return '--:--';
+  var h=Math.floor(tm/60)%24, m=tm%60, ap=h>=12?'PM':'AM', h12=h%12||12;
+  return h12+':'+pad2(m)+' '+ap;
 }
 
 function fmtDate(d){
   if(!d) return '';
-  var p = d.split('-');
-  if(p.length < 3) return d;
-  var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return mo[parseInt(p[1],10)-1] + ' ' + parseInt(p[2],10) + ', ' + p[0];
+  var p=d.split('-'); if(p.length<3) return d;
+  var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mo[parseInt(p[1],10)-1]+' '+parseInt(p[2],10)+', '+p[0];
 }
 
 function esc(s){
-  if(s === null || s === undefined) return '';
+  if(s===null||s===undefined) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ───────────────────────────────────────────────────
-   SECTION TOGGLE
-─────────────────────────────────────────────────── */
-function toggleSection(bodyId, btn){
-  var body  = document.getElementById(bodyId);
-  var arrow = btn.querySelector('.toggle-arrow');
-  if(body.classList.contains('hidden')){
-    body.classList.remove('hidden');
-    arrow.innerHTML = '&#9650;';
-  } else {
-    body.classList.add('hidden');
-    arrow.innerHTML = '&#9660;';
-  }
+function findById(arr,id){ for(var i=0;i<arr.length;i++){ if(arr[i].id===id) return arr[i]; } return null; }
+function idxOf(arr,v){ for(var i=0;i<arr.length;i++){ if(arr[i]===v) return i; } return -1; }
+
+/* ═══════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════ */
+function toggleSection(bodyId,btn){
+  var body=document.getElementById(bodyId), arrow=btn.querySelector('.toggle-arrow');
+  if(body.classList.contains('hidden')){ body.classList.remove('hidden'); arrow.innerHTML='&#9650;'; }
+  else { body.classList.add('hidden'); arrow.innerHTML='&#9660;'; }
 }
 
-/* ───────────────────────────────────────────────────
-   MEETING RULES
-─────────────────────────────────────────────────── */
 function onRuleChange(cb){
-  var lbl = cb.closest ? cb.closest('.rule-toggle') : cb.parentNode;
-  if(cb.checked){ lbl.classList.add('active'); }
-  else { lbl.classList.remove('active'); }
+  var lbl=cb.closest?cb.closest('.rule-toggle'):cb.parentNode;
+  if(cb.checked) lbl.classList.add('active'); else lbl.classList.remove('active');
   saveDraftDebounced();
 }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    ATTENDEES
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function getAttendees(){
-  var raw = document.getElementById('attendees').value;
-  return raw.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s !== ''; });
+  return document.getElementById('attendees').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s!==''; });
 }
 
 function updateAttendees(){
-  var list = getAttendees();
-  var sels = document.querySelectorAll('.owner-select');
-  for(var i = 0; i < sels.length; i++){
-    var sel = sels[i];
-    var cur = sel.value;
+  var list=getAttendees();
+  var sels=document.querySelectorAll('.owner-select');
+  for(var i=0;i<sels.length;i++){
+    var sel=sels[i], cur=sel.value;
     while(sel.firstChild) sel.removeChild(sel.firstChild);
-    var blank = document.createElement('option');
-    blank.value = ''; blank.textContent = '-- Unassigned --';
-    sel.appendChild(blank);
-    for(var j = 0; j < list.length; j++){
-      var opt = document.createElement('option');
-      opt.value = list[j]; opt.textContent = list[j];
-      if(list[j] === cur) opt.selected = true;
-      sel.appendChild(opt);
+    var b=document.createElement('option'); b.value=''; b.textContent='-- --'; sel.appendChild(b);
+    for(var j=0;j<list.length;j++){
+      var o=document.createElement('option'); o.value=list[j]; o.textContent=list[j];
+      if(list[j]===cur) o.selected=true; sel.appendChild(o);
     }
-    if(cur !== '' && indexOf(list, cur) >= 0) sel.value = cur;
+    if(cur!==''&&idxOf(list,cur)>=0) sel.value=cur;
   }
 }
 
-function indexOf(arr, val){
-  for(var i = 0; i < arr.length; i++){ if(arr[i] === val) return i; }
-  return -1;
-}
-
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    MATERIALS
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function getMaterials(){
-  var raw = document.getElementById('materials').value;
-  return raw.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s !== ''; });
+  return document.getElementById('materials').value.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s!==''; });
 }
 
 function updateMaterials(){
-  var mats = getMaterials();
-  var containers = document.querySelectorAll('.mat-check-list');
-  for(var i = 0; i < containers.length; i++){
-    var c = containers[i];
-    var iid = parseInt(c.getAttribute('data-itemid'), 10);
-    var item = findById(agendaItems, iid);
-    var chk = item ? (item.materialsChecked || []) : [];
-    renderMats(c, mats, chk, iid);
+  var mats=getMaterials();
+  var cs=document.querySelectorAll('.mat-check-list');
+  for(var i=0;i<cs.length;i++){
+    var c=cs[i], iid=parseInt(c.getAttribute('data-itemid'),10);
+    var item=findById(agendaItems,iid);
+    renderMats(c, mats, item?(item.materialsChecked||[]):[], iid);
   }
   saveDraftDebounced();
 }
 
 function renderMats(container, mats, checked, itemId){
   while(container.firstChild) container.removeChild(container.firstChild);
-  if(!mats || mats.length === 0){
-    var sp = document.createElement('span');
-    sp.className = 'no-materials'; sp.textContent = 'No materials listed';
-    container.appendChild(sp); return;
+  if(!mats||mats.length===0){
+    var sp=document.createElement('span'); sp.className='no-materials'; sp.textContent='No materials listed'; container.appendChild(sp); return;
   }
-  for(var i = 0; i < mats.length; i++){
-    var lbl = document.createElement('label');
-    var cb  = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.checked = indexOf(checked, mats[i]) >= 0;
-    cb.setAttribute('data-mat', mats[i]);
-    cb.setAttribute('data-iid', itemId);
-    cb.onchange = makeSyncMats(itemId);
-    var txt = document.createElement('span');
-    txt.textContent = mats[i];
-    lbl.appendChild(cb); lbl.appendChild(txt);
-    container.appendChild(lbl);
+  for(var i=0;i<mats.length;i++){
+    var lbl=document.createElement('label');
+    var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=idxOf(checked,mats[i])>=0;
+    cb.setAttribute('data-mat',mats[i]); cb.setAttribute('data-iid',itemId);
+    cb.onchange=makeSyncMats(itemId);
+    var tx=document.createElement('span'); tx.textContent=mats[i];
+    lbl.appendChild(cb); lbl.appendChild(tx); container.appendChild(lbl);
   }
 }
 
-function makeSyncMats(itemId){
-  return function(){ syncMats(itemId); saveDraftDebounced(); };
-}
+function makeSyncMats(id){ return function(){ syncMats(id); saveDraftDebounced(); }; }
 
 function syncMats(itemId){
-  var item = findById(agendaItems, itemId);
-  if(!item) return;
-  var c = document.querySelector('.mat-check-list[data-itemid="'+itemId+'"]');
-  if(!c) return;
-  var cbs = c.querySelectorAll('input[type="checkbox"]');
-  var result = [];
-  for(var i = 0; i < cbs.length; i++){
-    if(cbs[i].checked) result.push(cbs[i].getAttribute('data-mat'));
-  }
-  item.materialsChecked = result;
+  var item=findById(agendaItems,itemId); if(!item) return;
+  var c=document.querySelector('.mat-check-list[data-itemid="'+itemId+'"]'); if(!c) return;
+  var cbs=c.querySelectorAll('input[type="checkbox"]'), res=[];
+  for(var i=0;i<cbs.length;i++){ if(cbs[i].checked) res.push(cbs[i].getAttribute('data-mat')); }
+  item.materialsChecked=res;
 }
 
-function findById(arr, id){
-  for(var i = 0; i < arr.length; i++){ if(arr[i].id === id) return arr[i]; }
-  return null;
-}
-
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    AGENDA ITEMS
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
+var ITEM_TYPES = ['Inform','Discuss','Decide','Workshop','Opening','Closing'];
+
 function addAgendaItem(data){
-  var id = nextId++;
-  var item = {
-    id: id,
-    topic: data ? (data.topic || '') : '',
-    owner: data ? (data.owner || '') : '',
-    duration: data ? (parseInt(data.duration, 10) || 0) : 0,
-    materialsChecked: data ? (data.materialsChecked || []) : [],
-    notes: data ? (data.notes || '') : ''
-  };
+  var id=nextId++;
+  var item={id:id, topic:data?(data.topic||''):'', itemType:data?(data.itemType||'Discuss'):'Discuss',
+    owner:data?(data.owner||''):'', duration:data?(parseInt(data.duration,10)||0):0,
+    materialsChecked:data?(data.materialsChecked||[]):[], notes:data?(data.notes||')':'',
+    decisionRequired:data?!!data.decisionRequired:false};
+  // fix empty notes from typo above
+  item.notes = data?(data.notes||''):'';
   agendaItems.push(item);
   buildAgendaRow(item);
-  renumber();
-  recalcTimes();
-  updateAttendees();
-  var mats = getMaterials();
-  var c = document.querySelector('.mat-check-list[data-itemid="'+id+'"]');
+  renumber(); recalcTimes(); updateAttendees();
+  var mats=getMaterials(), c=document.querySelector('.mat-check-list[data-itemid="'+id+'"]');
   if(c) renderMats(c, mats, item.materialsChecked, id);
   saveDraftDebounced();
 }
 
+function addBookendItems(){
+  var facil=document.getElementById('facilitator').value||'';
+  addAgendaItem({topic:'Review & Open', itemType:'Opening', owner:facil, duration:5, notes:'Set the stage. Establish norms. Align on purpose and outcomes.'});
+  addAgendaItem({topic:'Highlight & Close', itemType:'Closing', owner:facil, duration:5, notes:'Summarize decisions. Confirm assignments. Set follow-up expectations.'});
+}
+
 function buildAgendaRow(item){
-  var tbody = document.getElementById('agendaTbody');
-  var tr = document.createElement('tr');
-  tr.id = 'row-' + item.id;
+  var tbody=document.getElementById('agendaTbody');
+  var tr=document.createElement('tr'); tr.id='row-'+item.id;
+  var attendees=getAttendees(), iid=item.id;
 
-  var attendees = getAttendees();
-  var iid = item.id;
+  // # 
+  var td0=document.createElement('td');
+  var ns=document.createElement('span'); ns.className='item-num'; ns.id='num-'+iid; ns.textContent='?';
+  td0.appendChild(ns);
 
-  // # cell
-  var td0 = document.createElement('td');
-  var numSp = document.createElement('span');
-  numSp.className = 'item-num'; numSp.id = 'num-' + iid; numSp.textContent = '?';
-  td0.appendChild(numSp);
+  // Topic
+  var td1=document.createElement('td');
+  var it=document.createElement('input'); it.type='text'; it.value=item.topic; it.placeholder='Topic...';
+  it.oninput=makeAF(iid,'topic'); td1.appendChild(it);
 
-  // Topic cell
-  var td1 = document.createElement('td');
-  var inpTopic = document.createElement('input');
-  inpTopic.type = 'text'; inpTopic.value = item.topic; inpTopic.placeholder = 'Topic...';
-  inpTopic.onchange = makeFieldUpdater(iid, 'topic');
-  inpTopic.oninput  = makeFieldUpdater(iid, 'topic');
-  td1.appendChild(inpTopic);
-
-  // Owner cell
-  var td2 = document.createElement('td');
-  var selOwner = document.createElement('select');
-  selOwner.className = 'owner-select';
-  var blankOpt = document.createElement('option'); blankOpt.value = ''; blankOpt.textContent = '-- --';
-  selOwner.appendChild(blankOpt);
-  for(var i = 0; i < attendees.length; i++){
-    var opt = document.createElement('option');
-    opt.value = attendees[i]; opt.textContent = attendees[i];
-    if(attendees[i] === item.owner) opt.selected = true;
-    selOwner.appendChild(opt);
+  // Type
+  var td2=document.createElement('td');
+  var st=document.createElement('select');
+  for(var i=0;i<ITEM_TYPES.length;i++){
+    var ot=document.createElement('option'); ot.textContent=ITEM_TYPES[i];
+    if(ITEM_TYPES[i]===item.itemType) ot.selected=true; st.appendChild(ot);
   }
-  selOwner.onchange = makeFieldUpdater(iid, 'owner');
-  td2.appendChild(selOwner);
+  st.onchange=makeAF(iid,'itemType'); td2.appendChild(st);
 
-  // Duration cell
-  var td3 = document.createElement('td');
-  var inpDur = document.createElement('input');
-  inpDur.type = 'number'; inpDur.min = '0';
-  inpDur.value = item.duration > 0 ? item.duration : '';
-  inpDur.placeholder = '0';
-  inpDur.onchange = makeDurUpdater(iid);
-  inpDur.oninput  = makeDurUpdater(iid);
-  td3.appendChild(inpDur);
+  // Owner
+  var td3=document.createElement('td');
+  var so=document.createElement('select'); so.className='owner-select';
+  var bo=document.createElement('option'); bo.value=''; bo.textContent='-- --'; so.appendChild(bo);
+  for(var j=0;j<attendees.length;j++){
+    var oo=document.createElement('option'); oo.value=attendees[j]; oo.textContent=attendees[j];
+    if(attendees[j]===item.owner) oo.selected=true; so.appendChild(oo);
+  }
+  so.onchange=makeAF(iid,'owner'); td3.appendChild(so);
 
-  // Start time display
-  var td4 = document.createElement('td');
-  var startSp = document.createElement('span');
-  startSp.className = 'time-val'; startSp.id = 'start-' + iid; startSp.textContent = '--:--';
-  td4.appendChild(startSp);
+  // Duration
+  var td4=document.createElement('td');
+  var id2=document.createElement('input'); id2.type='number'; id2.min='0';
+  id2.value=item.duration>0?item.duration:''; id2.placeholder='0';
+  id2.oninput=makeDurF(iid); td4.appendChild(id2);
 
-  // End time display
-  var td5 = document.createElement('td');
-  var endSp = document.createElement('span');
-  endSp.className = 'time-val'; endSp.id = 'end-' + iid; endSp.textContent = '--:--';
-  td5.appendChild(endSp);
+  // Start
+  var td5=document.createElement('td');
+  var ss=document.createElement('span'); ss.className='time-val'; ss.id='start-'+iid; ss.textContent='--:--';
+  td5.appendChild(ss);
+
+  // End
+  var td6=document.createElement('td');
+  var es=document.createElement('span'); es.className='time-val'; es.id='end-'+iid; es.textContent='--:--';
+  td6.appendChild(es);
 
   // Materials
-  var td6 = document.createElement('td');
-  var matDiv = document.createElement('div');
-  matDiv.className = 'mat-check-list'; matDiv.setAttribute('data-itemid', iid);
-  var noMat = document.createElement('span'); noMat.className = 'no-materials'; noMat.textContent = 'No materials listed';
-  matDiv.appendChild(noMat);
-  td6.appendChild(matDiv);
+  var td7=document.createElement('td');
+  var md=document.createElement('div'); md.className='mat-check-list'; md.setAttribute('data-itemid',iid);
+  var nm=document.createElement('span'); nm.className='no-materials'; nm.textContent='No materials listed';
+  md.appendChild(nm); td7.appendChild(md);
 
   // Notes
-  var td7 = document.createElement('td');
-  var ta = document.createElement('textarea');
-  ta.placeholder = 'Notes, decisions, motions...'; ta.value = item.notes;
-  ta.onchange = makeFieldUpdater(iid, 'notes');
-  ta.oninput  = makeFieldUpdater(iid, 'notes');
-  td7.appendChild(ta);
+  var td8=document.createElement('td');
+  var ta=document.createElement('textarea'); ta.placeholder='Notes...'; ta.value=item.notes;
+  ta.oninput=makeAF(iid,'notes'); td8.appendChild(ta);
+
+  // Decision required checkbox
+  var td9=document.createElement('td');
+  var dw=document.createElement('div'); dw.className='decision-check-wrap';
+  var dcb=document.createElement('input'); dcb.type='checkbox'; dcb.id='dec-'+iid; dcb.checked=!!item.decisionRequired;
+  dcb.setAttribute('data-iid',iid);
+  dcb.onchange=function(){ var it2=findById(agendaItems,parseInt(this.getAttribute('data-iid'),10)); if(it2) it2.decisionRequired=this.checked; saveDraftDebounced(); };
+  var dl=document.createElement('label'); dl.setAttribute('for','dec-'+iid); dl.textContent='Required';
+  dw.appendChild(dcb); dw.appendChild(dl); td9.appendChild(dw);
 
   // Delete
-  var td8 = document.createElement('td');
-  var delBtn = document.createElement('button');
-  delBtn.className = 'btn-danger'; delBtn.textContent = '\u2715';
-  delBtn.onclick = makeDelAgenda(iid);
-  td8.appendChild(delBtn);
+  var td10=document.createElement('td');
+  var db=document.createElement('button'); db.className='btn-danger'; db.textContent='\u2715';
+  db.onclick=makeDelA(iid); td10.appendChild(db);
 
-  tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
-  tr.appendChild(td3); tr.appendChild(td4); tr.appendChild(td5);
-  tr.appendChild(td6); tr.appendChild(td7); tr.appendChild(td8);
+  tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+  tr.appendChild(td4); tr.appendChild(td5); tr.appendChild(td6); tr.appendChild(td7);
+  tr.appendChild(td8); tr.appendChild(td9); tr.appendChild(td10);
   tbody.appendChild(tr);
 }
 
-function makeFieldUpdater(id, field){
-  return function(){ setAgendaField(id, field, this.value); saveDraftDebounced(); };
-}
-function makeDurUpdater(id){
-  return function(){ setAgendaField(id, 'duration', parseInt(this.value,10)||0); recalcTimes(); saveDraftDebounced(); };
-}
-function makeDelAgenda(id){
-  return function(){ deleteAgendaItem(id); };
-}
-
-function setAgendaField(id, field, val){
-  var item = findById(agendaItems, id);
-  if(item) item[field] = val;
-}
+function makeAF(id,field){ return function(){ var it=findById(agendaItems,id); if(it) it[field]=this.value; saveDraftDebounced(); }; }
+function makeDurF(id){ return function(){ var it=findById(agendaItems,id); if(it) it.duration=parseInt(this.value,10)||0; recalcTimes(); saveDraftDebounced(); }; }
+function makeDelA(id){ return function(){ deleteAgendaItem(id); }; }
 
 function deleteAgendaItem(id){
-  var newArr = [];
-  for(var i = 0; i < agendaItems.length; i++){
-    if(agendaItems[i].id !== id) newArr.push(agendaItems[i]);
-  }
-  agendaItems = newArr;
-  var row = document.getElementById('row-' + id);
-  if(row && row.parentNode) row.parentNode.removeChild(row);
-  renumber();
-  recalcTimes();
-  saveDraftDebounced();
+  var n=[]; for(var i=0;i<agendaItems.length;i++){ if(agendaItems[i].id!==id) n.push(agendaItems[i]); }
+  agendaItems=n;
+  var row=document.getElementById('row-'+id); if(row&&row.parentNode) row.parentNode.removeChild(row);
+  renumber(); recalcTimes(); saveDraftDebounced();
 }
 
-function renumber(){
-  for(var i = 0; i < agendaItems.length; i++){
-    var el = document.getElementById('num-' + agendaItems[i].id);
-    if(el) el.textContent = i + 1;
-  }
-}
+function renumber(){ for(var i=0;i<agendaItems.length;i++){ var el=document.getElementById('num-'+agendaItems[i].id); if(el) el.textContent=i+1; } }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    TIMING
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function recalcTimes(){
-  var sm = timeToMins(document.getElementById('startTime').value);
-  var em = timeToMins(document.getElementById('endTime').value);
-  var cursor = sm;
-  var total = 0;
-  var overrun = false;
+  var sm=timeToMins(document.getElementById('startTime').value);
+  var em=timeToMins(document.getElementById('endTime').value);
+  var cursor=sm, total=0, overrun=false;
 
-  for(var i = 0; i < agendaItems.length; i++){
-    var item = agendaItems[i];
-    var dur  = parseInt(item.duration, 10) || 0;
-    total += dur;
-    var row = document.getElementById('row-' + item.id);
-    var s   = document.getElementById('start-' + item.id);
-    var e   = document.getElementById('end-'   + item.id);
-
-    if(sm !== null){
-      var iend = cursor + dur;
-      if(s) s.textContent = minsTo12(cursor);
-      if(e) e.textContent = minsTo12(iend);
-      if(em !== null && iend > em){
-        if(row) row.classList.add('timing-over'); overrun = true;
-      } else {
-        if(row) row.classList.remove('timing-over');
-      }
-      cursor = iend;
+  for(var i=0;i<agendaItems.length;i++){
+    var item=agendaItems[i], dur=parseInt(item.duration,10)||0;
+    total+=dur;
+    var row=document.getElementById('row-'+item.id);
+    var se=document.getElementById('start-'+item.id), ee=document.getElementById('end-'+item.id);
+    if(sm!==null){
+      var iend=cursor+dur;
+      if(se) se.textContent=minsTo12(cursor);
+      if(ee) ee.textContent=minsTo12(iend);
+      if(em!==null&&iend>em){ if(row) row.classList.add('timing-over'); overrun=true; }
+      else { if(row) row.classList.remove('timing-over'); }
+      cursor=iend;
     } else {
-      if(s) s.textContent = '--:--';
-      if(e) e.textContent = '--:--';
+      if(se) se.textContent='--:--'; if(ee) ee.textContent='--:--';
       if(row) row.classList.remove('timing-over');
     }
   }
 
-  document.getElementById('totalMins').textContent = total + ' min';
-
-  var bufBadge = document.getElementById('badgeBuffer');
-  var bufEl    = document.getElementById('bufferVal');
-  var durEl    = document.getElementById('meetingDurVal');
-  var warnBox  = document.getElementById('timingWarning');
-
-  if(sm !== null && em !== null){
-    var meet = em - sm;
-    var buf  = meet - total;
-    durEl.textContent = meet + ' min';
-    bufEl.textContent = (buf >= 0 ? '+' : '') + buf + ' min';
-    bufBadge.className = 'timing-badge ' + (buf >= 0 ? 'ok' : 'warn');
-    if(overrun || buf < 0){
-      warnBox.textContent = '\u26A0 Agenda exceeds meeting end time by ' + Math.abs(Math.min(buf,0)) + ' min.';
-      warnBox.classList.add('visible');
-    } else { warnBox.classList.remove('visible'); }
-  } else {
-    durEl.textContent = '\u2014'; bufEl.textContent = '\u2014';
-    bufBadge.className = 'timing-badge'; warnBox.classList.remove('visible');
-  }
+  document.getElementById('totalMins').textContent=total+' min';
+  var bb=document.getElementById('badgeBuffer'), be=document.getElementById('bufferVal'), de=document.getElementById('meetingDurVal'), wb=document.getElementById('timingWarning');
+  if(sm!==null&&em!==null){
+    var meet=em-sm, buf=meet-total;
+    de.textContent=meet+' min'; be.textContent=(buf>=0?'+':'')+buf+' min';
+    bb.className='timing-badge '+(buf>=0?'ok':'warn');
+    if(overrun||buf<0){ wb.textContent='\u26A0 Agenda exceeds meeting end time by '+Math.abs(Math.min(buf,0))+' min.'; wb.classList.add('visible'); }
+    else wb.classList.remove('visible');
+  } else { de.textContent='\u2014'; be.textContent='\u2014'; bb.className='timing-badge'; wb.classList.remove('visible'); }
 }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    ACTION ITEMS
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function addActionItem(data){
-  var id = nextId++;
-  var item = {
-    id: id,
-    text:    data ? (data.text    || '') : '',
-    owner:   data ? (data.owner   || '') : '',
-    dueDate: data ? (data.dueDate || '') : '',
-    status:  data ? (data.status  || 'Open') : 'Open',
-    notes:   data ? (data.notes   || '') : ''
-  };
-  actionItems.push(item);
-  buildActionCard(item);
-  updateAttendees();
-  saveDraftDebounced();
+  var id=nextId++;
+  var item={id:id, text:data?(data.text||''):'', owner:data?(data.owner||''):'',
+    dueDate:data?(data.dueDate||''):'', status:data?(data.status||'Open'):'Open', notes:data?(data.notes||'):''};
+  item.notes=data?(data.notes||''):'';
+  actionItems.push(item); buildActionCard(item); updateAttendees(); saveDraftDebounced();
 }
 
 function buildActionCard(item){
-  var list = document.getElementById('actionList');
-  var div  = document.createElement('div');
-  div.className = 'item-card'; div.id = 'act-' + item.id;
+  var list=document.getElementById('actionList');
+  var div=document.createElement('div'); div.className='item-card'; div.id='act-'+item.id;
+  var atts=getAttendees(), iid=item.id;
+  var statuses=['Open','In Progress','Completed','Blocked','Deferred'];
 
-  var attendees = getAttendees();
-  var statuses  = ['Open','In Progress','Completed','Blocked','Deferred'];
-  var iid = item.id;
+  var grid=document.createElement('div'); grid.className='item-card-grid';
 
-  var grid = document.createElement('div');
-  grid.className = 'item-card-grid';
+  var fg1=mkFG('full'); fg1.appendChild(mkLbl('Action Item'));
+  var in1=document.createElement('input'); in1.type='text'; in1.value=item.text; in1.placeholder='What needs to happen...'; in1.oninput=makeActF(iid,'text'); fg1.appendChild(in1); grid.appendChild(fg1);
 
-  // Text
-  var fg1 = document.createElement('div'); fg1.className = 'field-group full';
-  var lbl1 = document.createElement('label'); lbl1.className = 'field-label'; lbl1.textContent = 'Action Item';
-  var inp1 = document.createElement('input'); inp1.type = 'text'; inp1.value = item.text; inp1.placeholder = 'What needs to happen...';
-  inp1.oninput = makeActUpdater(iid, 'text');
-  fg1.appendChild(lbl1); fg1.appendChild(inp1); grid.appendChild(fg1);
+  var fg2=mkFG(''); fg2.appendChild(mkLbl('Owner'));
+  var s2=mkOwnerSel(atts,item.owner,iid,'owner'); fg2.appendChild(s2); grid.appendChild(fg2);
 
-  // Owner
-  var fg2 = document.createElement('div'); fg2.className = 'field-group';
-  var lbl2 = document.createElement('label'); lbl2.className = 'field-label'; lbl2.textContent = 'Owner';
-  var sel2 = document.createElement('select'); sel2.className = 'owner-select';
-  var b2 = document.createElement('option'); b2.value = ''; b2.textContent = '-- Unassigned --'; sel2.appendChild(b2);
-  for(var i = 0; i < attendees.length; i++){
-    var o = document.createElement('option'); o.value = attendees[i]; o.textContent = attendees[i];
-    if(attendees[i] === item.owner) o.selected = true; sel2.appendChild(o);
-  }
-  sel2.onchange = makeActUpdater(iid, 'owner');
-  fg2.appendChild(lbl2); fg2.appendChild(sel2); grid.appendChild(fg2);
+  var fg3=mkFG(''); fg3.appendChild(mkLbl('Due Date'));
+  var d3=document.createElement('input'); d3.type='date'; d3.value=item.dueDate; d3.onchange=makeActF(iid,'dueDate'); fg3.appendChild(d3); grid.appendChild(fg3);
 
-  // Due Date
-  var fg3 = document.createElement('div'); fg3.className = 'field-group';
-  var lbl3 = document.createElement('label'); lbl3.className = 'field-label'; lbl3.textContent = 'Due Date';
-  var inp3 = document.createElement('input'); inp3.type = 'date'; inp3.value = item.dueDate;
-  inp3.onchange = makeActUpdater(iid, 'dueDate');
-  fg3.appendChild(lbl3); fg3.appendChild(inp3); grid.appendChild(fg3);
+  var fg4=mkFG(''); fg4.appendChild(mkLbl('Status'));
+  var s4=document.createElement('select');
+  for(var j=0;j<statuses.length;j++){ var os=document.createElement('option'); os.textContent=statuses[j]; if(statuses[j]===item.status) os.selected=true; s4.appendChild(os); }
+  s4.onchange=makeActF(iid,'status'); fg4.appendChild(s4); grid.appendChild(fg4);
 
-  // Status
-  var fg4 = document.createElement('div'); fg4.className = 'field-group';
-  var lbl4 = document.createElement('label'); lbl4.className = 'field-label'; lbl4.textContent = 'Status';
-  var sel4 = document.createElement('select');
-  for(var j = 0; j < statuses.length; j++){
-    var os = document.createElement('option'); os.textContent = statuses[j];
-    if(statuses[j] === item.status) os.selected = true; sel4.appendChild(os);
-  }
-  sel4.onchange = makeActUpdater(iid, 'status');
-  fg4.appendChild(lbl4); fg4.appendChild(sel4); grid.appendChild(fg4);
-
-  // Notes
-  var fg5 = document.createElement('div'); fg5.className = 'field-group full';
-  var lbl5 = document.createElement('label'); lbl5.className = 'field-label'; lbl5.textContent = 'Notes';
-  var ta5 = document.createElement('textarea'); ta5.rows = 2; ta5.value = item.notes; ta5.placeholder = 'Additional notes...';
-  ta5.oninput = makeActUpdater(iid, 'notes');
-  fg5.appendChild(lbl5); fg5.appendChild(ta5); grid.appendChild(fg5);
+  var fg5=mkFG('full'); fg5.appendChild(mkLbl('Notes'));
+  var t5=document.createElement('textarea'); t5.rows=2; t5.value=item.notes; t5.placeholder='Additional notes...'; t5.oninput=makeActF(iid,'notes'); fg5.appendChild(t5); grid.appendChild(fg5);
 
   div.appendChild(grid);
-  var delBtn = document.createElement('button'); delBtn.className = 'btn-danger';
-  delBtn.textContent = '\u2715 Remove'; delBtn.onclick = makeDelAction(iid);
-  div.appendChild(delBtn);
+  var db=document.createElement('button'); db.className='btn-danger'; db.textContent='\u2715 Remove'; db.onclick=makeDelAct(iid); div.appendChild(db);
   list.appendChild(div);
 }
 
-function makeActUpdater(id, field){
-  return function(){ setActionField(id, field, this.value); saveDraftDebounced(); };
+function mkFG(cls){ var d=document.createElement('div'); d.className='field-group'+(cls?' '+cls:''); return d; }
+function mkLbl(t){ var l=document.createElement('label'); l.className='field-label'; l.textContent=t; return l; }
+function mkOwnerSel(atts,cur,iid,field){
+  var s=document.createElement('select'); s.className='owner-select';
+  var b=document.createElement('option'); b.value=''; b.textContent='-- --'; s.appendChild(b);
+  for(var i=0;i<atts.length;i++){ var o=document.createElement('option'); o.value=atts[i]; o.textContent=atts[i]; if(atts[i]===cur) o.selected=true; s.appendChild(o); }
+  s.onchange=makeActF(iid,field); return s;
 }
-function makeDelAction(id){ return function(){ deleteActionItem(id); }; }
 
-function setActionField(id, field, val){
-  var item = findById(actionItems, id); if(item) item[field] = val;
-}
+function makeActF(id,field){ return function(){ var it=findById(actionItems,id); if(it) it[field]=this.value; saveDraftDebounced(); }; }
+function makeDelAct(id){ return function(){ deleteActionItem(id); }; }
 function deleteActionItem(id){
-  var n = []; for(var i=0;i<actionItems.length;i++){ if(actionItems[i].id!==id) n.push(actionItems[i]); }
-  actionItems = n;
-  var el = document.getElementById('act-'+id); if(el && el.parentNode) el.parentNode.removeChild(el);
-  saveDraftDebounced();
+  var n=[]; for(var i=0;i<actionItems.length;i++){ if(actionItems[i].id!==id) n.push(actionItems[i]); }
+  actionItems=n; var el=document.getElementById('act-'+id); if(el&&el.parentNode) el.parentNode.removeChild(el); saveDraftDebounced();
 }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    PARKING LOT
-─────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════ */
 function addParkItem(data){
-  var id = nextId++;
-  var item = {id:id, topic:data?(data.topic||''):'', reason:data?(data.reason||'Out of scope'):'Out of scope', notes:data?(data.notes||''):''};
-  parkItems.push(item);
-  buildParkCard(item);
-  saveDraftDebounced();
+  var id=nextId++;
+  var item={id:id, topic:data?(data.topic||''):'', reason:data?(data.reason||'Out of scope'):'Out of scope', notes:data?(data.notes||'):''};
+  item.notes=data?(data.notes||''):'';
+  parkItems.push(item); buildParkCard(item); saveDraftDebounced();
 }
 
 function buildParkCard(item){
-  var list = document.getElementById('parkList');
-  var div  = document.createElement('div');
-  div.className = 'item-card'; div.id = 'park-' + item.id;
-  var reasons = ['Out of scope','Time limit exceeded','Needs more data','Blocked','Other'];
-  var iid = item.id;
+  var list=document.getElementById('parkList');
+  var div=document.createElement('div'); div.className='item-card'; div.id='park-'+item.id;
+  var reasons=['Out of scope','Time limit exceeded','Needs more data','Blocked','Other'];
+  var iid=item.id;
 
-  var grid = document.createElement('div'); grid.className = 'park-card-grid';
+  var grid=document.createElement('div'); grid.className='park-card-grid';
 
-  var fg1 = document.createElement('div'); fg1.className = 'field-group full';
-  var l1 = document.createElement('label'); l1.className = 'field-label'; l1.textContent = 'Parked Topic';
-  var ta1 = document.createElement('textarea'); ta1.rows = 2; ta1.value = item.topic; ta1.placeholder = 'Describe the topic...';
-  ta1.oninput = makeParkUpdater(iid, 'topic');
-  fg1.appendChild(l1); fg1.appendChild(ta1); grid.appendChild(fg1);
+  var fg1=mkFG('full'); fg1.appendChild(mkLbl('Parked Topic'));
+  var t1=document.createElement('textarea'); t1.rows=2; t1.value=item.topic; t1.placeholder='Describe the topic...';
+  t1.oninput=makeParkF(iid,'topic'); fg1.appendChild(t1); grid.appendChild(fg1);
 
-  var fg2 = document.createElement('div'); fg2.className = 'field-group';
-  var l2 = document.createElement('label'); l2.className = 'field-label'; l2.textContent = 'Reason';
-  var sel2 = document.createElement('select');
-  for(var i=0;i<reasons.length;i++){
-    var o=document.createElement('option'); o.textContent=reasons[i];
-    if(reasons[i]===item.reason) o.selected=true; sel2.appendChild(o);
-  }
-  sel2.onchange = makeParkUpdater(iid, 'reason');
-  fg2.appendChild(l2); fg2.appendChild(sel2); grid.appendChild(fg2);
+  var fg2=mkFG(''); fg2.appendChild(mkLbl('Reason'));
+  var s2=document.createElement('select');
+  for(var i=0;i<reasons.length;i++){ var o=document.createElement('option'); o.textContent=reasons[i]; if(reasons[i]===item.reason) o.selected=true; s2.appendChild(o); }
+  s2.onchange=makeParkF(iid,'reason'); fg2.appendChild(s2); grid.appendChild(fg2);
 
-  var fg3 = document.createElement('div'); fg3.className = 'field-group full';
-  var l3 = document.createElement('label'); l3.className = 'field-label'; l3.textContent = 'Notes';
-  var ta3 = document.createElement('textarea'); ta3.rows = 2; ta3.value = item.notes; ta3.placeholder = 'Follow-up context...';
-  ta3.oninput = makeParkUpdater(iid, 'notes');
-  fg3.appendChild(l3); fg3.appendChild(ta3); grid.appendChild(fg3);
+  var fg3=mkFG('full'); fg3.appendChild(mkLbl('Notes'));
+  var t3=document.createElement('textarea'); t3.rows=2; t3.value=item.notes; t3.placeholder='Follow-up context...';
+  t3.oninput=makeParkF(iid,'notes'); fg3.appendChild(t3); grid.appendChild(fg3);
 
   div.appendChild(grid);
-  var delBtn = document.createElement('button'); delBtn.className = 'btn-danger';
-  delBtn.textContent = '\u2715 Remove'; delBtn.onclick = makeDelPark(iid);
-  div.appendChild(delBtn);
+  var db=document.createElement('button'); db.className='btn-danger'; db.textContent='\u2715 Remove'; db.onclick=makeDelPark(iid); div.appendChild(db);
   list.appendChild(div);
 }
 
-function makeParkUpdater(id, field){ return function(){ setParkField(id,field,this.value); saveDraftDebounced(); }; }
+function makeParkF(id,field){ return function(){ var it=findById(parkItems,id); if(it) it[field]=this.value; saveDraftDebounced(); }; }
 function makeDelPark(id){ return function(){ deleteParkItem(id); }; }
-function setParkField(id,field,val){ var item=findById(parkItems,id); if(item) item[field]=val; }
 function deleteParkItem(id){
   var n=[]; for(var i=0;i<parkItems.length;i++){ if(parkItems[i].id!==id) n.push(parkItems[i]); }
-  parkItems=n;
-  var el=document.getElementById('park-'+id); if(el&&el.parentNode) el.parentNode.removeChild(el);
-  saveDraftDebounced();
+  parkItems=n; var el=document.getElementById('park-'+id); if(el&&el.parentNode) el.parentNode.removeChild(el); saveDraftDebounced();
 }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    LOCAL STORAGE
-─────────────────────────────────────────────────── */
-var saveTimer = null;
-function saveDraftDebounced(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 900); }
+═══════════════════════════════════════════════════ */
+var saveTimer=null;
+function saveDraftDebounced(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveDraft,900); }
 
 function saveDraft(){
   try{
-    var ruleChecks = [];
-    var lbls = document.querySelectorAll('#rulesGrid .rule-toggle');
-    for(var i=0;i<lbls.length;i++) ruleChecks.push(lbls[i].querySelector('input').checked);
-
-    var draft = {
-      meetingTitle:   document.getElementById('meetingTitle').value,
-      meetingType:    document.getElementById('meetingType').value,
-      meetingDate:    document.getElementById('meetingDate').value,
-      startTime:      document.getElementById('startTime').value,
-      endTime:        document.getElementById('endTime').value,
-      facilitator:    document.getElementById('facilitator').value,
-      attendees:      document.getElementById('attendees').value,
-      materials:      document.getElementById('materials').value,
-      meetingPurpose: document.getElementById('meetingPurpose').value,
-      retroWorked:    document.getElementById('retroWorked').value,
-      retroImprove:   document.getElementById('retroImprove').value,
-      retroLearnings: document.getElementById('retroLearnings').value,
-      ruleChecks: ruleChecks,
-      agendaItems: agendaItems,
-      actionItems: actionItems,
-      parkItems: parkItems,
-      nextId: nextId
+    var rc=[]; var lbls=document.querySelectorAll('#rulesGrid .rule-toggle');
+    for(var i=0;i<lbls.length;i++) rc.push(lbls[i].querySelector('input').checked);
+    var d={
+      meetingTitle:document.getElementById('meetingTitle').value,
+      meetingType:document.getElementById('meetingType').value,
+      meetingDate:document.getElementById('meetingDate').value,
+      startTime:document.getElementById('startTime').value,
+      endTime:document.getElementById('endTime').value,
+      facilitator:document.getElementById('facilitator').value,
+      noteTaker:document.getElementById('noteTaker').value,
+      attendees:document.getElementById('attendees').value,
+      materials:document.getElementById('materials').value,
+      meetingPurpose:document.getElementById('meetingPurpose').value,
+      nextCheckin:document.getElementById('nextCheckin').value,
+      checkinRhythm:document.getElementById('checkinRhythm').value,
+      retroWorked:document.getElementById('retroWorked').value,
+      retroImprove:document.getElementById('retroImprove').value,
+      retroLearnings:document.getElementById('retroLearnings').value,
+      ruleChecks:rc, agendaItems:agendaItems, actionItems:actionItems, parkItems:parkItems, nextId:nextId
     };
-    localStorage.setItem('pm02_draft', JSON.stringify(draft));
-    var ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('draftStatus').textContent = 'Saved ' + ts;
-  } catch(e){ console.warn('Draft save failed', e); }
+    localStorage.setItem('pm02_draft',JSON.stringify(d));
+    var ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('draftStatus').textContent='Saved '+ts;
+  } catch(e){ console.warn('Draft save failed',e); }
 }
 
 function loadDraft(){
   try{
-    var raw = localStorage.getItem('pm02_draft');
-    if(!raw){ alert('No saved draft found.'); return; }
-    var d = JSON.parse(raw);
-
-    document.getElementById('meetingTitle').value   = d.meetingTitle   || '';
-    document.getElementById('meetingType').value    = d.meetingType    || 'General Meeting';
-    document.getElementById('meetingDate').value    = d.meetingDate    || '';
-    document.getElementById('startTime').value      = d.startTime      || '';
-    document.getElementById('endTime').value        = d.endTime        || '';
-    document.getElementById('facilitator').value    = d.facilitator    || '';
-    document.getElementById('attendees').value      = d.attendees      || '';
-    document.getElementById('materials').value      = d.materials      || '';
-    document.getElementById('meetingPurpose').value = d.meetingPurpose || '';
-    document.getElementById('retroWorked').value    = d.retroWorked    || '';
-    document.getElementById('retroImprove').value   = d.retroImprove   || '';
-    document.getElementById('retroLearnings').value = d.retroLearnings || '';
-
-    if(d.ruleChecks){
-      var lbls = document.querySelectorAll('#rulesGrid .rule-toggle');
-      for(var i=0;i<lbls.length;i++){
-        var cb = lbls[i].querySelector('input');
-        cb.checked = !!d.ruleChecks[i];
-        if(cb.checked) lbls[i].classList.add('active'); else lbls[i].classList.remove('active');
-      }
-    }
-
-    agendaItems=[]; actionItems=[]; parkItems=[];
-    nextId = d.nextId || 1;
-    document.getElementById('agendaTbody').innerHTML = '';
-    document.getElementById('actionList').innerHTML  = '';
-    document.getElementById('parkList').innerHTML    = '';
-
-    var mats = getMaterials();
-    if(d.agendaItems){
-      for(var j=0;j<d.agendaItems.length;j++){
-        var ai = d.agendaItems[j];
-        agendaItems.push(ai); buildAgendaRow(ai);
-        var c = document.querySelector('.mat-check-list[data-itemid="'+ai.id+'"]');
-        if(c) renderMats(c, mats, ai.materialsChecked||[], ai.id);
-      }
-    }
-    if(d.actionItems){ for(var k=0;k<d.actionItems.length;k++){ actionItems.push(d.actionItems[k]); buildActionCard(d.actionItems[k]); } }
-    if(d.parkItems){   for(var p=0;p<d.parkItems.length;p++){   parkItems.push(d.parkItems[p]);     buildParkCard(d.parkItems[p]);   } }
-
+    var raw=localStorage.getItem('pm02_draft'); if(!raw){ alert('No saved draft found.'); return; }
+    var d=JSON.parse(raw);
+    var fields=['meetingTitle','meetingType','meetingDate','startTime','endTime','facilitator','noteTaker','attendees','materials','meetingPurpose','nextCheckin','checkinRhythm','retroWorked','retroImprove','retroLearnings'];
+    for(var i=0;i<fields.length;i++){ var el=document.getElementById(fields[i]); if(el) el.value=d[fields[i]]||''; }
+    if(d.ruleChecks){ var lbls=document.querySelectorAll('#rulesGrid .rule-toggle'); for(var j=0;j<lbls.length;j++){ var cb=lbls[j].querySelector('input'); cb.checked=!!d.ruleChecks[j]; if(cb.checked) lbls[j].classList.add('active'); else lbls[j].classList.remove('active'); } }
+    agendaItems=[]; actionItems=[]; parkItems=[]; nextId=d.nextId||1;
+    document.getElementById('agendaTbody').innerHTML='';
+    document.getElementById('actionList').innerHTML='';
+    document.getElementById('parkList').innerHTML='';
+    var mats=getMaterials();
+    if(d.agendaItems){ for(var k=0;k<d.agendaItems.length;k++){ var ai=d.agendaItems[k]; agendaItems.push(ai); buildAgendaRow(ai); var c=document.querySelector('.mat-check-list[data-itemid="'+ai.id+'"]'); if(c) renderMats(c,mats,ai.materialsChecked||[],ai.id); } }
+    if(d.actionItems){ for(var m=0;m<d.actionItems.length;m++){ actionItems.push(d.actionItems[m]); buildActionCard(d.actionItems[m]); } }
+    if(d.parkItems){ for(var p=0;p<d.parkItems.length;p++){ parkItems.push(d.parkItems[p]); buildParkCard(d.parkItems[p]); } }
     updateAttendees(); renumber(); recalcTimes();
-    document.getElementById('draftStatus').textContent = 'Draft loaded';
-  } catch(e){ alert('Failed to load draft: ' + e.message); }
+    document.getElementById('draftStatus').textContent='Draft loaded';
+  } catch(e){ alert('Failed to load draft: '+e.message); }
 }
 
 function clearDraft(){
   if(!confirm('Clear saved draft? This cannot be undone.')) return;
   localStorage.removeItem('pm02_draft');
-  document.getElementById('draftStatus').textContent = 'Cleared';
+  document.getElementById('draftStatus').textContent='Cleared';
 }
 
-/* ───────────────────────────────────────────────────
-   PDF EXPORT
-─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   PDF EXPORT — paper-first layout
+═══════════════════════════════════════════════════ */
 function exportPDF(){
-  if(!window.jspdf || !window.jspdf.jsPDF){
-    alert('PDF library not loaded. Internet connection required for CDN.'); return;
-  }
-  var jsPDF = window.jspdf.jsPDF;
-  var bw = document.getElementById('exportBW').checked;
+  if(!window.jspdf||!window.jspdf.jsPDF){ alert('PDF library not loaded. Internet connection required.'); return; }
+  var jsPDF=window.jspdf.jsPDF;
+  var bw=document.getElementById('exportBW').checked;
 
+  // Data collection
   var title   = document.getElementById('meetingTitle').value || 'Meeting Agenda';
   var mType   = document.getElementById('meetingType').value;
   var mDate   = document.getElementById('meetingDate').value;
   var mStart  = document.getElementById('startTime').value;
   var mEnd    = document.getElementById('endTime').value;
   var facil   = document.getElementById('facilitator').value;
+  var noteTkr = document.getElementById('noteTaker').value;
   var atts    = document.getElementById('attendees').value;
   var matsRaw = document.getElementById('materials').value;
   var purpose = document.getElementById('meetingPurpose').value;
+  var nxtChk  = document.getElementById('nextCheckin').value;
+  var chkRhm  = document.getElementById('checkinRhythm').value;
   var retW    = document.getElementById('retroWorked').value;
   var retI    = document.getElementById('retroImprove').value;
   var retL    = document.getElementById('retroLearnings').value;
 
-  var sm = timeToMins(mStart);
-  var em = timeToMins(mEnd);
-  var timeRange = sm !== null ? minsTo12(sm) : '';
-  if(sm !== null && em !== null) timeRange += ' \u2013 ' + minsTo12(em);
+  var sm=timeToMins(mStart), em=timeToMins(mEnd);
+  var timeRange=(sm!==null?minsTo12(sm):'');
+  if(sm!==null&&em!==null) timeRange+='\u2013'+minsTo12(em);
 
-  var doc = new jsPDF({unit:'pt',format:'letter',orientation:'portrait'});
-  var PW = doc.internal.pageSize.getWidth();
-  var PH = doc.internal.pageSize.getHeight();
-  var ML = 54, MR = PW - 54, CW = MR - ML;
-
-  // Color sets
-  var ac,hd,bd,mt,rl,th,thT,ro,re,rT,wc,oc;
+  // Paper-friendly colors
+  var ac,hd,bd,mt,rl,th,thT,ro,re,rT,wc,oc,decC,linC;
   if(bw){
-    ac=[0,0,0]; hd=[70,70,70]; bd=[20,20,20]; mt=[120,120,120]; rl=[180,180,180];
-    th=[100,100,100]; thT=[255,255,255]; ro=[240,240,240]; re=[255,255,255]; rT=[20,20,20];
-    wc=[140,70,0]; oc=[40,110,20];
+    ac=[0,0,0]; hd=[60,60,60]; bd=[0,0,0]; mt=[110,110,110]; rl=[160,160,160];
+    th=[80,80,80]; thT=[255,255,255]; ro=[230,230,230]; re=[255,255,255]; rT=[0,0,0];
+    wc=[120,60,0]; oc=[30,100,30]; decC=[80,80,80]; linC=[180,180,180];
   } else {
-    ac=[212,101,26]; hd=[74,96,112]; bd=[30,40,50]; mt=[100,120,140]; rl=[74,96,112];
-    th=[74,96,112]; thT=[232,234,236]; ro=[58,74,92]; re=[46,58,71]; rT=[232,234,236];
-    wc=[212,101,26]; oc=[107,168,74];
+    ac=[180,70,10]; hd=[50,75,95]; bd=[10,20,30]; mt=[90,110,130]; rl=[140,160,175];
+    th=[50,75,95]; thT=[240,242,244]; ro=[220,228,235]; re=[240,244,248]; rT=[10,20,30];
+    wc=[180,70,10]; oc=[30,100,30]; decC=[50,75,95]; linC=[180,195,205];
   }
 
-  var y = 54;
+  var doc=new jsPDF({unit:'pt',format:'letter',orientation:'portrait'});
+  var PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
+  var ML=54, MR=PW-54, CW=MR-ML;
+  var y=54;
 
-  function chkY(need){ if(y + need > PH - 60){ doc.addPage(); y = 54; } }
+  function chkY(need){ if(y+need>PH-70){ addPage(); } }
+  function addPage(){ doc.addPage(); y=54; }
 
-  function secHdr(label){
-    chkY(24);
-    doc.setFontSize(11); doc.setFont('helvetica','bold');
+  function hRule(col){ doc.setDrawColor(col[0],col[1],col[2]); doc.setLineWidth(0.5); doc.line(ML,y,MR,y); }
+
+  function writeLines(text,maxW,lineH){
+    var lines=doc.splitTextToSize(text,maxW);
+    for(var i=0;i<lines.length;i++){ chkY(lineH); doc.text(lines[i],ML,y); y+=lineH; }
+  }
+
+  function sectionHdr(label,sub){
+    chkY(22);
+    doc.setFontSize(10); doc.setFont('helvetica','bold');
     doc.setTextColor(ac[0],ac[1],ac[2]);
-    doc.text(label, ML, y); y += 4;
-    doc.setDrawColor(ac[0],ac[1],ac[2]); doc.setLineWidth(0.8);
-    doc.line(ML, y, MR, y); y += 10;
+    doc.text(label.toUpperCase(),ML,y);
+    if(sub){ doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(mt[0],mt[1],mt[2]); doc.text('  '+sub,ML+doc.getTextWidth(label.toUpperCase())+2,y); }
+    y+=3; hRule(ac); y+=9;
   }
 
-  function miniHdr(label){
-    doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.setTextColor(hd[0],hd[1],hd[2]);
-    doc.text(label, ML, y); y += 4;
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(bd[0],bd[1],bd[2]);
+  function writeBlankLines(n,lineH,label){
+    lineH=lineH||16; n=n||3;
+    if(label){ doc.setFontSize(8); doc.setFont('helvetica','italic'); doc.setTextColor(mt[0],mt[1],mt[2]); doc.text(label,ML,y); y+=10; }
+    for(var i=0;i<n;i++){
+      chkY(lineH);
+      doc.setDrawColor(linC[0],linC[1],linC[2]); doc.setLineWidth(0.3);
+      doc.line(ML,y,MR,y); y+=lineH;
+    }
   }
 
-  // Title block
-  doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(ML,y,CW,4,'F'); y += 12;
-  doc.setFontSize(20); doc.setFont('helvetica','bold');
-  doc.setTextColor(ac[0],ac[1],ac[2]); doc.text(title,ML,y); y += 8;
-  doc.setFontSize(10); doc.setFont('helvetica','normal');
-  doc.setTextColor(hd[0],hd[1],hd[2]);
-  var meta = mType;
-  if(mDate) meta += '   \u00B7   ' + fmtDate(mDate);
-  if(timeRange) meta += '   \u00B7   ' + timeRange;
-  doc.text(meta,ML,y); y += 14;
+  // ── TITLE BLOCK ──
+  doc.setFillColor(ac[0],ac[1],ac[2]); doc.rect(ML,y,CW,5,'F'); y+=13;
+  doc.setFontSize(22); doc.setFont('helvetica','bold'); doc.setTextColor(ac[0],ac[1],ac[2]);
+  doc.text(title,ML,y); y+=9;
+  doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(hd[0],hd[1],hd[2]);
+  var meta=mType;
+  if(mDate) meta+='   \u00B7   '+fmtDate(mDate);
+  if(timeRange) meta+='   \u00B7   '+timeRange;
+  doc.text(meta,ML,y); y+=14;
 
-  if(facil){ miniHdr('FACILITATOR'); doc.text(facil,ML,y); y+=13; }
+  // Header details in two columns
+  var colW=CW/2-6;
+  var leftItems=[], rightItems=[];
+  if(facil)   leftItems.push(['Facilitator',facil]);
+  if(noteTkr) leftItems.push(['Note-Taker',noteTkr]);
+  if(atts)    leftItems.push(['Attendees',atts]);
+  if(purpose) rightItems.push(['Purpose & Outcomes',purpose]);
 
-  if(atts){
-    miniHdr('ATTENDEES');
-    var al = doc.splitTextToSize(atts,CW);
-    for(var i=0;i<al.length;i++){ chkY(13); doc.text(al[i],ML,y); y+=13; }
+  var maxRows=Math.max(leftItems.length,rightItems.length);
+  for(var ri=0;ri<maxRows;ri++){
+    var lh=0,rh=0;
+    if(leftItems[ri]){
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(hd[0],hd[1],hd[2]);
+      doc.text(leftItems[ri][0].toUpperCase(),ML,y);
+      doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+      var ll=doc.splitTextToSize(leftItems[ri][1],colW);
+      for(var li=0;li<ll.length;li++){ doc.text(ll[li],ML,y+(li+1)*11); }
+      lh=(ll.length+1)*11+4;
+    }
+    if(rightItems[ri]){
+      var rx=ML+colW+12;
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(hd[0],hd[1],hd[2]);
+      doc.text(rightItems[ri][0].toUpperCase(),rx,y);
+      doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+      var rl2=doc.splitTextToSize(rightItems[ri][1],colW);
+      for(var rli=0;rli<rl2.length;rli++){ doc.text(rl2[rli],rx,y+(rli+1)*11); }
+      rh=(rl2.length+1)*11+4;
+    }
+    y+=Math.max(lh,rh,18);
   }
 
-  if(purpose){
-    y+=2; miniHdr('PURPOSE & DESIRED OUTCOMES');
-    var pl = doc.splitTextToSize(purpose,CW);
-    for(var pi=0;pi<pl.length;pi++){ chkY(13); doc.text(pl[pi],ML,y); y+=13; }
-  }
-
+  // Materials
   if(matsRaw){
-    y+=2; miniHdr('MATERIALS / REFERENCES');
-    var ml2 = matsRaw.split('\n').filter(function(s){ return s.trim()!==''; });
-    for(var mi=0;mi<ml2.length;mi++){ chkY(13); doc.text('\u2022 '+ml2[mi].trim(),ML+8,y); y+=13; }
+    var matLines=matsRaw.split('\n').filter(function(s){ return s.trim()!==''; });
+    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(hd[0],hd[1],hd[2]);
+    doc.text('MATERIALS / REFERENCES',ML,y); y+=4;
+    doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+    for(var mi=0;mi<matLines.length;mi++){ chkY(11); doc.text('\u2022 '+matLines[mi].trim(),ML+6,y); y+=11; }
+    y+=6;
   }
 
-  var activeRules = [];
-  var rLbls = document.querySelectorAll('#rulesGrid .rule-toggle');
-  for(var ri=0;ri<rLbls.length;ri++){
-    if(rLbls[ri].querySelector('input').checked) activeRules.push(rLbls[ri].querySelector('.rule-text').textContent);
-  }
+  // Meeting rules
+  var activeRules=[];
+  var rLbls=document.querySelectorAll('#rulesGrid .rule-toggle');
+  for(var rli2=0;rli2<rLbls.length;rli2++){ if(rLbls[rli2].querySelector('input').checked) activeRules.push(rLbls[rli2].querySelector('.rule-text').textContent); }
   if(activeRules.length){
-    y+=2; miniHdr('MEETING RULES');
-    for(var rli=0;rli<activeRules.length;rli++){
-      var rl2 = doc.splitTextToSize('\u2022 '+activeRules[rli],CW-8);
-      for(var rln=0;rln<rl2.length;rln++){ chkY(13); doc.text(rl2[rln],ML+8,y); y+=13; }
+    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(hd[0],hd[1],hd[2]);
+    doc.text('MEETING RULES',ML,y); y+=4;
+    doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+    for(var arli=0;arli<activeRules.length;arli++){
+      var arl=doc.splitTextToSize('\u2022 '+activeRules[arli],CW-8);
+      for(var arln=0;arln<arl.length;arln++){ chkY(11); doc.text(arl[arln],ML+6,y); y+=11; }
     }
+    y+=6;
   }
 
-  // Agenda
-  secHdr('AGENDA (REACH)');
+  y+=2; hRule(rl); y+=10;
+
+  // ── AGENDA ──
+  sectionHdr('Agenda');
+
+  // Timing line
   var tot=0; for(var ti=0;ti<agendaItems.length;ti++) tot+=(parseInt(agendaItems[ti].duration,10)||0);
-  if(sm!==null && em!==null){
+  if(sm!==null&&em!==null){
     var buf2=(em-sm)-tot;
-    if(buf2>=0){ doc.setTextColor(oc[0],oc[1],oc[2]); } else { doc.setTextColor(wc[0],wc[1],wc[2]); }
     doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text('Total: '+tot+' min   Buffer: '+(buf2>=0?'+':'')+buf2+' min',ML,y); y+=12;
+    doc.setTextColor(buf2>=0?oc[0]:wc[0], buf2>=0?oc[1]:wc[1], buf2>=0?oc[2]:wc[2]);
+    doc.text('Total agenda time: '+tot+' min   |   Buffer: '+(buf2>=0?'+':'')+buf2+' min',ML,y); y+=12;
   }
 
-  if(agendaItems.length){
-    var tbody2=[];
-    for(var agi=0;agi<agendaItems.length;agi++){
-      var ag=agendaItems[agi];
-      var cur2=sm;
-      if(cur2!==null){ for(var pv=0;pv<agi;pv++) cur2+=(parseInt(agendaItems[pv].duration,10)||0); }
-      var agEnd2=cur2!==null?cur2+(parseInt(ag.duration,10)||0):null;
-      tbody2.push([String(agi+1),ag.topic||'',ag.owner||'',(parseInt(ag.duration,10)||0)+' min',
-        cur2!==null?minsTo12(cur2)+' \u2013 '+minsTo12(agEnd2):'--',
-        (ag.materialsChecked||[]).join('; '), ag.notes||'']);
+  // Agenda items — one per block, paper-friendly with write-in space
+  for(var agi=0;agi<agendaItems.length;agi++){
+    var ag=agendaItems[agi];
+    var dur=parseInt(ag.duration,10)||0;
+    var cur=sm; if(cur!==null){ for(var pv=0;pv<agi;pv++) cur+=(parseInt(agendaItems[pv].duration,10)||0); }
+    var agEnd=cur!==null?cur+dur:null;
+    var tStr=cur!==null?minsTo12(cur)+' \u2013 '+minsTo12(agEnd):'';
+
+    chkY(60);
+
+    // Item header bar
+    var barH=16;
+    doc.setFillColor(th[0],th[1],th[2]); doc.rect(ML,y-barH+4,CW,barH,'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(thT[0],thT[1],thT[2]);
+    doc.text(String(agi+1)+'.  '+(ag.topic||'(no topic)'),ML+4,y-1);
+
+    // Right side of bar: type + time
+    var rightLabel='';
+    if(ag.itemType) rightLabel+=ag.itemType;
+    if(tStr) rightLabel+=(rightLabel?'   ':'')+tStr;
+    if(dur) rightLabel+=(rightLabel?'   ':'')+dur+' min';
+    if(ag.owner) rightLabel+=(rightLabel?'   |   ':'')+ag.owner;
+    if(rightLabel){
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+      doc.text(rightLabel,MR-2,y-1,{align:'right'});
     }
-    doc.autoTable({startY:y,
-      head:[['#','Topic','Owner','Min','Time','Materials','Notes']],
-      body:tbody2,
-      margin:{left:ML,right:54},
-      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
-      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
-      alternateRowStyles:{fillColor:ro,textColor:rT},
-      columnStyles:{0:{cellWidth:18,halign:'center'},1:{cellWidth:82},2:{cellWidth:66},3:{cellWidth:28,halign:'center'},4:{cellWidth:72},5:{cellWidth:66},6:{cellWidth:'auto'}},
-      didParseCell:function(data){
-        if(data.section==='body'&&em!==null&&sm!==null){
-          var it=agendaItems[data.row.index];
-          if(it){ var c3=sm; for(var p2=0;p2<data.row.index;p2++) c3+=(parseInt(agendaItems[p2].duration,10)||0);
-            if(c3+(parseInt(it.duration,10)||0)>em) data.cell.styles.textColor=wc; }
-        }
-      }
-    });
-    y=doc.lastAutoTable.finalY+16;
-  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No agenda items.',ML,y);y+=16; }
+    y+=6;
 
-  // Action items
-  chkY(30); secHdr('ACTION ITEMS (RAP \u2014 Assign)');
-  var openA=actionItems.filter(function(i){ return ['Open','In Progress','Blocked','Deferred'].indexOf(i.status)>=0; });
-  if(openA.length){
-    doc.autoTable({startY:y,
-      head:[['Action Item','Owner','Due Date','Status','Notes']],
-      body:openA.map(function(i){ return [i.text,i.owner,fmtDate(i.dueDate)||i.dueDate,i.status,i.notes]; }),
-      margin:{left:ML,right:54},
-      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
-      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
-      alternateRowStyles:{fillColor:ro,textColor:rT},
-      columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:72},2:{cellWidth:62},3:{cellWidth:56},4:{cellWidth:80}}
-    });
-    y=doc.lastAutoTable.finalY+16;
-  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No open action items.',ML,y);y+=16; }
+    // Materials row
+    if(ag.materialsChecked&&ag.materialsChecked.length>0){
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(mt[0],mt[1],mt[2]);
+      doc.text('Materials: '+ag.materialsChecked.join(', '),ML+4,y); y+=11;
+    }
 
-  // Parking lot
-  chkY(30); secHdr('PARKING LOT');
+    // Pre-filled notes (if any)
+    if(ag.notes&&ag.notes.trim()!==''){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+      var nl=doc.splitTextToSize(ag.notes,CW-8);
+      for(var nli=0;nli<nl.length;nli++){ chkY(11); doc.text(nl[nli],ML+4,y); y+=11; }
+    }
+
+    // Notes write-in space
+    writeBlankLines(3,14,'Notes:');
+
+    // Decision block (always present for paper use)
+    chkY(52);
+    doc.setFillColor(re[0],re[1],re[2]); doc.rect(ML,y,CW,46,'F');
+    doc.setDrawColor(decC[0],decC[1],decC[2]); doc.setLineWidth(0.5); doc.rect(ML,y,CW,46,'S');
+    y+=10;
+
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(decC[0],decC[1],decC[2]);
+    doc.text('DECISION',ML+4,y);
+
+    // Decision required indicator
+    var decReqStr = ag.decisionRequired ? '[  Decision Required  ]' : '[  Decision Required?  \u25A1 Yes   \u25A1 No  ]';
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(mt[0],mt[1],mt[2]);
+    doc.text(decReqStr,ML+70,y); y+=8;
+
+    // Decision write line
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(mt[0],mt[1],mt[2]);
+    doc.text('Decision:',ML+4,y);
+    doc.setDrawColor(linC[0],linC[1],linC[2]); doc.setLineWidth(0.3);
+    doc.line(ML+50,y,MR-4,y); y+=10;
+
+    // Moved / Seconded row
+    doc.text('Moved by:',ML+4,y);
+    doc.line(ML+50,y,ML+(CW/2)-4,y);
+    doc.text('Seconded by:',ML+(CW/2)+4,y);
+    doc.line(ML+(CW/2)+52,y,MR-4,y);
+    y+=10;
+
+    // Vote tally
+    doc.text('Vote:  \u25A1 Unanimous    For ___  Against ___  Abstain ___',ML+4,y);
+    y+=14;
+  }
+
+  y+=4;
+
+  // ── ACTION ITEMS ──
+  var openActs=actionItems.filter(function(i){ return ['Open','In Progress','Blocked','Deferred'].indexOf(i.status)>=0; });
+  if(openActs.length||nxtChk||chkRhm){
+    chkY(30); sectionHdr('Action Items');
+    if(openActs.length){
+      doc.autoTable({startY:y,
+        head:[['Action Item','Owner','Due Date','Status']],
+        body:openActs.map(function(i){ return [i.text,i.owner,fmtDate(i.dueDate)||i.dueDate,i.status]; }),
+        margin:{left:ML,right:54},
+        styles:{font:'helvetica',fontSize:9,cellPadding:5,textColor:rT,fillColor:re,lineColor:linC,lineWidth:0.3,minCellHeight:20},
+        headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:8},
+        alternateRowStyles:{fillColor:ro,textColor:rT},
+        columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:80},2:{cellWidth:70},3:{cellWidth:65}}
+      });
+      y=doc.lastAutoTable.finalY+10;
+    }
+    if(nxtChk||chkRhm){
+      doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+      var trackLine='Progress Track:';
+      if(chkRhm) trackLine+='  '+chkRhm;
+      if(nxtChk) trackLine+='   |   Next check-in: '+fmtDate(nxtChk);
+      doc.text(trackLine,ML,y); y+=14;
+    }
+  }
+
+  // ── PARKING LOT ──
   if(parkItems.length){
+    chkY(30); sectionHdr('Parking Lot');
     doc.autoTable({startY:y,
       head:[['Topic','Reason','Notes']],
       body:parkItems.map(function(i){ return [i.topic,i.reason,i.notes]; }),
       margin:{left:ML,right:54},
-      styles:{font:'helvetica',fontSize:8,cellPadding:4,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
-      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:7},
+      styles:{font:'helvetica',fontSize:9,cellPadding:5,textColor:rT,fillColor:re,lineColor:linC,lineWidth:0.3,minCellHeight:20},
+      headStyles:{fillColor:th,textColor:thT,fontStyle:'bold',fontSize:8},
       alternateRowStyles:{fillColor:ro,textColor:rT},
-      columnStyles:{0:{cellWidth:120},1:{cellWidth:90},2:{cellWidth:'auto'}}
+      columnStyles:{0:{cellWidth:130},1:{cellWidth:100},2:{cellWidth:'auto'}}
     });
-    y=doc.lastAutoTable.finalY+16;
-  } else { doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(mt[0],mt[1],mt[2]);doc.text('No items in parking lot.',ML,y);y+=16; }
-
-  // Retrospective
-  if(retW||retI||retL){
-    chkY(30); secHdr('RETROSPECTIVE (RAP \u2014 Retrospect)');
-    var retRows=[];
-    if(retW) retRows.push(['What Worked Well',retW]);
-    if(retI) retRows.push(['Areas for Improvement',retI]);
-    if(retL) retRows.push(['Key Learnings',retL]);
-    doc.autoTable({startY:y,
-      body:retRows,
-      margin:{left:ML,right:54},
-      styles:{font:'helvetica',fontSize:8,cellPadding:5,textColor:rT,fillColor:re,lineColor:bw?[180,180,180]:[74,96,112],lineWidth:0.3},
-      alternateRowStyles:{fillColor:ro,textColor:rT},
-      columnStyles:{0:{cellWidth:100,fontStyle:'bold',textColor:bw?[50,50,50]:[212,101,26]},1:{cellWidth:'auto'}}
-    });
-    y=doc.lastAutoTable.finalY+16;
+    y=doc.lastAutoTable.finalY+10;
   }
 
-  // Page footers
-  var total2 = doc.internal.getNumberOfPages();
-  for(var pg=1;pg<=total2;pg++){
+  // ── RETROSPECTIVE (space for paper notes, pre-filled if data exists) ──
+  chkY(30); sectionHdr('Retrospective','Complete after the meeting');
+
+  var retroSections=[
+    {label:'What Worked Well', val:retW},
+    {label:'Areas for Improvement', val:retI},
+    {label:'Key Learnings', val:retL}
+  ];
+  for(var rsi=0;rsi<retroSections.length;rsi++){
+    var rs=retroSections[rsi];
+    chkY(50);
+    doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(hd[0],hd[1],hd[2]);
+    doc.text(rs.label,ML,y); y+=5;
+    if(rs.val&&rs.val.trim()!==''){
+      doc.setFont('helvetica','normal'); doc.setTextColor(bd[0],bd[1],bd[2]);
+      var rl3=doc.splitTextToSize(rs.val,CW);
+      for(var rli3=0;rli3<rl3.length;rli3++){ chkY(11); doc.text(rl3[rli3],ML,y); y+=11; }
+      y+=4;
+    } else {
+      writeBlankLines(3,15);
+    }
+  }
+
+  // ── PAGE FOOTERS ──
+  var totalPgs=doc.internal.getNumberOfPages();
+  var footerTitle = title;
+  for(var pg=1;pg<=totalPgs;pg++){
     doc.setPage(pg);
-    doc.setFontSize(8); doc.setTextColor(mt[0],mt[1],mt[2]);
-    doc.text('Meeting Agenda \u2014 '+title+(mDate?' \u2014 '+fmtDate(mDate):''), ML, PH-30);
-    doc.text('Page '+pg+' of '+total2, MR, PH-30, {align:'right'});
-    doc.setDrawColor(rl[0],rl[1],rl[2]); doc.setLineWidth(0.5); doc.line(ML,PH-38,MR,PH-38);
+    doc.setFontSize(7.5); doc.setTextColor(mt[0],mt[1],mt[2]);
+    doc.text(footerTitle+(mDate?' \u2014 '+fmtDate(mDate):''),ML,PH-28);
+    doc.text('Page '+pg+' of '+totalPgs,MR,PH-28,{align:'right'});
+    doc.setDrawColor(linC[0],linC[1],linC[2]); doc.setLineWidth(0.4); doc.line(ML,PH-36,MR,PH-36);
   }
 
-  var safe=(title||'Meeting_Agenda').replace(/[^a-zA-Z0-9_\- ]/g,'_');
+  var safe=(title).replace(/[^a-zA-Z0-9_\- ]/g,'_');
   doc.save(safe+(mDate?'_'+mDate.replace(/-/g,''):'')+'.pdf');
 }
 
-/* ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
    INIT
-─────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', function(){
-  var hasDraft = false;
-  try{ hasDraft = !!localStorage.getItem('pm02_draft'); } catch(e){}
-  if(hasDraft){ loadDraft(); }
-  else { addAgendaItem(); addAgendaItem(); }
+═══════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',function(){
+  var hasDraft=false; try{ hasDraft=!!localStorage.getItem('pm02_draft'); } catch(e){}
+  if(hasDraft){ loadDraft(); } else { addAgendaItem(); addAgendaItem(); }
 });
 </script>
+
 </body>
 </html>
