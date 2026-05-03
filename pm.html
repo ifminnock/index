@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design Tools — Alaska Geotechnical Tools</title>
+<title>Project Management — Alaska Geotechnical Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
@@ -15,11 +15,11 @@ html, body {
 min-height: 100vh;
 background: #2E3A47;
 color: #E8EAEC;
-font-family: ‘IBM Plex Sans’, sans-serif;
+font-family: 'IBM Plex Sans', sans-serif;
 }
 
 body::before {
-content: ‘’;
+content: '';
 position: fixed;
 inset: 0;
 background-image:
@@ -50,7 +50,7 @@ height: 52px;
 .dot-3 { background: #3dba7e; }
 
 .topbar-title {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 11px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -63,7 +63,7 @@ display: flex;
 align-items: center;
 gap: 8px;
 text-decoration: none;
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 10px;
 font-weight: 500;
 letter-spacing: 0.1em;
@@ -75,8 +75,8 @@ padding: 5px 12px;
 transition: color 0.2s, border-color 0.2s;
 }
 
-.home-link:hover { color: #f0a500; border-color: #f0a500; }
-.home-link::before { content: ‘←’; font-size: 12px; }
+.home-link:hover { color: #3dba7e; border-color: #3dba7e; }
+.home-link::before { content: '←'; font-size: 12px; }
 
 /* ── WRAPPER ── */
 .wrapper {
@@ -97,7 +97,7 @@ padding: 64px 40px 80px;
 display: flex;
 align-items: center;
 gap: 8px;
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 10px;
 color: #4A6070;
 letter-spacing: 0.08em;
@@ -111,9 +111,9 @@ text-decoration: none;
 transition: color 0.15s;
 }
 
-.breadcrumb a:hover { color: #f0a500; }
+.breadcrumb a:hover { color: #3dba7e; }
 .breadcrumb-sep { color: #4A6070; }
-.breadcrumb-current { color: #4a9eff; }
+.breadcrumb-current { color: #3dba7e; }
 
 /* ── HERO ── */
 .hero {
@@ -123,12 +123,12 @@ animation-delay: 0.05s;
 }
 
 .hero-tag {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 10px;
 font-weight: 600;
 letter-spacing: 0.22em;
 text-transform: uppercase;
-color: #4a9eff;
+color: #3dba7e;
 margin-bottom: 18px;
 display: flex;
 align-items: center;
@@ -136,15 +136,15 @@ gap: 10px;
 }
 
 .hero-tag::before {
-content: ‘’;
+content: '';
 display: inline-block;
 width: 24px;
 height: 1px;
-background: #4a9eff;
+background: #3dba7e;
 }
 
 .hero-title {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: clamp(22px, 3.5vw, 36px);
 font-weight: 700;
 line-height: 1.1;
@@ -153,10 +153,10 @@ letter-spacing: -0.02em;
 margin-bottom: 18px;
 }
 
-.hero-title span { color: #4a9eff; }
+.hero-title span { color: #3dba7e; }
 
 .hero-sub {
-font-family: ‘IBM Plex Sans’, sans-serif;
+font-family: 'IBM Plex Sans', sans-serif;
 font-size: 14px;
 font-weight: 300;
 color: #9AAABB;
@@ -173,7 +173,7 @@ margin-bottom: 36px;
 }
 
 .divider-label {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.18em;
@@ -187,12 +187,11 @@ white-space: nowrap;
 /* ── GRID ── */
 .app-grid {
 display: grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(2, 1fr);
 gap: 14px;
 margin-bottom: 64px;
 }
 
-@media (max-width: 860px) { .app-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .app-grid { grid-template-columns: 1fr; } }
 
 /* ── APP CARD ── */
@@ -211,8 +210,6 @@ animation: fadeUp 0.5s ease both;
 }
 
 .app-card:nth-child(1) { animation-delay: 0.10s; }
-.app-card:nth-child(2) { animation-delay: 0.16s; }
-.app-card:nth-child(3) { animation-delay: 0.22s; }
 
 @keyframes fadeUp {
 from { opacity: 0; transform: translateY(14px); }
@@ -220,7 +217,7 @@ to   { opacity: 1; transform: translateY(0); }
 }
 
 .app-card::before {
-content: ‘’;
+content: '';
 position: absolute;
 left: 0; top: 0; bottom: 0;
 width: 3px;
@@ -229,7 +226,7 @@ transition: opacity 0.2s;
 }
 
 .app-card::after {
-content: ‘’;
+content: '';
 position: absolute;
 inset: 0;
 opacity: 0;
@@ -246,7 +243,7 @@ box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 .app-card:hover::after  { opacity: 0.06; }
 
 .card-num {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -257,7 +254,7 @@ margin-bottom: 14px;
 .card-icon { font-size: 26px; margin-bottom: 12px; display: block; line-height: 1; }
 
 .card-title {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 12px;
 font-weight: 600;
 letter-spacing: 0.02em;
@@ -268,7 +265,7 @@ transition: color 0.2s;
 }
 
 .card-desc {
-font-family: ‘IBM Plex Sans’, sans-serif;
+font-family: 'IBM Plex Sans', sans-serif;
 font-size: 11px;
 font-weight: 300;
 color: #9AAABB;
@@ -279,7 +276,7 @@ margin-bottom: 16px;
 .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
 .tag {
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 8px;
 font-weight: 500;
 letter-spacing: 0.1em;
@@ -293,43 +290,25 @@ background: #263240;
 
 .tag.wip      { border-color: #4A6070; color: #4A6070; }
 .tag.complete { border-color: #3dba7e; color: #3dba7e; }
-.tag.draft    { border-color: #f0a500; color: #f0a500; }
+.tag.planned  { border-color: #f0a500; color: #f0a500; }
 
 .card-arrow {
 position: absolute;
 bottom: 18px;
 right: 20px;
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 15px;
 color: #4A6070;
 transition: color 0.2s, transform 0.2s;
 }
 
-/* ── PER-CARD HARDCODED COLORS ── */
-
-/* D-01 Subgrade & Frost — ice blue #63b3ed */
-.card-subgrade::before { background: #63b3ed; }
-.card-subgrade::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-subgrade:hover   { border-color: #63b3ed; }
-.card-subgrade:hover .card-title { color: #63b3ed; }
-.card-subgrade:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-subgrade .card-num         { color: #63b3ed; }
-
-/* D-02 Pavement Section Design — blue #4a9eff */
-.card-pavement::before { background: #4a9eff; }
-.card-pavement::after  { background: radial-gradient(ellipse at 20% 50%, #4a9eff 0%, transparent 70%); }
-.card-pavement:hover   { border-color: #4a9eff; }
-.card-pavement:hover .card-title { color: #4a9eff; }
-.card-pavement:hover .card-arrow { color: #4a9eff; transform: translate(3px, -2px); }
-.card-pavement .card-num         { color: #4a9eff; }
-
-/* D-03 ESAL & Traffic — amber #f0a500 */
-.card-esal::before { background: #f0a500; }
-.card-esal::after  { background: radial-gradient(ellipse at 20% 50%, #f0a500 0%, transparent 70%); }
-.card-esal:hover   { border-color: #f0a500; }
-.card-esal:hover .card-title { color: #f0a500; }
-.card-esal:hover .card-arrow { color: #f0a500; transform: translate(3px, -2px); }
-.card-esal .card-num         { color: #f0a500; }
+/* ── PM-01 Card — green #3dba7e ── */
+.card-pm::before { background: #3dba7e; }
+.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
+.card-pm:hover   { border-color: #3dba7e; }
+.card-pm:hover .card-title { color: #3dba7e; }
+.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
+.card-pm .card-num         { color: #3dba7e; }
 
 /* ── FOOTER ── */
 .footer {
@@ -339,7 +318,7 @@ display: flex;
 justify-content: space-between;
 flex-wrap: wrap;
 gap: 12px;
-font-family: ‘IBM Plex Mono’, monospace;
+font-family: 'IBM Plex Mono', monospace;
 font-size: 10px;
 color: #4A6070;
 letter-spacing: 0.06em;
@@ -351,11 +330,11 @@ text-decoration: none;
 transition: color 0.15s;
 }
 
-.footer a:hover { color: #f0a500; }
+.footer a:hover { color: #3dba7e; }
 
 .footer-disclaimer {
 width: 100%;
-font-family: ‘IBM Plex Sans’, sans-serif;
+font-family: 'IBM Plex Sans', sans-serif;
 font-size: 11px;
 font-weight: 300;
 font-style: italic;
@@ -379,7 +358,7 @@ margin-top: 8px;
       <div class="dot dot-2"></div>
       <div class="dot dot-3"></div>
     </div>
-    <div class="topbar-title">Design Tools</div>
+    <div class="topbar-title">Project Management</div>
   </div>
   <div style="display:flex;gap:6px">
     <a class="home-link" href="geol.html">← Tools</a>
@@ -394,21 +373,21 @@ margin-top: 8px;
   <div class="breadcrumb">
     <a href="geol.html">Tool Index</a>
     <span class="breadcrumb-sep">›</span>
-    <span class="breadcrumb-current">Design Tools</span>
+    <span class="breadcrumb-current">Project Management</span>
   </div>
 
   <!-- HERO -->
 
   <div class="hero">
-    <div class="hero-tag">04 — Design Tools</div>
-    <h1 class="hero-title">Engineering<br><span>Design</span> Calculators</h1>
-    <p class="hero-sub">Interactive calculators and design aids for Alaska pavement engineering. Covers subgrade evaluation, frost susceptibility, section design, and traffic loading. All outputs are design aids only — verify results against applicable specifications before use.</p>
+    <div class="hero-tag">PM — Project Management</div>
+    <h1 class="hero-title">Project<br><span>Management</span> Tools</h1>
+    <p class="hero-sub">PMI certification study tools, PDU tracking utilities, and project management reference aids. Practical tools for practitioners working toward or maintaining PMP and PMI-ACP credentials. Most tools in this section are planned or in early development.</p>
   </div>
 
   <!-- DIVIDER -->
 
   <div class="divider">
-    <span class="divider-label">Available Calculators</span>
+    <span class="divider-label">Available Tools</span>
     <div class="divider-line"></div>
   </div>
 
@@ -416,49 +395,17 @@ margin-top: 8px;
 
   <div class="app-grid">
 
-<!-- D-01: Subgrade & Frost Evaluation -->
-<a class="app-card card-subgrade" href="geot/subgrade-frost.html">
-  <div class="card-num">D-01 — Evaluation</div>
-  <span class="card-icon">🌡️</span>
-  <div class="card-title">Subgrade &amp; Frost<br>Evaluation</div>
-  <p class="card-desc">Subgrade characterization and frost susceptibility screening. Casagrande criterion checker, F1–F4 classification, Stefan equation for frost depth, and Alaska regional freezing index inputs.</p>
+<!-- PM-01: PMI Event Prep -->
+<a class="app-card card-pm" href="pm/event-prep.html">
+  <div class="card-num">PM-01 — Study</div>
+  <span class="card-icon">📋</span>
+  <div class="card-title">PMI Event<br>Prep</div>
+  <p class="card-desc">Study and preparation aid for PMI events and certification exams. Practice materials and reference content for PMP and PMI-ACP candidates.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">Subgrade</span>
-    <span class="tag">Frost</span>
-    <span class="tag">Casagrande</span>
-    <span class="tag">Stefan</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<!-- D-02: Pavement Section Design -->
-<a class="app-card card-pavement" href="geot/pavement-design.html">
-  <div class="card-num">D-02 — Design</div>
-  <span class="card-icon">📐</span>
-  <div class="card-title">Pavement Section<br>Design Calculator</div>
-  <p class="card-desc">Flexible pavement section calculator implementing the AKFPD Manual (July 2020). Layered elastic mechanistic design with Alaska DOT&amp;PF material specs — D-1 base, Select Material Type A subbase, PG binder grades.</p>
-  <div class="card-tags">
-    <span class="tag draft">⚠ Under Review</span>
-    <span class="tag">AKFPD</span>
-    <span class="tag">Section Design</span>
-    <span class="tag">Mechanistic</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<!-- D-03: ESAL & Traffic -->
-<a class="app-card card-esal" href="geot/esal-calculator.html">
-  <div class="card-num">D-03 — Traffic</div>
-  <span class="card-icon">🚛</span>
-  <div class="card-title">ESAL &amp; Traffic<br>Calculator</div>
-  <p class="card-desc">Equivalent single axle load calculator using Alaska DOT&amp;PF truck classification categories and AASHTO load equivalency factors. Supports directional distribution and design lane inputs.</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">ESAL</span>
-    <span class="tag">Traffic</span>
-    <span class="tag">AASHTO</span>
-    <span class="tag">Load Factors</span>
+    <span class="tag planned">Planned</span>
+    <span class="tag">PMP</span>
+    <span class="tag">PMI-ACP</span>
+    <span class="tag">Study</span>
   </div>
   <div class="card-arrow">↗</div>
 </a>
@@ -469,7 +416,7 @@ margin-top: 8px;
 
   <div class="footer">
     <span>Alaska Geotechnical Tools &nbsp;·&nbsp; <a href="geol.html">← Tool Index</a> &nbsp;·&nbsp; <a href="index.html">Home</a></span>
-    <span>3 calculators &nbsp;·&nbsp; 1 draft &nbsp;·&nbsp; 2 in progress</span>
+    <span>1 tool &nbsp;·&nbsp; 1 planned</span>
     <div class="footer-disclaimer">
       This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities or any government agency. All tool outputs are design aids and should be verified by a qualified professional before use.
     </div>
