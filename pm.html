@@ -4,22 +4,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Management — Alaska Geotechnical Tools</title>
+<title>Project Management &mdash; MFI Alaska Geo Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
 min-height: 100vh;
 background: #2E3A47;
 color: #E8EAEC;
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 }
 
 body::before {
-content: '';
+content: ‘’;
 position: fixed;
 inset: 0;
 background-image:
@@ -50,7 +50,7 @@ height: 52px;
 .dot-3 { background: #3dba7e; }
 
 .topbar-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 11px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -58,25 +58,91 @@ text-transform: uppercase;
 color: #9AAABB;
 }
 
-.home-link {
-display: flex;
-align-items: center;
-gap: 8px;
-text-decoration: none;
-font-family: 'IBM Plex Mono', monospace;
+.topbar-right {
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
-font-weight: 500;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-color: #9AAABB;
-border: 1px solid #3A4A5C;
-border-radius: 2px;
-padding: 5px 12px;
-transition: color 0.2s, border-color 0.2s;
+color: #4A6070;
+letter-spacing: 0.06em;
 }
 
-.home-link:hover { color: #3dba7e; border-color: #3dba7e; }
-.home-link::before { content: '←'; font-size: 12px; }
+/* ── SITE NAV BANNER ── */
+.site-nav {
+position: relative;
+z-index: 9;
+background: #1E2D3A;
+border-bottom: 1px solid #3A4A5C;
+padding: 0 40px;
+display: flex;
+align-items: stretch;
+gap: 0;
+overflow-x: auto;
+}
+
+.site-nav::-webkit-scrollbar { display: none; }
+
+.nav-item {
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+min-width: 0;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-item:hover { background: #263240; }
+.nav-item.active { background: #263240; border-bottom: 2px solid #3dba7e; }
+
+.nav-item-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #E8EAEC;
+margin-bottom: 3px;
+white-space: nowrap;
+}
+
+.nav-item.active .nav-item-label { color: #3dba7e; }
+
+.nav-item-desc {
+font-family: ‘IBM Plex Sans’, sans-serif;
+font-size: 10px;
+font-weight: 300;
+color: #4A6070;
+white-space: nowrap;
+}
+
+.nav-item:hover .nav-item-desc { color: #9AAABB; }
+
+.nav-home {
+display: flex;
+align-items: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+margin-right: 8px;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-home:hover { background: #263240; }
+
+.nav-home-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #4A6070;
+white-space: nowrap;
+transition: color 0.2s;
+}
+
+.nav-home:hover .nav-home-label { color: #9AAABB; }
 
 /* ── WRAPPER ── */
 .wrapper {
@@ -88,32 +154,10 @@ padding: 64px 40px 80px;
 }
 
 @media (max-width: 560px) {
-.wrapper { padding: 40px 20px 60px; }
-.topbar  { padding: 0 20px; }
+.wrapper  { padding: 40px 20px 60px; }
+.topbar   { padding: 0 20px; }
+.site-nav { padding: 0 20px; }
 }
-
-/* ── BREADCRUMB ── */
-.breadcrumb {
-display: flex;
-align-items: center;
-gap: 8px;
-font-family: 'IBM Plex Mono', monospace;
-font-size: 10px;
-color: #4A6070;
-letter-spacing: 0.08em;
-margin-bottom: 40px;
-animation: fadeUp 0.3s ease both;
-}
-
-.breadcrumb a {
-color: #9AAABB;
-text-decoration: none;
-transition: color 0.15s;
-}
-
-.breadcrumb a:hover { color: #3dba7e; }
-.breadcrumb-sep { color: #4A6070; }
-.breadcrumb-current { color: #3dba7e; }
 
 /* ── HERO ── */
 .hero {
@@ -123,7 +167,7 @@ animation-delay: 0.05s;
 }
 
 .hero-tag {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
 font-weight: 600;
 letter-spacing: 0.22em;
@@ -136,7 +180,7 @@ gap: 10px;
 }
 
 .hero-tag::before {
-content: '';
+content: ‘’;
 display: inline-block;
 width: 24px;
 height: 1px;
@@ -144,7 +188,7 @@ background: #3dba7e;
 }
 
 .hero-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: clamp(22px, 3.5vw, 36px);
 font-weight: 700;
 line-height: 1.1;
@@ -156,7 +200,7 @@ margin-bottom: 18px;
 .hero-title span { color: #3dba7e; }
 
 .hero-sub {
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 14px;
 font-weight: 300;
 color: #9AAABB;
@@ -173,7 +217,7 @@ margin-bottom: 36px;
 }
 
 .divider-label {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.18em;
@@ -187,11 +231,12 @@ white-space: nowrap;
 /* ── GRID ── */
 .app-grid {
 display: grid;
-grid-template-columns: repeat(2, 1fr);
+grid-template-columns: repeat(3, 1fr);
 gap: 14px;
 margin-bottom: 64px;
 }
 
+@media (max-width: 860px) { .app-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .app-grid { grid-template-columns: 1fr; } }
 
 /* ── APP CARD ── */
@@ -201,7 +246,7 @@ text-decoration: none;
 background: #1A2530;
 border: 1px solid #3A4A5C;
 border-radius: 3px;
-padding: 24px 24px 20px;
+padding: 24px 24px 48px;
 position: relative;
 overflow: hidden;
 cursor: pointer;
@@ -209,7 +254,9 @@ transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 animation: fadeUp 0.5s ease both;
 }
 
-.app-card:nth-child(1) { animation-delay: 0.10s; }
+.app-card:nth-child(1) { animation-delay: 0.08s; }
+.app-card:nth-child(2) { animation-delay: 0.14s; }
+.app-card:nth-child(3) { animation-delay: 0.20s; }
 
 @keyframes fadeUp {
 from { opacity: 0; transform: translateY(14px); }
@@ -217,7 +264,7 @@ to   { opacity: 1; transform: translateY(0); }
 }
 
 .app-card::before {
-content: '';
+content: ‘’;
 position: absolute;
 left: 0; top: 0; bottom: 0;
 width: 3px;
@@ -226,7 +273,7 @@ transition: opacity 0.2s;
 }
 
 .app-card::after {
-content: '';
+content: ‘’;
 position: absolute;
 inset: 0;
 opacity: 0;
@@ -243,7 +290,7 @@ box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 .app-card:hover::after  { opacity: 0.06; }
 
 .card-num {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -254,7 +301,7 @@ margin-bottom: 14px;
 .card-icon { font-size: 26px; margin-bottom: 12px; display: block; line-height: 1; }
 
 .card-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 12px;
 font-weight: 600;
 letter-spacing: 0.02em;
@@ -265,7 +312,7 @@ transition: color 0.2s;
 }
 
 .card-desc {
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
 color: #9AAABB;
@@ -276,7 +323,7 @@ margin-bottom: 16px;
 .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
 .tag {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 8px;
 font-weight: 500;
 letter-spacing: 0.1em;
@@ -290,77 +337,112 @@ background: #263240;
 
 .tag.wip      { border-color: #4A6070; color: #4A6070; }
 .tag.complete { border-color: #3dba7e; color: #3dba7e; }
-.tag.planned  { border-color: #f0a500; color: #f0a500; }
+.tag.planned  { border-color: #4A6070; color: #4A6070; }
 
 .card-arrow {
 position: absolute;
 bottom: 18px;
 right: 20px;
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 15px;
 color: #4A6070;
 transition: color 0.2s, transform 0.2s;
 }
 
-/* ── PM-01 Card — green #3dba7e ── */
-.card-pm::before { background: #3dba7e; }
-.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
-.card-pm:hover   { border-color: #3dba7e; }
-.card-pm:hover .card-title { color: #3dba7e; }
-.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
-.card-pm .card-num         { color: #3dba7e; }
+/* ── PER-CARD HARDCODED COLORS ── */
 
-/* ── PM-02 Card — green #3dba7e ── */
-.card-pm::before { background: #3dba7e; }
-.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
-.card-pm:hover   { border-color: #3dba7e; }
-.card-pm:hover .card-title { color: #3dba7e; }
-.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
-.card-pm .card-num         { color: #3dba7e; }
+/* PM01 PMI Event Prep — green #3dba7e */
+.card-pm01::before { background: #3dba7e; }
+.card-pm01::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
+.card-pm01:hover   { border-color: #3dba7e; }
+.card-pm01:hover .card-title { color: #3dba7e; }
+.card-pm01:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
+.card-pm01 .card-num         { color: #3dba7e; }
 
-/* ── PM-03 Card — green #3dba7e ── */
-.card-pm::before { background: #3dba7e; }
-.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
-.card-pm:hover   { border-color: #3dba7e; }
-.card-pm:hover .card-title { color: #3dba7e; }
-.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
-.card-pm .card-num         { color: #3dba7e; }
+/* PM02 Meeting Agenda — teal #2ec4b6 */
+.card-pm02::before { background: #2ec4b6; }
+.card-pm02::after  { background: radial-gradient(ellipse at 20% 50%, #2ec4b6 0%, transparent 70%); }
+.card-pm02:hover   { border-color: #2ec4b6; }
+.card-pm02:hover .card-title { color: #2ec4b6; }
+.card-pm02:hover .card-arrow { color: #2ec4b6; transform: translate(3px, -2px); }
+.card-pm02 .card-num         { color: #2ec4b6; }
 
-/* ── PM-04 Card — green #3dba7e ── */
-.card-pm::before { background: #3dba7e; }
-.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
-.card-pm:hover   { border-color: #3dba7e; }
-.card-pm:hover .card-title { color: #3dba7e; }
-.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
-.card-pm .card-num         { color: #3dba7e; }
-
-
+/* PM03 Org Simulator — amber #f0a500 */
+.card-pm03::before { background: #f0a500; }
+.card-pm03::after  { background: radial-gradient(ellipse at 20% 50%, #f0a500 0%, transparent 70%); }
+.card-pm03:hover   { border-color: #f0a500; }
+.card-pm03:hover .card-title { color: #f0a500; }
+.card-pm03:hover .card-arrow { color: #f0a500; transform: translate(3px, -2px); }
+.card-pm03 .card-num         { color: #f0a500; }
 
 /* ── FOOTER ── */
 .footer {
 border-top: 1px solid #3A4A5C;
-padding-top: 24px;
+padding-top: 32px;
 display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+.footer-top {
+display: flex;
+align-items: flex-start;
 justify-content: space-between;
 flex-wrap: wrap;
-gap: 12px;
-font-family: 'IBM Plex Mono', monospace;
-font-size: 10px;
-color: #4A6070;
-letter-spacing: 0.06em;
+gap: 16px;
 }
 
-.footer a {
+.footer-author {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 11px;
 color: #9AAABB;
-text-decoration: none;
-transition: color 0.15s;
+letter-spacing: 0.06em;
+line-height: 1.9;
 }
 
-.footer a:hover { color: #3dba7e; }
+.footer-author strong { color: #E8EAEC; font-weight: 600; }
+
+.footer-author a {
+color: #4a9eff;
+text-decoration: none;
+opacity: 0.8;
+transition: opacity 0.15s;
+}
+
+.footer-author a:hover { opacity: 1; text-decoration: underline; }
+
+.footer-badge {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 5px 12px;
+border: 1px solid #3A4A5C;
+border-radius: 2px;
+color: #4A6070;
+white-space: nowrap;
+align-self: flex-start;
+}
+
+.status-dot {
+display: inline-block;
+width: 6px; height: 6px;
+border-radius: 50%;
+background: #3dba7e;
+margin-right: 6px;
+position: relative;
+top: -1px;
+box-shadow: 0 0 6px #3dba7e;
+animation: pulse 2.5s ease infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50%       { opacity: 0.35; }
+}
 
 .footer-disclaimer {
-width: 100%;
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
 font-style: italic;
@@ -368,7 +450,7 @@ color: #4A6070;
 line-height: 1.7;
 border-top: 1px solid #3A4A5C;
 padding-top: 16px;
-margin-top: 8px;
+max-width: 780px;
 }
 </style>
 
@@ -386,34 +468,47 @@ margin-top: 8px;
     </div>
     <div class="topbar-title">Project Management</div>
   </div>
-  <div style="display:flex;gap:6px">
-    <a class="home-link" href="geol.html">← Tools</a>
-    <a class="home-link" href="index.html">Home</a>
-  </div>
+  <div class="topbar-right">mfimpact.com &nbsp;&middot;&nbsp; v2.0</div>
 </div>
 
+<!-- SITE NAV BANNER -->
+
+<nav class="site-nav">
+  <a class="nav-home" href="index.html">
+    <span class="nav-home-label">&#8592; Home</span>
+  </a>
+  <a class="nav-item" href="geol.html">
+    <span class="nav-item-label">GL &mdash; Geology &amp; Field</span>
+    <span class="nav-item-desc">Field ID, logging, investigation, GIS</span>
+  </a>
+  <a class="nav-item" href="geot.html">
+    <span class="nav-item-label">GT &mdash; Geotechnical Design</span>
+    <span class="nav-item-desc">Pavement, frost, ESAL calculators</span>
+  </a>
+  <a class="nav-item" href="ri.html">
+    <span class="nav-item-label">RI &mdash; Research &amp; Innovation</span>
+    <span class="nav-item-desc">AI analysis, modeling, simulation</span>
+  </a>
+  <a class="nav-item active" href="pm.html">
+    <span class="nav-item-label">PM &mdash; Project Management</span>
+    <span class="nav-item-desc">PMI study tools, planning aids</span>
+  </a>
+</nav>
+
 <div class="wrapper">
-
-  <!-- BREADCRUMB -->
-
-  <div class="breadcrumb">
-    <a href="geol.html">Tool Index</a>
-    <span class="breadcrumb-sep">›</span>
-    <span class="breadcrumb-current">Project Management</span>
-  </div>
 
   <!-- HERO -->
 
   <div class="hero">
-    <div class="hero-tag">PM — Project Management</div>
+    <div class="hero-tag">PM &mdash; Project Management</div>
     <h1 class="hero-title">Project<br><span>Management</span> Tools</h1>
-    <p class="hero-sub">PMI certification study tools, PDU tracking utilities, and project management reference aids. Practical tools for practitioners working toward or maintaining PMP and PMI-ACP credentials. Most tools in this section are planned or in early development.</p>
+    <p class="hero-sub">Interactive tools for PMI certification preparation, meeting facilitation, and organizational planning. Aimed at practitioners working toward or maintaining PMP and PMI-ACP credentials, and at project managers in technical and engineering fields. Most tools in this section are in early development or planned &mdash; scope will evolve.</p>
   </div>
 
   <!-- DIVIDER -->
 
   <div class="divider">
-    <span class="divider-label">Available Tools</span>
+    <span class="divider-label">PM &mdash; Available Tools</span>
     <div class="divider-line"></div>
   </div>
 
@@ -421,83 +516,70 @@ margin-top: 8px;
 
   <div class="app-grid">
 
-<!-- PM-01: PMI Event Prep -->
-<a class="app-card card-pm" href="pm/event-prep.html">
-  <div class="card-num">PM-01 — Study</div>
-  <span class="card-icon">📋</span>
-  <div class="card-title">PMI Event<br>Prep</div>
-  <p class="card-desc">Event preparation wizard.</p>
+```
+<!-- PM01: PMI Event Prep -->
+<a class="app-card card-pm01" href="pm/event-prep.html">
+  <div class="card-num">PM01 &mdash; Certification</div>
+  <span class="card-icon">🎯</span>
+  <div class="card-title">PMI Event<br>Prep Wizard</div>
+  <p class="card-desc">Guided preparation tool for PMI certification events and PDU activities. Walk through event type selection, knowledge domain mapping, and pre-event study focus areas for PMP and PMI-ACP exam alignment. Helps practitioners plan targeted preparation for PDU-eligible events, study groups, and chapter meetings.</p>
   <div class="card-tags">
     <span class="tag planned">Planned</span>
     <span class="tag">PMP</span>
     <span class="tag">PMI-ACP</span>
-    <span class="tag">Study</span>
+    <span class="tag">PDU</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-  </div>
-
-<!-- PM-02: PMI Event Prep -->
-<a class="app-card card-pm" href="pm/meeting-agenda.html">
-  <div class="card-num">PM-02 — Agenda</div>
+<!-- PM02: Meeting Agenda Builder -->
+<a class="app-card card-pm02" href="pm/meeting-agenda.html">
+  <div class="card-num">PM02 &mdash; Facilitation</div>
   <span class="card-icon">📋</span>
-  <div class="card-title">Agenda Development Tool<br>Prep</div>
-  <p class="card-desc">Agenda developer</p>
+  <div class="card-title">Meeting Agenda<br>Builder</div>
+  <p class="card-desc">Structured agenda development tool for technical project meetings. Define meeting purpose, attendees, agenda items with time allocations, and desired outcomes. Outputs a formatted agenda document ready to distribute. Incorporates PMI-aligned facilitation principles &mdash; decision vs. discussion vs. information items clearly distinguished.</p>
   <div class="card-tags">
     <span class="tag planned">Planned</span>
-    <span class="tag">PMP</span>
-    <span class="tag">PMI-ACP</span>
+    <span class="tag">Facilitation</span>
     <span class="tag">Meetings</span>
+    <span class="tag">PMP</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-  </div>
-
-<!-- PM-03: Organization Simulator -->
-<a class="app-card card-pm" href="pm/org-simulator.html">
-  <div class="card-num">PM-03 — Organization Simulator</div>
-  <span class="card-icon">📋</span>
-  <div class="card-title">Organization Simulator<br>Prep</div>
-  <p class="card-desc">Organization sinulator and optimizer</p>
+<!-- PM03: Organization Simulator -->
+<a class="app-card card-pm03" href="pm/org-simulator.html">
+  <div class="card-num">PM03 &mdash; Planning</div>
+  <span class="card-icon">🏗️</span>
+  <div class="card-title">Organization<br>Simulator</div>
+  <p class="card-desc">Interactive organizational structure modeler for exploring project and program management configurations. Compare functional, matrix, and projectized structures across scenarios. Adjust team size, reporting lines, and resource allocation to visualize authority, communication paths, and span of control. Useful for PMP exam prep and real-world org design exercises.</p>
   <div class="card-tags">
     <span class="tag planned">Planned</span>
+    <span class="tag">Org Design</span>
     <span class="tag">PMP</span>
-    <span class="tag">PMI-ACP</span>
-    <span class="tag">Planning</span>
+    <span class="tag">Structure</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
+```
 
   </div>
-
-<!-- PM-04: PMI Event Prep -->
-<a class="app-card card-pm" href="pm/meeting-agenda.html">
-  <div class="card-num">PM-02 — Agenda</div>
-  <span class="card-icon">📋</span>
-  <div class="card-title">Agenda Development Tool<br>Prep</div>
-  <p class="card-desc">Agenda developer</p>
-  <div class="card-tags">
-    <span class="tag planned">Planned</span>
-    <span class="tag">PMP</span>
-    <span class="tag">PMI-ACP</span>
-    <span class="tag">Meetings</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-  </div>
-
-
 
   <!-- FOOTER -->
 
   <div class="footer">
-    <span>Alaska Geotechnical Tools &nbsp;·&nbsp; <a href="geol.html">← Tool Index</a> &nbsp;·&nbsp; <a href="index.html">Home</a></span>
-    <span>1 tool &nbsp;·&nbsp; 1 planned</span>
+    <div class="footer-top">
+      <div class="footer-author">
+        <div><strong>Ian Minnock</strong> &nbsp;&middot;&nbsp; CPG, PMP, PMI-ACP</div>
+        <div><a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a> &nbsp;&middot;&nbsp; <a href="contact.html">Contact / Feedback</a></div>
+        <div>&#169; 2026 MFI &nbsp;&middot;&nbsp; Last updated: May 2026</div>
+      </div>
+      <div class="footer-badge">
+        <span class="status-dot"></span>3 tools &nbsp;&middot;&nbsp; 3 planned
+      </div>
+    </div>
     <div class="footer-disclaimer">
-      This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities or any government agency. All tool outputs are design aids and should be verified by a qualified professional before use.
+      This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities or any government agency. References to agency specifications are for informational purposes only. All tool outputs are design aids and should be verified by a qualified professional before use.
     </div>
   </div>
 
