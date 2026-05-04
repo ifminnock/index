@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RI04 — Slope Stability 3D Visualization | MFI Geotechnical Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+background-color: #2E3A47;
+color: #E8EAEC;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 14px;
+line-height: 1.5;
+height: 100%;
+overflow: hidden;
+}
+
+a { color: #9AAABB; text-decoration: none; }
+a:hover { color: #D4651A; }
+
+/* LAYOUT */
+.page-wrapper {
+background-color: #2E3A47;
+display: flex;
+flex-direction: column;
+height: 100vh;
+overflow: hidden;
+}
+
+.main-area {
+background-color: #2E3A47;
+display: flex;
+flex: 1;
+overflow: hidden;
+min-height: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+background-color: #2E3A47;
+width: 310px;
+min-width: 310px;
+display: flex;
+flex-direction: column;
+border-right: 1px solid #4A6070;
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+.sidebar-inner {
+background-color: #2E3A47;
+padding: 1rem;
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+}
+
+/* CANVAS AREA */
+.canvas-area {
+background-color: #2E3A47;
+flex: 1;
+display: flex;
+flex-direction: column;
+min-width: 0;
+position: relative;
+}
+
+.canvas-container {
+background-color: #2E3A47;
+flex: 1;
+position: relative;
+min-height: 0;
+}
+
+#three-canvas {
+background-color: #2E3A47;
+display: block;
+width: 100%;
+height: 100%;
+}
+
+/* OUTPUT PANEL */
+.output-panel {
+background-color: #3A4A5C;
+border-top: 1px solid #4A6070;
+padding: 0.75rem 1rem;
+display: flex;
+flex-wrap: wrap;
+gap: 0.75rem;
+align-items: flex-start;
+}
+
+/* CARDS */
+.card {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-radius: 3px;
+padding: 0.6rem 0.75rem;
+}
+
+.card-title {
+font-size: 0.72rem;
+font-weight: 700;
+color: #D4651A;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+margin-bottom: 0.5rem;
+border-bottom: 1px solid #4A6070;
+padding-bottom: 0.3rem;
+}
+
+/* FORM ELEMENTS */
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 0.2rem;
+margin-bottom: 0.4rem;
+}
+
+.form-label {
+font-size: 0.72rem;
+color: #9AAABB;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.form-row {
+display: flex;
+gap: 0.5rem;
+align-items: center;
+}
+
+input[type=“number”] {
+background-color: #3A4A5C;
+color: #E8EAEC;
+border: 1px solid #4A6070;
+border-radius: 2px;
+padding: 0.25rem 0.4rem;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 0.8rem;
+width: 75px;
+transition: border-color 0.15s;
+}
+input[type=“number”]:focus {
+outline: none;
+border-color: #D4651A;
+border-width: 2px;
+}
+
+input[type=“range”] {
+-webkit-appearance: none;
+appearance: none;
+background: #4A6070;
+height: 4px;
+border-radius: 2px;
+outline: none;
+cursor: pointer;
+flex: 1;
+}
+input[type=“range”]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 14px;
+height: 14px;
+background: #D4651A;
+border-radius: 50%;
+cursor: pointer;
+}
+input[type=“range”]::-moz-range-thumb {
+width: 14px;
+height: 14px;
+background: #D4651A;
+border-radius: 50%;
+border: none;
+cursor: pointer;
+}
+
+.range-val {
+font-size: 0.75rem;
+color: #E8EAEC;
+min-width: 35px;
+text-align: right;
+}
+
+/* BUTTONS */
+.btn {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 0.75rem;
+font-weight: 700;
+padding: 0.35rem 0.7rem;
+border: none;
+border-radius: 2px;
+cursor: pointer;
+transition: opacity 0.15s, transform 0.1s;
+letter-spacing: 0.04em;
+}
+.btn:hover { opacity: 0.85; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+background-color: #D4651A;
+color: #E8EAEC;
+}
+
+.btn-secondary {
+background-color: #4A6070;
+color: #E8EAEC;
+}
+
+.btn-danger {
+background-color: #D64A4A;
+color: #E8EAEC;
+}
+
+.btn-sm {
+padding: 0.25rem 0.5rem;
+font-size: 0.7rem;
+}
+
+.btn-group {
+display: flex;
+gap: 0.4rem;
+flex-wrap: wrap;
+}
+
+.preset-btn {
+background-color: #3A4A5C;
+color: #9AAABB;
+border: 1px solid #4A6070;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 0.68rem;
+padding: 0.3rem 0.5rem;
+border-radius: 2px;
+cursor: pointer;
+transition: all 0.15s;
+text-align: left;
+width: 100%;
+}
+.preset-btn:hover {
+background-color: #4A6070;
+color: #E8EAEC;
+border-color: #D4651A;
+}
+
+/* METRIC DISPLAY */
+.metric-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+gap: 0.5rem;
+flex: 1;
+}
+
+.metric-item {
+background-color: #2E3A47;
+border: 1px solid #4A6070;
+border-radius: 2px;
+padding: 0.4rem 0.6rem;
+}
+
+.metric-label {
+font-size: 0.65rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+margin-bottom: 0.15rem;
+}
+
+.metric-value {
+font-size: 1.0rem;
+font-weight: 700;
+color: #E8EAEC;
+}
+
+.metric-unit {
+font-size: 0.65rem;
+color: #9AAABB;
+margin-left: 0.2rem;
+}
+
+/* FS INDICATOR */
+.fs-indicator {
+background-color: #2E3A47;
+border: 2px solid #4A6070;
+border-radius: 3px;
+padding: 0.5rem 1rem;
+min-width: 150px;
+text-align: center;
+}
+
+.fs-label {
+font-size: 0.65rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+
+.fs-value {
+font-size: 1.8rem;
+font-weight: 700;
+line-height: 1.1;
+}
+
+.fs-stable { color: #6BA84A; border-color: #6BA84A; }
+.fs-warning { color: #D4651A; border-color: #D4651A; }
+.fs-failed  { color: #D64A4A; border-color: #D64A4A; }
+
+.fs-status {
+font-size: 0.7rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+
+/* STATUS MESSAGE */
+.status-msg {
+background-color: #2E3A47;
+border-left: 3px solid #4A6070;
+padding: 0.4rem 0.6rem;
+font-size: 0.72rem;
+color: #9AAABB;
+flex-basis: 100%;
+font-style: italic;
+}
+.status-msg.stable { border-color: #6BA84A; color: #6BA84A; }
+.status-msg.warning { border-color: #D4651A; color: #D4651A; }
+.status-msg.failed  { border-color: #D64A4A; color: #D64A4A; }
+
+/* CAMERA CONTROLS OVERLAY */
+.cam-controls {
+position: absolute;
+top: 0.75rem;
+right: 0.75rem;
+display: flex;
+gap: 0.4rem;
+z-index: 10;
+}
+
+/* HEADER */
+header {
+background-color: #2E3A47;
+border-bottom: 2px solid #D4651A;
+padding: 0.75rem 1.5rem;
+width: 100%;
+flex-shrink: 0;
+}
+
+.header-breadcrumb {
+font-size: 0.72rem;
+color: #9AAABB;
+margin-bottom: 0.3rem;
+}
+
+.header-title-row {
+display: flex;
+align-items: baseline;
+gap: 0.75rem;
+}
+
+.header-id {
+font-size: 0.8rem;
+color: #D4651A;
+font-weight: 700;
+}
+
+.header-title {
+font-size: 1.2rem;
+font-weight: 700;
+color: #E8EAEC;
+}
+
+.header-sub {
+font-size: 0.8rem;
+color: #9AAABB;
+margin-top: 0.15rem;
+}
+
+/* FOOTER */
+footer {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.5rem 1.5rem;
+font-size: 0.68rem;
+color: #9AAABB;
+display: flex;
+flex-wrap: wrap;
+gap: 0.75rem;
+justify-content: space-between;
+flex-shrink: 0;
+}
+
+/* PLAYBACK STATE */
+.play-btn-active {
+background-color: #6BA84A !important;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #2E3A47; }
+::-webkit-scrollbar-thumb { background: #4A6070; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #D4651A; }
+
+/* LEGEND */
+.legend {
+display: flex;
+flex-direction: column;
+gap: 0.3rem;
+}
+.legend-item {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+font-size: 0.7rem;
+color: #9AAABB;
+}
+.legend-swatch {
+width: 14px;
+height: 14px;
+border-radius: 2px;
+flex-shrink: 0;
+}
+
+/* ANIMATION PULSE for failure */
+@keyframes failurePulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.6; }
+}
+.failure-pulse {
+animation: failurePulse 1s ease-in-out infinite;
+}
+
+/* SMALL SCREEN STACK */
+@media (max-width: 768px) {
+.main-area { flex-direction: column; }
+.sidebar { width: 100%; min-width: unset; border-right: none; border-bottom: 1px solid #4A6070; max-height: 40vh; }
+.canvas-area { min-height: 300px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="header-breadcrumb">
+      <a href="research-index.html">← Research &amp; AI</a>
+      &nbsp;|&nbsp;
+      <a href="tool-index.html">Tool Index</a>
+      &nbsp;|&nbsp;
+      <a href="subgrade-frost.html">GT02 Subgrade Frost</a>
+      &nbsp;|&nbsp;
+      <a href="thaw_consolidation.html">RI02 Thaw Consolidation</a>
+    </div>
+    <div class="header-title-row">
+      <span class="header-id">RI04</span>
+      <h1 class="header-title">Slope Stability 3D Visualization</h1>
+    </div>
+    <p class="header-sub">Animated thaw-induced failure simulation &mdash; Bishop method, permafrost slopes</p>
+  </header>
+
+  <!-- MAIN AREA -->
+
+  <div class="main-area">
+
+```
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-inner">
+
+    <!-- PRESET SCENARIOS -->
+    <div class="card">
+      <div class="card-title">Preset Scenarios</div>
+      <div style="display:flex; flex-direction:column; gap:0.35rem;">
+        <button class="preset-btn" onclick="applyPreset('stable')">✓ Stable Slope — FS &gt; 1.5 throughout</button>
+        <button class="preset-btn" onclick="applyPreset('marginal')">⚠ Marginally Stable — fails mid-animation</button>
+        <button class="preset-btn" onclick="applyPreset('steep')">▲ Steep Permafrost Slope — Alaska scenario</button>
+        <button class="preset-btn" onclick="applyPreset('glaciomarine')">◆ Glaciomarine Silt — high failure susceptibility</button>
+      </div>
+    </div>
+
+    <!-- SIMULATION CONTROLS -->
+    <div class="card">
+      <div class="card-title">Simulation Controls</div>
+      <div class="btn-group" style="margin-bottom:0.6rem;">
+        <button class="btn btn-primary" id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+        <button class="btn btn-secondary" onclick="resetSim()">↺ RESET</button>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Speed multiplier</div>
+        <div class="form-row">
+          <input type="range" id="speedSlider" min="0.5" max="3.0" step="0.1" value="1.0" oninput="updateSpeedDisplay()">
+          <span class="range-val" id="speedVal">1.0×</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Manual thaw depth scrub (m)</div>
+        <div class="form-row">
+          <input type="range" id="thawScrub" min="0" max="50" step="0.5" value="0" oninput="scrubThawDepth()">
+          <span class="range-val" id="thawScrubVal">0.0 m</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLOPE GEOMETRY -->
+    <div class="card">
+      <div class="card-title">Slope Geometry</div>
+      <div class="form-group">
+        <div class="form-label">Height (m) [5–100]</div>
+        <input type="number" id="slopeHeight" value="20" min="5" max="100" step="1" onchange="rebuildScene()">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Angle (°) [5–90]</div>
+        <input type="number" id="slopeAngle" value="35" min="5" max="90" step="1" onchange="rebuildScene()">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Width at base (m)</div>
+        <input type="number" id="slopeWidth" value="40" min="10" max="200" step="5" onchange="rebuildScene()">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Depth to bedrock (m)</div>
+        <input type="number" id="soilDepth" value="30" min="10" max="200" step="5" onchange="rebuildScene()">
+      </div>
+    </div>
+
+    <!-- SOIL PROPERTIES -->
+    <div class="card">
+      <div class="card-title">Soil Properties — Frozen State</div>
+      <div class="form-group">
+        <div class="form-label">Unit weight γ (kN/m³)</div>
+        <input type="number" id="unitWeight" value="20" min="16" max="24" step="0.5">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Friction angle φ (°)</div>
+        <input type="number" id="friction" value="35" min="20" max="45" step="1">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Cohesion c (kPa) — frozen</div>
+        <input type="number" id="cohesion" value="50" min="0" max="200" step="5">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Saturated unit weight (kN/m³)</div>
+        <input type="number" id="unitWeightSat" value="21" min="16" max="24" step="0.5">
+      </div>
+    </div>
+
+    <!-- THAW PARAMETERS -->
+    <div class="card">
+      <div class="card-title">Thaw Parameters</div>
+      <div class="form-group">
+        <div class="form-label">Thaw rate (m/day)</div>
+        <input type="number" id="thawRate" value="0.3" min="0.1" max="2.0" step="0.05">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Excess pore pressure (kPa)</div>
+        <input type="number" id="excessPP" value="30" min="0" max="100" step="5">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Post-thaw cohesion factor</div>
+        <input type="number" id="cohesionFactor" value="0.20" min="0.0" max="1.0" step="0.05">
+      </div>
+      <div class="form-group">
+        <div class="form-label">φ reduction post-thaw (°)</div>
+        <input type="number" id="frictionReduction" value="2" min="0" max="15" step="1">
+      </div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="card">
+      <div class="card-title">Legend</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#4A7FB8;"></div>Frozen zone</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#8B7355;"></div>Thawed zone</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#6B5A47;"></div>Saturated / high pore pressure</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#00FF7F;"></div>Thaw front boundary</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#D64A4A; opacity:0.7;"></div>Failure surface (FS ≤ 1.0)</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end sidebar -->
+
+<!-- CANVAS AREA -->
+<div class="canvas-area">
+  <div class="canvas-container" id="canvasContainer">
+    <canvas id="three-canvas" style="background-color:#2E3A47;"></canvas>
+    <div class="cam-controls">
+      <button class="btn btn-secondary btn-sm" onclick="resetCamera()">⊙ Reset Camera</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="output-panel">
+    <div class="fs-indicator" id="fsIndicator">
+      <div class="fs-label">Factor of Safety</div>
+      <div class="fs-value" id="fsValue">—</div>
+      <div class="fs-status" id="fsStatus">Initializing…</div>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-item">
+        <div class="metric-label">Thaw Depth</div>
+        <div class="metric-value" id="metThawDepth">0.0<span class="metric-unit">m</span></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Sim Time</div>
+        <div class="metric-value" id="metSimTime">0.0<span class="metric-unit">d</span></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Pore Pressure</div>
+        <div class="metric-value" id="metPP">0.0<span class="metric-unit">kPa</span></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Eff. Cohesion</div>
+        <div class="metric-value" id="metCohesion">—<span class="metric-unit">kPa</span></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Eff. Friction φ′</div>
+        <div class="metric-value" id="metFriction">—<span class="metric-unit">°</span></div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Slip Radius</div>
+        <div class="metric-value" id="metRadius">—<span class="metric-unit">m</span></div>
+      </div>
+    </div>
+
+    <div class="status-msg" id="statusMsg">Frozen state — thaw not initiated. Press PLAY to begin simulation.</div>
+  </div><!-- end output-panel -->
+
+</div><!-- end canvas-area -->
+```
+
+  </div><!-- end main-area -->
+
+  <!-- FOOTER -->
+
+  <footer>
+    <span>RI04 &mdash; Slope Stability 3D Visualization</span>
+    <span>Independent personal project &mdash; not affiliated with any government agency or employer</span>
+    <span>Ian Minnock, CPG, PMP, PMI-ACP &mdash; ian.minnock@mfimpact.com</span>
+    <span>v1.0 &mdash; May 2026</span>
+  </footer>
+
+</div><!-- end page-wrapper -->
+
+<!-- THREE.JS -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+// ============================================================
+// RI04 — SLOPE STABILITY 3D VISUALIZATION
+// Bishop Simplified Method + Permafrost Thaw Animation
+// Ian Minnock, CPG, PMP, PMI-ACP
+// ============================================================
+
+// ── 1. SCENE STATE ───────────────────────────────────────────
+let scene, camera, renderer, controls;
+let animFrameId = null;
+let isPlaying = false;
+let simulationTime = 0;       // days
+let manualScrub = false;
+let manualScrubDepth = 0;
+
+// Scene objects
+let slopeMeshFrozen = null;
+let slopeMeshThawed = null;
+let thawFrontPlane = null;
+let failureMesh = null;
+let porePressureMeshes = [];
+let gridHelper = null;
+
+let failureVisible = false;
+let failureScale = 0;
+let lastFS = 999;
+
+// Default camera position (isometric-ish)
+const CAM_DEFAULT = { x: 60, y: 50, z: 60 };
+
+// ── 2. INIT ───────────────────────────────────────────────────
+function initThree() {
+  const container = document.getElementById('canvasContainer');
+  const canvas = document.getElementById('three-canvas');
+
+  // SCENE
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x2E3A47);
+  scene.fog = new THREE.FogExp2(0x2E3A47, 0.008);
+
+  // CAMERA
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 2000);
+  camera.position.set(CAM_DEFAULT.x, CAM_DEFAULT.y, CAM_DEFAULT.z);
+  camera.lookAt(0, 10, 0);
+
+  // RENDERER
+  renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x2E3A47, 1);
+  renderer.domElement.style.backgroundColor = '#2E3A47';
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // LIGHTS
+  const ambLight = new THREE.AmbientLight(0xE8EAEC, 0.5);
+  scene.add(ambLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  dirLight.position.set(50, 80, 40);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  scene.add(dirLight);
+
+  const fillLight = new THREE.DirectionalLight(0x4A7FB8, 0.3);
+  fillLight.position.set(-30, 20, -20);
+  scene.add(fillLight);
+
+  // ORBIT CONTROLS
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.maxPolarAngle = Math.PI / 2 + 0.15;
+  controls.minDistance = 5;
+  controls.maxDistance = 500;
+  controls.target.set(0, 10, 0);
+
+  // GRID
+  gridHelper = new THREE.GridHelper(200, 40, 0x4A6070, 0x3A4A5C);
+  scene.add(gridHelper);
+
+  // AXES helper (small, at origin)
+  const axesHelper = new THREE.AxesHelper(5);
+  scene.add(axesHelper);
+
+  // GROUND PLANE (shadow receiver)
+  const groundGeo = new THREE.PlaneGeometry(300, 300);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x2A3440, side: THREE.FrontSide });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.05;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // RESIZE
+  window.addEventListener('resize', onWindowResize);
+
+  // BUILD INITIAL SCENE
+  rebuildScene();
+
+  // START RENDER LOOP (always render, sim advances only when playing)
+  renderLoop();
+}
+
+// ── 3. SCENE REBUILD ─────────────────────────────────────────
+function getParams() {
+  return {
+    H: parseFloat(document.getElementById('slopeHeight').value) || 20,
+    beta: parseFloat(document.getElementById('slopeAngle').value) || 35,
+    W: parseFloat(document.getElementById('slopeWidth').value) || 40,
+    soilDepth: parseFloat(document.getElementById('soilDepth').value) || 30,
+    gamma: parseFloat(document.getElementById('unitWeight').value) || 20,
+    phi: parseFloat(document.getElementById('friction').value) || 35,
+    c: parseFloat(document.getElementById('cohesion').value) || 50,
+    gammaSat: parseFloat(document.getElementById('unitWeightSat').value) || 21,
+    thawRate: parseFloat(document.getElementById('thawRate').value) || 0.3,
+    excessPP: parseFloat(document.getElementById('excessPP').value) || 30,
+    cohesionFactor: parseFloat(document.getElementById('cohesionFactor').value) || 0.20,
+    phiReduction: parseFloat(document.getElementById('frictionReduction').value) || 2,
+  };
+}
+
+function rebuildScene() {
+  // Remove old slope objects
+  [slopeMeshFrozen, slopeMeshThawed, thawFrontPlane, failureMesh].forEach(m => {
+    if (m) { scene.remove(m); if (m.geometry) m.geometry.dispose(); if (m.material) m.material.dispose(); }
+  });
+  porePressureMeshes.forEach(m => { scene.remove(m); if (m.geometry) m.geometry.dispose(); if (m.material) m.material.dispose(); });
+  porePressureMeshes = [];
+  slopeMeshFrozen = null; slopeMeshThawed = null; thawFrontPlane = null; failureMesh = null;
+  failureVisible = false; failureScale = 0;
+
+  const p = getParams();
+
+  // Compute slope geometry in model space
+  // Origin: slope toe at (0,0,0)
+  // Slope rises from x=0 up to x = H/tan(beta), y = H
+  const betaRad = (p.beta * Math.PI) / 180;
+  const rise = p.H;
+  const run = p.H / Math.tan(betaRad);
+  const depth = p.soilDepth;
+  const halfW = p.W / 2;
+
+  // 2D cross-section polygon (clockwise from bottom-left):
+  // (-(depth/tan(betaRad)+run), 0) -> (0, 0) -> (run, rise) -> ((run + 20), rise) -> ((run+20), -depth) -> (-(depth/tan(betaRad)+run+20), -depth)
+  // Simplified: base block below slope
+  const backX = -(run + depth / Math.tan(betaRad) + 10);
+
+  const shape = new THREE.Shape();
+  shape.moveTo(backX, -depth);
+  shape.lineTo(run + 20, -depth);
+  shape.lineTo(run + 20, rise);
+  shape.lineTo(run, rise);
+  shape.lineTo(0, 0);
+  shape.lineTo(backX, 0);
+  shape.closePath();
+
+  const extrudeSettings = { depth: p.W, bevelEnabled: false };
+  const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  // Center in Z
+  geo.translate(0, 0, -halfW);
+
+  const matFrozen = new THREE.MeshLambertMaterial({ color: 0x4A7FB8, transparent: true, opacity: 0.92 });
+  slopeMeshFrozen = new THREE.Mesh(geo, matFrozen);
+  slopeMeshFrozen.castShadow = true;
+  slopeMeshFrozen.receiveShadow = true;
+  scene.add(slopeMeshFrozen);
+
+  // THAWED zone mesh — same geometry, clipped by shader trick: we'll use a second mesh with clipPlane
+  const matThawed = new THREE.MeshLambertMaterial({
+    color: 0x8B7355,
+    transparent: true,
+    opacity: 0.0,
+    clippingPlanes: [],
+    side: THREE.FrontSide
+  });
+  const geoThawed = geo.clone();
+  slopeMeshThawed = new THREE.Mesh(geoThawed, matThawed);
+  scene.add(slopeMeshThawed);
+  renderer.localClippingEnabled = true;
+
+  // THAW FRONT PLANE (visual indicator)
+  const pfGeo = new THREE.PlaneGeometry(p.W + 30, run + depth + 40);
+  const pfMat = new THREE.MeshBasicMaterial({ color: 0x00FF7F, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+  thawFrontPlane = new THREE.Mesh(pfGeo, pfMat);
+  thawFrontPlane.rotation.x = -Math.PI / 2;
+  thawFrontPlane.position.set(run / 2 - 10, 0.1, 0);
+  thawFrontPlane.visible = false;
+  scene.add(thawFrontPlane);
+
+  // FAILURE SURFACE — hidden initially
+  buildFailureSurface(p);
+
+  // Update thaw scrub max
+  document.getElementById('thawScrub').max = rise + depth;
+
+  // Reframe camera
+  const sceneCenterX = run / 2;
+  camera.position.set(sceneCenterX + 60, 50, 60);
+  controls.target.set(sceneCenterX, rise / 2, 0);
+  controls.update();
+
+  // Reset sim
+  resetSim();
+}
+
+function buildFailureSurface(p) {
+  const betaRad = (p.beta * Math.PI) / 180;
+  const run = p.H / Math.tan(betaRad);
+
+  // Slip circle center (Bishop: center typically above midslope, behind crest)
+  // Center at ~0.3H above slope, offset from toe
+  const R = p.H * 0.9;  // radius
+  const cx = run * 0.4;
+  const cy = p.H * 0.3;
+
+  // Build a spherical arc (half-sphere embedded in slope)
+  const geo = new THREE.SphereGeometry(R, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  const mat = new THREE.MeshLambertMaterial({
+    color: 0xD64A4A,
+    transparent: true,
+    opacity: 0.0,
+    side: THREE.DoubleSide,
+    wireframe: false,
+  });
+  failureMesh = new THREE.Mesh(geo, mat);
+  failureMesh.position.set(cx, cy - R, 0);
+  failureMesh.scale.set(0.01, 0.01, p.W / (2 * R));
+  scene.add(failureMesh);
+}
+
+// ── 4. BISHOP METHOD ─────────────────────────────────────────
+function calculateBishopFS(thawDepth, porePressure) {
+  const p = getParams();
+  const betaRad = (p.beta * Math.PI) / 180;
+  const run = p.H / Math.tan(betaRad);
+
+  // Number of slices
+  const N = 12;
+  const dx = run / N;
+
+  // Slip surface: circle center at (cx, cy), radius R
+  const R = p.H * 0.9;
+  const cx = run * 0.4;
+  const cy = p.H * 0.3;
+
+  // Effective soil properties — depends on what's thawed
+  // thaw front is a horizontal plane: anything above ground surface and within thawDepth from surface is thawed
+  // For simplicity: thaw fraction = thawDepth / (H + soilDepth)
+  const thawFraction = Math.min(thawDepth / (p.H * 0.6 + p.soilDepth * 0.4), 1.0);
+  const cEff = p.c * (1 - thawFraction * (1 - p.cohesionFactor));
+  const phiEff = p.phi - thawFraction * p.phiReduction;
+  const phiRad = (phiEff * Math.PI) / 180;
+  const gammaEff = p.gamma + thawFraction * (p.gammaSat - p.gamma);
+  const uEff = porePressure * thawFraction;
+
+  // Bishop Simplified: FS = Σ[c'×b + (W - u×b)×tan(φ')/mα] / Σ[W×sin(α)]
+  // Iterate once for simplified (no Newton-Raphson for mα)
+  let numerator = 0;
+  let denominator = 0;
+
+  for (let i = 0; i < N; i++) {
+    const xMid = (i + 0.5) * dx;
+    // Height of slice at this x (slope profile)
+    const ySlope = Math.min(xMid * Math.tan(betaRad), p.H);
+    // Height above failure arc
+    const distFromCenter = Math.sqrt((xMid - cx) ** 2);
+    const arcY = cy - Math.sqrt(Math.max(R * R - (xMid - cx) ** 2, 0));
+    const sliceH = Math.max(ySlope - arcY, 0);
+
+    const W = gammaEff * sliceH * dx;  // kN per meter width
+    const b = dx;
+
+    // Alpha = angle from vertical to slice base on circle
+    const sinAlpha = (xMid - cx) / R;
+    const cosAlpha = Math.sqrt(Math.max(1 - sinAlpha * sinAlpha, 0));
+    const alpha = Math.asin(Math.max(-1, Math.min(1, sinAlpha)));
+
+    // mα (Bishop iteration, 1st pass, FS assumed = 1.3)
+    const FS_assumed = 1.3;
+    const mAlpha = cosAlpha + (Math.sin(alpha) * Math.tan(phiRad)) / FS_assumed;
+    const mAlphaSafe = Math.abs(mAlpha) < 0.001 ? 0.001 : mAlpha;
+
+    const num_i = (cEff * b + (W - uEff * b) * Math.tan(phiRad)) / mAlphaSafe;
+    const den_i = W * Math.sin(alpha);
+
+    numerator += num_i;
+    denominator += den_i;
+  }
+
+  if (Math.abs(denominator) < 0.001) return 999;
+  const FS = numerator / denominator;
+  return Math.max(0.1, FS);
+}
+
+// ── 5. SIMULATION UPDATE ─────────────────────────────────────
+function updateSim(dt) {
+  const p = getParams();
+  const betaRad = (p.beta * Math.PI) / 180;
+  const run = p.H / Math.tan(betaRad);
+  const maxThawDepth = p.H + p.soilDepth;
+
+  let thawDepth;
+  if (manualScrub) {
+    thawDepth = manualScrubDepth;
+  } else {
+    simulationTime += dt;
+    thawDepth = Math.min(p.thawRate * simulationTime, maxThawDepth);
+  }
+
+  // Pore pressure builds as thaw fraction increases
+  const thawFraction = Math.min(thawDepth / (p.H * 0.6 + p.soilDepth * 0.4), 1.0);
+  const porePressure = p.excessPP * thawFraction;
+
+  // Bishop FS
+  const FS = calculateBishopFS(thawDepth, porePressure);
+  lastFS = FS;
+
+  // Effective properties
+  const cEff = p.c * (1 - thawFraction * (1 - p.cohesionFactor));
+  const phiEff = p.phi - thawFraction * p.phiReduction;
+
+  // ── UPDATE 3D SCENE ──
+  // Thaw front plane Y position
+  // In our coordinate: slope surface goes from y=0 (toe) to y=H (crest).
+  // Thaw front at depth below surface: Y = top of slope - thawDepth
+  if (thawFrontPlane) {
+    const frontY = Math.max(-p.soilDepth + 0.1, p.H - thawDepth);
+    thawFrontPlane.position.y = frontY;
+    thawFrontPlane.visible = thawDepth > 0.1;
+    // Pulse opacity
+    const t = performance.now() / 1000;
+    thawFrontPlane.material.opacity = 0.2 + 0.2 * Math.sin(t * 3);
+  }
+
+  // Thawed zone — update clipping plane on frozen mesh to hide thawed portion
+  if (slopeMeshFrozen && thawFrontPlane) {
+    const clipY = Math.max(-p.soilDepth, p.H - thawDepth);
+    const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), clipY + 0.01);
+    slopeMeshFrozen.material.clippingPlanes = thawDepth > 0.1 ? [clipPlane] : [];
+  }
+
+  // Thawed zone mesh opacity and clipping
+  if (slopeMeshThawed) {
+    const clipYThawedBelow = Math.max(-p.soilDepth, p.H - thawDepth);
+    // Show thawed portion: clip everything ABOVE thaw front
+    const clipPlane2 = new THREE.Plane(new THREE.Vector3(0, 1, 0), -(clipYThawedBelow - 0.01));
+    slopeMeshThawed.material.clippingPlanes = [clipPlane2];
+    slopeMeshThawed.material.opacity = Math.min(0.92, thawFraction * 1.2);
+    // Switch to saturated color if high pore pressure
+    if (porePressure > p.excessPP * 0.6) {
+      slopeMeshThawed.material.color.setHex(0x6B5A47);
+    } else {
+      slopeMeshThawed.material.color.setHex(0x8B7355);
+    }
+  }
+
+  // Failure surface
+  if (failureMesh) {
+    if (FS <= 1.0 && !failureVisible) {
+      failureVisible = true;
+      failureScale = 0;
+    }
+    if (failureVisible) {
+      failureScale = Math.min(1.0, failureScale + 0.02);
+      const R = p.H * 0.9;
+      failureMesh.scale.set(failureScale, failureScale, (p.W / 2) / R * failureScale);
+      failureMesh.material.opacity = failureScale * 0.55;
+      // Pulse when fully visible
+      if (failureScale >= 1.0) {
+        const t = performance.now() / 1000;
+        failureMesh.material.opacity = 0.4 + 0.15 * Math.sin(t * 2);
+      }
+    }
+    if (FS > 1.0) {
+      failureVisible = false;
+      failureScale = 0;
+      const R = p.H * 0.9;
+      failureMesh.scale.set(0.01, 0.01, p.W / (2 * R));
+      failureMesh.material.opacity = 0;
+    }
+  }
+
+  // ── UPDATE UI ──
+  updateMetrics(thawDepth, simulationTime, porePressure, cEff, phiEff, FS, p);
+
+  // Stop sim if thaw reached max depth
+  if (!manualScrub && thawDepth >= maxThawDepth - 0.5) {
+    isPlaying = false;
+    document.getElementById('playBtn').textContent = '▶ PLAY';
+    document.getElementById('playBtn').classList.remove('play-btn-active');
+  }
+}
+
+// ── 6. UI METRICS UPDATE ─────────────────────────────────────
+function updateMetrics(thawDepth, simTime, pp, cEff, phiEff, FS, p) {
+  const R = p.H * 0.9;
+
+  document.getElementById('metThawDepth').innerHTML = thawDepth.toFixed(1) + '<span class="metric-unit">m</span>';
+  document.getElementById('metSimTime').innerHTML = simTime.toFixed(1) + '<span class="metric-unit">d</span>';
+  document.getElementById('metPP').innerHTML = pp.toFixed(1) + '<span class="metric-unit">kPa</span>';
+  document.getElementById('metCohesion').innerHTML = cEff.toFixed(0) + '<span class="metric-unit">kPa</span>';
+  document.getElementById('metFriction').innerHTML = phiEff.toFixed(1) + '<span class="metric-unit">°</span>';
+  document.getElementById('metRadius').innerHTML = R.toFixed(1) + '<span class="metric-unit">m</span>';
+
+  // FS indicator
+  const fsEl = document.getElementById('fsValue');
+  const fsStatus = document.getElementById('fsStatus');
+  const fsBox = document.getElementById('fsIndicator');
+  const statusMsg = document.getElementById('statusMsg');
+
+  fsEl.textContent = FS > 99 ? '—' : FS.toFixed(2);
+
+  fsBox.classList.remove('fs-stable', 'fs-warning', 'fs-failed');
+  statusMsg.classList.remove('stable', 'warning', 'failed');
+
+  if (thawDepth < 0.1) {
+    fsEl.textContent = '—';
+    fsStatus.textContent = 'Frozen';
+    fsBox.classList.add('fs-stable');
+    statusMsg.textContent = 'Frozen state — no thaw initiated. Press PLAY to begin simulation.';
+    statusMsg.classList.add('stable');
+  } else if (FS > 1.5) {
+    fsStatus.textContent = '✓ Stable';
+    fsBox.classList.add('fs-stable');
+    statusMsg.textContent = 'Thaw front at ' + thawDepth.toFixed(1) + ' m — pore pressure building. Slope remains stable.';
+    statusMsg.classList.add('stable');
+  } else if (FS > 1.0) {
+    fsStatus.textContent = '⚠ Marginal';
+    fsBox.classList.add('fs-warning');
+    statusMsg.textContent = 'Critical thaw depth approached — FS = ' + FS.toFixed(2) + '. Monitor for further weakening.';
+    statusMsg.classList.add('warning');
+  } else {
+    fsStatus.textContent = '✗ FAILED';
+    fsBox.classList.add('fs-failed');
+    statusMsg.textContent = 'SLOPE FAILURE — FS = ' + FS.toFixed(2) + '. Failure surface propagating through thawed zone.';
+    statusMsg.classList.add('failed');
+    // Pulse the FS display
+    fsEl.parentElement.classList.add('failure-pulse');
+  }
+
+  if (FS > 1.0) {
+    fsEl.parentElement.classList.remove('failure-pulse');
+  }
+}
+
+// ── 7. RENDER LOOP ───────────────────────────────────────────
+let lastTimestamp = null;
+
+function renderLoop(timestamp) {
+  animFrameId = requestAnimationFrame(renderLoop);
+
+  const dt = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.05) : 0.016;
+  lastTimestamp = timestamp;
+
+  if (isPlaying && !manualScrub) {
+    const speed = parseFloat(document.getElementById('speedSlider').value) || 1.0;
+    updateSim(dt * speed);
+  } else if (manualScrub) {
+    updateSim(0);
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// ── 8. CONTROLS ──────────────────────────────────────────────
+function togglePlay() {
+  isPlaying = !isPlaying;
+  manualScrub = false;
+  const btn = document.getElementById('playBtn');
+  if (isPlaying) {
+    btn.textContent = '⏸ PAUSE';
+    btn.classList.add('play-btn-active');
+  } else {
+    btn.textContent = '▶ PLAY';
+    btn.classList.remove('play-btn-active');
+  }
+}
+
+function resetSim() {
+  isPlaying = false;
+  simulationTime = 0;
+  manualScrub = false;
+  manualScrubDepth = 0;
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+  document.getElementById('playBtn').classList.remove('play-btn-active');
+  document.getElementById('thawScrub').value = 0;
+  document.getElementById('thawScrubVal').textContent = '0.0 m';
+
+  // Reset failure surface
+  if (failureMesh) {
+    const p = getParams();
+    const R = p.H * 0.9;
+    failureMesh.scale.set(0.01, 0.01, p.W / (2 * R));
+    failureMesh.material.opacity = 0;
+  }
+  // Reset thawed mesh
+  if (slopeMeshThawed) {
+    slopeMeshThawed.material.opacity = 0;
+    slopeMeshThawed.material.clippingPlanes = [];
+  }
+  if (slopeMeshFrozen) {
+    slopeMeshFrozen.material.clippingPlanes = [];
+  }
+  if (thawFrontPlane) {
+    thawFrontPlane.visible = false;
+  }
+  failureVisible = false;
+  failureScale = 0;
+
+  // Reset metrics
+  document.getElementById('metThawDepth').innerHTML = '0.0<span class="metric-unit">m</span>';
+  document.getElementById('metSimTime').innerHTML = '0.0<span class="metric-unit">d</span>';
+  document.getElementById('metPP').innerHTML = '0.0<span class="metric-unit">kPa</span>';
+  document.getElementById('metCohesion').innerHTML = '—<span class="metric-unit">kPa</span>';
+  document.getElementById('metFriction').innerHTML = '—<span class="metric-unit">°</span>';
+  document.getElementById('metRadius').innerHTML = '—<span class="metric-unit">m</span>';
+  document.getElementById('fsValue').textContent = '—';
+  document.getElementById('fsStatus').textContent = 'Frozen';
+  document.getElementById('fsIndicator').className = 'fs-indicator fs-stable';
+  document.getElementById('statusMsg').textContent = 'Frozen state — thaw not initiated. Press PLAY to begin simulation.';
+  document.getElementById('statusMsg').className = 'status-msg stable';
+}
+
+function scrubThawDepth() {
+  const val = parseFloat(document.getElementById('thawScrub').value);
+  manualScrubDepth = val;
+  manualScrub = val > 0;
+  document.getElementById('thawScrubVal').textContent = val.toFixed(1) + ' m';
+  if (manualScrub) {
+    isPlaying = false;
+    document.getElementById('playBtn').textContent = '▶ PLAY';
+    document.getElementById('playBtn').classList.remove('play-btn-active');
+  }
+  updateSim(0);
+}
+
+function updateSpeedDisplay() {
+  const v = parseFloat(document.getElementById('speedSlider').value).toFixed(1);
+  document.getElementById('speedVal').textContent = v + '×';
+}
+
+function resetCamera() {
+  const p = getParams();
+  const betaRad = (p.beta * Math.PI) / 180;
+  const run = p.H / Math.tan(betaRad);
+  camera.position.set(run / 2 + 60, 50, 60);
+  controls.target.set(run / 2, p.H / 2, 0);
+  controls.update();
+}
+
+function onWindowResize() {
+  const container = document.getElementById('canvasContainer');
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+
+// ── 9. PRESETS ───────────────────────────────────────────────
+const PRESETS = {
+  stable: {
+    slopeHeight: 15, slopeAngle: 20, slopeWidth: 40, soilDepth: 25,
+    unitWeight: 19, friction: 38, cohesion: 80, unitWeightSat: 20,
+    thawRate: 0.2, excessPP: 10, cohesionFactor: 0.50, frictionReduction: 1,
+    label: 'Stable Slope'
+  },
+  marginal: {
+    slopeHeight: 20, slopeAngle: 30, slopeWidth: 40, soilDepth: 30,
+    unitWeight: 20, friction: 30, cohesion: 40, unitWeightSat: 21,
+    thawRate: 0.4, excessPP: 35, cohesionFactor: 0.20, frictionReduction: 3,
+    label: 'Marginally Stable'
+  },
+  steep: {
+    slopeHeight: 30, slopeAngle: 45, slopeWidth: 50, soilDepth: 35,
+    unitWeight: 21, friction: 28, cohesion: 60, unitWeightSat: 22,
+    thawRate: 0.5, excessPP: 50, cohesionFactor: 0.15, frictionReduction: 4,
+    label: 'Steep Permafrost Slope — Alaska'
+  },
+  glaciomarine: {
+    slopeHeight: 18, slopeAngle: 22, slopeWidth: 45, soilDepth: 40,
+    unitWeight: 18, friction: 22, cohesion: 30, unitWeightSat: 19,
+    thawRate: 0.6, excessPP: 70, cohesionFactor: 0.10, frictionReduction: 5,
+    label: 'Glaciomarine Silt — High Clay Fraction'
+  }
+};
+
+function applyPreset(name) {
+  const pr = PRESETS[name];
+  if (!pr) return;
+  Object.keys(pr).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.value = pr[key];
+  });
+  rebuildScene();
+}
+
+// ── 10. BOOT ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  initThree();
+});
+</script>
+
+</body>
+</html>
