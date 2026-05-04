@@ -310,6 +310,15 @@ transition: color 0.2s, transform 0.2s;
 .card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
 .card-pm .card-num         { color: #3dba7e; }
 
+/* ── PM-02 Card — green #3dba7e ── */
+.card-pm::before { background: #3dba7e; }
+.card-pm::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
+.card-pm:hover   { border-color: #3dba7e; }
+.card-pm:hover .card-title { color: #3dba7e; }
+.card-pm:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
+.card-pm .card-num         { color: #3dba7e; }
+
+
 /* ── FOOTER ── */
 .footer {
 border-top: 1px solid #3A4A5C;
@@ -400,7 +409,7 @@ margin-top: 8px;
   <div class="card-num">PM-01 — Study</div>
   <span class="card-icon">📋</span>
   <div class="card-title">PMI Event<br>Prep</div>
-  <p class="card-desc">Study and preparation aid for PMI events and certification exams. Practice materials and reference content for PMP and PMI-ACP candidates.</p>
+  <p class="card-desc">Event preparation wizard.</p>
   <div class="card-tags">
     <span class="tag planned">Planned</span>
     <span class="tag">PMP</span>
@@ -411,6 +420,24 @@ margin-top: 8px;
 </a>
 
   </div>
+
+<!-- PM-02: PMI Event Prep -->
+<a class="app-card card-pm" href="pm/meeting-agenda.html">
+  <div class="card-num">PM-02 — Agenda</div>
+  <span class="card-icon">📋</span>
+  <div class="card-title">Agenda Development Tool<br>Prep</div>
+  <p class="card-desc">Agenda developer</p>
+  <div class="card-tags">
+    <span class="tag planned">Planned</span>
+    <span class="tag">PMP</span>
+    <span class="tag">PMI-ACP</span>
+    <span class="tag">Meetings</span>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+
+  </div>
+
 
   <!-- FOOTER -->
 
