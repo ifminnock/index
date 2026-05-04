@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RI06 — Depositional Environment Stratigraphic Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background-color: #2E3A47;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+color: #E8EAEC;
+min-height: 100vh;
+font-size: 0.9rem;
+line-height: 1.5;
+}
+
+/* ─────────── HEADER ─────────── */
+header {
+background-color: #2E3A47;
+border-bottom: 2px solid #D4651A;
+padding: 1rem 1.5rem;
+width: 100%;
+}
+.breadcrumb { font-size: 0.8rem; color: #9AAABB; margin-bottom: 0.4rem; }
+.breadcrumb a { color: #9AAABB; text-decoration: none; }
+.breadcrumb a:hover { color: #D4651A; }
+.header-title { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
+.module-id { font-size: 0.85rem; color: #D4651A; font-weight: 700; }
+h1 { margin: 0; font-size: 1.3rem; color: #E8EAEC; font-weight: 700; }
+.header-sub { margin: 0.3rem 0 0; font-size: 0.8rem; color: #9AAABB; }
+.depth-badge {
+display: inline-block;
+margin-left: 0.6rem;
+font-size: 0.65rem;
+color: #D4651A;
+border: 1px solid #D4651A;
+padding: 0.1rem 0.4rem;
+letter-spacing: 0.05em;
+border-radius: 2px;
+vertical-align: middle;
+}
+
+/* ─────────── TOP CONTROLS ─────────── */
+.top-controls {
+background-color: #3A4A5C;
+border-bottom: 1px solid #4A6070;
+padding: 0.6rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+.ctrl-btn {
+background-color: #4A6070;
+border: 1px solid #5A7080;
+color: #E8EAEC;
+font-family: inherit;
+font-size: 0.8rem;
+padding: 0.35rem 0.9rem;
+cursor: pointer;
+border-radius: 2px;
+transition: background 0.15s;
+}
+.ctrl-btn:hover { background-color: #5A7080; }
+.ctrl-btn.primary { background-color: #D4651A; border-color: #D4651A; color: #fff; font-weight: 700; }
+.ctrl-btn.primary:hover { background-color: #E07830; }
+.ctrl-btn.toggle.active { background-color: #D4651A; border-color: #D4651A; color: #fff; }
+
+.speed-wrap { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #9AAABB; }
+input[type=“range”].speed-slider { width: 80px; accent-color: #D4651A; }
+
+.sim-status {
+display: flex; gap: 1rem; flex-wrap: wrap; margin-left: auto;
+font-size: 0.75rem; color: #9AAABB;
+}
+.status-item { display: flex; flex-direction: column; min-width: 90px; }
+.status-val { color: #D4651A; font-weight: 700; font-size: 0.8rem; }
+.time-display { font-size: 0.85rem; color: #E8EAEC; font-weight: 700; }
+
+/* ─────────── MAIN LAYOUT ─────────── */
+.main-layout {
+background-color: #2E3A47;
+display: grid;
+grid-template-columns: 270px 1fr 310px;
+height: calc(100vh - 220px);
+min-height: 520px;
+}
+
+/* ─────────── SIDEBAR ─────────── */
+.sidebar {
+background-color: #2E3A47;
+border-right: 1px solid #4A6070;
+overflow-y: auto;
+padding: 1rem;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: #2E3A47; }
+.sidebar::-webkit-scrollbar-thumb { background: #4A6070; border-radius: 2px; }
+
+.section-label {
+font-size: 0.7rem;
+color: #D4651A;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+margin: 1rem 0 0.4rem;
+padding-bottom: 0.2rem;
+border-bottom: 1px solid #3A4A5C;
+}
+.section-label:first-child { margin-top: 0; }
+
+label { display: block; font-size: 0.75rem; color: #9AAABB; margin-bottom: 0.2rem; }
+select, input[type=“text”], input[type=“number”] {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+color: #E8EAEC;
+font-family: inherit;
+font-size: 0.8rem;
+padding: 0.3rem 0.5rem;
+width: 100%;
+margin-bottom: 0.6rem;
+border-radius: 2px;
+}
+select:focus, input:focus { outline: 1px solid #D4651A; }
+
+.checkbox-group { margin-bottom: 0.6rem; }
+.checkbox-row {
+display: flex; align-items: center; gap: 0.4rem;
+font-size: 0.72rem; color: #9AAABB;
+margin-bottom: 0.25rem; cursor: pointer;
+padding: 0.15rem 0.3rem;
+border-radius: 2px;
+}
+.checkbox-row input[type=“checkbox”] { accent-color: #D4651A; cursor: pointer; }
+.checkbox-row:hover { color: #E8EAEC; background-color: #3A4A5C; }
+
+.slider-wrap { margin-bottom: 0.6rem; }
+.slider-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: #9AAABB; }
+.slider-row span { min-width: 2.4rem; text-align: right; color: #D4651A; font-weight: 700; }
+input[type=“range”] { flex: 1; accent-color: #D4651A; }
+
+.start-btn {
+background-color: #D4651A;
+border: none;
+color: #fff;
+font-family: inherit;
+font-size: 0.85rem;
+font-weight: 700;
+padding: 0.6rem;
+width: 100%;
+cursor: pointer;
+border-radius: 2px;
+margin-top: 0.8rem;
+letter-spacing: 0.05em;
+transition: background 0.15s;
+}
+.start-btn:hover { background-color: #E07830; }
+
+.help-text {
+font-size: 0.65rem;
+color: #7A8E9E;
+font-style: italic;
+margin: 0.2rem 0 0.6rem;
+line-height: 1.4;
+}
+
+.sub-env-group { display: none; }
+.sub-env-group.visible { display: block; }
+
+/* ─────────── CROSS SECTION ─────────── */
+.main-viewport {
+background-color: #2E3A47;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+position: relative;
+}
+#crossSection {
+background-color: #2E3A47;
+flex: 1;
+cursor: crosshair;
+display: block;
+}
+.canvas-overlay-label {
+position: absolute;
+top: 0.5rem;
+left: 1rem;
+font-size: 0.7rem;
+color: #9AAABB;
+pointer-events: none;
+background-color: rgba(46,58,71,0.85);
+padding: 0.15rem 0.4rem;
+border-radius: 2px;
+}
+.hover-tooltip {
+position: absolute;
+background-color: #3A4A5C;
+border: 1px solid #D4651A;
+padding: 0.4rem 0.6rem;
+font-size: 0.7rem;
+color: #E8EAEC;
+border-radius: 2px;
+pointer-events: none;
+display: none;
+z-index: 10;
+max-width: 240px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.hover-tooltip .tt-facies {
+color: #D4651A;
+font-weight: 700;
+margin-bottom: 0.2rem;
+}
+.hover-tooltip .tt-row {
+display: flex;
+justify-content: space-between;
+gap: 0.6rem;
+color: #9AAABB;
+font-size: 0.65rem;
+}
+.hover-tooltip .tt-row span:last-child { color: #E8EAEC; }
+
+/* ─────────── LOG PANEL ─────────── */
+.log-panel {
+background-color: #2E3A47;
+border-left: 1px solid #4A6070;
+overflow-y: auto;
+padding: 0.75rem;
+display: flex;
+flex-direction: column;
+}
+.log-panel::-webkit-scrollbar { width: 4px; }
+.log-panel::-webkit-scrollbar-track { background: #2E3A47; }
+.log-panel::-webkit-scrollbar-thumb { background: #4A6070; border-radius: 2px; }
+
+.log-header {
+font-size: 0.7rem;
+color: #D4651A;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+margin-bottom: 0.5rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.view-toggle {
+display: flex;
+gap: 0.2rem;
+}
+.view-toggle button {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+color: #9AAABB;
+font-family: inherit;
+font-size: 0.6rem;
+padding: 0.15rem 0.4rem;
+cursor: pointer;
+border-radius: 2px;
+}
+.view-toggle button.active {
+background-color: #D4651A;
+border-color: #D4651A;
+color: #fff;
+}
+
+.log-empty { font-size: 0.75rem; color: #4A6070; font-style: italic; text-align: center; margin-top: 2rem; line-height: 1.6; }
+
+.borehole-tabs {
+display: flex;
+gap: 0.3rem;
+flex-wrap: wrap;
+margin-bottom: 0.6rem;
+}
+.bh-tab {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+color: #9AAABB;
+font-family: inherit;
+font-size: 0.7rem;
+padding: 0.2rem 0.5rem;
+cursor: pointer;
+border-radius: 2px;
+}
+.bh-tab.active { background-color: #D4651A; border-color: #D4651A; color: #fff; }
+.bh-tab:hover:not(.active) { color: #E8EAEC; }
+
+.bh-meta { font-size: 0.7rem; color: #9AAABB; margin-bottom: 0.6rem; line-height: 1.6; }
+.bh-meta span { color: #E8EAEC; }
+.bh-meta .pf-badge {
+display: inline-block;
+background-color: #5A7A9E;
+color: #fff;
+font-size: 0.6rem;
+padding: 0.05rem 0.3rem;
+border-radius: 2px;
+margin-left: 0.3rem;
+}
+
+.log-entry {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-left: 4px solid #4A6070;
+padding: 0.5rem;
+margin-bottom: 0.4rem;
+font-size: 0.7rem;
+border-radius: 0 2px 2px 0;
+}
+.log-entry .depth { font-weight: 700; color: #E8EAEC; margin-bottom: 0.2rem; }
+.log-entry .facies-name { color: #D4651A; font-weight: 700; font-size: 0.75rem; margin-bottom: 0.25rem; }
+.log-entry .prop-row { display: flex; justify-content: space-between; color: #9AAABB; margin-bottom: 0.1rem; }
+.log-entry .prop-row span:last-child { color: #E8EAEC; text-align: right; }
+.log-entry .geotech { margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid #4A6070; font-size: 0.68rem; color: #7A9AAA; line-height: 1.5; }
+.log-entry .geotech .frozen { color: #5ABDE8; }
+.log-entry .geotech .ocr-high { color: #E07830; }
+.log-entry.tephra-marker { border-left-color: #E8B87A; background-color: #4A4030; }
+.log-entry.tephra-marker .facies-name { color: #E8B87A; }
+
+.log-actions { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.log-btn {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+color: #9AAABB;
+font-family: inherit;
+font-size: 0.7rem;
+padding: 0.3rem 0.6rem;
+cursor: pointer;
+border-radius: 2px;
+}
+.log-btn:hover { color: #E8EAEC; border-color: #D4651A; }
+
+/* Correlation view */
+.correlation-view {
+display: flex;
+gap: 0.4rem;
+overflow-x: auto;
+padding-bottom: 0.5rem;
+}
+.corr-column {
+flex: 0 0 110px;
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-radius: 2px;
+display: flex;
+flex-direction: column;
+}
+.corr-header {
+font-size: 0.65rem;
+font-weight: 700;
+color: #D4651A;
+padding: 0.3rem;
+border-bottom: 1px solid #4A6070;
+text-align: center;
+}
+.corr-header .pos { color: #9AAABB; font-weight: 400; font-size: 0.6rem; }
+.corr-strip {
+position: relative;
+flex: 1;
+min-height: 360px;
+width: 100%;
+}
+
+/* ─────────── CURVES ─────────── */
+.curves-panel {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.75rem 1.5rem;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 1rem;
+height: 130px;
+}
+.curve-chart {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-radius: 2px;
+position: relative;
+overflow: hidden;
+}
+.curve-title {
+position: absolute;
+top: 0.3rem;
+left: 0.5rem;
+font-size: 0.65rem;
+color: #9AAABB;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+z-index: 1;
+}
+.curve-canvas { width: 100%; height: 100%; display: block; }
+
+/* ─────────── FOOTER ─────────── */
+footer {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.6rem 1.5rem;
+font-size: 0.7rem;
+color: #9AAABB;
+display: flex;
+flex-wrap: wrap;
+gap: 0.75rem;
+justify-content: space-between;
+}
+
+/* ─────────── NOTIFY ─────────── */
+.notify {
+position: fixed;
+bottom: 1.5rem;
+left: 50%;
+transform: translateX(-50%);
+background-color: #D4651A;
+color: #fff;
+font-size: 0.8rem;
+padding: 0.4rem 1rem;
+border-radius: 2px;
+pointer-events: none;
+opacity: 0;
+transition: opacity 0.3s;
+z-index: 999;
+box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.notify.show { opacity: 1; }
+
+/* ─────────── RESPONSIVE ─────────── */
+@media (max-width: 980px) {
+.main-layout {
+grid-template-columns: 1fr;
+grid-template-rows: auto 400px auto;
+height: auto;
+}
+.sidebar { border-right: none; border-bottom: 1px solid #4A6070; }
+.log-panel { border-left: none; border-top: 1px solid #4A6070; height: 380px; }
+.curves-panel { grid-template-columns: 1fr; height: auto; }
+.curve-chart { height: 80px; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ─────────── HEADER ─────────── -->
+
+<header style="background-color:#2E3A47; border-bottom:2px solid #D4651A; padding:1rem 1.5rem; width:100%;">
+  <div class="breadcrumb">
+    <a href="research-index.html">← Research &amp; AI</a>
+    &nbsp;|&nbsp;
+    <a href="tool-index.html">Tool Index</a>
+  </div>
+  <div class="header-title">
+    <span class="module-id">RI06</span>
+    <h1>Depositional Environment Stratigraphic Simulator
+      <span class="depth-badge">v2.0 — DEEPENED</span>
+    </h1>
+  </div>
+  <p class="header-sub">Watch sediments accumulate over geological time — extract synthetic boring logs with depth-dependent geotechnical properties, lateral facies variation, and Alaska-specific cryostratigraphy</p>
+</header>
+
+<!-- ─────────── TOP CONTROLS ─────────── -->
+
+<div class="top-controls">
+  <button class="ctrl-btn primary" id="btnPlay" onclick="togglePlay()">▶ Play</button>
+  <button class="ctrl-btn" onclick="resetSim()">↺ Reset</button>
+  <div class="speed-wrap">
+    <span>Speed</span>
+    <input type="range" class="speed-slider" id="speedSlider" min="0.5" max="6" step="0.5" value="1.5">
+    <span id="speedVal">1.5×</span>
+  </div>
+  <div class="time-display" id="timeDisplay">⏱ Not started</div>
+  <div class="sim-status">
+    <div class="status-item"><span style="font-size:0.65rem;color:#9AAABB;">Environment</span><span class="status-val" id="statusEnv">—</span></div>
+    <div class="status-item"><span style="font-size:0.65rem;color:#9AAABB;">Sea Level</span><span class="status-val" id="statusSL">—</span></div>
+    <div class="status-item"><span style="font-size:0.65rem;color:#9AAABB;">Climate</span><span class="status-val" id="statusClimate">—</span></div>
+    <div class="status-item"><span style="font-size:0.65rem;color:#9AAABB;">Flux</span><span class="status-val" id="statusFlux">—</span></div>
+  </div>
+</div>
+
+<!-- ─────────── MAIN LAYOUT ─────────── -->
+
+<div class="main-layout">
+
+  <!-- LEFT SIDEBAR -->
+
+  <div class="sidebar" style="background-color:#2E3A47;">
+    <div class="section-label">Preset Scenario</div>
+    <label for="scenarioSelect">Select scenario</label>
+    <select id="scenarioSelect" onchange="onScenarioChange()">
+      <option value="quaternary">Quaternary Glacial Cycle (D-O oscillations)</option>
+      <option value="bootlegger" selected>Bootlegger Cove Formation, Cook Inlet</option>
+      <option value="cretaceous">Cretaceous Western Interior Seaway</option>
+      <option value="beaufort">Beaufort Coastal Plain (permafrost overprint)</option>
+      <option value="braided">Braided River Outwash Plain</option>
+      <option value="alluvial">Alluvial Fan / Bajada, Arid Climate</option>
+      <option value="lacustrine">Lacustrine Basin with Climate Shift</option>
+      <option value="custom">Custom</option>
+    </select>
+
+```
+<div id="customEnvGroup" style="display:none;">
+  <div class="section-label">Primary Environment</div>
+  <label for="primaryEnv">Depositional environment</label>
+  <select id="primaryEnv">
+    <option value="fluvial">Fluvial</option>
+    <option value="deltaic">Deltaic</option>
+    <option value="shelf">Shelf Marine</option>
+    <option value="deep_marine">Deep Marine</option>
+    <option value="lacustrine">Lacustrine</option>
+    <option value="glacial_outwash">Glacial Outwash</option>
+    <option value="kettle">Kettle Lake</option>
+    <option value="alluvial_fan">Alluvial Fan</option>
+    <option value="aeolian">Coastal Aeolian</option>
+  </select>
+</div>
+
+<div id="subEnvGroup" class="sub-env-group">
+  <div class="section-label">Glacial Sub-Environments</div>
+  <p class="help-text">Select which sub-environments are active. Affects lateral and vertical facies variation.</p>
+  <div class="checkbox-group">
+    <label class="checkbox-row"><input type="checkbox" id="se_subglacial" checked> Subglacial (till under ice)</label>
+    <label class="checkbox-row"><input type="checkbox" id="se_proglacial" checked> Proglacial (outwash)</label>
+    <label class="checkbox-row"><input type="checkbox" id="se_periglacial" checked> Periglacial (loess, frost)</label>
+    <label class="checkbox-row"><input type="checkbox" id="se_glaciomarine" checked> Glaciomarine (IRD)</label>
+    <label class="checkbox-row"><input type="checkbox" id="se_glaciolacustrine" checked> Glaciolacustrine (varves)</label>
+    <label class="checkbox-row"><input type="checkbox" id="se_interglacial" checked> Interglacial Soil Formation</label>
+  </div>
+  <label class="checkbox-row" style="margin-top:0.4rem;"><input type="checkbox" id="se_permafrost"> Permafrost Overprint (frozen ground)</label>
+  <label class="checkbox-row"><input type="checkbox" id="se_tephra" checked> Tephra Marker Beds (volcanic ash)</label>
+  <label class="checkbox-row"><input type="checkbox" id="se_doOscillations"> Dansgaard-Oeschger Oscillations</label>
+</div>
+
+<div class="section-label">Climate Drivers</div>
+<p class="help-text">These sliders modulate facies probability within each phase — colder shifts toward glacial facies, wetter toward fluvial/lacustrine.</p>
+<div class="slider-wrap">
+  <label>Temperature offset (°C)</label>
+  <div class="slider-row">
+    <span style="font-size:0.65rem;min-width:0;">❄</span>
+    <input type="range" id="tempSlider" min="-10" max="10" value="0">
+    <span style="font-size:0.65rem;min-width:0;">☀</span>
+    <span id="tempVal">0°</span>
+  </div>
+</div>
+<div class="slider-wrap">
+  <label>Precipitation offset (%)</label>
+  <div class="slider-row">
+    <span style="font-size:0.65rem;min-width:0;">▲</span>
+    <input type="range" id="precipSlider" min="-50" max="50" value="0">
+    <span style="font-size:0.65rem;min-width:0;">≋</span>
+    <span id="precipVal">0%</span>
+  </div>
+</div>
+
+<div class="section-label">Basin Geometry</div>
+<p class="help-text">Basin shape drives lateral facies variation. Center is deeper than margins.</p>
+<label>Basin asymmetry: <span id="asymVal" style="color:#D4651A;">0.5</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.5" id="asymSlider">
+<label>Max water depth (m): <span id="depthVal" style="color:#D4651A;">50</span></label>
+<input type="range" min="5" max="500" value="50" id="depthSlider">
+<label>Basin width (km): <span id="widthVal" style="color:#D4651A;">10</span></label>
+<input type="range" min="1" max="100" value="10" id="widthSlider">
+
+<div class="section-label">Sediment Supply</div>
+<label for="grainDist">Grain size dominance</label>
+<select id="grainDist">
+  <option value="coarse">Coarse (gravel–sand)</option>
+  <option value="mixed" selected>Mixed (sand–silt)</option>
+  <option value="fine">Fine (silt–clay)</option>
+  <option value="very_fine">Very Fine (clay)</option>
+</select>
+<label>Sediment flux multiplier: <span id="fluxVal" style="color:#D4651A;">1.0</span>×</label>
+<input type="range" min="0.2" max="3" step="0.1" value="1" id="fluxSlider">
+
+<button class="start-btn" onclick="initSim()">⚙ Start Simulation</button>
+
+<div class="section-label" style="margin-top:1rem;">Legend</div>
+<div style="font-size:0.62rem; color:#9AAABB; line-height:1.7;">
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#C8A96E;display:inline-block;"></span> Braided River Sand</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#B89968;display:inline-block;"></span> Deltaic Sand</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#7BA3C4;display:inline-block;"></span> Shelf Clay</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#4A7FB8;display:inline-block;"></span> Deep Marine Mud</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#8A8A8A;display:inline-block;"></span> Glacial Till</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#D4B483;display:inline-block;"></span> Glacial Outwash</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#7A9E8A;display:inline-block;"></span> Glaciolacustrine</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#7A8E9E;display:inline-block;"></span> Kettle Lake Clay</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#E8D4A8;display:inline-block;"></span> Periglacial Loess</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#4A3A2A;display:inline-block;"></span> Interglacial Paleosol</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#8A8A9A;display:inline-block;"></span> Glaciomarine (IRD)</div>
+  <div style="display:flex;align-items:center;gap:0.4rem;"><span style="width:10px;height:10px;background:#E8B87A;display:inline-block;"></span> Aeolian / Tephra</div>
+  <div style="display:flex;align-items:center;gap:0.4rem; margin-top:0.3rem;"><span style="width:10px;height:10px;background:repeating-linear-gradient(45deg,#5ABDE8,#5ABDE8 2px,#7A8E9E 2px,#7A8E9E 4px);display:inline-block;"></span> Frozen / Ice-Rich</div>
+</div>
+```
+
+  </div>
+
+  <!-- MAIN CANVAS -->
+
+  <div class="main-viewport" style="background-color:#2E3A47; position:relative;">
+    <canvas id="crossSection" style="background-color:#2E3A47;"></canvas>
+    <div class="canvas-overlay-label" id="canvasLabel">Click ⚙ Start Simulation to begin.</div>
+    <div class="hover-tooltip" id="hoverTooltip"></div>
+  </div>
+
+  <!-- RIGHT LOG PANEL -->
+
+  <div class="log-panel" style="background-color:#2E3A47;">
+    <div class="log-header">
+      <span>⬤ Borehole Log</span>
+      <div class="view-toggle">
+        <button id="viewLogBtn" class="active" onclick="setView('log')">Log</button>
+        <button id="viewCorrBtn" onclick="setView('correlation')">Correlate</button>
+      </div>
+    </div>
+    <div id="bhTabs" class="borehole-tabs"></div>
+    <div id="logContent">
+      <p class="log-empty">No boreholes drilled.<br><br>After starting the simulation, click anywhere on the cross-section to place a virtual borehole and extract a stratigraphic log.<br><br>Drilling at <em>different lateral positions</em> will produce <em>different facies</em> — proximal vs distal, channel vs overbank, basin center vs margin.</p>
+    </div>
+    <div class="log-actions" id="logActions" style="display:none;">
+      <button class="log-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="log-btn" onclick="exportLogImage()">🖼 Export PNG</button>
+      <button class="log-btn" onclick="clearBoreholes()">✕ Clear All</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─────────── CURVES ─────────── -->
+
+<div class="curves-panel" style="background-color:#2E3A47;">
+  <div class="curve-chart" style="background-color:#3A4A5C;">
+    <div class="curve-title">Temperature / Climate</div>
+    <canvas class="curve-canvas" id="curveClimate"></canvas>
+  </div>
+  <div class="curve-chart" style="background-color:#3A4A5C;">
+    <div class="curve-title">Relative Sea Level (m)</div>
+    <canvas class="curve-canvas" id="curveSL"></canvas>
+  </div>
+  <div class="curve-chart" style="background-color:#3A4A5C;">
+    <div class="curve-title">Sediment Flux (rel.)</div>
+    <canvas class="curve-canvas" id="curveFlux"></canvas>
+  </div>
+</div>
+
+<!-- ─────────── FOOTER ─────────── -->
+
+<footer style="background-color:#2E3A47; border-top:1px solid #4A6070; padding:0.6rem 1.5rem; font-size:0.7rem; color:#9AAABB; display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:space-between;">
+  <span>RI06 &mdash; Depositional Environment Stratigraphic Simulator</span>
+  <span>Independent personal project &mdash; not affiliated with any government agency or employer</span>
+  <span>Ian Minnock, CPG, PMP, PMI-ACP &mdash; ian.minnock@mfimpact.com</span>
+  <span>v2.0 &mdash; May 2026</span>
+</footer>
+
+<div class="notify" id="notify"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   FACIES DATABASE — Base properties; depth/age/cryogenic
+   modifiers applied at borehole-extraction time.
+   ═══════════════════════════════════════════════════════════ */
+const FACIES = {
+  braided_sand: {
+    name: 'Braided River Sand', color: '#C8A96E',
+    grain_size: 'Sand (medium–coarse)', uscs: 'SW / SP',
+    structures: ['cross-laminations','imbrication'],
+    paleoclimate: 'Cool–cold, high energy meltwater',
+    gamma: 20, phi: 35, cohesion: 0, k_log: -3, porosity_lo: 28, porosity_hi: 35,
+    cementation_rate: 0.2,        // cohesion gain per Ma
+    consolidation_rate: 0.8,      // OCR gain per 10m burial
+    frost_susceptible: false,
+    thaw_settlement: 'Low',
+    notes: 'Glacial meltwater origin; coarsening-upward sequences common',
+    lateral_zone: ['proximal','medial']
+  },
+  deltaic_sand: {
+    name: 'Deltaic Sand', color: '#B89968',
+    grain_size: 'Sand (fine–medium)', uscs: 'SP / SM',
+    structures: ['ripples','foresets','laminations'],
+    paleoclimate: 'Warm, fluvial-dominated',
+    gamma: 19, phi: 33, cohesion: 5, k_log: -4, porosity_lo: 30, porosity_hi: 38,
+    cementation_rate: 0.3, consolidation_rate: 0.6,
+    frost_susceptible: false, thaw_settlement: 'Low',
+    notes: 'Deltaic progradation; coarsening-upward parasequence',
+    lateral_zone: ['proximal','medial']
+  },
+  shelf_clay: {
+    name: 'Shelf Clay', color: '#7BA3C4',
+    grain_size: 'Silt–Clay', uscs: 'CL',
+    structures: ['laminations','bioturbation'],
+    paleoclimate: 'Marine, moderate energy',
+    gamma: 17, phi: 25, cohesion: 30, k_log: -7, porosity_lo: 40, porosity_hi: 55,
+    cementation_rate: 0.5, consolidation_rate: 1.5,
+    frost_susceptible: true, thaw_settlement: 'Moderate',
+    notes: 'Shallow marine; normally consolidated; bioturbation common',
+    lateral_zone: ['medial','distal']
+  },
+  deep_marine: {
+    name: 'Deep Marine Mud', color: '#4A7FB8',
+    grain_size: 'Clay (fine)', uscs: 'CH',
+    structures: ['laminations','graded_beds'],
+    paleoclimate: 'Deep marine, low energy',
+    gamma: 16, phi: 22, cohesion: 40, k_log: -8, porosity_lo: 55, porosity_hi: 70,
+    cementation_rate: 0.4, consolidation_rate: 1.8,
+    frost_susceptible: true, thaw_settlement: 'High',
+    notes: 'Distal marine; high plasticity; turbidite interbeds possible',
+    lateral_zone: ['distal']
+  },
+  till: {
+    name: 'Glacial Till', color: '#8A8A8A',
+    grain_size: 'Gravel–Sand–Silt–Clay (mixed)', uscs: 'GM / GC',
+    structures: ['shear_fabric','striated_clasts'],
+    paleoclimate: 'Cold, subglacial; ice-loaded',
+    gamma: 22, phi: 30, cohesion: 50, k_log: -6, porosity_lo: 15, porosity_hi: 25,
+    cementation_rate: 0.6, consolidation_rate: 0.0, // already heavily preconsolidated
+    base_OCR: 4.0,
+    frost_susceptible: false, thaw_settlement: 'Low',
+    notes: 'Overconsolidated from ice loading (OCR 4–10); high pre-consolidation; low permeability',
+    lateral_zone: ['proximal','medial']
+  },
+  glacial_outwash: {
+    name: 'Glacial Outwash', color: '#D4B483',
+    grain_size: 'Sand–Gravel (coarse)', uscs: 'SW / GW',
+    structures: ['cross-laminations','imbrication','pebbles'],
+    paleoclimate: 'Cold, high-energy proglacial streams',
+    gamma: 20, phi: 35, cohesion: 0, k_log: -2, porosity_lo: 25, porosity_hi: 35,
+    cementation_rate: 0.1, consolidation_rate: 0.5,
+    frost_susceptible: false, thaw_settlement: 'Low',
+    notes: 'Proglacial meltwater; very permeable; fines washed out; major aquifer',
+    lateral_zone: ['proximal']
+  },
+  glaciolacustrine: {
+    name: 'Glaciolacustrine Silt (Varved)', color: '#7A9E8A',
+    grain_size: 'Silt–fine sand (varved couplets)', uscs: 'ML',
+    structures: ['varves','laminations'],
+    paleoclimate: 'Cold, ice-marginal lake; seasonal varves',
+    gamma: 19, phi: 28, cohesion: 20, k_log: -6, porosity_lo: 35, porosity_hi: 50,
+    cementation_rate: 0.3, consolidation_rate: 1.0,
+    frost_susceptible: true, thaw_settlement: 'High',
+    notes: 'Rhythmic varve couplets; summer silt over winter clay; sensitive — quick-clay potential',
+    lateral_zone: ['medial','distal']
+  },
+  kettle_clay: {
+    name: 'Kettle Lake Clay', color: '#7A8E9E',
+    grain_size: 'Clay (fine, laminated)', uscs: 'CH',
+    structures: ['laminations','dropstones_rare'],
+    paleoclimate: 'Postglacial; quiet-water lake basin',
+    gamma: 17, phi: 22, cohesion: 25, k_log: -8, porosity_lo: 50, porosity_hi: 65,
+    cementation_rate: 0.3, consolidation_rate: 1.2,
+    frost_susceptible: true, thaw_settlement: 'Very High',
+    notes: 'Bootlegger Cove type; fine laminations; high plasticity; quick-clay sensitivity in marine-influenced units; brittle under thaw',
+    lateral_zone: ['medial','distal']
+  },
+  periglacial_loess: {
+    name: 'Periglacial Loess', color: '#E8D4A8',
+    grain_size: 'Silt (aeolian, uniform)', uscs: 'ML / CL',
+    structures: ['massive','vertical_pores'],
+    paleoclimate: 'Cold, windy; periglacial margin',
+    gamma: 18, phi: 32, cohesion: 15, k_log: -6, porosity_lo: 40, porosity_hi: 55,
+    cementation_rate: 0.4, consolidation_rate: 0.7,
+    frost_susceptible: true, thaw_settlement: 'Moderate',
+    notes: 'Aeolian; open metastable pore structure; collapsible when wetted; ice-lens forming',
+    lateral_zone: ['proximal','medial','distal']
+  },
+  paleosol: {
+    name: 'Interglacial Paleosol', color: '#4A3A2A',
+    grain_size: 'Silt–Clay (weathered)', uscs: 'CL',
+    structures: ['oxidation_mottles','root_traces'],
+    paleoclimate: 'Warm interglacial; soil formation',
+    gamma: 18, phi: 28, cohesion: 40, k_log: -7, porosity_lo: 38, porosity_hi: 48,
+    cementation_rate: 0.6, consolidation_rate: 0.9,
+    frost_susceptible: false, thaw_settlement: 'Low',
+    notes: 'Dark oxidized horizon; clay enrichment from leaching; marks unconformity / hiatus',
+    lateral_zone: ['proximal','medial','distal']
+  },
+  glaciomarine_proximal: {
+    name: 'Glaciomarine (Proximal IRD)', color: '#9A9AA8',
+    grain_size: 'Diamicton with abundant dropstones', uscs: 'GC',
+    structures: ['dropstones','graded_beds','laminations'],
+    paleoclimate: 'Cold; tidewater glacier proximal',
+    gamma: 20, phi: 28, cohesion: 30, k_log: -7, porosity_lo: 30, porosity_hi: 45,
+    cementation_rate: 0.5, consolidation_rate: 1.3,
+    frost_susceptible: true, thaw_settlement: 'High',
+    notes: 'Proximal to ice margin; abundant dropstones; subglacial discharge plumes; matrix-supported diamicton',
+    lateral_zone: ['proximal']
+  },
+  glaciomarine_distal: {
+    name: 'Glaciomarine (Distal)', color: '#8A8A9A',
+    grain_size: 'Clay–Silt with rare dropstones', uscs: 'CL',
+    structures: ['laminations','dropstones_rare'],
+    paleoclimate: 'Cold; offshore from tidewater glacier',
+    gamma: 18, phi: 25, cohesion: 30, k_log: -8, porosity_lo: 45, porosity_hi: 60,
+    cementation_rate: 0.4, consolidation_rate: 1.5,
+    frost_susceptible: true, thaw_settlement: 'High',
+    notes: 'Distal glaciomarine; fine grain size; iceberg-rafted detritus rare; quick-clay susceptibility',
+    lateral_zone: ['medial','distal']
+  },
+  aeolian: {
+    name: 'Aeolian Sand', color: '#E8B87A',
+    grain_size: 'Sand (fine–medium, well-sorted)', uscs: 'SP',
+    structures: ['large_foresets','rounding'],
+    paleoclimate: 'Arid, windy; coastal or desert',
+    gamma: 18, phi: 33, cohesion: 0, k_log: -3, porosity_lo: 30, porosity_hi: 40,
+    cementation_rate: 0.2, consolidation_rate: 0.4,
+    frost_susceptible: false, thaw_settlement: 'Low',
+    notes: 'Well-sorted; rounded grains; large-scale cross-bedding; dry climate indicator',
+    lateral_zone: ['proximal','medial','distal']
+  },
+  tephra: {
+    name: 'Tephra (Volcanic Ash)', color: '#E8B87A',
+    grain_size: 'Silt (volcanic glass shards)', uscs: 'ML',
+    structures: ['massive','sharp_contacts'],
+    paleoclimate: 'Synchronous event horizon',
+    gamma: 14, phi: 30, cohesion: 5, k_log: -5, porosity_lo: 50, porosity_hi: 65,
+    cementation_rate: 0.8, consolidation_rate: 0.5,
+    frost_susceptible: true, thaw_settlement: 'High',
+    notes: 'Volcanic ashfall; sharp basal contact; chronostratigraphic tie-point; low γ from glass shards',
+    lateral_zone: ['proximal','medial','distal'],
+    is_event: true
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   SCENARIOS — Each phase now carries:
+   - facies_dist: probability map (modulated by climate sliders)
+   - lateral_gradient: how facies vary across basin
+   - climate metadata for slider coupling
+   ═══════════════════════════════════════════════════════════ */
+const SCENARIOS = {
+  quaternary: {
+    name: 'Quaternary Glacial Cycle',
+    totalYears: 120000,
+    has_DO: true,
+    phases: [
+      { pct:[0,0.15], label:'Glacial Maximum', temp:-8, sl:-100, flux:0.6, climate:'Cold–Glacial',
+        facies_dist:{ till:0.6, glacial_outwash:0.25, periglacial_loess:0.15 },
+        lateral:{ proximal:'till', medial:'glacial_outwash', distal:'periglacial_loess' } },
+      { pct:[0.15,0.30], label:'Glacial Outwash', temp:-5, sl:-80, flux:0.9, climate:'Cold–Deglaciation',
+        facies_dist:{ glacial_outwash:0.65, braided_sand:0.25, glaciolacustrine:0.10 },
+        lateral:{ proximal:'glacial_outwash', medial:'braided_sand', distal:'glaciolacustrine' } },
+      { pct:[0.30,0.45], label:'Glaciomarine', temp:-2, sl:-40, flux:0.7, climate:'Cool–Deglaciation',
+        facies_dist:{ glaciomarine_proximal:0.4, glaciomarine_distal:0.45, kettle_clay:0.15 },
+        lateral:{ proximal:'glaciomarine_proximal', medial:'glaciomarine_distal', distal:'kettle_clay' } },
+      { pct:[0.45,0.55], label:'Glaciolacustrine', temp:0, sl:-20, flux:0.5, climate:'Cool–Warming',
+        facies_dist:{ glaciolacustrine:0.6, kettle_clay:0.3, periglacial_loess:0.1 },
+        lateral:{ proximal:'glaciolacustrine', medial:'glaciolacustrine', distal:'kettle_clay' } },
+      { pct:[0.55,0.65], label:'Kettle Lake', temp:3, sl:-10, flux:0.3, climate:'Warming–Postglacial',
+        facies_dist:{ kettle_clay:0.7, glaciolacustrine:0.2, paleosol:0.1 },
+        lateral:{ proximal:'paleosol', medial:'kettle_clay', distal:'kettle_clay' } },
+      { pct:[0.65,0.75], label:'Periglacial Loess', temp:-3, sl:-15, flux:0.4, climate:'Cool–Periglacial',
+        facies_dist:{ periglacial_loess:0.7, paleosol:0.2, kettle_clay:0.1 },
+        lateral:{ proximal:'periglacial_loess', medial:'periglacial_loess', distal:'paleosol' } },
+      { pct:[0.75,0.88], label:'Marine Transgression', temp:5, sl:5, flux:0.25, climate:'Warm–Interglacial',
+        facies_dist:{ shelf_clay:0.55, deltaic_sand:0.3, paleosol:0.15 },
+        lateral:{ proximal:'deltaic_sand', medial:'shelf_clay', distal:'shelf_clay' } },
+      { pct:[0.88,1.0], label:'Interglacial Soil', temp:8, sl:2, flux:0.2, climate:'Warm–Interglacial',
+        facies_dist:{ paleosol:0.7, periglacial_loess:0.2, kettle_clay:0.1 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'kettle_clay' } }
+    ]
+  },
+  bootlegger: {
+    name: 'Bootlegger Cove Formation, Cook Inlet',
+    totalYears: 15000,
+    has_DO: false,
+    tephra_events: [0.12, 0.45, 0.82], // pct of total time when ash falls
+    phases: [
+      { pct:[0,0.20], label:'Glacial Outwash Base', temp:-6, sl:-120, flux:0.95, climate:'Cold–Glacial Maximum',
+        facies_dist:{ glacial_outwash:0.7, till:0.2, braided_sand:0.1 },
+        lateral:{ proximal:'till', medial:'glacial_outwash', distal:'glacial_outwash' } },
+      { pct:[0.20,0.47], label:'Glaciomarine Proximal', temp:-3, sl:-80, flux:0.80, climate:'Cold–Deglaciation',
+        facies_dist:{ glaciomarine_proximal:0.65, glaciomarine_distal:0.25, kettle_clay:0.1 },
+        lateral:{ proximal:'glaciomarine_proximal', medial:'glaciomarine_proximal', distal:'glaciomarine_distal' } },
+      { pct:[0.47,0.60], label:'Glaciomarine Distal', temp:0, sl:-30, flux:0.65, climate:'Cool–Deglaciation',
+        facies_dist:{ glaciomarine_distal:0.7, kettle_clay:0.25, glaciolacustrine:0.05 },
+        lateral:{ proximal:'glaciomarine_distal', medial:'glaciomarine_distal', distal:'kettle_clay' } },
+      { pct:[0.60,0.75], label:'Glaciofluvial Delta', temp:2, sl:-15, flux:0.75, climate:'Warming',
+        facies_dist:{ deltaic_sand:0.55, kettle_clay:0.3, glaciomarine_distal:0.15 },
+        lateral:{ proximal:'deltaic_sand', medial:'deltaic_sand', distal:'kettle_clay' } },
+      { pct:[0.75,0.90], label:'Kettle Lake Clay (BCF)', temp:5, sl:-5, flux:0.25, climate:'Postglacial Warming',
+        facies_dist:{ kettle_clay:0.8, glaciolacustrine:0.15, paleosol:0.05 },
+        lateral:{ proximal:'paleosol', medial:'kettle_clay', distal:'kettle_clay' } },
+      { pct:[0.90,1.0], label:'Upper BCF (Holocene)', temp:7, sl:0, flux:0.15, climate:'Holocene Warm',
+        facies_dist:{ kettle_clay:0.5, paleosol:0.4, periglacial_loess:0.1 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'kettle_clay' } }
+    ]
+  },
+  cretaceous: {
+    name: 'Cretaceous Western Interior Seaway',
+    totalYears: 10000000,
+    has_DO: false,
+    tephra_events: [0.25, 0.55, 0.78],
+    phases: [
+      { pct:[0,0.20], label:'Fluvial–Alluvial', temp:18, sl:-20, flux:0.7, climate:'Warm–Cretaceous',
+        facies_dist:{ braided_sand:0.6, deltaic_sand:0.3, paleosol:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'braided_sand', distal:'deltaic_sand' } },
+      { pct:[0.20,0.45], label:'Delta Progradation', temp:20, sl:10, flux:0.8, climate:'Warm–Transgressive',
+        facies_dist:{ deltaic_sand:0.55, shelf_clay:0.35, braided_sand:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'deltaic_sand', distal:'shelf_clay' } },
+      { pct:[0.45,0.65], label:'Shallow Marine Shelf', temp:22, sl:80, flux:0.4, climate:'Warm–Marine Highstand',
+        facies_dist:{ shelf_clay:0.65, deep_marine:0.25, deltaic_sand:0.1 },
+        lateral:{ proximal:'deltaic_sand', medial:'shelf_clay', distal:'deep_marine' } },
+      { pct:[0.65,0.80], label:'Deep Marine Mud', temp:22, sl:150, flux:0.2, climate:'Warm–Deep Marine',
+        facies_dist:{ deep_marine:0.75, shelf_clay:0.25 },
+        lateral:{ proximal:'shelf_clay', medial:'deep_marine', distal:'deep_marine' } },
+      { pct:[0.80,0.92], label:'Regression – Shelf', temp:20, sl:40, flux:0.5, climate:'Warm–Regression',
+        facies_dist:{ shelf_clay:0.5, deltaic_sand:0.4, deep_marine:0.1 },
+        lateral:{ proximal:'deltaic_sand', medial:'shelf_clay', distal:'deep_marine' } },
+      { pct:[0.92,1.0], label:'Deltaic Regression', temp:18, sl:-10, flux:0.7, climate:'Warm–Regressive',
+        facies_dist:{ deltaic_sand:0.6, braided_sand:0.3, paleosol:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'deltaic_sand', distal:'shelf_clay' } }
+    ]
+  },
+  beaufort: {
+    name: 'Beaufort Coastal Plain, Arctic Alaska',
+    totalYears: 200000,
+    has_DO: true,
+    tephra_events: [0.35, 0.72],
+    permafrost_default: true,
+    phases: [
+      { pct:[0,0.25], label:'Glacial Till (Arctic)', temp:-12, sl:-80, flux:0.5, climate:'Cold–Arctic Glacial',
+        facies_dist:{ till:0.65, periglacial_loess:0.25, glacial_outwash:0.1 },
+        lateral:{ proximal:'till', medial:'till', distal:'periglacial_loess' } },
+      { pct:[0.25,0.40], label:'Periglacial Loess', temp:-8, sl:-40, flux:0.6, climate:'Cold–Periglacial',
+        facies_dist:{ periglacial_loess:0.7, paleosol:0.15, glacial_outwash:0.15 },
+        lateral:{ proximal:'glacial_outwash', medial:'periglacial_loess', distal:'periglacial_loess' } },
+      { pct:[0.40,0.55], label:'Marine Transgression', temp:-2, sl:-10, flux:0.3, climate:'Cool–Transgressive',
+        facies_dist:{ glaciomarine_distal:0.4, shelf_clay:0.45, kettle_clay:0.15 },
+        lateral:{ proximal:'glaciomarine_distal', medial:'shelf_clay', distal:'shelf_clay' } },
+      { pct:[0.55,0.70], label:'Offshore Mud', temp:2, sl:5, flux:0.2, climate:'Mild–Marine',
+        facies_dist:{ shelf_clay:0.6, deep_marine:0.3, kettle_clay:0.1 },
+        lateral:{ proximal:'shelf_clay', medial:'shelf_clay', distal:'deep_marine' } },
+      { pct:[0.70,0.85], label:'Fluvial–Coastal', temp:-5, sl:-20, flux:0.55, climate:'Cool–Regression',
+        facies_dist:{ braided_sand:0.5, deltaic_sand:0.3, periglacial_loess:0.2 },
+        lateral:{ proximal:'braided_sand', medial:'deltaic_sand', distal:'shelf_clay' } },
+      { pct:[0.85,1.0], label:'Permafrost / Loess Cap', temp:-10, sl:-30, flux:0.45, climate:'Cold–Permafrost Active',
+        facies_dist:{ periglacial_loess:0.7, paleosol:0.2, kettle_clay:0.1 },
+        lateral:{ proximal:'periglacial_loess', medial:'periglacial_loess', distal:'paleosol' } }
+    ]
+  },
+  braided: {
+    name: 'Braided River Outwash Plain',
+    totalYears: 50000, has_DO: false,
+    phases: [
+      { pct:[0,0.30], label:'Subglacial Till', temp:-7, sl:-50, flux:0.55, climate:'Cold–Glacial',
+        facies_dist:{ till:0.8, glacial_outwash:0.2 },
+        lateral:{ proximal:'till', medial:'till', distal:'glacial_outwash' } },
+      { pct:[0.30,0.60], label:'High-Energy Outwash', temp:-3, sl:-30, flux:0.95, climate:'Cold–High Flux',
+        facies_dist:{ glacial_outwash:0.7, braided_sand:0.25, glaciolacustrine:0.05 },
+        lateral:{ proximal:'glacial_outwash', medial:'glacial_outwash', distal:'braided_sand' } },
+      { pct:[0.60,0.75], label:'Braided River Sand', temp:1, sl:-20, flux:0.8, climate:'Cool–Meltwater',
+        facies_dist:{ braided_sand:0.7, glacial_outwash:0.2, glaciolacustrine:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'braided_sand', distal:'glaciolacustrine' } },
+      { pct:[0.75,0.88], label:'Proglacial Lake', temp:3, sl:-10, flux:0.4, climate:'Warming',
+        facies_dist:{ glaciolacustrine:0.6, kettle_clay:0.3, paleosol:0.1 },
+        lateral:{ proximal:'glaciolacustrine', medial:'glaciolacustrine', distal:'kettle_clay' } },
+      { pct:[0.88,1.0], label:'Soil Development', temp:7, sl:0, flux:0.2, climate:'Warm–Postglacial',
+        facies_dist:{ paleosol:0.7, periglacial_loess:0.2, kettle_clay:0.1 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'paleosol' } }
+    ]
+  },
+  alluvial: {
+    name: 'Alluvial Fan / Bajada, Arid Climate',
+    totalYears: 500000, has_DO: false,
+    phases: [
+      { pct:[0,0.25], label:'Alluvial Fan (wet)', temp:15, sl:-30, flux:0.75, climate:'Wet–Alluvial',
+        facies_dist:{ braided_sand:0.7, paleosol:0.2, aeolian:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'braided_sand', distal:'paleosol' } },
+      { pct:[0.25,0.50], label:'Aeolian (dry)', temp:22, sl:-50, flux:0.3, climate:'Hot–Dry',
+        facies_dist:{ aeolian:0.75, paleosol:0.15, braided_sand:0.1 },
+        lateral:{ proximal:'aeolian', medial:'aeolian', distal:'paleosol' } },
+      { pct:[0.50,0.65], label:'Pedogenic Soil', temp:20, sl:-40, flux:0.15, climate:'Warm–Dry–Soil',
+        facies_dist:{ paleosol:0.8, aeolian:0.2 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'paleosol' } },
+      { pct:[0.65,0.80], label:'Flash Floods', temp:16, sl:-25, flux:0.85, climate:'Episodic Wet',
+        facies_dist:{ braided_sand:0.7, paleosol:0.2, aeolian:0.1 },
+        lateral:{ proximal:'braided_sand', medial:'braided_sand', distal:'aeolian' } },
+      { pct:[0.80,1.0], label:'Aeolian Return', temp:24, sl:-55, flux:0.25, climate:'Hot–Dry',
+        facies_dist:{ aeolian:0.8, paleosol:0.2 },
+        lateral:{ proximal:'aeolian', medial:'aeolian', distal:'aeolian' } }
+    ]
+  },
+  lacustrine: {
+    name: 'Lacustrine Basin with Climate Shift',
+    totalYears: 300000, has_DO: false,
+    phases: [
+      { pct:[0,0.30], label:'Lake Highstand', temp:-4, sl:10, flux:0.45, climate:'Cold–Lake Highstand',
+        facies_dist:{ glaciolacustrine:0.7, kettle_clay:0.2, shelf_clay:0.1 },
+        lateral:{ proximal:'glaciolacustrine', medial:'glaciolacustrine', distal:'kettle_clay' } },
+      { pct:[0.30,0.50], label:'Lake Deepening', temp:2, sl:20, flux:0.3, climate:'Warming–Lake Full',
+        facies_dist:{ shelf_clay:0.55, glaciolacustrine:0.3, kettle_clay:0.15 },
+        lateral:{ proximal:'glaciolacustrine', medial:'shelf_clay', distal:'shelf_clay' } },
+      { pct:[0.50,0.70], label:'Lake Desiccation', temp:18, sl:-20, flux:0.2, climate:'Warm–Dry',
+        facies_dist:{ aeolian:0.55, paleosol:0.3, glaciolacustrine:0.15 },
+        lateral:{ proximal:'aeolian', medial:'aeolian', distal:'paleosol' } },
+      { pct:[0.70,0.85], label:'Pedogenic / Evaporite', temp:20, sl:-30, flux:0.15, climate:'Hot–Arid',
+        facies_dist:{ paleosol:0.7, aeolian:0.3 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'paleosol' } },
+      { pct:[0.85,1.0], label:'Lake Return', temp:5, sl:15, flux:0.5, climate:'Cool–Wet Return',
+        facies_dist:{ glaciolacustrine:0.6, kettle_clay:0.3, shelf_clay:0.1 },
+        lateral:{ proximal:'glaciolacustrine', medial:'glaciolacustrine', distal:'kettle_clay' } }
+    ]
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   SIMULATION STATE
+   ═══════════════════════════════════════════════════════════ */
+let sim = {
+  running: false, initialized: false,
+  currentTime: 0, totalTime: 100000,
+  layers: [],          // { columns: [facies array per x bin], yTop, yBot, age, phaseLabel, isTephra }
+  boreholes: [],
+  activeBH: 0,
+  animId: null, lastFrameTime: null,
+  scenario: null,
+  canvasW: 0, canvasH: 0,
+  depositY: 0,
+  speedMult: 1.5,
+  history: { time: [], temp: [], sl: [], flux: [] },
+  view: 'log',
+  tephraEventsFired: new Set(),
+  N_BINS: 60,          // horizontal lateral bins
+  permafrostActive: false
+};
+
+/* ═══════════════════════════════════════════════════════════
+   UI BINDINGS
+   ═══════════════════════════════════════════════════════════ */
+function showNotify(msg) {
+  const n = document.getElementById('notify');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2200);
+}
+
+function onScenarioChange() {
+  const v = document.getElementById('scenarioSelect').value;
+  document.getElementById('customEnvGroup').style.display = v === 'custom' ? 'block' : 'none';
+  const glacial = ['quaternary','bootlegger','braided','beaufort'].includes(v);
+  document.getElementById('subEnvGroup').classList.toggle('visible', glacial);
+  // Default permafrost on for Beaufort
+  document.getElementById('se_permafrost').checked = (v === 'beaufort');
+  // Default D-O for Quaternary, Beaufort
+  document.getElementById('se_doOscillations').checked = (v === 'quaternary' || v === 'beaufort');
+}
+
+['tempSlider','precipSlider','speedSlider','asymSlider','depthSlider','widthSlider','fluxSlider'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', function() {
+    const v = this.value;
+    if (id === 'tempSlider') document.getElementById('tempVal').textContent = (v >= 0 ? '+' : '') + v + '°';
+    else if (id === 'precipSlider') document.getElementById('precipVal').textContent = (v >= 0 ? '+' : '') + v + '%';
+    else if (id === 'speedSlider') { document.getElementById('speedVal').textContent = v + '×'; sim.speedMult = parseFloat(v); }
+    else if (id === 'asymSlider') document.getElementById('asymVal').textContent = parseFloat(v).toFixed(2);
+    else if (id === 'depthSlider') document.getElementById('depthVal').textContent = v;
+    else if (id === 'widthSlider') document.getElementById('widthVal').textContent = v;
+    else if (id === 'fluxSlider') document.getElementById('fluxVal').textContent = parseFloat(v).toFixed(1);
+  });
+});
+
+function setView(v) {
+  sim.view = v;
+  document.getElementById('viewLogBtn').classList.toggle('active', v === 'log');
+  document.getElementById('viewCorrBtn').classList.toggle('active', v === 'correlation');
+  renderLogPanel();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CANVAS
+   ═══════════════════════════════════════════════════════════ */
+function getCanvas() { return document.getElementById('crossSection'); }
+function getCtx() { return getCanvas().getContext('2d'); }
+
+function resizeCanvas() {
+  const c = getCanvas();
+  const p = c.parentElement;
+  c.width = p.clientWidth;
+  c.height = p.clientHeight;
+  sim.canvasW = c.width;
+  sim.canvasH = c.height;
+}
+window.addEventListener('resize', () => { resizeCanvas(); if (sim.initialized) redrawAll(); });
+
+const MARGIN_LEFT = 50;
+const MARGIN_TOP = 22;
+
+/* ═══════════════════════════════════════════════════════════
+   INITIALIZATION
+   ═══════════════════════════════════════════════════════════ */
+function initSim() {
+  resizeCanvas();
+  const key = document.getElementById('scenarioSelect').value;
+  sim.scenario = key === 'custom' ? buildCustomScenario() : JSON.parse(JSON.stringify(SCENARIOS[key]));
+  sim.totalTime = sim.scenario.totalYears;
+  sim.currentTime = 0;
+  sim.layers = [];
+  sim.boreholes = [];
+  sim.activeBH = -1;
+  sim.initialized = true;
+  sim.running = false;
+  sim.depositY = sim.canvasH * 0.86;
+  sim.history = { time: [], temp: [], sl: [], flux: [] };
+  sim.tephraEventsFired = new Set();
+
+  // Permafrost toggle
+  sim.permafrostActive = document.getElementById('se_permafrost').checked ||
+                         sim.scenario.permafrost_default === true;
+
+  clearLogPanel();
+  const canvas = getCanvas();
+  canvas.onclick = onCanvasClick;
+  canvas.onmousemove = onCanvasHover;
+  canvas.onmouseleave = () => { document.getElementById('hoverTooltip').style.display = 'none'; };
+
+  drawBaseline();
+  document.getElementById('canvasLabel').textContent =
+    'Click ▶ Play. Drill anywhere on the cross-section — proximal (left) vs distal (right) gives different facies.';
+  document.getElementById('btnPlay').textContent = '▶ Play';
+  updateStatusBar(sim.scenario.phases[0]);
+
+  showNotify('Loaded: ' + sim.scenario.name);
+}
+
+function buildCustomScenario() {
+  const env = document.getElementById('primaryEnv').value;
+  const map = {
+    fluvial:'braided_sand', deltaic:'deltaic_sand', shelf:'shelf_clay',
+    deep_marine:'deep_marine', lacustrine:'glaciolacustrine',
+    glacial_outwash:'glacial_outwash', kettle:'kettle_clay',
+    alluvial_fan:'braided_sand', aeolian:'aeolian'
+  };
+  const f = map[env] || 'braided_sand';
+  const dist = {}; dist[f] = 0.85; dist.paleosol = 0.15;
+  return {
+    name: 'Custom — ' + env, totalYears: 100000, has_DO: false,
+    phases: [
+      { pct:[0,0.5], label: FACIES[f].name, temp: 5, sl: 0,
+        flux: parseFloat(document.getElementById('fluxSlider').value),
+        climate: 'Custom', facies_dist: dist,
+        lateral:{ proximal:f, medial:f, distal: f === 'braided_sand' ? 'paleosol' : f } },
+      { pct:[0.5,1.0], label: 'Soil Development', temp: 8, sl: 0, flux: 0.2, climate: 'Warm',
+        facies_dist:{ paleosol:0.85, periglacial_loess:0.15 },
+        lateral:{ proximal:'paleosol', medial:'paleosol', distal:'paleosol' } }
+    ]
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PALEOCLIMATE COUPLING
+   - Climate sliders modulate facies probabilities within each phase
+   - D-O oscillations: ~1500 yr cold spikes during glacial phases
+   - Tephra events: fire as discrete event layers across whole basin
+   ═══════════════════════════════════════════════════════════ */
+function getModulatedClimate(phase) {
+  const tempOffset = parseFloat(document.getElementById('tempSlider').value);
+  const precipOffset = parseFloat(document.getElementById('precipSlider').value);
+
+  let temp = phase.temp + tempOffset;
+  let flux = phase.flux * (1 + precipOffset / 100);
+
+  // D-O oscillation overlay (sub-orbital ~1500 yr cycles, glacial only)
+  if (sim.scenario.has_DO && document.getElementById('se_doOscillations').checked) {
+    const cyclePeriod = 1500; // years
+    const phaseFrac = (sim.currentTime % cyclePeriod) / cyclePeriod;
+    const doSignal = Math.cos(phaseFrac * Math.PI * 2);
+    // D-O is asymmetric: sharp cold spikes, gradual warming
+    if (temp < 5) {
+      temp += doSignal * 2.0;
+      flux *= (1 + doSignal * 0.15);
+    }
+  }
+
+  return { temp, flux, precipOffset, tempOffset };
+}
+
+function getModulatedFaciesDist(phase) {
+  // Apply climate slider modulation to phase distribution
+  const dist = Object.assign({}, phase.facies_dist);
+  const { temp, precipOffset } = getModulatedClimate(phase);
+
+  // Cold shifts: more glacial facies; Warm shifts: more soils, fluvial
+  const coldness = Math.max(0, (5 - temp) / 15); // 0..~1
+  const warmth = Math.max(0, (temp - 10) / 15);
+  const wetness = Math.max(0, precipOffset / 50);
+
+  const shift = (faciesKey, factor) => {
+    if (dist[faciesKey] !== undefined) dist[faciesKey] *= factor;
+  };
+
+  // Cold boosts
+  shift('till', 1 + coldness * 0.4);
+  shift('glacial_outwash', 1 + coldness * 0.3);
+  shift('periglacial_loess', 1 + coldness * 0.3);
+  shift('glaciomarine_proximal', 1 + coldness * 0.3);
+  shift('glaciomarine_distal', 1 + coldness * 0.3);
+
+  // Warm boosts
+  shift('paleosol', 1 + warmth * 0.5);
+  shift('deltaic_sand', 1 + warmth * 0.2);
+  shift('shelf_clay', 1 + warmth * 0.2);
+
+  // Wet boosts fluvial
+  shift('braided_sand', 1 + wetness * 0.3);
+  shift('deltaic_sand', 1 + wetness * 0.2);
+  shift('glacial_outwash', 1 + wetness * 0.2);
+
+  // Dry boosts aeolian
+  shift('aeolian', 1 + Math.max(0, -precipOffset / 50) * 0.5);
+
+  // Renormalize
+  const sum = Object.values(dist).reduce((a,b) => a + b, 0);
+  if (sum > 0) {
+    for (const k in dist) dist[k] /= sum;
+  }
+  return dist;
+}
+
+/* Filter facies distribution by enabled sub-environment checkboxes */
+function applySubEnvFilter(dist) {
+  const filtered = Object.assign({}, dist);
+  const checks = {
+    se_subglacial: ['till'],
+    se_proglacial: ['glacial_outwash', 'braided_sand'],
+    se_periglacial: ['periglacial_loess'],
+    se_glaciomarine: ['glaciomarine_proximal', 'glaciomarine_distal'],
+    se_glaciolacustrine: ['glaciolacustrine'],
+    se_interglacial: ['paleosol']
+  };
+  // Only filter if sub-env panel is visible
+  const subEnvVisible = document.getElementById('subEnvGroup').classList.contains('visible');
+  if (!subEnvVisible) return filtered;
+
+  for (const [chkId, faciesList] of Object.entries(checks)) {
+    const checkbox = document.getElementById(chkId);
+    if (checkbox && !checkbox.checked) {
+      faciesList.forEach(f => { if (filtered[f]) filtered[f] = 0; });
+    }
+  }
+  // Renormalize. If everything was filtered out, fall back to original (paleosol always available)
+  const sum = Object.values(filtered).reduce((a,b) => a + b, 0);
+  if (sum <= 0) {
+    // Safety net: use paleosol so simulation doesn't stall
+    return { paleosol: 1.0 };
+  }
+  for (const k in filtered) filtered[k] /= sum;
+  return filtered;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LATERAL FACIES VARIATION
+   - Each layer has a column array (one entry per horizontal bin)
+   - Bin facies depends on lateral position relative to phase's
+     proximal/medial/distal facies + basin geometry + noise
+   ═══════════════════════════════════════════════════════════ */
+function classifyLateralZone(xPct) {
+  const asym = parseFloat(document.getElementById('asymSlider').value);
+  // asym = 0.5 (default): proximal on LEFT, distal on RIGHT
+  // asym = 0: even more proximal-skewed left (shifts boundaries left)
+  // asym = 1: proximal on RIGHT, distal on LEFT (mirrored)
+  // Reflect xPct only when asym > 0.5
+  const adjusted = (asym <= 0.5) ? xPct : 1 - xPct;
+  if (adjusted < 0.30) return 'proximal';
+  if (adjusted < 0.65) return 'medial';
+  return 'distal';
+}
+
+function getBinFacies(xPct, phase, modDist) {
+  const zone = classifyLateralZone(xPct);
+  const lateralFacies = phase.lateral[zone];
+
+  // Bias the modulated dist toward the zone's signature facies
+  const biased = Object.assign({}, modDist);
+  if (biased[lateralFacies] !== undefined) {
+    biased[lateralFacies] = (biased[lateralFacies] || 0.1) * 2.5 + 0.15;
+  } else {
+    biased[lateralFacies] = 0.5;
+  }
+  // Filter facies that don't match this lateral zone
+  for (const k in biased) {
+    if (FACIES[k] && FACIES[k].lateral_zone && !FACIES[k].lateral_zone.includes(zone)) {
+      biased[k] *= 0.2;
+    }
+  }
+  // Renormalize
+  const sum = Object.values(biased).reduce((a,b) => a + b, 0);
+  if (sum <= 0) return lateralFacies;
+  for (const k in biased) biased[k] /= sum;
+
+  // Sample
+  let r = Math.random();
+  for (const k in biased) {
+    r -= biased[k];
+    if (r <= 0) return k;
+  }
+  return lateralFacies;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIMULATION LOOP
+   ═══════════════════════════════════════════════════════════ */
+function togglePlay() {
+  if (!sim.initialized) { initSim(); }
+  sim.running = !sim.running;
+  document.getElementById('btnPlay').textContent = sim.running ? '⏸ Pause' : '▶ Play';
+  if (sim.running) {
+    sim.lastFrameTime = null;
+    sim.animId = requestAnimationFrame(simLoop);
+  } else cancelAnimationFrame(sim.animId);
+}
+
+function resetSim() {
+  if (sim.animId) cancelAnimationFrame(sim.animId);
+  sim.running = false;
+  sim.initialized = false;
+  sim.layers = [];
+  sim.boreholes = [];
+  sim.currentTime = 0;
+  sim.tephraEventsFired = new Set();
+  clearLogPanel();
+  resizeCanvas();
+  const ctx = getCtx();
+  ctx.clearRect(0, 0, sim.canvasW, sim.canvasH);
+  ctx.fillStyle = '#2E3A47';
+  ctx.fillRect(0, 0, sim.canvasW, sim.canvasH);
+  document.getElementById('btnPlay').textContent = '▶ Play';
+  document.getElementById('timeDisplay').textContent = '⏱ Not started';
+  document.getElementById('statusEnv').textContent = '—';
+  document.getElementById('statusSL').textContent = '—';
+  document.getElementById('statusClimate').textContent = '—';
+  document.getElementById('statusFlux').textContent = '—';
+  document.getElementById('canvasLabel').textContent = 'Click ⚙ Start Simulation to begin.';
+  drawCurves(); // clear curves
+}
+
+function simLoop(timestamp) {
+  if (!sim.running) return;
+  if (!sim.lastFrameTime) sim.lastFrameTime = timestamp;
+  const elapsed = (timestamp - sim.lastFrameTime) / 1000;
+  sim.lastFrameTime = timestamp;
+
+  const yearPerSec = sim.speedMult * (sim.totalTime / 25); // ~25s for full run at 1×
+  const dt = elapsed * yearPerSec;
+  sim.currentTime = Math.min(sim.currentTime + dt, sim.totalTime);
+
+  const phase = currentPhase();
+  if (phase) {
+    // Check tephra events
+    if (sim.scenario.tephra_events && document.getElementById('se_tephra').checked) {
+      const pctNow = sim.currentTime / sim.totalTime;
+      sim.scenario.tephra_events.forEach((evtPct, idx) => {
+        if (pctNow >= evtPct && !sim.tephraEventsFired.has(idx)) {
+          depositTephraLayer();
+          sim.tephraEventsFired.add(idx);
+        }
+      });
+    }
+
+    depositLayer(phase, dt);
+    updateStatusBar(phase);
+    recordHistory(phase);
+  }
+
+  redrawAll();
+  updateTimeDisplay();
+
+  if (sim.currentTime >= sim.totalTime) {
+    sim.running = false;
+    document.getElementById('btnPlay').textContent = '▶ Play';
+    showNotify('Simulation complete — drill anywhere on the cross-section');
+    return;
+  }
+  sim.animId = requestAnimationFrame(simLoop);
+}
+
+function currentPhase() {
+  if (!sim.scenario) return null;
+  const pct = sim.currentTime / sim.totalTime;
+  for (const p of sim.scenario.phases) {
+    if (pct >= p.pct[0] && pct < p.pct[1]) return p;
+  }
+  return sim.scenario.phases[sim.scenario.phases.length - 1];
+}
+
+function depositLayer(phase, dt) {
+  const { flux } = getModulatedClimate(phase);
+  const fluxNorm = flux;
+  const pixPerYear = (sim.depositY - MARGIN_TOP) / sim.totalTime;
+  const pixPerDt = dt * pixPerYear * fluxNorm * 2.2;
+  if (pixPerDt < 0.15) return;
+
+  // Decide whether to extend last layer or create a new one
+  // New layer triggered when phase changes OR at finer interval for visual variety
+  const last = sim.layers.length > 0 ? sim.layers[sim.layers.length - 1] : null;
+  const phaseChanged = !last || last.phaseLabel !== phase.label || last.isTephra;
+  const enoughTimeForNewLayer = !last || (last.thickness > 6 + Math.random() * 8);
+
+  if (phaseChanged || enoughTimeForNewLayer) {
+    const yBot = last ? last.yTop : sim.depositY;
+    const yTop = Math.max(MARGIN_TOP + 2, yBot - pixPerDt);
+    if (yTop >= yBot) return;
+
+    // Build column: facies for each horizontal bin
+    const modDist = applySubEnvFilter(getModulatedFaciesDist(phase));
+    const columns = [];
+    for (let bi = 0; bi < sim.N_BINS; bi++) {
+      const xPct = (bi + 0.5) / sim.N_BINS;
+      columns.push(getBinFacies(xPct, phase, modDist));
+    }
+    sim.layers.push({
+      columns, yTop, yBot,
+      thickness: yBot - yTop,
+      age: sim.currentTime,
+      phaseLabel: phase.label,
+      phase: { temp: phase.temp, sl: phase.sl, climate: phase.climate },
+      isTephra: false
+    });
+  } else {
+    // Extend last layer upward
+    last.yTop -= pixPerDt;
+    last.thickness += pixPerDt;
+  }
+}
+
+function depositTephraLayer() {
+  // Discrete thin layer across all bins, single facies = tephra
+  const last = sim.layers.length > 0 ? sim.layers[sim.layers.length - 1] : null;
+  const yBot = last ? last.yTop : sim.depositY;
+  const thicknessPx = 3 + Math.random() * 2;
+  const yTop = Math.max(MARGIN_TOP + 2, yBot - thicknessPx);
+  if (yTop >= yBot) return;
+  const columns = new Array(sim.N_BINS).fill('tephra');
+  sim.layers.push({
+    columns, yTop, yBot,
+    thickness: yBot - yTop,
+    age: sim.currentTime,
+    phaseLabel: 'TEPHRA EVENT',
+    phase: { temp: 0, sl: 0, climate: 'Volcanic ashfall' },
+    isTephra: true
+  });
+  showNotify('💥 Tephra event at ' + Math.round(sim.currentTime).toLocaleString() + ' yr');
+}
+
+function updateTimeDisplay() {
+  const t = sim.currentTime, total = sim.totalTime;
+  let label;
+  if (total >= 1000000) label = (t / 1000000).toFixed(2) + ' Ma elapsed';
+  else if (total >= 100000) label = Math.round(t / 1000) + ',000 yr elapsed';
+  else label = Math.round(t).toLocaleString() + ' yr elapsed';
+  document.getElementById('timeDisplay').textContent = '⏱ ' + label;
+}
+
+function updateStatusBar(phase) {
+  const { temp, flux } = getModulatedClimate(phase);
+  document.getElementById('statusEnv').textContent = phase.label || '—';
+  const sl = phase.sl;
+  document.getElementById('statusSL').textContent = (sl >= 0 ? '+' : '') + sl + 'm ' + (sl > 0 ? '↑' : sl < -20 ? '↓↓' : '↓');
+  document.getElementById('statusClimate').textContent = phase.climate + ' (' + temp.toFixed(1) + '°)';
+  document.getElementById('statusFlux').textContent = flux >= 0.7 ? 'High' : flux >= 0.4 ? 'Moderate' : 'Low';
+}
+
+function recordHistory(phase) {
+  const { temp, flux } = getModulatedClimate(phase);
+  const pct = sim.currentTime / sim.totalTime;
+  sim.history.time.push(pct);
+  sim.history.temp.push(temp);
+  sim.history.sl.push(phase.sl || 0);
+  sim.history.flux.push(flux * 100);
+  if (sim.history.time.length > 800) {
+    sim.history.time.shift(); sim.history.temp.shift();
+    sim.history.sl.shift(); sim.history.flux.shift();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DRAWING
+   ═══════════════════════════════════════════════════════════ */
+function drawBaseline() {
+  const ctx = getCtx();
+  const W = sim.canvasW, H = sim.canvasH;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#2E3A47';
+  ctx.fillRect(0, 0, W, H);
+
+  // Bedrock
+  ctx.fillStyle = '#222830';
+  ctx.fillRect(MARGIN_LEFT, sim.depositY, W - MARGIN_LEFT - 5, H - sim.depositY);
+  ctx.strokeStyle = '#333D4A';
+  ctx.lineWidth = 1;
+  for (let x = MARGIN_LEFT; x < W; x += 14) {
+    ctx.beginPath();
+    ctx.moveTo(x, sim.depositY + 2);
+    ctx.lineTo(x - 9, sim.depositY + 11);
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.fillText('BEDROCK / BASE', MARGIN_LEFT + 5, sim.depositY + 18);
+
+  drawDepthAxis(ctx, W, H);
+  drawLateralAxis(ctx, W, H);
+  drawTimeAxis(ctx, W, H);
+}
+
+function drawDepthAxis(ctx, W, H) {
+  const totalDepthM = parseFloat(document.getElementById('depthSlider').value);
+  const pxPerM = (sim.depositY - MARGIN_TOP) / 50; // visual: 50 m visible
+  ctx.strokeStyle = '#4A6070';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(MARGIN_LEFT, MARGIN_TOP);
+  ctx.lineTo(MARGIN_LEFT, sim.depositY);
+  ctx.stroke();
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.textAlign = 'right';
+  for (let d = 0; d <= 50; d += 10) {
+    const y = MARGIN_TOP + d * pxPerM;
+    ctx.beginPath();
+    ctx.moveTo(MARGIN_LEFT - 4, y);
+    ctx.lineTo(MARGIN_LEFT, y);
+    ctx.stroke();
+    ctx.fillText(d + 'm', MARGIN_LEFT - 6, y + 3);
+  }
+  ctx.textAlign = 'left';
+}
+
+function drawLateralAxis(ctx, W, H) {
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xRight = W - 5;
+  const xRange = xRight - MARGIN_LEFT;
+  ctx.strokeStyle = '#4A6070';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.textAlign = 'center';
+  for (let f = 0; f <= 1; f += 0.25) {
+    const x = MARGIN_LEFT + f * xRange;
+    ctx.beginPath();
+    ctx.moveTo(x, MARGIN_TOP - 2);
+    ctx.lineTo(x, MARGIN_TOP + 2);
+    ctx.stroke();
+    ctx.fillText((f * widthKm).toFixed(1) + 'km', x, MARGIN_TOP - 6);
+  }
+  // Proximal/distal labels — at asym <= 0.5, proximal is on the LEFT
+  const asym = parseFloat(document.getElementById('asymSlider').value);
+  const proximalLeft = asym <= 0.5;
+  ctx.fillStyle = '#7A8E9E';
+  ctx.font = 'bold 8px IBM Plex Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText(proximalLeft ? 'PROXIMAL →' : '← DISTAL', MARGIN_LEFT + 4, MARGIN_TOP - 14);
+  ctx.textAlign = 'right';
+  ctx.fillText(proximalLeft ? '← DISTAL' : 'PROXIMAL →', W - 8, MARGIN_TOP - 14);
+  ctx.textAlign = 'left';
+}
+
+function drawTimeAxis(ctx, W, H) {
+  if (!sim.scenario || !sim.initialized) return;
+  const pct = sim.totalTime > 0 ? sim.currentTime / sim.totalTime : 0;
+  const xRight = W - 5;
+  const xFill = MARGIN_LEFT + pct * (xRight - MARGIN_LEFT);
+  ctx.fillStyle = '#3A4A5C';
+  ctx.fillRect(MARGIN_LEFT, H - 8, xRight - MARGIN_LEFT, 4);
+  ctx.fillStyle = '#D4651A';
+  ctx.fillRect(MARGIN_LEFT, H - 8, xFill - MARGIN_LEFT, 4);
+}
+
+function redrawAll() {
+  const ctx = getCtx();
+  const W = sim.canvasW, H = sim.canvasH;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#2E3A47';
+  ctx.fillRect(0, 0, W, H);
+
+  // Bedrock
+  ctx.fillStyle = '#222830';
+  ctx.fillRect(MARGIN_LEFT, sim.depositY, W - MARGIN_LEFT - 5, H - sim.depositY);
+  ctx.strokeStyle = '#333D4A';
+  ctx.lineWidth = 1;
+  for (let x = MARGIN_LEFT; x < W; x += 14) {
+    ctx.beginPath();
+    ctx.moveTo(x, sim.depositY + 2);
+    ctx.lineTo(x - 9, sim.depositY + 11);
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.fillText('BEDROCK / BASE', MARGIN_LEFT + 5, sim.depositY + 18);
+
+  // Layers
+  for (const layer of sim.layers) drawLayer(ctx, layer);
+
+  // Permafrost overprint
+  if (sim.permafrostActive) drawPermafrost(ctx, W);
+
+  // Sea level
+  drawSeaLevel(ctx, W);
+
+  // Boreholes
+  sim.boreholes.forEach((bh, idx) => drawBorehole(ctx, bh, idx === sim.activeBH));
+
+  drawDepthAxis(ctx, W, H);
+  drawLateralAxis(ctx, W, H);
+  drawTimeAxis(ctx, W, H);
+  drawCurves();
+}
+
+function drawLayer(ctx, layer) {
+  const W = sim.canvasW;
+  const xStart = MARGIN_LEFT;
+  const xRange = W - MARGIN_LEFT - 5;
+  const binW = xRange / sim.N_BINS;
+
+  // Draw each bin as a rect
+  for (let bi = 0; bi < sim.N_BINS; bi++) {
+    const fac = FACIES[layer.columns[bi]];
+    if (!fac) continue;
+    const x = xStart + bi * binW;
+    ctx.fillStyle = fac.color;
+    ctx.fillRect(x, layer.yTop, binW + 0.5, layer.yBot - layer.yTop);
+  }
+
+  // Draw structures (sample one bin's facies per layer for overlay perf;
+  // structures are mostly representative — heterogeneous overlays would be visually noisy)
+  const dominantFacies = mostCommon(layer.columns);
+  const dominant = FACIES[dominantFacies];
+  if (dominant && layer.thickness > 3) {
+    drawStructures(ctx, dominant.structures, MARGIN_LEFT, layer.yTop, xRange, layer.thickness);
+  }
+
+  // Tephra: outline strongly
+  if (layer.isTephra) {
+    ctx.strokeStyle = '#E8B87A';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(MARGIN_LEFT, layer.yTop, xRange, layer.thickness);
+    ctx.fillStyle = '#2E3A47';
+    ctx.font = 'bold 8px IBM Plex Mono, monospace';
+    ctx.fillText('TEPHRA', MARGIN_LEFT + 6, layer.yTop + Math.min(layer.thickness * 0.7, 8));
+  } else {
+    ctx.strokeStyle = '#2E3A47';
+    ctx.lineWidth = 0.4;
+    ctx.strokeRect(MARGIN_LEFT, layer.yTop, xRange, layer.thickness);
+  }
+
+  // Phase label if thick enough
+  if (layer.thickness > 14 && !layer.isTephra) {
+    ctx.fillStyle = 'rgba(0,0,0,0.50)';
+    ctx.font = '8px IBM Plex Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(layer.phaseLabel, MARGIN_LEFT + 6, layer.yTop + Math.min(layer.thickness * 0.55, 11));
+  }
+}
+
+function mostCommon(arr) {
+  const counts = {};
+  for (const v of arr) counts[v] = (counts[v] || 0) + 1;
+  let best = arr[0], bestN = 0;
+  for (const k in counts) if (counts[k] > bestN) { best = k; bestN = counts[k]; }
+  return best;
+}
+
+function drawStructures(ctx, structures, x, y, w, h, baseColor) {
+  if (!structures || h < 4) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  if (structures.includes('cross-laminations')) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+    ctx.lineWidth = 0.5;
+    for (let xi = x; xi < x + w; xi += 22) {
+      ctx.beginPath();
+      ctx.moveTo(xi, y);
+      ctx.lineTo(xi + 16, y + h);
+      ctx.stroke();
+    }
+  }
+  if (structures.includes('laminations') || structures.includes('varves')) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 0.4;
+    const spacing = structures.includes('varves') ? 4 : 7;
+    for (let yi = y + spacing; yi < y + h; yi += spacing) {
+      ctx.beginPath();
+      ctx.moveTo(x, yi);
+      ctx.lineTo(x + w, yi);
+      ctx.stroke();
+    }
+  }
+  if (structures.includes('ripples')) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+    ctx.lineWidth = 0.5;
+    for (let yi = y + 5; yi < y + h; yi += 9) {
+      ctx.beginPath();
+      for (let xi = x; xi < x + w; xi += 2) {
+        const yOff = Math.sin((xi - x) * 0.13) * 1.4;
+        xi === x ? ctx.moveTo(xi, yi + yOff) : ctx.lineTo(xi, yi + yOff);
+      }
+      ctx.stroke();
+    }
+  }
+  if (structures.includes('dropstones') || structures.includes('dropstones_rare')) {
+    const count = structures.includes('dropstones_rare') ? 2 : Math.max(3, Math.floor(w / 30));
+    ctx.fillStyle = '#5A5A5A';
+    for (let i = 0; i < count; i++) {
+      const dx = x + Math.random() * w;
+      const dy = y + Math.random() * h;
+      ctx.beginPath();
+      ctx.arc(dx, dy, 2 + Math.random() * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  if (structures.includes('pebbles') || structures.includes('imbrication')) {
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    for (let i = 0; i < Math.max(4, Math.floor(w / 60)); i++) {
+      const dx = x + Math.random() * w;
+      const dy = y + Math.random() * h;
+      ctx.beginPath();
+      ctx.ellipse(dx, dy, 3, 1.8, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  if (structures.includes('graded_beds')) {
+    const grad = ctx.createLinearGradient(x, y, x, y + h);
+    grad.addColorStop(0, 'rgba(255,255,255,0.08)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.13)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, w, h);
+  }
+  if (structures.includes('oxidation_mottles')) {
+    ctx.fillStyle = 'rgba(180,90,30,0.4)';
+    for (let i = 0; i < 6; i++) {
+      const dx = x + Math.random() * w;
+      const dy = y + Math.random() * h;
+      ctx.beginPath();
+      ctx.arc(dx, dy, 1.5 + Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  if (structures.includes('shear_fabric')) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 0.5;
+    for (let yi = y + 4; yi < y + h; yi += 5) {
+      ctx.beginPath();
+      ctx.moveTo(x, yi);
+      ctx.lineTo(x + w, yi + 1.5);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawPermafrost(ctx, W) {
+  // Cross-hatch pattern over upper meters representing modern permafrost
+  const topY = sim.layers.length > 0 ? sim.layers[0].yTop : sim.depositY;
+  // Permafrost depth ~ 5m below surface (visualization)
+  const pxPerM = (sim.depositY - MARGIN_TOP) / 50;
+  const permTop = topY;
+  const permBot = Math.min(sim.depositY - 2, topY + 10 * pxPerM);
+  const xRight = W - 5;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(MARGIN_LEFT, permTop, xRight - MARGIN_LEFT, permBot - permTop);
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(90,189,232,0.35)';
+  ctx.lineWidth = 0.6;
+  for (let x = MARGIN_LEFT - 20; x < xRight + 20; x += 8) {
+    ctx.beginPath();
+    ctx.moveTo(x, permTop);
+    ctx.lineTo(x + (permBot - permTop), permBot);
+    ctx.stroke();
+  }
+  for (let x = MARGIN_LEFT - 20; x < xRight + 20; x += 8) {
+    ctx.beginPath();
+    ctx.moveTo(x + (permBot - permTop), permTop);
+    ctx.lineTo(x, permBot);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Label
+  ctx.fillStyle = '#5ABDE8';
+  ctx.font = 'bold 8px IBM Plex Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('❄ PERMAFROST', xRight - 6, permTop + 11);
+  ctx.textAlign = 'left';
+}
+
+function drawSeaLevel(ctx, W) {
+  if (!sim.scenario) return;
+  const phase = currentPhase();
+  if (!phase) return;
+  const slM = phase.sl;
+  const baseSurface = sim.layers.length > 0 ? sim.layers[0].yTop : sim.depositY;
+  const pxPerM = (sim.depositY - MARGIN_TOP) / 50;
+  const slY = baseSurface - slM * pxPerM * 0.5;
+  const clampedY = Math.max(MARGIN_TOP + 5, Math.min(sim.depositY - 2, slY));
+  ctx.setLineDash([6, 3]);
+  ctx.strokeStyle = '#5ABDE8';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(MARGIN_LEFT, clampedY);
+  ctx.lineTo(W - 5, clampedY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#5ABDE8';
+  ctx.font = '8px IBM Plex Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('SL ' + (slM >= 0 ? '+' : '') + slM + 'm', W - 8, clampedY - 2);
+  ctx.textAlign = 'left';
+}
+
+function drawBorehole(ctx, bh, isActive) {
+  const W = sim.canvasW;
+  const x = MARGIN_LEFT + bh.xPct * (W - MARGIN_LEFT - 5);
+  const topY = sim.layers.length > 0 ? sim.layers[0].yTop : sim.depositY;
+  ctx.setLineDash([4, 2]);
+  ctx.strokeStyle = isActive ? '#D4651A' : '#9AAABB';
+  ctx.lineWidth = isActive ? 1.6 : 1;
+  ctx.beginPath();
+  ctx.moveTo(x, topY);
+  ctx.lineTo(x, sim.depositY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = isActive ? '#D4651A' : '#9AAABB';
+  ctx.font = 'bold 8px IBM Plex Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(bh.id, x, topY - 4);
+  ctx.beginPath();
+  ctx.moveTo(x - 5, topY - 12);
+  ctx.lineTo(x + 5, topY - 12);
+  ctx.lineTo(x, topY - 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.textAlign = 'left';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURVES
+   ═══════════════════════════════════════════════════════════ */
+function drawCurves() {
+  drawCurve('curveClimate', sim.history.temp, '#E07830', -15, 25, '°C');
+  drawCurve('curveSL', sim.history.sl, '#5ABDE8', -130, 160, 'm');
+  drawCurve('curveFlux', sim.history.flux, '#7A9E8A', 0, 200, '%');
+}
+
+function drawCurve(id, data, color, minV, maxV, unit) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const p = c.parentElement;
+  c.width = p.clientWidth;
+  c.height = p.clientHeight;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#3A4A5C';
+  ctx.fillRect(0, 0, W, H);
+  if (!data || data.length < 2) return;
+
+  const pad = { l: 32, r: 8, t: 18, b: 12 };
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+  const range = maxV - minV;
+
+  // Grid
+  ctx.strokeStyle = '#4A6070';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([2, 3]);
+  for (let g = 0; g <= 4; g++) {
+    const gy = pad.t + (g / 4) * cH;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, gy);
+    ctx.lineTo(pad.l + cW, gy);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // Zero line
+  if (minV < 0 && maxV > 0) {
+    const zY = pad.t + cH - ((0 - minV) / range) * cH;
+    ctx.strokeStyle = '#5A7080';
+    ctx.lineWidth = 0.7;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, zY);
+    ctx.lineTo(pad.l + cW, zY);
+    ctx.stroke();
+  }
+  // Axes
+  ctx.strokeStyle = '#4A6070';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t);
+  ctx.lineTo(pad.l, pad.t + cH);
+  ctx.lineTo(pad.l + cW, pad.t + cH);
+  ctx.stroke();
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '7px IBM Plex Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText(maxV + unit, pad.l - 2, pad.t + 6);
+  ctx.fillText(minV + unit, pad.l - 2, pad.t + cH);
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < data.length; i++) {
+    const xPos = pad.l + sim.history.time[i] * cW;
+    const yPos = pad.t + cH - ((data[i] - minV) / range) * cH;
+    i === 0 ? ctx.moveTo(xPos, yPos) : ctx.lineTo(xPos, yPos);
+  }
+  ctx.stroke();
+  // Time marker
+  const curPct = sim.currentTime / sim.totalTime;
+  const cx = pad.l + curPct * cW;
+  ctx.strokeStyle = '#D4651A';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 2]);
+  ctx.beginPath();
+  ctx.moveTo(cx, pad.t);
+  ctx.lineTo(cx, pad.t + cH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.textAlign = 'left';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOREHOLE DRILLING + LATERAL VARIATION
+   ═══════════════════════════════════════════════════════════ */
+function onCanvasClick(e) {
+  if (!sim.initialized || sim.layers.length === 0) {
+    showNotify('Start the simulation and let it deposit first');
+    return;
+  }
+  const c = getCanvas();
+  const rect = c.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const topY = sim.layers.length > 0 ? sim.layers[0].yTop : sim.depositY;
+  if (x < MARGIN_LEFT || x > sim.canvasW - 5) return;
+  if (y < topY - 20 || y > sim.depositY) return;
+  const xPct = (x - MARGIN_LEFT) / (sim.canvasW - MARGIN_LEFT - 5);
+  const bhId = 'BH-' + String(sim.boreholes.length + 1).padStart(2, '0');
+  const bhLayers = extractBoreholeLog(xPct);
+  const bh = { id: bhId, xPct, layers: bhLayers };
+  sim.boreholes.push(bh);
+  sim.activeBH = sim.boreholes.length - 1;
+  redrawAll();
+  renderLogPanel();
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xKm = (xPct * widthKm).toFixed(2);
+  const zone = classifyLateralZone(xPct);
+  showNotify(bhId + ' drilled at ' + xKm + ' km — ' + zone + ' zone');
+}
+
+function extractBoreholeLog(xPct) {
+  const W = sim.canvasW;
+  const totalDepthPx = sim.depositY - (sim.layers.length > 0 ? sim.layers[0].yTop : sim.depositY);
+  const totalDepthM = parseFloat(document.getElementById('depthSlider').value);
+  const pxPerM = totalDepthPx > 0 ? totalDepthPx / totalDepthM : 6;
+
+  // Determine bin index for this xPct
+  const binIdx = Math.min(sim.N_BINS - 1, Math.max(0, Math.floor(xPct * sim.N_BINS)));
+
+  const logs = [];
+  let depthM = 0;
+  // Each layer contributes its bin-specific facies
+  for (let i = 0; i < sim.layers.length; i++) {
+    const layer = sim.layers[i];
+    const thickM = Math.max(0.1, layer.thickness / pxPerM);
+    const topM = depthM;
+    const botM = depthM + thickM;
+    depthM = botM;
+    const facKey = layer.columns[binIdx];
+    const fac = FACIES[facKey];
+    if (!fac) continue;
+    let ageLabel;
+    if (sim.totalTime >= 1000000) ageLabel = (layer.age / 1000000).toFixed(2) + ' Ma';
+    else if (sim.totalTime >= 100000) ageLabel = Math.round(layer.age / 1000) + ',000 yr';
+    else ageLabel = Math.round(layer.age).toLocaleString() + ' yr';
+
+    logs.push({
+      depth_top: topM, depth_bot: botM,
+      facies: facKey, faciesData: fac,
+      phase_label: layer.phaseLabel, age_label: ageLabel,
+      age_years: layer.age,
+      thickM, isTephra: layer.isTephra
+    });
+  }
+  return logs;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GEOTECHNICAL PROPERTY INFERENCE
+   - Depth-dependent OCR (overconsolidation from burial)
+   - Age-dependent cementation (cohesion gain)
+   - Permafrost overprint (frozen vs thawed properties)
+   ═══════════════════════════════════════════════════════════ */
+function inferGeotechProperties(entry) {
+  const fac = entry.faciesData;
+  const midDepth = (entry.depth_top + entry.depth_bot) / 2;
+  const ageMaSinceDeposition = (sim.totalTime - entry.age_years) / 1000000;
+
+  // Base values
+  let gamma = fac.gamma;
+  let phi = fac.phi;
+  let cohesion = fac.cohesion;
+  let kLog = fac.k_log;
+
+  // Burial-driven consolidation
+  // OCR formula: tills are pre-consolidated; others gain OCR with burial depth
+  let OCR = fac.base_OCR || 1.0;
+  if (!fac.base_OCR) {
+    OCR = 1.0 + (midDepth / 10) * (fac.consolidation_rate || 0.5);
+  }
+  // Cohesion increases with both depth (consolidation) and age (cementation)
+  const consolidationGain = midDepth * 1.5 * (fac.consolidation_rate || 0.5);
+  const cementationGain = Math.min(80, ageMaSinceDeposition * 1000 * fac.cementation_rate);
+  cohesion = cohesion + consolidationGain + cementationGain;
+  // Porosity decreases with consolidation
+  let porLo = fac.porosity_lo - midDepth * 0.15;
+  let porHi = fac.porosity_hi - midDepth * 0.15;
+  porLo = Math.max(5, porLo);
+  porHi = Math.max(porLo + 5, porHi);
+  // φ slightly increases with cementation in cohesive soils
+  if (fac.cohesion > 10) phi = phi + Math.min(4, ageMaSinceDeposition * 0.1);
+  // γ slightly increases with depth (compaction)
+  gamma = gamma + midDepth * 0.02;
+
+  // Permafrost overprint (top 10 m, if active)
+  const isFrozen = sim.permafrostActive && midDepth < 10;
+  let frozen_cohesion = null, frozen_phi = null, thaw_settlement_pct = null;
+  if (isFrozen) {
+    // Frozen ground: cohesion increases dramatically due to ice bonding
+    frozen_cohesion = cohesion + 200 + (fac.frost_susceptible ? 100 : 0);
+    frozen_phi = phi + 5;
+    // Thaw settlement: ice-rich fines settle dramatically when thawed
+    if (fac.thaw_settlement === 'Very High') thaw_settlement_pct = 15 + Math.random() * 5;
+    else if (fac.thaw_settlement === 'High') thaw_settlement_pct = 8 + Math.random() * 4;
+    else if (fac.thaw_settlement === 'Moderate') thaw_settlement_pct = 3 + Math.random() * 3;
+    else thaw_settlement_pct = Math.random() * 2;
+  }
+
+  return {
+    gamma: gamma.toFixed(1),
+    phi: phi.toFixed(0),
+    cohesion: Math.round(cohesion),
+    kLog,
+    OCR: OCR.toFixed(1),
+    porosityRange: porLo.toFixed(0) + '–' + porHi.toFixed(0) + '%',
+    cementationGain: cementationGain > 1 ? cementationGain.toFixed(0) : null,
+    isFrozen,
+    frozen_cohesion: frozen_cohesion ? Math.round(frozen_cohesion) : null,
+    frozen_phi: frozen_phi ? frozen_phi.toFixed(0) : null,
+    thaw_settlement_pct: thaw_settlement_pct ? thaw_settlement_pct.toFixed(1) : null,
+    midDepth: midDepth.toFixed(1)
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOG PANEL RENDERING
+   ═══════════════════════════════════════════════════════════ */
+function clearLogPanel() {
+  document.getElementById('logContent').innerHTML =
+    '<p class="log-empty">No boreholes drilled.<br><br>After starting the simulation, click anywhere on the cross-section to place a virtual borehole.<br><br>Drilling at <em>different lateral positions</em> will produce <em>different facies</em> — proximal vs distal, channel vs overbank, basin center vs margin.</p>';
+  document.getElementById('bhTabs').innerHTML = '';
+  document.getElementById('logActions').style.display = 'none';
+}
+
+function renderLogPanel() {
+  if (sim.boreholes.length === 0) { clearLogPanel(); return; }
+  if (sim.view === 'correlation') { renderCorrelationView(); return; }
+
+  const tabsEl = document.getElementById('bhTabs');
+  tabsEl.innerHTML = '';
+  sim.boreholes.forEach((bh, idx) => {
+    const tab = document.createElement('button');
+    tab.className = 'bh-tab' + (idx === sim.activeBH ? ' active' : '');
+    tab.textContent = bh.id;
+    tab.onclick = () => { sim.activeBH = idx; renderLogPanel(); redrawAll(); };
+    tabsEl.appendChild(tab);
+  });
+
+  const bh = sim.boreholes[sim.activeBH];
+  if (!bh) return;
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xKm = (bh.xPct * widthKm).toFixed(2);
+  const totalDepthM = bh.layers.length > 0 ? bh.layers[bh.layers.length - 1].depth_bot.toFixed(1) : '—';
+  const zone = classifyLateralZone(bh.xPct);
+
+  let html = `<div class="bh-meta">📍 <span>${xKm} km</span> across basin &nbsp;|&nbsp; <span>${zone}</span> zone &nbsp;|&nbsp; TD <span>${totalDepthM} m</span>`;
+  if (sim.permafrostActive) html += `<span class="pf-badge">PERMAFROST</span>`;
+  html += `</div>`;
+
+  const merged = mergeLayers(bh.layers);
+  merged.forEach((entry) => {
+    const fac = entry.faciesData;
+    const props = inferGeotechProperties(entry);
+    const isTephra = entry.isTephra;
+    const borderColor = fac.color;
+    html += `
+    <div class="log-entry${isTephra ? ' tephra-marker' : ''}" style="border-left-color:${borderColor};">
+      <div class="depth">${entry.depth_top.toFixed(1)}&ndash;${entry.depth_bot.toFixed(1)} m</div>
+      <div class="facies-name" style="color:${isTephra ? '#E8B87A' : borderColor};">${fac.name}${isTephra ? ' ⚡ EVENT' : ''}</div>
+      <div class="prop-row"><span>Grain Size</span><span>${fac.grain_size}</span></div>
+      <div class="prop-row"><span>USCS</span><span>${fac.uscs}</span></div>
+      <div class="prop-row"><span>Structures</span><span>${fac.structures.join(', ')}</span></div>
+      <div class="prop-row"><span>Paleoclimate</span><span>${fac.paleoclimate}</span></div>
+      <div class="prop-row"><span>Age (est.)</span><span>${entry.age_label}</span></div>
+      <div class="geotech">
+        <strong>Inferred properties at ${props.midDepth} m depth:</strong><br>
+        γ = ${props.gamma} kN/m³ &nbsp;|&nbsp; φ = ${props.phi}° &nbsp;|&nbsp; c = ${props.cohesion} kPa &nbsp;|&nbsp; k ≈ 10<sup>${props.kLog}</sup> cm/s<br>
+        OCR ≈ <span class="${parseFloat(props.OCR) > 2 ? 'ocr-high' : ''}">${props.OCR}</span> &nbsp;|&nbsp; n = ${props.porosityRange}
+        ${props.cementationGain ? `<br><em>Cementation gain: +${props.cementationGain} kPa over ${((sim.totalTime - entry.age_years) / 1000).toFixed(0)} kyr burial</em>` : ''}
+        ${props.isFrozen ? `<br><span class="frozen">❄ FROZEN STATE: c = ${props.frozen_cohesion} kPa, φ = ${props.frozen_phi}°</span>
+        <br><span class="frozen">⚠ Thaw settlement potential: ${props.thaw_settlement_pct}% (${fac.thaw_settlement})</span>` : ''}
+        <br><em>${fac.notes}</em>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('logContent').innerHTML = html;
+  document.getElementById('logActions').style.display = 'flex';
+}
+
+function renderCorrelationView() {
+  const tabsEl = document.getElementById('bhTabs');
+  tabsEl.innerHTML = '';
+
+  if (sim.boreholes.length < 2) {
+    document.getElementById('logContent').innerHTML =
+      '<p class="log-empty">Drill 2+ boreholes to compare logs side by side.<br><br>Correlation view shows facies stratigraphy across lateral position — useful for tracing channels, identifying unconformities, and seeing facies pinch-outs.</p>';
+    document.getElementById('logActions').style.display = sim.boreholes.length === 1 ? 'flex' : 'none';
+    return;
+  }
+
+  // Sort by xPct for ordered display
+  const sorted = [...sim.boreholes].sort((a, b) => a.xPct - b.xPct);
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const maxDepthM = Math.max(...sim.boreholes.map(bh =>
+    bh.layers.length > 0 ? bh.layers[bh.layers.length - 1].depth_bot : 0));
+
+  let html = '<div class="correlation-view">';
+  sorted.forEach(bh => {
+    const merged = mergeLayers(bh.layers);
+    const xKm = (bh.xPct * widthKm).toFixed(2);
+    const zone = classifyLateralZone(bh.xPct);
+    html += `<div class="corr-column">
+      <div class="corr-header">${bh.id}<br><span class="pos">${xKm} km · ${zone}</span></div>
+      <div class="corr-strip" style="position:relative;">`;
+    merged.forEach(e => {
+      const top = (e.depth_top / maxDepthM) * 100;
+      const ht = ((e.depth_bot - e.depth_top) / maxDepthM) * 100;
+      const fac = e.faciesData;
+      const heightShown = Math.max(ht, 0.5);
+      html += `<div title="${fac.name} (${e.depth_top.toFixed(1)}–${e.depth_bot.toFixed(1)} m)" style="position:absolute;left:0;right:0;top:${top}%;height:${heightShown}%;background:${fac.color};border-bottom:1px solid rgba(0,0,0,0.3);font-size:0.55rem;color:rgba(0,0,0,0.6);padding-left:3px;overflow:hidden;${e.isTephra?'border:1px dashed #E8B87A;':''}">${ht > 5 ? fac.name.substring(0,12) : ''}</div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += '</div>';
+  html += '<p style="font-size:0.65rem;color:#7A8E9E;margin-top:0.5rem;font-style:italic;">Columns ordered left-to-right by basin position. Trace facies laterally to see pinch-outs, channel cuts, and ice-marginal gradients.</p>';
+  document.getElementById('logContent').innerHTML = html;
+  document.getElementById('logActions').style.display = 'flex';
+}
+
+function mergeLayers(layers) {
+  if (!layers.length) return [];
+  const out = [];
+  let cur = Object.assign({}, layers[0]);
+  for (let i = 1; i < layers.length; i++) {
+    const l = layers[i];
+    // Don't merge tephras; they're event markers
+    if (l.facies === cur.facies && !l.isTephra && !cur.isTephra) {
+      cur.depth_bot = l.depth_bot;
+      cur.thickM += l.thickM;
+    } else {
+      out.push(cur);
+      cur = Object.assign({}, l);
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOVER TOOLTIP
+   ═══════════════════════════════════════════════════════════ */
+function onCanvasHover(e) {
+  if (!sim.initialized || sim.layers.length === 0) return;
+  const c = getCanvas();
+  const rect = c.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const tooltip = document.getElementById('hoverTooltip');
+
+  if (x < MARGIN_LEFT || x > sim.canvasW - 5 || y < MARGIN_TOP || y > sim.depositY) {
+    tooltip.style.display = 'none';
+    return;
+  }
+
+  // Find which layer contains y
+  const xPct = (x - MARGIN_LEFT) / (sim.canvasW - MARGIN_LEFT - 5);
+  const binIdx = Math.min(sim.N_BINS - 1, Math.max(0, Math.floor(xPct * sim.N_BINS)));
+  let hit = null;
+  for (const layer of sim.layers) {
+    if (y >= layer.yTop && y <= layer.yBot) { hit = layer; break; }
+  }
+  if (!hit) { tooltip.style.display = 'none'; return; }
+  const fac = FACIES[hit.columns[binIdx]];
+  if (!fac) { tooltip.style.display = 'none'; return; }
+
+  // Compute depth for properties
+  const totalDepthPx = sim.depositY - sim.layers[0].yTop;
+  const totalDepthM = parseFloat(document.getElementById('depthSlider').value);
+  const pxPerM = totalDepthPx > 0 ? totalDepthPx / totalDepthM : 6;
+  const depthM = ((y - sim.layers[0].yTop) / pxPerM).toFixed(1);
+
+  let ageLabel;
+  if (sim.totalTime >= 1000000) ageLabel = (hit.age / 1000000).toFixed(2) + ' Ma';
+  else if (sim.totalTime >= 100000) ageLabel = Math.round(hit.age / 1000) + ',000 yr';
+  else ageLabel = Math.round(hit.age).toLocaleString() + ' yr';
+
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xKm = (xPct * widthKm).toFixed(2);
+  const zone = classifyLateralZone(xPct);
+
+  tooltip.innerHTML = `
+    <div class="tt-facies">${fac.name}${hit.isTephra ? ' ⚡' : ''}</div>
+    <div class="tt-row"><span>Depth</span><span>${depthM} m</span></div>
+    <div class="tt-row"><span>Position</span><span>${xKm} km · ${zone}</span></div>
+    <div class="tt-row"><span>Age</span><span>${ageLabel}</span></div>
+    <div class="tt-row"><span>USCS</span><span>${fac.uscs}</span></div>
+    <div class="tt-row"><span>Phase</span><span>${hit.phaseLabel}</span></div>
+  `;
+  // Position tooltip
+  const tx = Math.min(x + 14, sim.canvasW - 250);
+  const ty = Math.min(y + 14, sim.canvasH - 130);
+  tooltip.style.left = tx + 'px';
+  tooltip.style.top = ty + 'px';
+  tooltip.style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPORT
+   ═══════════════════════════════════════════════════════════ */
+function exportCSV() {
+  const bh = sim.boreholes[sim.activeBH];
+  if (!bh) return;
+  const merged = mergeLayers(bh.layers);
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xKm = (bh.xPct * widthKm).toFixed(2);
+  const zone = classifyLateralZone(bh.xPct);
+
+  let csv = `# RI06 Synthetic Borehole Log\n`;
+  csv += `# Borehole: ${bh.id}\n`;
+  csv += `# Position: ${xKm} km (${zone} zone)\n`;
+  csv += `# Scenario: ${sim.scenario.name}\n`;
+  csv += `# Permafrost active: ${sim.permafrostActive}\n#\n`;
+  csv += 'Borehole ID,Depth Top (m),Depth Bot (m),Facies,Grain Size,USCS,Structures,Paleoclimate,Age,γ (kN/m³),φ (°),c (kPa),OCR,k (cm/s),Porosity,Frozen c (kPa),Thaw Settlement %,Notes\n';
+  merged.forEach(e => {
+    const f = e.faciesData;
+    const p = inferGeotechProperties(e);
+    csv += [
+      bh.id,
+      e.depth_top.toFixed(2), e.depth_bot.toFixed(2),
+      f.name, f.grain_size, f.uscs,
+      '"' + f.structures.join('; ') + '"',
+      f.paleoclimate, e.age_label,
+      p.gamma, p.phi, p.cohesion, p.OCR, '1e' + p.kLog, p.porosityRange,
+      p.frozen_cohesion || '',
+      p.thaw_settlement_pct || '',
+      '"' + f.notes + (e.isTephra ? ' [TEPHRA EVENT MARKER]' : '') + '"'
+    ].join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = bh.id + '_log.csv';
+  a.click();
+  showNotify('CSV exported: ' + bh.id + '_log.csv');
+}
+
+function exportLogImage() {
+  const bh = sim.boreholes[sim.activeBH];
+  if (!bh) return;
+  const merged = mergeLayers(bh.layers);
+  const canvas = document.createElement('canvas');
+  const rowH = 72;
+  const W = 540;
+  const H = 90 + merged.length * rowH + 50;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#2E3A47';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#D4651A';
+  ctx.font = 'bold 13px IBM Plex Mono, monospace';
+  ctx.fillText('RI06 — Stratigraphic Log: ' + bh.id, 16, 28);
+  ctx.fillStyle = '#9AAABB';
+  ctx.font = '10px IBM Plex Mono, monospace';
+  ctx.fillText(sim.scenario ? sim.scenario.name : '', 16, 46);
+  const widthKm = parseFloat(document.getElementById('widthSlider').value);
+  const xKm = (bh.xPct * widthKm).toFixed(2);
+  const zone = classifyLateralZone(bh.xPct);
+  ctx.fillText(`Position: ${xKm} km · ${zone} zone${sim.permafrostActive ? ' · permafrost' : ''}`, 16, 62);
+
+  merged.forEach((e, i) => {
+    const y = 80 + i * rowH;
+    const f = e.faciesData;
+    const p = inferGeotechProperties(e);
+    ctx.fillStyle = f.color;
+    ctx.fillRect(16, y, 22, rowH - 4);
+    if (e.isTephra) {
+      ctx.strokeStyle = '#E8B87A';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(16, y, 22, rowH - 4);
+    }
+    ctx.fillStyle = '#E8EAEC';
+    ctx.font = 'bold 10px IBM Plex Mono, monospace';
+    ctx.fillText(e.depth_top.toFixed(1) + '–' + e.depth_bot.toFixed(1) + ' m', 46, y + 13);
+    ctx.fillStyle = e.isTephra ? '#E8B87A' : f.color;
+    ctx.fillText(f.name + (e.isTephra ? ' ⚡' : ''), 46, y + 26);
+    ctx.fillStyle = '#9AAABB';
+    ctx.font = '9px IBM Plex Mono, monospace';
+    ctx.fillText(`USCS: ${f.uscs}  γ=${p.gamma}  φ=${p.phi}°  c=${p.cohesion} kPa  OCR=${p.OCR}`, 46, y + 40);
+    ctx.fillText(`k≈10^${p.kLog} cm/s  n=${p.porosityRange}  ·  ${e.age_label}`, 46, y + 52);
+    if (p.isFrozen) {
+      ctx.fillStyle = '#5ABDE8';
+      ctx.fillText(`❄ Frozen: c=${p.frozen_cohesion} kPa  Thaw settlement: ${p.thaw_settlement_pct}%`, 46, y + 64);
+    }
+    ctx.strokeStyle = '#4A6070';
+    ctx.lineWidth = 0.4;
+    ctx.beginPath();
+    ctx.moveTo(16, y + rowH - 2);
+    ctx.lineTo(W - 16, y + rowH - 2);
+    ctx.stroke();
+  });
+
+  ctx.fillStyle = '#4A6070';
+  ctx.font = '8px IBM Plex Mono, monospace';
+  ctx.fillText('Ian Minnock, CPG, PMP, PMI-ACP — ian.minnock@mfimpact.com — RI06 v2.0', 16, H - 14);
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = bh.id + '_log.png';
+  a.click();
+  showNotify('PNG exported: ' + bh.id + '_log.png');
+}
+
+function clearBoreholes() {
+  sim.boreholes = [];
+  sim.activeBH = -1;
+  clearLogPanel();
+  redrawAll();
+  showNotify('All boreholes cleared');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STARTUP
+   ═══════════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  resizeCanvas();
+  onScenarioChange();
+  drawBaseline();
+  drawCurves();
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+V2.0 OPUS DEEPENING — CHANGE LOG & FUTURE WORK
+
+Built on the Sonnet v1.0 prototype. The handoff list in v1 has been
+worked through; this section records what changed and what's still open.
+
+WHAT WAS DEEPENED
+─────────────────
+
+1. PALEOCLIMATE-TO-FACIES COUPLING (handoff item #2)
+   - Climate sliders (temp, precip) now actually do something:
+     getModulatedClimate() applies offsets to phase temp/flux
+     getModulatedFaciesDist() shifts facies probabilities — colder boosts
+     glacial facies (till, outwash, periglacial, glaciomarine), warmer
+     boosts paleosols and warm-marine. Wet boosts fluvial; dry boosts aeolian.
+   - Dansgaard-Oeschger oscillations: 1500-yr asymmetric cold-spike overlay
+     during glacial-temperature phases (toggleable; default on for Quaternary
+     and Beaufort). Visible as ripples in the temperature curve and triggers
+     thin glacial-facies layers within otherwise warm phases.
+   - Phase facies are now PROBABILITY DISTRIBUTIONS, not single facies — a
+     single "Glaciomarine Proximal" phase can deposit a mix of proximal
+     diamicton (65%), distal mud (25%), and kettle clay (10%), with the mix
+     shifting laterally and with climate sliders.
+
+2. LATERAL FACIES VARIATION (handoff item #5)
+   - Each layer is now a 60-bin column array, not a single facies stripe.
+   - Each phase has a lateral{proximal, medial, distal} tuple defining what
+     facies should dominate at each lateral position.
+   - getBinFacies() biases the modulated distribution toward the zone's
+     signature facies AND filters out facies that don't belong in that zone
+     (e.g. glacial outwash is restricted to proximal; deep marine to distal).
+   - Result: drilling at xPct=0.1 vs xPct=0.9 in the same phase produces
+     materially different logs. Bootlegger Cove proximal sees more diamicton;
+     distal sees more kettle clay. Cretaceous proximal sees deltaic sand;
+     distal sees deep marine mud.
+   - Basin asymmetry slider controls which side is proximal.
+
+3. GEOTECHNICAL PROPERTY INFERENCE (handoff item #3)
+   - Replaced static lookup with inferGeotechProperties() that computes:
+     * Depth-dependent OCR: OCR = 1 + (depth/10) * consolidation_rate.
+       Tills carry a base_OCR=4.0 (pre-consolidated by ice loading) and
+       don't gain further from burial in the model.
+     * Cementation gain over time: cohesion += age_Ma * 1000 * cementation_rate
+       (capped at +80 kPa). Older deposits are stiffer.
+     * Burial consolidation gain: cohesion += depth * 1.5 * consolidation_rate.
+     * φ slight increase with cementation (cohesive soils only)
+     * γ slight increase with depth
+     * Porosity decreases with burial depth (~0.15%/m)
+   - Each facies now has cementation_rate and consolidation_rate parameters
+     reflecting how it actually responds to burial.
+
+4. PERMAFROST / CRYOGENIC OVERPRINT (handoff item #7)
+   - Top 10 m of section is overlaid with cross-hatch when permafrost is
+     active (auto-on for Beaufort, manual checkbox elsewhere).
+   - For frozen layers: frozen_cohesion = c + 200..300 kPa (ice bonding),
+     frozen_phi = phi + 5°.
+   - Thaw settlement potential: 0–20% based on facies thaw_settlement
+     classification ("Very High" for ice-rich kettle clay, "Low" for sands).
+   - Frozen-state properties shown in log entries when active.
+
+5. BOOTLEGGER COVE REALISM (handoff item #4)
+   - Six-phase sequence calibrated to actual Cook Inlet deglaciation:
+     glacial outwash base → proximal IRD diamicton → distal glaciomarine
+     → glaciofluvial delta → kettle lake clay (the BCF unit) → upper
+     organic-rich Holocene cap.
+   - Lateral gradient is realistic: proximal sees more diamicton and
+     deltaic sand, distal sees more clay (matching real BCF map patterns).
+   - Three tephra events (~1800, 6700, 12300 yr-ago equivalents) provide
+     chronostratigraphic tie-points (handoff item #6 partial — tephras
+     marked as event horizons in section and log).
+
+6. UI/UX IMPROVEMENTS (handoff item #9)
+   - Hover tooltip on cross-section shows facies, depth, age, position,
+     phase, and USCS without requiring a borehole drill.
+   - Borehole correlation view: side-by-side stratigraphic columns
+     ordered by basin position. Reveals lateral facies pinch-outs.
+   - Lateral distance axis labels (km).
+   - Tephra layers visually distinct (orange outline, "TEPHRA" text).
+   - Log entries flag tephra markers and frozen states distinctly.
+   - CSV export now includes inferred properties + permafrost data.
+
+WHAT REMAINS OPEN
+─────────────────
+
+A. Sub-orbital climate stochasticity — D-O is implemented as a deterministic
+   sinusoid; real D-O is stochastic with millennial-scale clustering. Adding
+   a Heinrich-event flag (massive iceberg discharge with proximal IRD spike)
+   would be a high-value next step.
+
+B. Channel architecture — currently lateral variation is zone-based and
+   smooth. Real fluvial/deltaic systems have channelized facies (sand
+   ribbons in clay) that cut across stratigraphy. Implementing a channel
+   migration model (Gaussian channel positions migrating through time)
+   would create much more realistic correlation panels.
+
+C. Sequence stratigraphy interpretation — handoff item #8. The simulation
+   produces parasequences and unconformities but doesn't auto-detect them.
+   A post-processing step that flags sequence boundaries (sharp facies
+   contrasts), maximum flooding surfaces, and systems tracts would turn
+   the cross-section into a teaching tool for SS interpretation.
+
+D. Quick-clay sensitivity calculation — Bootlegger Cove kettle clay and
+   Norwegian/Swedish quick clays gain sensitivity through post-depositional
+   leaching of marine pore-water salts. Adding a salinity-leaching state
+   variable that increases sensitivity over postglacial time would be
+   relevant for Anchorage seismic-stability work.
+
+E. Ice-wedge polygon visualization — handoff item #7 partial. Permafrost
+   currently shows as a uniform cross-hatch. Real periglacial terrain has
+   ice-wedge polygons visible in plan view; not directly rendererable in a
+   2D cross-section, but the active layer / yedoma / ice-wedge cast hierarchy
+   could be shown.
+
+F. Radiocarbon age uncertainty — handoff item #6. Ages are exact in the
+   simulator but real 14C dating has 100–500-yr error bars. Adding
+   per-layer age uncertainty bands would be honest pedagogy.
+
+G. Foraminiferal biozones for Bootlegger Cove (Elphidium clavatum vs
+   Cassidulina spp.) for paleobathymetry inference — would let the
+   simulator predict water depth from microfossils as real BCF cores do.
+
+H. Save/load scenarios as JSON — useful for sharing a configured run.
+
+ARCHITECTURE NOTES
+──────────────────
+- FACIES{} is now richer: lateral_zone, frost_susceptible, thaw_settlement,
+  cementation_rate, consolidation_rate, base_OCR. New facies (tephra,
+  glaciomarine_proximal/distal split) added cleanly.
+- SCENARIOS{} phases now carry facies_dist + lateral, not single facies.
+- Layer storage went from {facies, yTop, yBot} to {columns[N_BINS], ...}.
+- inferGeotechProperties() is the single point of property computation; all
+  exports/log rendering go through it. Easy to extend.
+═══════════════════════════════════════════════════════════ -->
+
+</body>
+</html>
