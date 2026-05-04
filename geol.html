@@ -4,12 +4,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alaska Geotechnical Tools</title>
+<title>Geology &amp; Field Tools &mdash; MFI Alaska Geo Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
 min-height: 100vh;
@@ -65,6 +65,88 @@ color: #4A6070;
 letter-spacing: 0.06em;
 }
 
+/* ── SITE NAV BANNER ── */
+.site-nav {
+position: relative;
+z-index: 9;
+background: #1E2D3A;
+border-bottom: 1px solid #3A4A5C;
+padding: 0 40px;
+display: flex;
+align-items: stretch;
+gap: 0;
+overflow-x: auto;
+}
+
+.site-nav::-webkit-scrollbar { display: none; }
+
+.nav-item {
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+min-width: 0;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-item:first-child { border-left: none; }
+
+.nav-item:hover { background: #263240; }
+
+.nav-item.active { background: #263240; border-bottom: 2px solid #f0a500; }
+
+.nav-item-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #E8EAEC;
+margin-bottom: 3px;
+white-space: nowrap;
+}
+
+.nav-item.active .nav-item-label { color: #f0a500; }
+
+.nav-item-desc {
+font-family: ‘IBM Plex Sans’, sans-serif;
+font-size: 10px;
+font-weight: 300;
+color: #4A6070;
+white-space: nowrap;
+}
+
+.nav-item:hover .nav-item-desc { color: #9AAABB; }
+
+.nav-home {
+display: flex;
+align-items: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+margin-right: 8px;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-home:hover { background: #263240; }
+
+.nav-home-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #4A6070;
+white-space: nowrap;
+transition: color 0.2s;
+}
+
+.nav-home:hover .nav-home-label { color: #9AAABB; }
+
 /* ── WRAPPER ── */
 .wrapper {
 position: relative;
@@ -72,6 +154,12 @@ z-index: 1;
 max-width: 1040px;
 margin: 0 auto;
 padding: 64px 40px 80px;
+}
+
+@media (max-width: 560px) {
+.wrapper { padding: 40px 20px 60px; }
+.topbar  { padding: 0 20px; }
+.site-nav { padding: 0 20px; }
 }
 
 /* ── HERO ── */
@@ -140,22 +228,35 @@ color: #4A6070;
 white-space: nowrap;
 }
 
+.divider-label.gis-label { color: #4a9eff; }
+
 .divider-line { flex: 1; height: 1px; background: #3A4A5C; }
+.divider-line.gis-line { background: #263a50; }
 
 /* ── GRID ── */
 .app-grid {
 display: grid;
 grid-template-columns: repeat(3, 1fr);
 gap: 14px;
-margin-bottom: 64px;
+margin-bottom: 48px;
 }
 
 @media (max-width: 860px) { .app-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) {
-.app-grid { grid-template-columns: 1fr; }
-.wrapper  { padding: 40px 20px 60px; }
-.topbar   { padding: 0 20px; }
+@media (max-width: 560px) { .app-grid { grid-template-columns: 1fr; } }
+
+/* ── GIS SECTION WRAPPER ── */
+.gis-section {
+margin-bottom: 64px;
+padding: 28px 28px 20px;
+background: #263240;
+border: 1px solid #3A4A5C;
+border-left: 3px solid #4a9eff;
+border-radius: 3px;
 }
+
+.gis-section .divider { margin-bottom: 24px; }
+
+.gis-section .app-grid { margin-bottom: 0; }
 
 /* ── APP CARD ── */
 .app-card {
@@ -164,13 +265,15 @@ text-decoration: none;
 background: #1A2530;
 border: 1px solid #3A4A5C;
 border-radius: 3px;
-padding: 24px 24px 20px;
+padding: 24px 24px 48px;
 position: relative;
 overflow: hidden;
 cursor: pointer;
 transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 animation: fadeUp 0.5s ease both;
 }
+
+.gis-section .app-card { background: #1E2D3A; }
 
 .app-card:nth-child(1) { animation-delay: 0.04s; }
 .app-card:nth-child(2) { animation-delay: 0.08s; }
@@ -179,15 +282,12 @@ animation: fadeUp 0.5s ease both;
 .app-card:nth-child(5) { animation-delay: 0.20s; }
 .app-card:nth-child(6) { animation-delay: 0.24s; }
 .app-card:nth-child(7) { animation-delay: 0.28s; }
-.app-card:nth-child(8) { animation-delay: 0.32s; }
-.app-card:nth-child(9) { animation-delay: 0.36s; }
 
 @keyframes fadeUp {
 from { opacity: 0; transform: translateY(14px); }
 to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Left accent strip — color set per card below */
 .app-card::before {
 content: ‘’;
 position: absolute;
@@ -197,7 +297,6 @@ opacity: 0.6;
 transition: opacity 0.2s;
 }
 
-/* Hover glow — color set per card below */
 .app-card::after {
 content: ‘’;
 position: absolute;
@@ -277,15 +376,15 @@ transition: color 0.2s, transform 0.2s;
 
 /* ── PER-CARD COLOR HARDCODING ── */
 
-/* 01 Pavement Distress — amber #f0a500 */
+/* GL01 Pavement Distress — amber #f0a500 */
 .card-distress::before { background: #f0a500; }
 .card-distress::after  { background: radial-gradient(ellipse at 20% 50%, #f0a500 0%, transparent 70%); }
 .card-distress:hover   { border-color: #f0a500; }
-.card-distress:hover .card-title  { color: #f0a500; }
-.card-distress:hover .card-arrow  { color: #f0a500; transform: translate(3px, -2px); }
-.card-distress .card-num          { color: #f0a500; }
+.card-distress:hover .card-title { color: #f0a500; }
+.card-distress:hover .card-arrow { color: #f0a500; transform: translate(3px, -2px); }
+.card-distress .card-num         { color: #f0a500; }
 
-/* 02 Rock & Soil — teal #2ec4b6 */
+/* GL02 Rock & Soil — teal #2ec4b6 */
 .card-soil::before { background: #2ec4b6; }
 .card-soil::after  { background: radial-gradient(ellipse at 20% 50%, #2ec4b6 0%, transparent 70%); }
 .card-soil:hover   { border-color: #2ec4b6; }
@@ -293,7 +392,7 @@ transition: color 0.2s, transform 0.2s;
 .card-soil:hover .card-arrow { color: #2ec4b6; transform: translate(3px, -2px); }
 .card-soil .card-num         { color: #2ec4b6; }
 
-/* 03 Investigation — orange #f6ad55 */
+/* GL03 Investigation — orange #f6ad55 */
 .card-invest::before { background: #f6ad55; }
 .card-invest::after  { background: radial-gradient(ellipse at 20% 50%, #f6ad55 0%, transparent 70%); }
 .card-invest:hover   { border-color: #f6ad55; }
@@ -301,45 +400,37 @@ transition: color 0.2s, transform 0.2s;
 .card-invest:hover .card-arrow { color: #f6ad55; transform: translate(3px, -2px); }
 .card-invest .card-num         { color: #f6ad55; }
 
-/* 04 Design Tools — blue #4a9eff */
-.card-design::before { background: #4a9eff; }
-.card-design::after  { background: radial-gradient(ellipse at 20% 50%, #4a9eff 0%, transparent 70%); }
-.card-design:hover   { border-color: #4a9eff; }
-.card-design:hover .card-title { color: #4a9eff; }
-.card-design:hover .card-arrow { color: #4a9eff; transform: translate(3px, -2px); }
-.card-design .card-num         { color: #4a9eff; }
+/* GL04 Well / Boring — steel blue #68a9c8 */
+.card-well::before { background: #68a9c8; }
+.card-well::after  { background: radial-gradient(ellipse at 20% 50%, #68a9c8 0%, transparent 70%); }
+.card-well:hover   { border-color: #68a9c8; }
+.card-well:hover .card-title { color: #68a9c8; }
+.card-well:hover .card-arrow { color: #68a9c8; transform: translate(3px, -2px); }
+.card-well .card-num         { color: #68a9c8; }
 
-/* 05 Thaw Consolidation — ice blue #63b3ed */
-.card-thaw::before { background: #63b3ed; }
-.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-thaw:hover   { border-color: #63b3ed; }
-.card-thaw:hover .card-title { color: #63b3ed; }
-.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-thaw .card-num         { color: #63b3ed; }
+/* GIS01 GCP Planning — blue #4a9eff */
+.card-gcp::before { background: #4a9eff; }
+.card-gcp::after  { background: radial-gradient(ellipse at 20% 50%, #4a9eff 0%, transparent 70%); }
+.card-gcp:hover   { border-color: #4a9eff; }
+.card-gcp:hover .card-title { color: #4a9eff; }
+.card-gcp:hover .card-arrow { color: #4a9eff; transform: translate(3px, -2px); }
+.card-gcp .card-num         { color: #4a9eff; }
 
-/* 06 AI Analysis — violet #b794f4 */
-.card-ai::before { background: #b794f4; }
-.card-ai::after  { background: radial-gradient(ellipse at 20% 50%, #b794f4 0%, transparent 70%); }
-.card-ai:hover   { border-color: #b794f4; }
-.card-ai:hover .card-title { color: #b794f4; }
-.card-ai:hover .card-arrow { color: #b794f4; transform: translate(3px, -2px); }
-.card-ai .card-num         { color: #b794f4; }
+/* GIS02 Map Projections — periwinkle #7b9ef0 */
+.card-proj::before { background: #7b9ef0; }
+.card-proj::after  { background: radial-gradient(ellipse at 20% 50%, #7b9ef0 0%, transparent 70%); }
+.card-proj:hover   { border-color: #7b9ef0; }
+.card-proj:hover .card-title { color: #7b9ef0; }
+.card-proj:hover .card-arrow { color: #7b9ef0; transform: translate(3px, -2px); }
+.card-proj .card-num         { color: #7b9ef0; }
 
-/* 07 Contact — green #3dba7e */
-.card-contact::before { background: #3dba7e; }
-.card-contact::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
-.card-contact:hover   { border-color: #3dba7e; }
-.card-contact:hover .card-title { color: #3dba7e; }
-.card-contact:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
-.card-contact .card-num         { color: #3dba7e; }
-
-/* 08 References — purple #9b72cf */
-.card-refs::before { background: #9b72cf; }
-.card-refs::after  { background: radial-gradient(ellipse at 20% 50%, #9b72cf 0%, transparent 70%); }
-.card-refs:hover   { border-color: #9b72cf; }
-.card-refs:hover .card-title { color: #9b72cf; }
-.card-refs:hover .card-arrow { color: #9b72cf; transform: translate(3px, -2px); }
-.card-refs .card-num         { color: #9b72cf; }
+/* GIS03 UAS Pre-Flight — sky #56c7e0 */
+.card-uas::before { background: #56c7e0; }
+.card-uas::after  { background: radial-gradient(ellipse at 20% 50%, #56c7e0 0%, transparent 70%); }
+.card-uas:hover   { border-color: #56c7e0; }
+.card-uas:hover .card-title { color: #56c7e0; }
+.card-uas:hover .card-arrow { color: #56c7e0; transform: translate(3px, -2px); }
+.card-uas .card-num         { color: #56c7e0; }
 
 /* ── FOOTER ── */
 .footer {
@@ -423,6 +514,8 @@ max-width: 780px;
 </head>
 <body>
 
+<!-- TOP BAR -->
+
 <div class="topbar">
   <div class="topbar-left">
     <div class="dot-cluster">
@@ -430,147 +523,194 @@ max-width: 780px;
       <div class="dot dot-2"></div>
       <div class="dot dot-3"></div>
     </div>
-    <div class="topbar-title">Alaska Geotechnical Tools</div>
+    <div class="topbar-title">Geology &amp; Field Tools</div>
   </div>
-  <div class="topbar-right">mfimpact.com &nbsp;·&nbsp; v1.0</div>
+  <div class="topbar-right">mfimpact.com &nbsp;&middot;&nbsp; v2.0</div>
 </div>
+
+<!-- SITE NAV BANNER -->
+
+<nav class="site-nav">
+  <a class="nav-home" href="index.html">
+    <span class="nav-home-label">&#8592; Home</span>
+  </a>
+  <a class="nav-item active" href="geol.html">
+    <span class="nav-item-label">GL &mdash; Geology &amp; Field</span>
+    <span class="nav-item-desc">Field ID, logging, investigation, GIS</span>
+  </a>
+  <a class="nav-item" href="geot.html">
+    <span class="nav-item-label">GT &mdash; Geotechnical Design</span>
+    <span class="nav-item-desc">Pavement, frost, ESAL calculators</span>
+  </a>
+  <a class="nav-item" href="ri.html">
+    <span class="nav-item-label">RI &mdash; Research &amp; Innovation</span>
+    <span class="nav-item-desc">AI analysis, modeling, simulation</span>
+  </a>
+  <a class="nav-item" href="pm.html">
+    <span class="nav-item-label">PM &mdash; Project Management</span>
+    <span class="nav-item-desc">PMI study tools, planning aids</span>
+  </a>
+</nav>
 
 <div class="wrapper">
 
+  <!-- HERO -->
+
   <div class="hero">
-    <div class="hero-tag">Field Reference System</div>
-    <h1 class="hero-title">Alaska<br>Geotechnical <span>Tools</span></h1>
-    <p class="hero-sub">Interactive field and design reference guides for geotechnical engineering practice in Alaska. Select a tool below to begin. All tools run locally — no internet required after loading.</p>
+    <div class="hero-tag">GL &mdash; Geology &amp; Field Tools</div>
+    <h1 class="hero-title">Geology &amp;<br><span>Field</span> Tools</h1>
+    <p class="hero-sub">Field identification guides, subsurface investigation planning, and well geometry tools for Alaska geotechnical practice. Includes GIS and spatial tools for survey planning and drone operations. All tools run locally &mdash; no internet required after loading.</p>
   </div>
 
+  <!-- GL DIVIDER -->
+
   <div class="divider">
-    <span class="divider-label">Available Tools</span>
+    <span class="divider-label">GL &mdash; Geology &amp; Field Tools</span>
     <div class="divider-line"></div>
   </div>
 
+  <!-- GL GRID -->
+
   <div class="app-grid">
 
-<a class="app-card card-distress" href="geot/pavement-distress.html">
-  <div class="card-num">01 — Diagnostics</div>
+```
+<!-- GL01: Pavement Distress Identification -->
+<a class="app-card card-distress" href="geol/pavement-distress.html">
+  <div class="card-num">GL01 &mdash; Diagnostics</div>
   <span class="card-icon">🛣️</span>
   <div class="card-title">Pavement Distress<br>Identification</div>
-  <p class="card-desc">Trace observed distress types to their geotechnical and structural causes. Rutting, cracking, frost heave, edge failure, and more — with Alaska context throughout.</p>
+  <p class="card-desc">Field diagnostic reference for identifying pavement distress types and tracing them to geotechnical and structural root causes. Covers 15 FHWA LTPP distress types plus five Alaska cold-climate types: frost heave, thaw settlement, delamination, longitudinal joint cracking, and reflective cracking. Reference photos included.</p>
   <div class="card-tags">
-    <span class="tag complete">✓ Complete</span>
-    <span class="tag">Distress</span>
-    <span class="tag">Causes</span>
+    <span class="tag complete">&#10003; Complete</span>
+    <span class="tag">FHWA LTPP</span>
     <span class="tag">Alaska</span>
+    <span class="tag">Cold Climate</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
+<!-- GL02: Rock & Soil Identification -->
 <a class="app-card card-soil" href="geol/soil_rock_guide.html">
-  <div class="card-num">02 — Identification</div>
+  <div class="card-num">GL02 &mdash; Identification</div>
   <span class="card-icon">🪨</span>
-  <div class="card-title">Rock &amp; Soil<br>Identification</div>
-  <p class="card-desc">Interactive USCS-based decision tree for soil classification and geological rock description. Includes frozen soil designations and Alaska-specific soil types.</p>
+  <div class="card-title">Rock &amp; Soil<br>Field ID Guide</div>
+  <p class="card-desc">Interactive USCS-based decision tree for soil classification and rock description. Covers organic soil tiers per Alaska DOT&amp;PF thresholds, dual-symbol fines classification, frozen soil designations per ASTM D4083, and igneous, sedimentary, and metamorphic rock identification. Alaska geological context throughout &mdash; Bootlegger Cove, Cook Inlet Quaternary, glaciomarine silts, P&eacute;w&eacute; loess.</p>
   <div class="card-tags">
-    <span class="tag complete">✓ Complete</span>
+    <span class="tag complete">&#10003; Complete</span>
     <span class="tag">USCS</span>
-    <span class="tag">Soil</span>
-    <span class="tag">Rock</span>
+    <span class="tag">ASTM D4083</span>
+    <span class="tag">DOT&amp;PF</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
+<!-- GL03: Subsurface Investigation Planning -->
 <a class="app-card card-invest" href="geol/investigation_planning.html">
-  <div class="card-num">03 — Planning</div>
-  <span class="card-icon">🚁</span>
+  <div class="card-num">GL03 &mdash; Planning</div>
+  <span class="card-icon">🗺️</span>
   <div class="card-title">Subsurface Investigation<br>Planning</div>
-  <p class="card-desc">Interactive planning tool for selecting drilling methods, rig types, and investigative technologies. Covers rotary, auger, sonic, geophysics, and drone-based surveying.</p>
+  <p class="card-desc">Step-by-step planning tool for selecting drilling methods, rig types, and investigative technologies. Guides decisions from project purpose through site access, depth, ground conditions, and sampling method. Alaska-specific guidance for fly-in access, permafrost freeze-back, cobble and boulder conditions, and remote village mobilization.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">Drill Rigs</span>
-    <span class="tag">Methods</span>
-    <span class="tag">Geophysics</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<a class="app-card card-design" href="geot.html">
-  <div class="card-num">04 — Design Tools</div>
-  <span class="card-icon">📐</span>
-  <div class="card-title">Engineering<br>Design Tools</div>
-  <p class="card-desc">Interactive calculators and design aids for pavement section design, well geometry, and more. Alaska material specifications and frost design methods throughout.</p>
-  <div class="card-tags">
-    <span class="tag">Pavement</span>
-    <span class="tag">Wells</span>
-    <span class="tag">Frost</span>
-    <span class="tag">Calculators</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<a class="app-card card-thaw" href="ri/thaw_consolidation.html">
-  <div class="card-num">05 — Modeling</div>
-  <span class="card-icon">🧊</span>
-  <div class="card-title">Thaw Consolidation<br>Model</div>
-  <p class="card-desc">1D thaw consolidation model for estimating settlement in thawing permafrost. Couples the Stefan equation with Terzaghi consolidation theory. Planned expansion to 2D. Math capstone project.</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">1D Model</span>
-    <span class="tag">Thaw</span>
-    <span class="tag">Permafrost</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<a class="app-card card-ai" href="ri/geo-agg.html">
-  <div class="card-num">06 — Analysis</div>
-  <span class="card-icon">📡</span>
-  <div class="card-title">AI Historical<br>Data Analysis</div>
-  <p class="card-desc">AI-assisted analysis tool for historical geotechnical and climate datasets. Pattern recognition, trend analysis, and site characterization support using regional Alaska data.</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">AI</span>
-    <span class="tag">Historical Data</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">Drilling</span>
+    <span class="tag">Sampling</span>
     <span class="tag">Alaska</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-<a class="app-card card-contact" href="contact.html">
-  <div class="card-num">07 — Contact</div>
-  <span class="card-icon">✉️</span>
-  <div class="card-title">Contact &amp;<br>Feedback</div>
-  <p class="card-desc">Questions, corrections, or suggestions about any tool in this reference system. Feedback helps improve the accuracy and usefulness of these guides.</p>
+<!-- GL04: Well / Boring Geometry Builder -->
+<a class="app-card card-well" href="geol/well-geometry.html">
+  <div class="card-num">GL04 &mdash; Design</div>
+  <span class="card-icon">🔩</span>
+  <div class="card-title">Well &amp; Boring<br>Geometry Builder</div>
+  <p class="card-desc">Canvas-based cross-section builder for configuring monitoring wells, piezometers, and observation borings. Set borehole diameter, casing depth, screen interval, gravel pack, and bentonite seal, then generate a dimensioned schematic. Supports piezometer, percolation/infiltration test, and monitoring well configurations.</p>
   <div class="card-tags">
-    <span class="tag">Feedback</span>
-    <span class="tag">Contact</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">Monitoring Well</span>
+    <span class="tag">Piezometer</span>
+    <span class="tag">Cross-Section</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
-
-<a class="app-card card-refs" href="references.html">
-  <div class="card-num">08 — References</div>
-  <span class="card-icon">📚</span>
-  <div class="card-title">References</div>
-  <p class="card-desc">Source documents, standards, and manuals cited across all tools. Alaska DOT&amp;PF specifications, AASHTO, ASTM, USACE CRREL, and peer-reviewed literature.</p>
-  <div class="card-tags">
-    <span class="tag">AASHTO</span>
-    <span class="tag">ASTM</span>
-    <span class="tag">DOT Specs</span>
-    <span class="tag">CRREL</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
+```
 
   </div>
+
+  <!-- GIS SUBSECTION -->
+
+  <div class="gis-section">
+
+```
+<div class="divider">
+  <span class="divider-label gis-label">GIS &mdash; Spatial &amp; Remote Sensing Tools</span>
+  <div class="divider-line gis-line"></div>
+</div>
+
+<div class="app-grid">
+
+  <!-- GIS01: GCP Planning Aid -->
+  <a class="app-card card-gcp" href="geol/gis/gcp-planning.html">
+    <div class="card-num">GIS01 &mdash; Survey Planning</div>
+    <span class="card-icon">📍</span>
+    <div class="card-title">GCP Planning<br>Aid</div>
+    <p class="card-desc">Leaflet-based map tool for planning ground control point layouts ahead of UAS photogrammetric surveys. Draw your survey polygon, enter flight altitude and sensor parameters, and get GSD estimates, GCP spacing recommendations, and a CSV export of planned GCP coordinates.</p>
+    <div class="card-tags">
+      <span class="tag wip">&#x1F6A7; In Progress</span>
+      <span class="tag">GCP</span>
+      <span class="tag">GSD</span>
+      <span class="tag">Photogrammetry</span>
+    </div>
+    <div class="card-arrow">&#8599;</div>
+  </a>
+
+  <!-- GIS02: Map Projection Reference Guide -->
+  <a class="app-card card-proj" href="geol/gis/projection-guide.html">
+    <div class="card-num">GIS02 &mdash; Reference</div>
+    <span class="card-icon">🌐</span>
+    <div class="card-title">Map Projection<br>Reference Guide</div>
+    <p class="card-desc">Interactive reference covering 20 map projections across five families &mdash; cylindrical, conic, azimuthal, pseudocylindrical, and miscellaneous. Each entry includes an SVG graticule diagram, EPSG code, distortion characteristics, and Alaska-specific relevance notes. Essential background for GIS, photogrammetry, and coordinate system selection.</p>
+    <div class="card-tags">
+      <span class="tag wip">&#x1F6A7; In Progress</span>
+      <span class="tag">Projections</span>
+      <span class="tag">EPSG</span>
+      <span class="tag">Alaska GIS</span>
+    </div>
+    <div class="card-arrow">&#8599;</div>
+  </a>
+
+  <!-- GIS03: UAS Pre-Flight Decision Tree -->
+  <a class="app-card card-uas" href="geol/gis/uas-precheck.html">
+    <div class="card-num">GIS03 &mdash; Pre-Flight</div>
+    <span class="card-icon">🚁</span>
+    <div class="card-title">UAS Pre-Flight<br>Decision Tree</div>
+    <p class="card-desc">FAA Part 107 and LAANC compliance decision tree with a dynamic Go/No-Go checklist. Flags Alaska and Arctic-specific conditions &mdash; wind, icing, temperature limits, low visibility, and airspace &mdash; that standard pre-flight tools miss. Printable checklist output for field documentation.</p>
+    <div class="card-tags">
+      <span class="tag wip">&#x1F6A7; In Progress</span>
+      <span class="tag">FAA Part 107</span>
+      <span class="tag">LAANC</span>
+      <span class="tag">Arctic Ops</span>
+    </div>
+    <div class="card-arrow">&#8599;</div>
+  </a>
+
+</div>
+```
+
+  </div>
+
+  <!-- FOOTER -->
 
   <div class="footer">
     <div class="footer-top">
       <div class="footer-author">
-        <div><strong>Ian Minnock</strong> &nbsp;CPG, PMP, PMI-ACP</div>
-        <div><a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a></div>
-        <div>Last updated: April 2026</div>
+        <div><strong>Ian Minnock</strong> &nbsp;&middot;&nbsp; MFI</div>
+        <div>Ian Minnock, CPG, PMP, PMI-ACP</div>
+        <div><a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a> &nbsp;&middot;&nbsp; <a href="contact.html">Contact / Feedback</a></div>
+        <div>&#169; 2026 MFI &nbsp;&middot;&nbsp; Last updated: May 2026</div>
       </div>
       <div class="footer-badge">
-        <span class="status-dot"></span>8 tools &nbsp;·&nbsp; 2 complete &nbsp;·&nbsp; 4 in progress &nbsp;·&nbsp; 1 draft
+        <span class="status-dot"></span>7 tools &nbsp;&middot;&nbsp; 2 complete &nbsp;&middot;&nbsp; 5 in progress
       </div>
     </div>
     <div class="footer-disclaimer">
