@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM03 — Organization Design &amp; Scaling Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+background-color: #2E3A47;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.9rem;
+color: #E8EAEC;
+line-height: 1.5;
+min-height: 100vh;
+}
+
+a { color: #9AAABB; text-decoration: none; border-bottom: 1px dotted #4A6070; }
+a:hover { color: #D4651A; border-bottom-color: #D4651A; }
+
+/* ── PAGE WRAPPER ─────────────────────────────────────────── */
+.page-wrapper {
+background-color: #2E3A47;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+header {
+background-color: #2E3A47;
+border-bottom: 2px solid #D4651A;
+padding: 1.2rem 1.5rem;
+width: 100%;
+flex-shrink: 0;
+}
+.header-breadcrumb { font-size: 0.75rem; color: #9AAABB; margin-bottom: 0.5rem; }
+.header-title-row { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.header-module-id {
+font-size: 0.8rem;
+color: #D4651A;
+font-weight: 700;
+letter-spacing: 0.08em;
+}
+.header-title { font-size: 1.4rem; color: #E8EAEC; font-weight: 700; }
+.header-subtitle { margin-top: 0.4rem; font-size: 0.8rem; color: #9AAABB; max-width: 80ch; }
+
+/* ── CONTROL BAR ──────────────────────────────────────────── */
+.control-bar {
+background-color: #3A4A5C;
+border-bottom: 1px solid #4A6070;
+padding: 0.6rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1rem;
+flex-wrap: wrap;
+flex-shrink: 0;
+}
+.control-group { display: flex; align-items: center; gap: 0.5rem; }
+.control-divider { width: 1px; align-self: stretch; background-color: #4A6070; margin: 0 0.25rem; }
+.control-label { font-size: 0.7rem; color: #9AAABB; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.btn {
+background-color: #4A6070;
+color: #E8EAEC;
+border: 1px solid #4A6070;
+padding: 0.35rem 0.75rem;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 0.75rem;
+cursor: pointer;
+transition: background 0.12s, border-color 0.12s;
+letter-spacing: 0.02em;
+}
+.btn:hover { background-color: #5A7080; border-color: #5A7080; }
+.btn-primary { background-color: #D4651A; border-color: #D4651A; color: #FFFFFF; }
+.btn-primary:hover { background-color: #E07520; border-color: #E07520; }
+.btn-danger { background-color: #D64A4A; border-color: #D64A4A; color: #FFFFFF; }
+.btn-danger:hover { background-color: #E05050; border-color: #E05050; }
+.btn-ghost { background-color: transparent; border-color: #4A6070; color: #9AAABB; }
+.btn-ghost:hover { background-color: #3A4A5C; color: #E8EAEC; }
+.btn-sm { padding: 0.25rem 0.55rem; font-size: 0.7rem; }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+.time-display {
+font-size: 0.85rem;
+color: #D4651A;
+font-weight: 700;
+min-width: 5.5rem;
+letter-spacing: 0.04em;
+}
+
+input[type=“range”] { accent-color: #D4651A; width: 90px; }
+select, input[type=“text”], input[type=“number”] {
+background-color: #2E3A47;
+color: #E8EAEC;
+border: 1px solid #4A6070;
+padding: 0.3rem 0.5rem;
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 0.75rem;
+}
+select:focus, input:focus { outline: 1px solid #D4651A; }
+
+.preset-stack { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
+/* ── MAIN CONTENT ─────────────────────────────────────────── */
+.main-content {
+background-color: #2E3A47;
+display: flex;
+flex: 1;
+gap: 0;
+overflow: hidden;
+min-height: 600px;
+}
+
+/* ── LEFT: ORG CHART ──────────────────────────────────────── */
+.org-panel {
+background-color: #2E3A47;
+flex: 0 0 38%;
+display: flex;
+flex-direction: column;
+border-right: 1px solid #4A6070;
+overflow: hidden;
+}
+.panel-header {
+background-color: #3A4A5C;
+border-bottom: 1px solid #4A6070;
+padding: 0.45rem 1rem;
+font-size: 0.75rem;
+font-weight: 700;
+color: #D4651A;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-shrink: 0;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+.panel-header .sub { color: #9AAABB; font-weight: 400; font-size: 0.65rem; text-transform: none; letter-spacing: 0; }
+
+.org-chart-area {
+background-color: #2E3A47;
+flex: 1;
+overflow-y: auto;
+padding: 0.75rem;
+}
+.org-empty {
+color: #9AAABB;
+font-size: 0.8rem;
+padding: 1rem;
+border: 1px dashed #4A6070;
+text-align: center;
+}
+
+/* ── ORG NODES ────────────────────────────────────────────── */
+.org-node-wrap { background-color: #2E3A47; margin-bottom: 0.35rem; }
+.org-node {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+border-left: 3px solid #7A8A9A;
+padding: 0.45rem 0.6rem;
+cursor: pointer;
+transition: border-color 0.12s, background-color 0.12s;
+position: relative;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 0.4rem;
+align-items: center;
+}
+.org-node:hover { border-color: #D4651A; }
+.org-node.role-ic       { border-left-color: #7A8A9A; }
+.org-node.role-lead     { border-left-color: #D4651A; }
+.org-node.role-manager  { border-left-color: #D4651A; }
+.org-node.role-director { border-left-color: #D64A4A; }
+.org-node.role-vp       { border-left-color: #D64A4A; }
+.org-node.role-ceo      { border-left-color: #F0A830; }
+
+.node-title { font-size: 0.78rem; font-weight: 700; color: #E8EAEC; line-height: 1.2; }
+.node-meta { font-size: 0.68rem; color: #9AAABB; margin-top: 2px; }
+.node-stats { font-size: 0.68rem; color: #9AAABB; margin-top: 2px; }
+
+.node-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.node-pill {
+background-color: #2E3A47;
+border: 1px solid #4A6070;
+padding: 1px 5px;
+font-size: 0.62rem;
+color: #9AAABB;
+letter-spacing: 0.04em;
+}
+.node-pill.util-green  { background-color: #2E3A47; border-color: #6BA84A; color: #6BA84A; }
+.node-pill.util-yellow { background-color: #2E3A47; border-color: #F0A830; color: #F0A830; }
+.node-pill.util-red    { background-color: #2E3A47; border-color: #D64A4A; color: #D64A4A; }
+
+.node-warn-row {
+grid-column: 1 / -1;
+display: flex;
+flex-wrap: wrap;
+gap: 4px;
+margin-top: 4px;
+}
+.node-warn-tag {
+font-size: 0.62rem;
+padding: 1px 5px;
+background-color: #2E3A47;
+border: 1px solid #D64A4A;
+color: #D64A4A;
+letter-spacing: 0.04em;
+}
+.node-warn-tag.warn { border-color: #F0A830; color: #F0A830; }
+.node-warn-tag.info { border-color: #4A6070; color: #9AAABB; }
+
+.node-children {
+margin-top: 0.3rem;
+padding-left: 0.9rem;
+border-left: 1px dashed #4A6070;
+display: flex;
+flex-direction: column;
+gap: 0.3rem;
+}
+
+/* morale bar */
+.morale-bar {
+height: 3px;
+background-color: #2E3A47;
+border: 1px solid #4A6070;
+margin-top: 4px;
+grid-column: 1 / -1;
+position: relative;
+}
+.morale-fill { height: 100%; background-color: #6BA84A; transition: width 0.3s, background-color 0.3s; }
+
+/* ── RIGHT PANELS ─────────────────────────────────────────── */
+.right-panels {
+background-color: #2E3A47;
+flex: 1;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+min-width: 0;
+}
+.right-top {
+background-color: #2E3A47;
+display: flex;
+flex: 1 1 60%;
+overflow: hidden;
+border-bottom: 1px solid #4A6070;
+min-height: 0;
+}
+
+/* ── COMM GRAPH ───────────────────────────────────────────── */
+.graph-panel {
+background-color: #2E3A47;
+flex: 0 0 50%;
+border-right: 1px solid #4A6070;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+min-width: 0;
+}
+.graph-canvas-wrap {
+flex: 1;
+position: relative;
+background-color: #2E3A47;
+overflow: hidden;
+}
+#commCanvas { display: block; background-color: #2E3A47; }
+.graph-legend {
+background-color: #3A4A5C;
+border-top: 1px solid #4A6070;
+padding: 0.35rem 0.7rem;
+font-size: 0.65rem;
+color: #9AAABB;
+display: flex;
+gap: 0.9rem;
+flex-wrap: wrap;
+flex-shrink: 0;
+}
+.legend-item { display: flex; align-items: center; gap: 0.3rem; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend-line { width: 14px; height: 2px; display: inline-block; }
+
+/* ── METRICS ──────────────────────────────────────────────── */
+.metrics-panel {
+background-color: #2E3A47;
+flex: 0 0 50%;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+min-width: 0;
+}
+.metrics-scroll { overflow-y: auto; flex: 1; display: flex; flex-direction: column; }
+.metrics-grid {
+background-color: #2E3A47;
+padding: 0.5rem;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.35rem;
+flex-shrink: 0;
+}
+.metric-card {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+padding: 0.4rem 0.55rem;
+display: grid;
+grid-template-columns: 1fr 4px;
+gap: 0.4rem;
+align-items: stretch;
+min-height: 50px;
+}
+.metric-name {
+font-size: 0.65rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+line-height: 1.1;
+}
+.metric-value {
+font-size: 1rem;
+font-weight: 700;
+color: #E8EAEC;
+margin-top: 2px;
+line-height: 1.1;
+}
+.metric-sub {
+font-size: 0.62rem;
+color: #9AAABB;
+margin-top: 2px;
+}
+.metric-indicator { width: 4px; }
+.ind-green   { background-color: #6BA84A; }
+.ind-yellow  { background-color: #F0A830; }
+.ind-red     { background-color: #D64A4A; }
+.ind-neutral { background-color: #4A6070; }
+
+/* ── PATHOLOGIES & INSIGHTS ───────────────────────────────── */
+.pathology-panel {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.5rem 0.7rem;
+font-size: 0.7rem;
+flex-shrink: 0;
+}
+.pathology-list { display: flex; flex-direction: column; gap: 0.3rem; max-height: 110px; overflow-y: auto; }
+.pathology-row {
+display: grid;
+grid-template-columns: 90px 1fr;
+gap: 0.5rem;
+padding: 0.25rem 0.4rem;
+background-color: #3A4A5C;
+border-left: 2px solid #4A6070;
+font-size: 0.7rem;
+align-items: start;
+}
+.pathology-row.fire { border-left-color: #D64A4A; }
+.pathology-row.warn { border-left-color: #F0A830; }
+.pathology-row.ok   { border-left-color: #6BA84A; }
+.pathology-name { color: #E8EAEC; font-weight: 700; font-size: 0.66rem; letter-spacing: 0.04em; }
+.pathology-detail { color: #9AAABB; line-height: 1.3; font-size: 0.66rem; }
+
+.insights-panel {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.4rem 0.7rem;
+font-size: 0.7rem;
+overflow-y: auto;
+max-height: 130px;
+flex-shrink: 0;
+}
+.insight-item {
+padding: 0.18rem 0;
+line-height: 1.35;
+border-bottom: 1px solid #3A4A5C;
+}
+.insight-item:last-child { border-bottom: none; }
+.insight-warn { color: #F0A830; }
+.insight-crit { color: #D64A4A; }
+.insight-ok   { color: #6BA84A; }
+.insight-info { color: #9AAABB; }
+
+/* ── TIMELINE ─────────────────────────────────────────────── */
+.timeline-panel {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.4rem 1rem 0.6rem;
+flex-shrink: 0;
+height: 180px;
+position: relative;
+}
+.timeline-panel canvas { width: 100% !important; }
+.tipping-marker {
+position: absolute;
+top: 28px;
+bottom: 8px;
+width: 1px;
+background-color: #D64A4A;
+pointer-events: none;
+opacity: 0.6;
+}
+.tipping-marker::after {
+content: “▼”;
+position: absolute;
+top: -10px;
+left: -5px;
+color: #D64A4A;
+font-size: 0.6rem;
+}
+
+/* ── WHAT-IF STRIP ────────────────────────────────────────── */
+.whatif-strip {
+background-color: #3A4A5C;
+border-top: 1px solid #D4651A;
+padding: 0.5rem 1rem;
+display: none;
+gap: 1rem;
+align-items: center;
+font-size: 0.7rem;
+flex-wrap: wrap;
+flex-shrink: 0;
+}
+.whatif-strip.active { display: flex; }
+.whatif-col {
+display: flex;
+flex-direction: column;
+gap: 2px;
+padding-right: 1rem;
+border-right: 1px solid #4A6070;
+}
+.whatif-col:last-of-type { border-right: none; }
+.whatif-label { font-size: 0.6rem; color: #9AAABB; text-transform: uppercase; letter-spacing: 0.05em; }
+.whatif-value { font-size: 0.85rem; font-weight: 700; color: #E8EAEC; }
+.whatif-delta { font-size: 0.7rem; }
+.delta-pos { color: #6BA84A; }
+.delta-neg { color: #D64A4A; }
+
+/* ── MODAL ────────────────────────────────────────────────── */
+.modal-overlay {
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+background-color: rgba(20, 28, 38, 0.78);
+z-index: 100;
+align-items: center;
+justify-content: center;
+padding: 1rem;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+background-color: #3A4A5C;
+border: 1px solid #D4651A;
+padding: 1.4rem;
+width: 440px;
+max-width: 100%;
+max-height: 86vh;
+overflow-y: auto;
+}
+.modal h3 {
+color: #D4651A;
+margin-bottom: 1rem;
+font-size: 0.95rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+}
+.modal-close {
+float: right;
+cursor: pointer;
+color: #9AAABB;
+font-size: 1rem;
+line-height: 1;
+margin-left: 0.5rem;
+}
+.modal-close:hover { color: #D64A4A; }
+.modal-field { margin-bottom: 0.7rem; }
+.modal-field label {
+display: block;
+font-size: 0.68rem;
+color: #9AAABB;
+margin-bottom: 0.25rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+}
+.modal-field select, .modal-field input { width: 100%; }
+
+.drill-grid { display: grid; grid-template-columns: 110px 1fr; gap: 0.4rem; font-size: 0.78rem; background-color: #3A4A5C; }
+.drill-label { color: #9AAABB; }
+.drill-value { color: #E8EAEC; }
+
+/* ── STATUS BAR ───────────────────────────────────────────── */
+.status-bar {
+background-color: #3A4A5C;
+border-top: 1px solid #4A6070;
+padding: 0.3rem 1rem;
+font-size: 0.7rem;
+color: #9AAABB;
+display: flex;
+gap: 1.6rem;
+flex-wrap: wrap;
+flex-shrink: 0;
+align-items: center;
+}
+.status-bar strong { color: #E8EAEC; font-weight: 700; }
+#sbState { color: #D4651A; font-weight: 700; letter-spacing: 0.06em; }
+
+footer {
+background-color: #2E3A47;
+border-top: 1px solid #4A6070;
+padding: 0.7rem 1.5rem;
+font-size: 0.7rem;
+color: #9AAABB;
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+justify-content: space-between;
+flex-shrink: 0;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #2E3A47; }
+::-webkit-scrollbar-thumb { background: #4A6070; }
+::-webkit-scrollbar-thumb:hover { background: #5A7080; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 1100px) {
+.right-top { flex-direction: column; }
+.graph-panel { flex: 0 0 320px; border-right: none; border-bottom: 1px solid #4A6070; }
+.metrics-panel { flex: 1; }
+}
+@media (max-width: 800px) {
+.main-content { flex-direction: column; min-height: auto; }
+.org-panel { flex: 0 0 360px; border-right: none; border-bottom: 1px solid #4A6070; }
+.right-panels { flex: 1; }
+.control-bar { padding: 0.5rem 0.75rem; gap: 0.6rem; }
+.control-divider { display: none; }
+}
+</style>
+
+</head>
+<body>
+<div class="page-wrapper">
+
+<!-- HEADER ──────────────────────────────────────────────── -->
+
+<header>
+  <div class="header-breadcrumb">
+    <a href="pm-index.html">← Project Management</a>
+    &nbsp;|&nbsp;
+    <a href="tool-index.html">Tool Index</a>
+  </div>
+  <div class="header-title-row">
+    <span class="header-module-id">PM03</span>
+    <h1 class="header-title">Organization Design &amp; Scaling Simulator</h1>
+  </div>
+  <p class="header-subtitle">
+    Build a structure, run it forward, watch the failure modes emerge — decision latency, meeting bloat, fiefdoms, silos, tipping points. The point is not to predict your org; it is to see <em style="color:#D4651A;font-style:normal;">why</em> orgs break at scale.
+  </p>
+</header>
+
+<!-- CONTROL BAR ─────────────────────────────────────────── -->
+
+<div class="control-bar">
+  <div class="control-group">
+    <button class="btn btn-primary" id="btnPlay" onclick="togglePlay()">▶ Play</button>
+    <button class="btn btn-ghost" onclick="resetSim()">↺ Reset</button>
+  </div>
+  <div class="control-group">
+    <span class="time-display" id="timeDisplay">M0</span>
+  </div>
+  <div class="control-divider"></div>
+  <div class="control-group">
+    <span class="control-label">Speed</span>
+    <input type="range" id="speedSlider" min="1" max="6" value="2" step="1">
+    <span id="speedLabel" style="font-size:0.7rem;color:#9AAABB;min-width:18px;">2×</span>
+  </div>
+  <div class="control-group">
+    <span class="control-label">Hire/mo</span>
+    <input type="number" id="hiringRate" value="1" min="0" max="10" step="0.5" style="width:48px;">
+  </div>
+  <div class="control-group">
+    <span class="control-label">Pressure</span>
+    <select id="complexitySelect">
+      <option value="stable">Stable</option>
+      <option value="gradual" selected>Gradual</option>
+      <option value="aggressive">Aggressive</option>
+    </select>
+  </div>
+  <div class="control-divider"></div>
+  <div class="control-group">
+    <span class="control-label">Preset</span>
+    <div class="preset-stack">
+      <button class="btn btn-sm" onclick="loadPreset('solo')">Solo</button>
+      <button class="btn btn-sm" onclick="loadPreset('small')">Small</button>
+      <button class="btn btn-sm" onclick="loadPreset('startup')">Startup</button>
+      <button class="btn btn-sm" onclick="loadPreset('firm')">Firm</button>
+    </div>
+  </div>
+  <div class="control-group">
+    <span class="control-label">Structure</span>
+    <div class="preset-stack">
+      <button class="btn btn-sm" onclick="loadScenario('flat')">Flat</button>
+      <button class="btn btn-sm" onclick="loadScenario('functional')">Functional</button>
+      <button class="btn btn-sm" onclick="loadScenario('matrix')">Matrix</button>
+    </div>
+  </div>
+  <div class="control-divider"></div>
+  <div class="control-group">
+    <button class="btn btn-sm btn-ghost" onclick="startWhatIf()" id="whatifBtn">⇆ What-If</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT ────────────────────────────────────────── -->
+
+<div class="main-content">
+
+  <!-- LEFT: ORG CHART -->
+
+  <div class="org-panel">
+    <div class="panel-header">
+      <span>Org Chart</span>
+      <button class="btn btn-sm btn-primary" onclick="showAddRoleModal()">+ Add Role</button>
+    </div>
+    <div class="org-chart-area" id="orgChartArea">
+      <div class="org-empty">Load a preset or add roles, then press ▶ Play.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANELS -->
+
+  <div class="right-panels">
+    <div class="right-top">
+
+```
+  <!-- COMM GRAPH -->
+  <div class="graph-panel">
+    <div class="panel-header">
+      <span>Communication Network</span>
+      <span class="sub">size = centrality · ring = load</span>
+    </div>
+    <div class="graph-canvas-wrap">
+      <canvas id="commCanvas"></canvas>
+    </div>
+    <div class="graph-legend">
+      <span class="legend-item"><span class="legend-line" style="background-color:#4A6070;"></span>reporting</span>
+      <span class="legend-item"><span class="legend-line" style="background-color:#D4651A;"></span>cross-fn</span>
+      <span class="legend-item"><span class="legend-line" style="background-color:#D64A4A;"></span>critical</span>
+      <span class="legend-item"><span class="legend-swatch" style="background-color:#6BA84A;"></span>healthy</span>
+      <span class="legend-item"><span class="legend-swatch" style="background-color:#F0A830;"></span>strained</span>
+      <span class="legend-item"><span class="legend-swatch" style="background-color:#D64A4A;"></span>overloaded</span>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics-panel">
+    <div class="panel-header">
+      <span>Live Metrics</span>
+      <span class="sub" id="effLabel">eff —</span>
+    </div>
+    <div class="metrics-scroll">
+      <div class="metrics-grid" id="metricsGrid"></div>
+      <div class="panel-header" style="border-top:1px solid #4A6070;">
+        <span>Pathologies</span>
+        <span class="sub">why orgs break</span>
+      </div>
+      <div class="pathology-panel">
+        <div class="pathology-list" id="pathologyList"></div>
+      </div>
+      <div class="panel-header" style="border-top:1px solid #4A6070;">
+        <span>Insights</span>
+        <span class="sub">action triggers</span>
+      </div>
+      <div class="insights-panel" id="insightsPanel">
+        <div class="insight-item insight-info">Run simulation to generate insights.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- WHAT-IF STRIP -->
+<div class="whatif-strip" id="whatifStrip">
+  <div class="whatif-col">
+    <span class="whatif-label">What-If Mode</span>
+    <span class="whatif-value" id="whatifTitle">—</span>
+  </div>
+  <div class="whatif-col">
+    <span class="whatif-label">Δ Efficiency</span>
+    <span class="whatif-value" id="whatifEff">—</span>
+    <span class="whatif-delta" id="whatifEffDelta"></span>
+  </div>
+  <div class="whatif-col">
+    <span class="whatif-label">Δ Latency</span>
+    <span class="whatif-value" id="whatifLat">—</span>
+    <span class="whatif-delta" id="whatifLatDelta"></span>
+  </div>
+  <div class="whatif-col">
+    <span class="whatif-label">Δ Success</span>
+    <span class="whatif-value" id="whatifSucc">—</span>
+    <span class="whatif-delta" id="whatifSuccDelta"></span>
+  </div>
+  <div class="whatif-col" style="border-right:none;">
+    <button class="btn btn-sm btn-primary" onclick="acceptWhatIf()">Apply</button>
+    <button class="btn btn-sm btn-ghost" onclick="closeWhatIf()" style="margin-top:3px;">Discard</button>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-panel" id="timelinePanel">
+  <canvas id="timelineChart"></canvas>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+
+<div class="status-bar" id="statusBar">
+  <span>Headcount: <strong id="sbHeadcount">0</strong></span>
+  <span>Active Projects: <strong id="sbProjects">0</strong></span>
+  <span>Org Levels: <strong id="sbLevels">0</strong></span>
+  <span>Avg Util: <strong id="sbUtil">—</strong></span>
+  <span>Avg Morale: <strong id="sbMorale">—</strong></span>
+  <span>Trust: <strong id="sbTrust">—</strong></span>
+  <span>Turnover (12mo): <strong id="sbTurnover">—</strong></span>
+  <span style="margin-left:auto;" id="sbState">STOPPED</span>
+</div>
+
+<!-- ADD ROLE MODAL -->
+
+<div class="modal-overlay" id="addRoleModal">
+  <div class="modal">
+    <span class="modal-close" onclick="closeModal('addRoleModal')">✕</span>
+    <h3>Add Role</h3>
+    <div class="modal-field">
+      <label>Role Type</label>
+      <select id="newRoleType">
+        <option value="ceo">CEO</option>
+        <option value="vp">VP</option>
+        <option value="director">Director</option>
+        <option value="manager" selected>Manager</option>
+        <option value="lead">Team Lead</option>
+        <option value="ic">Individual Contributor</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Role Title</label>
+      <input type="text" id="newRoleTitle" placeholder="e.g. Senior Geotechnical Engineer">
+    </div>
+    <div class="modal-field">
+      <label>Specialization</label>
+      <select id="newRoleSpec">
+        <option value="engineering">Engineering</option>
+        <option value="pm">Project Management</option>
+        <option value="ops">Operations</option>
+        <option value="qa">QA</option>
+        <option value="finance">Finance</option>
+        <option value="hr">HR</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Reports To</label>
+      <select id="newRoleReportsTo">
+        <option value="">— None (top level) —</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Initial Count</label>
+      <input type="number" id="newRoleCount" value="1" min="1" max="20">
+    </div>
+    <div class="modal-field">
+      <label>Capacity per Person (%)</label>
+      <input type="number" id="newRoleCapacity" value="100" min="10" max="100">
+    </div>
+    <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+      <button class="btn btn-primary" onclick="confirmAddRole()">Add Role</button>
+      <button class="btn btn-ghost" onclick="closeModal('addRoleModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRILL MODAL -->
+
+<div class="modal-overlay" id="drillModal">
+  <div class="modal">
+    <span class="modal-close" onclick="closeModal('drillModal')">✕</span>
+    <h3 id="drillTitle">Role Detail</h3>
+    <div id="drillContent"></div>
+  </div>
+</div>
+
+<footer>
+  <span>PM03 — Organization Design &amp; Scaling Simulator</span>
+  <span>Independent personal project — not affiliated with any government agency or employer</span>
+  <span>Ian Minnock, CPG, PMP, PMI-ACP — ian.minnock@mfimpact.com</span>
+  <span>v2.0 — May 2026</span>
+</footer>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+// PM03 — Organization Design & Scaling Simulator (Opus deepening v2.0)
+//
+// Replaces the v1 prototype's independent-metric model with a coupled
+// state simulation. Each step recomputes:
+//   - role utilization (workload + onboarding tax + coordination tax)
+//   - morale (capacity slack, recent decisions, churn)
+//   - trust (reversed decisions, communication overload)
+//   - decision latency (depth + bandwidth queueing + info loss)
+//   - meeting overhead (cascade + context switching - async substitution)
+//   - project pipeline (delay cascade, resource contention)
+//   - turnover (morale + overload feedback)
+//   - pathology detection (Peter, Conway, fiefdom, silo)
+//   - tipping-point detection (efficiency 2nd derivative + Dunbar bands)
+// ════════════════════════════════════════════════════════════════════
+
+// ── ROLE / SIM STATE ───────────────────────────────────────────────
+let roles = [];
+let roleIdCounter = 1;
+let simInterval = null;
+let timelineChart = null;
+
+const initialMetrics = () => ({
+  decisionLatency: 0.5, meetingOverhead: 10, successRate: 95,
+  headcount: 0, avgSpan: 0, commDensity: 0, criticalNodes: 0,
+  efficiency: 100, morale: 85, trust: 80, turnoverAnnual: 0,
+  asyncSubstitution: 0.1, infoFidelity: 1, siloCount: 1
+});
+
+const defaultSim = () => ({
+  running: false,
+  month: 0,
+  speed: 2,
+  hiringAccum: 0,
+  projectAccum: 0,
+  hiringDebt: 0,           // unfilled hires due to recruiting friction
+  activeProjects: [],
+  projectCounter: 0,
+  trust: 80,               // org-wide trust [0..100]
+  reversedDecisions: 0,    // accumulator that decays
+  asyncMaturity: 0.1,      // [0..1] grows slowly with org age
+  history: { months: [], headcount: [], meetingOverhead: [],
+             decisionLatency: [], successRate: [], efficiency: [],
+             morale: [], trust: [], turnover: [] },
+  metrics: initialMetrics(),
+  tippingPoints: [],
+  pathologies: []
+});
+
+let simState = defaultSim();
+let whatIf = null; // { fromMonth, baseline, alternate, title }
+
+// ── ROLE COLORS ────────────────────────────────────────────────────
+const ROLE_COLORS = {
+  ceo: '#F0A830', vp: '#D64A4A', director: '#D64A4A',
+  manager: '#D4651A', lead: '#D4651A', ic: '#7A8A9A'
+};
+const ROLE_LEVEL = { ic: 1, lead: 2, manager: 3, director: 4, vp: 5, ceo: 6 };
+
+// ── PRESETS / SCENARIOS ────────────────────────────────────────────
+const PRESETS = {
+  solo: [
+    { type:'ic', title:'Consultant', specialization:'engineering', reportsTo:null, count:1, capacity:100 }
+  ],
+  small: [
+    { type:'ceo', title:'Principal', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'ic',  title:'Senior Engineer', specialization:'engineering', reportsTo:0, count:2, capacity:100 },
+    { type:'ic',  title:'Project Manager', specialization:'pm', reportsTo:0, count:1, capacity:100 },
+    { type:'ic',  title:'Field Technician', specialization:'ops', reportsTo:0, count:2, capacity:100 }
+  ],
+  startup: [
+    { type:'ceo',     title:'CEO', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'vp',      title:'VP Engineering', specialization:'engineering', reportsTo:0, count:1, capacity:100 },
+    { type:'vp',      title:'VP Operations',  specialization:'ops', reportsTo:0, count:1, capacity:100 },
+    { type:'manager', title:'Engineering Manager', specialization:'engineering', reportsTo:1, count:1, capacity:100 },
+    { type:'manager', title:'Project Manager', specialization:'pm', reportsTo:2, count:2, capacity:100 },
+    { type:'ic',      title:'Senior Engineer', specialization:'engineering', reportsTo:3, count:3, capacity:100 },
+    { type:'ic',      title:'Field Technician', specialization:'ops', reportsTo:4, count:4, capacity:100 },
+    { type:'ic',      title:'QA Analyst', specialization:'qa', reportsTo:3, count:1, capacity:100 }
+  ],
+  firm: [
+    { type:'ceo',      title:'Executive Director', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'vp',       title:'VP Engineering', specialization:'engineering', reportsTo:0, count:1, capacity:100 },
+    { type:'vp',       title:'VP Operations',  specialization:'ops', reportsTo:0, count:1, capacity:100 },
+    { type:'vp',       title:'VP Finance',     specialization:'finance', reportsTo:0, count:1, capacity:100 },
+    { type:'director', title:'Director of Engineering', specialization:'engineering', reportsTo:1, count:1, capacity:100 },
+    { type:'director', title:'Director of PM',  specialization:'pm', reportsTo:2, count:1, capacity:100 },
+    { type:'manager',  title:'Engineering Manager', specialization:'engineering', reportsTo:4, count:2, capacity:100 },
+    { type:'manager',  title:'Project Manager', specialization:'pm', reportsTo:5, count:3, capacity:100 },
+    { type:'ic',       title:'Senior Engineer', specialization:'engineering', reportsTo:6, count:6, capacity:100 },
+    { type:'ic',       title:'Field Technician', specialization:'ops', reportsTo:7, count:8, capacity:100 },
+    { type:'ic',       title:'QA Analyst', specialization:'qa', reportsTo:6, count:2, capacity:100 },
+    { type:'ic',       title:'Finance Analyst', specialization:'finance', reportsTo:3, count:2, capacity:100 }
+  ]
+};
+const SCENARIOS = {
+  flat: [
+    { type:'ceo', title:'CEO', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'ic',  title:'Engineer',       specialization:'engineering', reportsTo:0, count:4, capacity:100 },
+    { type:'ic',  title:'Ops Specialist', specialization:'ops', reportsTo:0, count:3, capacity:100 },
+    { type:'ic',  title:'Project Manager', specialization:'pm', reportsTo:0, count:2, capacity:100 }
+  ],
+  functional: [
+    { type:'ceo',     title:'CEO', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'manager', title:'Engineering Lead', specialization:'engineering', reportsTo:0, count:1, capacity:100 },
+    { type:'manager', title:'Operations Lead',  specialization:'ops', reportsTo:0, count:1, capacity:100 },
+    { type:'manager', title:'PM Lead',          specialization:'pm', reportsTo:0, count:1, capacity:100 },
+    { type:'ic',      title:'Engineer',  specialization:'engineering', reportsTo:1, count:4, capacity:100 },
+    { type:'ic',      title:'Field Tech', specialization:'ops', reportsTo:2, count:3, capacity:100 },
+    { type:'ic',      title:'PM Analyst', specialization:'pm', reportsTo:3, count:2, capacity:100 }
+  ],
+  matrix: [
+    { type:'ceo',     title:'CEO', specialization:'pm', reportsTo:null, count:1, capacity:100 },
+    { type:'vp',      title:'VP Technical', specialization:'engineering', reportsTo:0, count:1, capacity:100 },
+    { type:'vp',      title:'VP Projects',  specialization:'pm', reportsTo:0, count:1, capacity:100 },
+    { type:'manager', title:'Technical Manager', specialization:'engineering', reportsTo:1, count:2, capacity:100 },
+    { type:'manager', title:'Project Lead',  specialization:'pm', reportsTo:2, count:2, capacity:100 },
+    { type:'ic',      title:'Senior Engineer', specialization:'engineering', reportsTo:3, count:4, capacity:80 },
+    { type:'ic',      title:'Field Tech',  specialization:'ops', reportsTo:3, count:3, capacity:80 }
+  ]
+};
+
+// ── LOAD PRESETS ───────────────────────────────────────────────────
+function loadPreset(key)   { loadFromTemplate(PRESETS[key]); }
+function loadScenario(key) { loadFromTemplate(SCENARIOS[key]); }
+
+function loadFromTemplate(template) {
+  stopSim();
+  closeWhatIf();
+  simState = defaultSim();
+  const t = JSON.parse(JSON.stringify(template));
+  roles = t.map((r, i) => buildRole(r, i + 1, i));
+  roleIdCounter = roles.length + 1;
+  // Translate index-based reportsTo into id-based
+  roles.forEach((r, i) => { r.reportsTo = (t[i].reportsTo !== null && t[i].reportsTo !== undefined) ? t[i].reportsTo + 1 : null; });
+  document.getElementById('timeDisplay').textContent = 'M0';
+  resetTimelineChart();
+  recomputeAll();
+  renderAll();
+}
+
+function buildRole(r, id) {
+  return {
+    id,
+    type: r.type,
+    title: r.title,
+    specialization: r.specialization,
+    reportsTo: null,
+    count: r.count,
+    capacity: r.capacity,
+    utilization: 55 + Math.random() * 15,
+    morale: 85,
+    avgTenureMonths: 24 + Math.random() * 12, // for managers, "tenure in current role"
+    onboardingPeople: 0,                       // people in role who are still ramping
+    incomingComm: 0,                           // computed each step
+    outgoingComm: 0,
+    isCritical: false,
+    componentId: 0
+  };
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────
+function getDirectReports(roleId) { return roles.filter(r => r.reportsTo === roleId); }
+function totalHeadcount() { return roles.reduce((s, r) => s + r.count, 0); }
+function getOrgDepth() {
+  function depth(roleId, seen = new Set()) {
+    if (seen.has(roleId)) return 0;
+    seen.add(roleId);
+    const children = getDirectReports(roleId);
+    if (!children.length) return 1;
+    return 1 + Math.max(...children.map(c => depth(c.id, seen)));
+  }
+  const roots = roles.filter(r => !r.reportsTo);
+  if (!roots.length) return 0;
+  return Math.max(...roots.map(r => depth(r.id)));
+}
+function roleLevelDepth(roleId) {
+  // distance from root for a given role id
+  let d = 0; let cur = roles.find(r => r.id === roleId);
+  while (cur && cur.reportsTo) {
+    cur = roles.find(r => r.id === cur.reportsTo);
+    d++;
+    if (d > 50) break;
+  }
+  return d;
+}
+function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+function logistic(x) { return 1 / (1 + Math.exp(-x)); }
+
+// ── SIMULATION CORE ────────────────────────────────────────────────
+function togglePlay() {
+  if (!roles.length) return;
+  if (simState.running) stopSim(); else startSim();
+}
+function startSim() {
+  simState.running = true;
+  document.getElementById('btnPlay').textContent = '⏸ Pause';
+  document.getElementById('btnPlay').className = 'btn btn-danger';
+  document.getElementById('sbState').textContent = 'RUNNING';
+  document.getElementById('sbState').style.color = '#6BA84A';
+  const delay = Math.max(160, 1100 / simState.speed);
+  simInterval = setInterval(simulationStep, delay);
+}
+function stopSim() {
+  simState.running = false;
+  clearInterval(simInterval); simInterval = null;
+  document.getElementById('btnPlay').textContent = '▶ Play';
+  document.getElementById('btnPlay').className = 'btn btn-primary';
+  document.getElementById('sbState').textContent = 'PAUSED';
+  document.getElementById('sbState').style.color = '#D4651A';
+}
+function resetSim() {
+  stopSim();
+  closeWhatIf();
+  // keep current role structure but reset counts to original where known
+  const archetypes = JSON.parse(JSON.stringify(roles));
+  simState = defaultSim();
+  roles = archetypes.map(r => ({
+    ...r,
+    count: r._originalCount || r.count,
+    utilization: 55 + Math.random() * 15,
+    morale: 85, onboardingPeople: 0,
+    avgTenureMonths: 24 + Math.random() * 12,
+    incomingComm: 0, outgoingComm: 0, isCritical: false, componentId: 0
+  }));
+  document.getElementById('timeDisplay').textContent = 'M0';
+  document.getElementById('sbState').textContent = 'STOPPED';
+  document.getElementById('sbState').style.color = '#D4651A';
+  resetTimelineChart();
+  recomputeAll();
+  renderAll();
+}
+
+function simulationStep() {
+  simState.month++;
+  const hiringRate    = parseFloat(document.getElementById('hiringRate').value) || 0;
+  const complexityKey = document.getElementById('complexitySelect').value;
+
+  // 1. Hiring with friction (recruiting takes time, debt accumulates)
+  applyHiring(hiringRate);
+
+  // 2. Project pipeline with cascade
+  applyProjectPipeline(complexityKey);
+
+  // 3. Coupled state update — order matters; tax flows downstream
+  updateOnboarding();
+  updateUtilization(complexityKey);
+  updateMorale();
+  updateTrust();
+  updateAsyncMaturity();
+
+  // 4. Recompute structural metrics
+  computeCommNetwork();
+  recomputeAll();
+
+  // 5. Detect pathologies + tipping points
+  detectPathologies();
+  detectTippingPoint();
+
+  // 6. Record history
+  pushHistory();
+
+  // 7. Voluntary turnover from low morale + overload
+  applyTurnover();
+
+  // 8. If shadow run is active, advance it too
+  if (whatIf && whatIf.shadowState) advanceShadow();
+
+  // 9. Render
+  document.getElementById('timeDisplay').textContent = 'M' + simState.month;
+  renderAll();
+
+  // 10. Failure stop
+  if (simState.metrics.successRate < 8 && totalHeadcount() > 5) {
+    stopSim();
+    document.getElementById('sbState').textContent = 'ORG COLLAPSE';
+    document.getElementById('sbState').style.color = '#D64A4A';
+  }
+}
+
+// ── HIRING WITH FRICTION ───────────────────────────────────────────
+function applyHiring(rate) {
+  if (rate <= 0) return;
+  simState.hiringAccum += rate;
+  const want = Math.floor(simState.hiringAccum);
+  simState.hiringAccum -= want;
+  // Recruiting friction: only ~70% of intended hires actually close each month
+  // — the rest go to hiring debt
+  const closed = Math.round(want * 0.7);
+  simState.hiringDebt += (want - closed);
+
+  // Try to also burn down some debt this month (slowly)
+  const debtBurn = Math.min(simState.hiringDebt, Math.ceil(want * 0.3));
+  simState.hiringDebt -= debtBurn;
+  const total = closed + debtBurn;
+
+  // Distribute new hires to IC and Lead roles
+  const targets = roles.filter(r => r.type === 'ic' || r.type === 'lead');
+  if (!targets.length) return;
+  for (let i = 0; i < total; i++) {
+    const t = targets[Math.floor(Math.random() * targets.length)];
+    t.count++;
+    t._originalCount = t._originalCount || 1;
+    t.onboardingPeople = (t.onboardingPeople || 0) + 1;
+  }
+}
+
+// ── PROJECT PIPELINE WITH CASCADE ──────────────────────────────────
+function applyProjectPipeline(complexityKey) {
+  const factor = { stable: 0.45, gradual: 0.85, aggressive: 1.6 }[complexityKey];
+  // Arrival rate scales with headcount (bigger orgs run more projects)
+  const hc = totalHeadcount();
+  const arrivalPerMonth = factor * (0.5 + Math.sqrt(Math.max(1, hc)) * 0.35);
+  simState.projectAccum += arrivalPerMonth;
+
+  while (simState.projectAccum >= 1) {
+    simState.projectAccum -= 1;
+    simState.projectCounter++;
+    simState.activeProjects.push({
+      id: simState.projectCounter,
+      duration: 3 + Math.floor(Math.random() * 9),
+      monthsRemaining: 3 + Math.floor(Math.random() * 9),
+      health: 1,                              // 1 = healthy, < 0.4 = at risk
+      pulledResources: false
+    });
+  }
+
+  // Advance projects, with cascade: stressed projects pull resources,
+  // damaging health of others
+  const stressFromOrg = projectStressLevel();
+  simState.activeProjects.forEach(p => {
+    p.monthsRemaining -= 1;
+    p.health -= stressFromOrg * 0.06;
+    p.health = clamp(p.health, 0, 1);
+    if (p.health < 0.3 && !p.pulledResources) {
+      p.pulledResources = true;
+      // pulling resources damages OTHER projects
+      simState.activeProjects.forEach(o => { if (o !== p) o.health -= 0.04; });
+    }
+  });
+  // Remove completed
+  simState.activeProjects = simState.activeProjects.filter(p => p.monthsRemaining > 0 && p.health > 0.05);
+  if (simState.activeProjects.length > 60) {
+    simState.activeProjects = simState.activeProjects.slice(-60);
+  }
+}
+
+function projectStressLevel() {
+  // Stress is the sum of latency, overhead-above-async, and overload pressure
+  const m = simState.metrics;
+  const latStress = clamp((m.decisionLatency - 1) / 4, 0, 1);
+  const ovhStress = clamp((m.meetingOverhead - 25) / 50, 0, 1);
+  const utlStress = clamp((avgUtilization() - 85) / 40, 0, 1);
+  return clamp((latStress + ovhStress + utlStress) / 3, 0, 1);
+}
+
+// ── ONBOARDING TAX ─────────────────────────────────────────────────
+function updateOnboarding() {
+  // Each onboarding person costs ~30% of a manager's slot for ~3 months
+  // We model decay by reducing onboardingPeople by ~33% per month
+  roles.forEach(r => {
+    if (r.onboardingPeople > 0) {
+      r.onboardingPeople = Math.max(0, r.onboardingPeople - Math.ceil(r.onboardingPeople * 0.33));
+    }
+  });
+}
+
+// ── UTILIZATION (coupled) ──────────────────────────────────────────
+function updateUtilization(complexityKey) {
+  const complexityFactor = { stable: 0.4, gradual: 1.0, aggressive: 2.0 }[complexityKey];
+  const hc = totalHeadcount();
+  const projectsPerPerson = simState.activeProjects.length / Math.max(1, hc);
+
+  roles.forEach(role => {
+    // Base load grows with organizational pressure over time
+    const baseLoad = 50 + Math.random() * 6 + simState.month * complexityFactor * 0.35;
+
+    // Project load (everyone touches projects, ICs more)
+    const projectLoad = projectsPerPerson * (role.type === 'ic' ? 18 : 8);
+
+    // Coordination tax — exponential in span of control
+    const reports = getDirectReports(role.id);
+    const reportPeople = reports.reduce((s, r) => s + r.count, 0);
+    const coordTax = role.type !== 'ic' ? Math.pow(reportPeople, 1.25) * 1.5 : 0;
+
+    // Onboarding tax — manager pays for ramping reports
+    const onboardingTax = reports.reduce((s, r) => s + (r.onboardingPeople || 0), 0) * 6;
+
+    // Async substitution discount
+    const asyncDiscount = simState.asyncMaturity * 12;
+
+    // Trust tax — when trust is low, more verification work is needed
+    const trustTax = (100 - simState.trust) * 0.12;
+
+    role.utilization = clamp(
+      baseLoad + projectLoad + coordTax + onboardingTax + trustTax - asyncDiscount,
+      30, 180
+    );
+  });
+}
+
+function avgUtilization() {
+  if (!roles.length) return 0;
+  const total = roles.reduce((s, r) => s + r.utilization * r.count, 0);
+  const hc = totalHeadcount() || 1;
+  return total / hc;
+}
+
+// ── MORALE (per role) ──────────────────────────────────────────────
+function updateMorale() {
+  roles.forEach(role => {
+    // Morale gravitates toward 85, perturbed by overload and trust
+    const overloadPenalty = Math.max(0, role.utilization - 95) * 0.6;
+    const trustEffect = (simState.trust - 60) * 0.08; // higher trust = morale support
+    const moraleTarget = 85 - overloadPenalty + trustEffect;
+    // First-order lag toward target
+    role.morale = clamp(role.morale + (moraleTarget - role.morale) * 0.18, 0, 100);
+  });
+}
+
+function avgMorale() {
+  if (!roles.length) return 0;
+  const total = roles.reduce((s, r) => s + r.morale * r.count, 0);
+  return total / Math.max(1, totalHeadcount());
+}
+
+// ── TRUST (org-wide) ───────────────────────────────────────────────
+function updateTrust() {
+  // Decisions get reversed when latency is high (stale info) and overhead is high (decisions made in too many places)
+  const m = simState.metrics;
+  const reversalRate = clamp((m.decisionLatency - 1.5) * 0.06 + (m.meetingOverhead - 25) * 0.005, 0, 0.4);
+  simState.reversedDecisions += reversalRate;
+  simState.reversedDecisions *= 0.92; // decay
+
+  // Trust drifts down with reversed decisions, up with stable execution
+  const trustHit = simState.reversedDecisions * 5;
+  const recoveryRate = (m.successRate > 75 && m.meetingOverhead < 30) ? 0.6 : 0;
+  simState.trust = clamp(simState.trust - trustHit + recoveryRate, 0, 100);
+}
+
+function updateAsyncMaturity() {
+  // Async practice maturity grows slowly, faster in larger orgs
+  const hc = totalHeadcount();
+  if (hc < 8) return; // small orgs don't need async
+  const growth = 0.004 * Math.log(hc);
+  simState.asyncMaturity = clamp(simState.asyncMaturity + growth, 0, 0.55);
+}
+
+// ── TURNOVER ───────────────────────────────────────────────────────
+function applyTurnover() {
+  // Voluntary turnover: small baseline (life events, retirement) plus
+  // overload/morale-driven excess.
+  let leavers = 0;
+  roles.forEach(role => {
+    if (role.count <= 0) return;
+    const moraleFactor = clamp((75 - role.morale) / 100, 0, 0.6);
+    const overloadFactor = clamp((role.utilization - 100) / 200, 0, 0.5);
+    // Annualized: ~6% baseline + excess from stress; monthly = /12
+    const annualP = 0.06 + (moraleFactor * 0.5 + overloadFactor * 0.5) * 0.6;
+    const monthlyP = annualP / 12;
+    const expected = monthlyP * role.count;
+    const intLeavers = Math.floor(expected) + (Math.random() < (expected - Math.floor(expected)) ? 1 : 0);
+    if (intLeavers > 0) {
+      role.count = Math.max(0, role.count - intLeavers);
+      leavers += intLeavers;
+      simState.hiringDebt += intLeavers; // backfill required
+    }
+  });
+  if (!simState._turnover12mo) simState._turnover12mo = [];
+  simState._turnover12mo.push(leavers);
+  if (simState._turnover12mo.length > 12) simState._turnover12mo.shift();
+}
+
+function turnover12moPct() {
+  if (!simState._turnover12mo || !simState._turnover12mo.length) return 0;
+  const sum = simState._turnover12mo.reduce((a, b) => a + b, 0);
+  const hc = Math.max(1, totalHeadcount());
+  return Math.round((sum / hc) * 100);
+}
+
+// ── COMM NETWORK (with informal edges) ────────────────────────────
+let _commCache = { nodes: [], edges: [], components: [] };
+function computeCommNetwork() {
+  const visible = roles.filter(r => r.count > 0);
+
+  // Reset comm counts
+  visible.forEach(r => { r.incomingComm = 0; r.outgoingComm = 0; });
+
+  // Reporting edges
+  const edges = [];
+  visible.forEach(r => {
+    if (r.reportsTo) {
+      const parent = visible.find(p => p.id === r.reportsTo);
+      if (parent) {
+        edges.push({ from: parent.id, to: r.id, kind: 'report', weight: 1 });
+        parent.outgoingComm += r.count;
+        r.incomingComm += 1;
+      }
+    }
+  });
+
+  // Cross-functional informal edges — emerge between same-spec roles in
+  // different reporting branches, plus cross-spec between PM and engineering
+  const specGroups = {};
+  visible.forEach(r => {
+    if (!specGroups[r.specialization]) specGroups[r.specialization] = [];
+    specGroups[r.specialization].push(r);
+  });
+  Object.values(specGroups).forEach(group => {
+    for (let i = 0; i < group.length; i++) {
+      for (let j = i + 1; j < group.length; j++) {
+        // Only if NOT in same direct line
+        if (!sharesLineage(group[i], group[j])) {
+          const w = 0.3 + 0.3 * (simState.activeProjects.length / Math.max(1, totalHeadcount()));
+          edges.push({ from: group[i].id, to: group[j].id, kind: 'cross', weight: w });
+          group[i].outgoingComm += w;
+          group[j].incomingComm += w;
+        }
+      }
+    }
+  });
+  // PM <-> engineering bridges (matrix orgs / cross-functional projects)
+  const pmRoles = visible.filter(r => r.specialization === 'pm');
+  const engRoles = visible.filter(r => r.specialization === 'engineering');
+  pmRoles.forEach(p => {
+    engRoles.forEach(e => {
+      if (Math.abs(roleLevelDepth(p.id) - roleLevelDepth(e.id)) <= 1 && !sharesLineage(p, e)) {
+        const w = 0.4;
+        edges.push({ from: p.id, to: e.id, kind: 'cross', weight: w });
+        p.outgoingComm += w; e.incomingComm += w;
+      }
+    });
+  });
+
+  // Critical-node detection: high incoming centrality
+  const incomingMap = {};
+  edges.forEach(e => { incomingMap[e.to] = (incomingMap[e.to] || 0) + e.weight; });
+  visible.forEach(r => {
+    r.isCritical = (incomingMap[r.id] || 0) >= 5;
+  });
+
+  // Connected-component (silo) analysis on visible nodes ignoring reporting edges
+  // — silos = informally disconnected subgraphs
+  const adj = {};
+  visible.forEach(r => { adj[r.id] = new Set(); });
+  edges.forEach(e => {
+    if (e.kind === 'cross') {
+      adj[e.from].add(e.to); adj[e.to].add(e.from);
+    }
+  });
+  // Build components
+  const seen = new Set(); let comp = 0;
+  visible.forEach(r => {
+    if (seen.has(r.id)) return;
+    comp++;
+    const stack = [r.id];
+    while (stack.length) {
+      const id = stack.pop();
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const node = visible.find(v => v.id === id);
+      if (node) node.componentId = comp;
+      adj[id].forEach(n => { if (!seen.has(n)) stack.push(n); });
+    }
+  });
+
+  _commCache = { nodes: visible, edges, components: comp };
+}
+
+function sharesLineage(a, b) {
+  // returns true if one is in the chain of command of the other
+  const ancestors = (r) => {
+    const out = new Set([r.id]);
+    let cur = r;
+    while (cur && cur.reportsTo) {
+      cur = roles.find(x => x.id === cur.reportsTo);
+      if (!cur || out.has(cur.id)) break;
+      out.add(cur.id);
+    }
+    return out;
+  };
+  const A = ancestors(a), B = ancestors(b);
+  if (A.has(b.id) || B.has(a.id)) return true;
+  return false;
+}
+
+// ── METRIC SYNTHESIS ───────────────────────────────────────────────
+function recomputeAll() {
+  computeCommNetwork();
+
+  const headcount = totalHeadcount();
+  const orgDepth = getOrgDepth();
+  const visible = _commCache.nodes;
+
+  // ── Decision latency ────────────────────────────────────────────
+  // base depth latency
+  const baseDepthLatency = orgDepth * 0.55;
+  // bandwidth queueing — saturated senior nodes increase wait time
+  const seniorOverload = visible
+    .filter(r => ROLE_LEVEL[r.type] >= 4)
+    .reduce((s, r) => s + Math.max(0, r.utilization - 95) / 100, 0);
+  const bandwidthQueue = seniorOverload * 0.45;
+  // span penalty
+  const overspanCount = visible.filter(r => getDirectReports(r.id).length > 7).length;
+  const spanPenalty = overspanCount * 0.4;
+  // information fidelity = (1 - lossPerHop)^depth ; loss grows when overhead is high
+  const lossPerHop = 0.05 + simState.metrics.meetingOverhead * 0.0015;
+  const fidelity = Math.pow(1 - lossPerHop, Math.max(1, orgDepth));
+  // when fidelity is low, decisions get re-litigated → latency multiplier
+  const fidelityMult = 1 + (1 - fidelity) * 1.2;
+  const decisionLatency = (baseDepthLatency + bandwidthQueue + spanPenalty + 0.4) * fidelityMult;
+
+  // ── Meeting overhead ───────────────────────────────────────────
+  // meetings/week per role, with cascade, cross-fn load, context-switch tax.
+  // Per-meeting hour cost is ~1.4h (45min meeting + 30min prep/recovery).
+  let totalPersonHours = 0;
+  let totalPeopleWeighted = 0;
+  const specCount = new Set(visible.map(r => r.specialization)).size;
+  const projectsPerPerson = simState.activeProjects.length / Math.max(1, headcount);
+  visible.forEach(role => {
+    const reports = getDirectReports(role.id);
+    const reportPeople = reports.reduce((s, r) => s + r.count, 0);
+    const lvl = ROLE_LEVEL[role.type] || 1;
+
+    // Base recurring (standup, all-hands, retro, planning) — everyone has these
+    let meetsPerWeek = 4.0;
+    // 1:1s with each direct report (managers & up)
+    meetsPerWeek += reportPeople * 0.5;
+    // Cross-functional load — scales with spec breadth and active projects.
+    // Small orgs with 4 specs don't actually run 4 separate meetings — co-location subsumes coordination.
+    const crossFnScale = clamp((headcount - 8) / 20, 0, 1); // 0 at hc≤8, full at hc≥28
+    meetsPerWeek += Math.min(specCount, 5) * 0.6 * crossFnScale + projectsPerPerson * 2.4;
+    // Executive cascade — each layer above level 3 generates more upward/downward sync
+    if (lvl >= 4) meetsPerWeek += (lvl - 3) * 1.5;
+    // ICs: less management, but still in working sessions, design reviews, project standups
+    if (role.type === 'ic') meetsPerWeek = Math.max(3.5, meetsPerWeek - 1.0);
+
+    // Per-meeting effective time cost (incl. prep/recovery): 1.6h
+    const meetingHrs = meetsPerWeek * 1.6;
+    // Context-switching tax — sub-linear in count
+    const switchTax = 0.5 * Math.sqrt(meetsPerWeek);
+    // Async maturity discount — reduces recurring sync meetings
+    const asyncDiscount = 1 - simState.asyncMaturity * 0.4;
+
+    const totalH = (meetingHrs + switchTax) * asyncDiscount;
+    totalPersonHours += totalH * role.count;
+    totalPeopleWeighted += role.count;
+  });
+  const meetingHoursPerPerson = totalPeopleWeighted > 0 ? totalPersonHours / totalPeopleWeighted : 0;
+  const meetingOverhead = clamp((meetingHoursPerPerson / 40) * 100, 0, 90);
+
+  // ── Project success (emergent, logistic) ───────────────────────
+  // Combine: low overhead, low latency, slack capacity, morale, trust
+  const slack = clamp((110 - avgUtilization()) / 30, -1, 1);
+  const moraleNorm = (avgMorale() - 50) / 50;       // [-1..1]
+  const trustNorm  = (simState.trust - 50) / 50;
+  const ovhNorm    = (35 - meetingOverhead) / 35;   // positive when below 35
+  const latNorm    = (2 - decisionLatency) / 2;
+  // weighted sum into logistic
+  const z = 0.55 * slack + 0.65 * moraleNorm + 0.45 * trustNorm + 0.65 * ovhNorm + 0.55 * latNorm + 0.4;
+  let successRate = logistic(z * 1.6) * 100;
+  // pull-down for active project distress
+  if (simState.activeProjects.length > 0) {
+    const distressed = simState.activeProjects.filter(p => p.health < 0.4).length;
+    successRate -= (distressed / simState.activeProjects.length) * 25;
+  }
+  successRate = clamp(successRate, 0, 100);
+
+  // ── Span / density / criticals ────────────────────────────────
+  const managers = visible.filter(r => r.type !== 'ic');
+  const spans = managers.map(r => getDirectReports(r.id).length).filter(s => s > 0);
+  const avgSpan = spans.length ? spans.reduce((a, b) => a + b, 0) / spans.length : 0;
+  const totalLinks = _commCache.edges.length;
+  const commDensity = headcount > 0 ? (totalLinks * 2 / headcount) : 0;
+  const criticalNodes = visible.filter(r => r.isCritical).length;
+
+  // ── Composite efficiency ───────────────────────────────────────
+  let efficiency = 100;
+  efficiency -= (meetingOverhead / 90) * 28;
+  efficiency -= Math.max(0, decisionLatency - 1) * 6;
+  efficiency -= (100 - successRate) * 0.3;
+  efficiency -= Math.max(0, avgUtilization() - 95) * 0.5;
+  efficiency -= criticalNodes * 2.5;
+  efficiency -= Math.max(0, _commCache.components - 1) * 4;  // silos cost
+  efficiency -= (100 - simState.trust) * 0.18;
+  efficiency = clamp(Math.round(efficiency), 0, 100);
+
+  simState.metrics = {
+    decisionLatency: parseFloat(decisionLatency.toFixed(2)),
+    meetingOverhead: parseFloat(meetingOverhead.toFixed(1)),
+    successRate: Math.round(successRate),
+    headcount,
+    avgSpan: parseFloat(avgSpan.toFixed(1)),
+    commDensity: parseFloat(commDensity.toFixed(1)),
+    criticalNodes,
+    efficiency,
+    morale: Math.round(avgMorale()),
+    trust: Math.round(simState.trust),
+    turnoverAnnual: turnover12moPct(),
+    asyncSubstitution: simState.asyncMaturity,
+    infoFidelity: parseFloat(fidelity.toFixed(2)),
+    siloCount: _commCache.components
+  };
+}
+
+function pushHistory() {
+  const m = simState.metrics;
+  const h = simState.history;
+  h.months.push(simState.month);
+  h.headcount.push(m.headcount);
+  h.meetingOverhead.push(m.meetingOverhead);
+  h.decisionLatency.push(m.decisionLatency);
+  h.successRate.push(m.successRate);
+  h.efficiency.push(m.efficiency);
+  h.morale.push(m.morale);
+  h.trust.push(m.trust);
+  h.turnover.push(m.turnoverAnnual);
+}
+
+// ── PATHOLOGY DETECTION ────────────────────────────────────────────
+function detectPathologies() {
+  const out = [];
+  const visible = _commCache.nodes;
+
+  // Peter Principle — promoted manager is overloaded, has wide span, low tenure-in-role
+  const peters = visible.filter(r =>
+    r.type !== 'ic' && r.type !== 'lead' &&
+    r.utilization > 110 && getDirectReports(r.id).length > 6 && r.avgTenureMonths < 18
+  );
+  if (peters.length) {
+    out.push({
+      severity: 'fire',
+      name: 'Peter Principle',
+      detail: peters.length + ' manager(s) over their head — high span, low tenure, overloaded. Consider deputies or backfill.'
+    });
+  }
+
+  // Conway's Law — when org has N specialization silos, projects feel that shape
+  const specs = new Set(visible.map(r => r.specialization));
+  if (specs.size >= 4 && simState.activeProjects.length > 5 && _commCache.components > 1) {
+    out.push({
+      severity: 'warn',
+      name: "Conway's Law",
+      detail: 'Projects mirror your ' + specs.size + ' org silos. Output system architecture will reflect comms structure, not the problem.'
+    });
+  }
+
+  // Fiefdom — single role hoards > 35% of all incoming comm
+  const totalIncoming = visible.reduce((s, r) => s + r.incomingComm, 0);
+  if (totalIncoming > 4) {
+    const fiefs = visible.filter(r => r.incomingComm / totalIncoming > 0.35);
+    if (fiefs.length) {
+      out.push({
+        severity: 'fire',
+        name: 'Fiefdom',
+        detail: fiefs.map(f => f.title).join(', ') + ' is a single point of organizational dependence. Bus-factor risk: high.'
+      });
+    }
+  }
+
+  // Silos — disconnected components in informal comm graph
+  if (_commCache.components > 1 && totalHeadcount() > 12) {
+    out.push({
+      severity: 'warn',
+      name: 'Silos',
+      detail: _commCache.components + ' disconnected sub-networks. Cross-functional comms have stopped happening informally.'
+    });
+  }
+
+  // Hiring debt
+  if (simState.hiringDebt > 3) {
+    out.push({
+      severity: 'warn',
+      name: 'Hiring Debt',
+      detail: Math.round(simState.hiringDebt) + ' open seats unfilled. Existing staff absorb the gap, accelerating burnout.'
+    });
+  }
+
+  // Trust collapse
+  if (simState.metrics.trust < 50) {
+    out.push({
+      severity: 'fire',
+      name: 'Trust Collapse',
+      detail: 'Trust at ' + simState.metrics.trust + '. Decisions get re-litigated, work gets verified twice, latency compounds.'
+    });
+  }
+
+  // Morale crisis
+  if (simState.metrics.morale < 55) {
+    out.push({
+      severity: 'fire',
+      name: 'Morale Crisis',
+      detail: 'Avg morale ' + simState.metrics.morale + '. Turnover risk rising — especially among overloaded ICs.'
+    });
+  }
+
+  // Healthy default
+  if (out.length === 0) {
+    out.push({
+      severity: 'ok',
+      name: 'Stable',
+      detail: 'No structural pathologies detected at current scale.'
+    });
+  }
+
+  simState.pathologies = out;
+}
+
+// ── TIPPING POINTS ────────────────────────────────────────────────
+function detectTippingPoint() {
+  const eff = simState.history.efficiency;
+  if (eff.length < 4) return;
+  const a = eff[eff.length - 4];
+  const b = eff[eff.length - 3];
+  const c = eff[eff.length - 2];
+  const d = eff[eff.length - 1];
+  const slopeBefore = b - a;
+  const slopeAfter  = d - c;
+  // Mark a tipping point when efficiency drop accelerates and current eff < 60
+  if (slopeAfter < -3 && (slopeAfter - slopeBefore) < -2 && d < 60) {
+    const m = simState.month;
+    if (!simState.tippingPoints.find(t => Math.abs(t - m) < 2)) {
+      simState.tippingPoints.push(m);
+    }
+  }
+  // Also flag Dunbar-like band crossings
+  const hc = totalHeadcount();
+  const bands = [9, 25, 50, 150];
+  bands.forEach(band => {
+    if (hc === band || (hc > band && hc - 1 === band)) {
+      if (!simState._bandsHit) simState._bandsHit = new Set();
+      if (!simState._bandsHit.has(band)) {
+        simState._bandsHit.add(band);
+        // a "watch" event, not a structural tipping point
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// RENDERING
+// ════════════════════════════════════════════════════════════════════
+
+function renderAll() {
+  renderOrgChart();
+  renderMetricsCards();
+  renderPathologies();
+  renderInsights();
+  renderCommGraph();
+  renderTimeline();
+  renderStatusBar();
+}
+
+// ── ORG CHART ──────────────────────────────────────────────────────
+function renderOrgChart() {
+  const area = document.getElementById('orgChartArea');
+  if (!roles.length) {
+    area.innerHTML = '<div class="org-empty">Load a preset or add roles, then press ▶ Play.</div>';
+    return;
+  }
+  area.innerHTML = '';
+  const roots = roles.filter(r => !r.reportsTo);
+  roots.forEach(root => area.appendChild(renderNode(root, 0)));
+}
+function renderNode(role) {
+  const wrap = document.createElement('div');
+  wrap.className = 'org-node-wrap';
+  const reports = getDirectReports(role.id);
+  const span = reports.length;
+  const util = role.utilization || 60;
+  let utilClass = 'util-green';
+  if (util > 100) utilClass = 'util-red';
+  else if (util > 80) utilClass = 'util-yellow';
+
+  const moraleColor = role.morale > 70 ? '#6BA84A' : role.morale > 50 ? '#F0A830' : '#D64A4A';
+  const moralePct = Math.max(0, Math.min(100, role.morale));
+
+  const warnings = [];
+  if (span > 7) warnings.push('<span class="node-warn-tag">span ' + span + '</span>');
+  else if (span > 5) warnings.push('<span class="node-warn-tag warn">span ' + span + '</span>');
+  if (role.isCritical) warnings.push('<span class="node-warn-tag">critical</span>');
+  if ((role.onboardingPeople || 0) > 0) warnings.push('<span class="node-warn-tag info">+' + role.onboardingPeople + ' ramping</span>');
+
+  const node = document.createElement('div');
+  node.className = 'org-node role-' + role.type;
+  node.innerHTML = `
+    <div>
+      <div class="node-title">${escapeHtml(role.title)}</div>
+      <div class="node-meta">${role.type.toUpperCase()} · ${role.specialization}</div>
+      <div class="node-stats">×${role.count} · ${Math.round(util)}% util · morale ${Math.round(role.morale)}</div>
+    </div>
+    <div class="node-right">
+      <span class="node-pill ${utilClass}">${Math.round(util)}%</span>
+    </div>
+    <div class="morale-bar"><div class="morale-fill" style="width:${moralePct}%; background-color:${moraleColor};"></div></div>
+    ${warnings.length ? `<div class="node-warn-row">${warnings.join('')}</div>` : ''}
+  `;
+  node.onclick = () => showDrill(role);
+  wrap.appendChild(node);
+
+  if (reports.length) {
+    const childrenDiv = document.createElement('div');
+    childrenDiv.className = 'node-children';
+    reports.forEach(child => childrenDiv.appendChild(renderNode(child)));
+    wrap.appendChild(childrenDiv);
+  }
+  return wrap;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+}
+
+// ── METRICS CARDS ──────────────────────────────────────────────────
+function renderMetricsCards() {
+  const m = simState.metrics;
+  document.getElementById('effLabel').textContent = 'eff ' + m.efficiency + '/100';
+
+  const cards = [
+    { name: 'Decision Latency', value: m.decisionLatency + 'd',
+      sub: 'fidelity ' + Math.round(m.infoFidelity * 100) + '%',
+      color: m.decisionLatency < 1.5 ? 'ind-green' : m.decisionLatency <= 3 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Meeting Overhead', value: m.meetingOverhead + '%',
+      sub: 'async ' + Math.round(m.asyncSubstitution * 100) + '%',
+      color: m.meetingOverhead < 25 ? 'ind-green' : m.meetingOverhead <= 38 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Project Success', value: m.successRate + '%',
+      sub: simState.activeProjects.length + ' active',
+      color: m.successRate > 75 ? 'ind-green' : m.successRate >= 55 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Headcount', value: m.headcount,
+      sub: simState.hiringDebt > 0 ? '+' + Math.round(simState.hiringDebt) + ' debt' : 'no debt',
+      color: 'ind-neutral' },
+    { name: 'Avg Span', value: m.avgSpan,
+      sub: 'reports per mgr',
+      color: m.avgSpan < 5 ? 'ind-green' : m.avgSpan <= 7 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Comm Density', value: m.commDensity,
+      sub: 'links / person',
+      color: 'ind-neutral' },
+    { name: 'Critical Nodes', value: m.criticalNodes,
+      sub: m.criticalNodes ? 'bus-factor risk' : 'distributed',
+      color: m.criticalNodes === 0 ? 'ind-green' : 'ind-red' },
+    { name: 'Silos', value: m.siloCount,
+      sub: m.siloCount > 1 ? 'disconnected' : 'connected',
+      color: m.siloCount === 1 ? 'ind-green' : m.siloCount === 2 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Morale', value: m.morale,
+      sub: 'workforce mood',
+      color: m.morale > 70 ? 'ind-green' : m.morale >= 55 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Trust', value: m.trust,
+      sub: 'org-wide',
+      color: m.trust > 70 ? 'ind-green' : m.trust >= 55 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Turnover', value: m.turnoverAnnual + '%',
+      sub: 'annualized',
+      color: m.turnoverAnnual < 10 ? 'ind-green' : m.turnoverAnnual <= 22 ? 'ind-yellow' : 'ind-red' },
+    { name: 'Org Efficiency', value: m.efficiency,
+      sub: 'composite 0–100',
+      color: m.efficiency > 70 ? 'ind-green' : m.efficiency >= 50 ? 'ind-yellow' : 'ind-red' }
+  ];
+  document.getElementById('metricsGrid').innerHTML = cards.map(c => `
+    <div class="metric-card">
+      <div>
+        <div class="metric-name">${c.name}</div>
+        <div class="metric-value">${c.value}</div>
+        <div class="metric-sub">${c.sub}</div>
+      </div>
+      <div class="metric-indicator ${c.color}"></div>
+    </div>
+  `).join('');
+}
+
+// ── PATHOLOGIES ────────────────────────────────────────────────────
+function renderPathologies() {
+  const list = document.getElementById('pathologyList');
+  list.innerHTML = simState.pathologies.map(p => `
+    <div class="pathology-row ${p.severity}">
+      <div class="pathology-name">${p.name}</div>
+      <div class="pathology-detail">${p.detail}</div>
+    </div>
+  `).join('');
+}
+
+// ── INSIGHTS ───────────────────────────────────────────────────────
+function renderInsights() {
+  const m = simState.metrics;
+  const out = [];
+
+  // Per-role overload
+  roles.forEach(r => {
+    if (r.utilization > 130) {
+      out.push({ type: 'crit', text: '✗ ' + r.title + ' critically overloaded (' + Math.round(r.utilization) + '%) — backfill or rebalance' });
+    } else if (r.utilization > 105) {
+      out.push({ type: 'warn', text: '⚠ ' + r.title + ' over capacity (' + Math.round(r.utilization) + '%)' });
+    }
+    const span = getDirectReports(r.id).length;
+    if (span > 7) out.push({ type: 'crit', text: '✗ ' + r.title + ' span exceeded (' + span + ' direct reports) — split team' });
+  });
+
+  if (m.decisionLatency > 3) out.push({ type: 'crit', text: '✗ Decision latency ' + m.decisionLatency + 'd — hierarchy too deep, consider flattening' });
+  else if (m.decisionLatency > 2) out.push({ type: 'warn', text: '⚠ Decision latency ' + m.decisionLatency + 'd — escalation paths slowing' });
+
+  if (m.meetingOverhead > 45) out.push({ type: 'crit', text: '✗ Meeting overhead ' + m.meetingOverhead + '% — push async, kill recurring meetings' });
+  else if (m.meetingOverhead > 30) out.push({ type: 'warn', text: '⚠ Meeting overhead ' + m.meetingOverhead + '% — approaching threshold' });
+
+  if (m.criticalNodes > 0) out.push({ type: 'crit', text: '✗ ' + m.criticalNodes + ' critical node(s) — single point(s) of failure' });
+  if (m.siloCount > 1) out.push({ type: 'warn', text: '⚠ ' + m.siloCount + ' disconnected sub-networks — cross-fn comms have stopped' });
+  if (m.infoFidelity < 0.7) out.push({ type: 'warn', text: '⚠ Information fidelity ' + Math.round(m.infoFidelity * 100) + '% — telephone game effect' });
+  if (m.turnoverAnnual > 25) out.push({ type: 'crit', text: '✗ Turnover ' + m.turnoverAnnual + '%/yr — retention crisis' });
+
+  if (simState.tippingPoints.length) {
+    const last = simState.tippingPoints[simState.tippingPoints.length - 1];
+    out.push({ type: 'crit', text: '✗ Tipping point detected at M' + last + ' — efficiency now declining' });
+  }
+
+  if (m.successRate > 80 && m.efficiency > 75 && simState.month > 0) {
+    out.push({ type: 'ok', text: '✓ Structure scaling well — efficiency ' + m.efficiency + '/100' });
+  }
+
+  if (!out.length) out.push({ type: 'info', text: 'No active alerts.' });
+
+  document.getElementById('insightsPanel').innerHTML =
+    out.map(i => `<div class="insight-item insight-${i.type}">${i.text}</div>`).join('');
+}
+
+// ── COMM GRAPH ─────────────────────────────────────────────────────
+function renderCommGraph() {
+  const canvas = document.getElementById('commCanvas');
+  const wrap = canvas.parentElement;
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#2E3A47';
+  ctx.fillRect(0, 0, W, H);
+
+  const visible = _commCache.nodes;
+  if (!visible.length) {
+    ctx.fillStyle = '#9AAABB';
+    ctx.font = '11px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('No org defined', W / 2, H / 2);
+    return;
+  }
+
+  // Layout: tree by depth, x-distributed
+  const roots = visible.filter(r => !r.reportsTo);
+  function assign(roleId, x, y, xRange) {
+    const role = visible.find(v => v.id === roleId);
+    if (!role) return;
+    role._gx = x; role._gy = y;
+    const children = visible.filter(v => v.reportsTo === roleId);
+    if (!children.length) return;
+    const step = xRange / (children.length + 1);
+    children.forEach((child, i) =>
+      assign(child.id, x - xRange / 2 + step * (i + 1), y + Math.min(70, (H - 60) / Math.max(2, getOrgDepth())), xRange / Math.max(2, children.length))
+    );
+  }
+  const rootStep = W / (roots.length + 1);
+  roots.forEach((root, i) =>
+    assign(root.id, rootStep * (i + 1), 35, W * 0.85 / Math.max(1, roots.length))
+  );
+
+  // Draw cross-fn edges first (under reporting)
+  const crossEdges = _commCache.edges.filter(e => e.kind === 'cross');
+  ctx.lineWidth = 1;
+  crossEdges.forEach(e => {
+    const a = visible.find(v => v.id === e.from);
+    const b = visible.find(v => v.id === e.to);
+    if (!a || !b || a._gx === undefined || b._gx === undefined) return;
+    ctx.strokeStyle = '#D4651A';
+    ctx.globalAlpha = 0.25 + e.weight * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(a._gx, a._gy);
+    ctx.bezierCurveTo(a._gx, (a._gy + b._gy) / 2, b._gx, (a._gy + b._gy) / 2, b._gx, b._gy);
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+
+  // Draw reporting edges
+  visible.forEach(role => {
+    if (!role.reportsTo) return;
+    const parent = visible.find(v => v.id === role.reportsTo);
+    if (!parent || parent._gx === undefined || role._gx === undefined) return;
+    const childPeople = role.count;
+    const isCriticalLine = parent.isCritical || role.isCritical;
+    ctx.strokeStyle = isCriticalLine ? '#D64A4A' : '#4A6070';
+    ctx.lineWidth = isCriticalLine ? 1.8 : 1;
+    ctx.beginPath();
+    ctx.moveTo(parent._gx, parent._gy);
+    ctx.lineTo(role._gx, role._gy);
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  visible.forEach(role => {
+    if (role._gx === undefined) return;
+    const reports = getDirectReports(role.id).reduce((s, r) => s + r.count, 0);
+    const radius = 6 + Math.min(reports * 1.4, 14);
+    const color = ROLE_COLORS[role.type] || '#7A8A9A';
+    let ringColor = '#6BA84A';
+    if (role.utilization > 100) ringColor = '#D64A4A';
+    else if (role.utilization > 80) ringColor = '#F0A830';
+
+    // Overload halo
+    if (role.utilization > 110) {
+      ctx.strokeStyle = '#D64A4A';
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(role._gx, role._gy, radius + 5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.fillStyle = color;
+    ctx.strokeStyle = ringColor;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.arc(role._gx, role._gy, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#E8EAEC';
+    ctx.font = '9px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    const label = role.title.length > 14 ? role.title.substring(0, 14) + '…' : role.title;
+    ctx.fillText(label, role._gx, role._gy + radius + 11);
+    ctx.fillStyle = '#9AAABB';
+    ctx.fillText('×' + role.count, role._gx, role._gy + radius + 21);
+  });
+}
+
+// ── TIMELINE ───────────────────────────────────────────────────────
+function initTimeline() {
+  const ctx = document.getElementById('timelineChart').getContext('2d');
+  timelineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        { label: 'Headcount',     data: [], borderColor: '#9AAABB', backgroundColor: 'transparent', borderWidth: 1.4, pointRadius: 0, tension: 0.3, yAxisID: 'y1' },
+        { label: 'Mtg Overhead %', data: [], borderColor: '#D4651A', backgroundColor: 'transparent', borderWidth: 1.4, pointRadius: 0, tension: 0.3, yAxisID: 'y' },
+        { label: 'Latency ×10',    data: [], borderColor: '#F0A830', backgroundColor: 'transparent', borderWidth: 1.4, pointRadius: 0, tension: 0.3, yAxisID: 'y' },
+        { label: 'Success %',      data: [], borderColor: '#6BA84A', backgroundColor: 'transparent', borderWidth: 1.4, pointRadius: 0, tension: 0.3, yAxisID: 'y' },
+        { label: 'Efficiency',     data: [], borderColor: '#E8EAEC', backgroundColor: 'transparent', borderWidth: 1.6, pointRadius: 0, tension: 0.3, yAxisID: 'y' },
+        { label: 'Trust',          data: [], borderColor: '#D64A4A', backgroundColor: 'transparent', borderWidth: 1.2, pointRadius: 0, borderDash: [4, 3], tension: 0.3, yAxisID: 'y' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: '#9AAABB', font: { family: 'IBM Plex Mono', size: 9 }, boxWidth: 12, padding: 8 }
+        },
+        tooltip: {
+          backgroundColor: '#3A4A5C', borderColor: '#4A6070', borderWidth: 1,
+          titleColor: '#D4651A', bodyColor: '#E8EAEC',
+          titleFont: { family: 'IBM Plex Mono', size: 10 },
+          bodyFont: { family: 'IBM Plex Mono', size: 10 }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#9AAABB', font: { family: 'IBM Plex Mono', size: 9 }, maxTicksLimit: 12 },
+          grid: { color: '#3A4A5C' }
+        },
+        y: {
+          position: 'left',
+          ticks: { color: '#9AAABB', font: { family: 'IBM Plex Mono', size: 9 } },
+          grid: { color: '#3A4A5C' },
+          min: 0, max: 110
+        },
+        y1: {
+          position: 'right',
+          ticks: { color: '#9AAABB', font: { family: 'IBM Plex Mono', size: 9 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+function resetTimelineChart() {
+  if (!timelineChart) return;
+  timelineChart.data.labels = [];
+  timelineChart.data.datasets.forEach(d => d.data = []);
+  timelineChart.update('none');
+  document.querySelectorAll('.tipping-marker').forEach(el => el.remove());
+}
+function renderTimeline() {
+  if (!timelineChart) return;
+  const h = simState.history;
+  timelineChart.data.labels = h.months.map(m => 'M' + m);
+  timelineChart.data.datasets[0].data = h.headcount;
+  timelineChart.data.datasets[1].data = h.meetingOverhead;
+  timelineChart.data.datasets[2].data = h.decisionLatency.map(d => d * 10);
+  timelineChart.data.datasets[3].data = h.successRate;
+  timelineChart.data.datasets[4].data = h.efficiency;
+  timelineChart.data.datasets[5].data = h.trust;
+  timelineChart.update('none');
+
+  // Draw tipping markers
+  const panel = document.getElementById('timelinePanel');
+  panel.querySelectorAll('.tipping-marker').forEach(el => el.remove());
+  if (!simState.tippingPoints.length || h.months.length < 2) return;
+  const chartArea = timelineChart.chartArea;
+  if (!chartArea) return;
+  simState.tippingPoints.forEach(tp => {
+    const idx = h.months.indexOf(tp);
+    if (idx === -1) return;
+    const xScale = timelineChart.scales.x;
+    const xPx = xScale.getPixelForValue(idx);
+    if (!isFinite(xPx)) return;
+    const marker = document.createElement('div');
+    marker.className = 'tipping-marker';
+    marker.style.left = xPx + 'px';
+    marker.title = 'Tipping point at M' + tp;
+    panel.appendChild(marker);
+  });
+}
+
+// ── STATUS BAR ─────────────────────────────────────────────────────
+function renderStatusBar() {
+  const m = simState.metrics;
+  document.getElementById('sbHeadcount').textContent = m.headcount;
+  document.getElementById('sbProjects').textContent = simState.activeProjects.length;
+  document.getElementById('sbLevels').textContent = getOrgDepth();
+  document.getElementById('sbUtil').textContent = roles.length ? Math.round(avgUtilization()) + '%' : '—';
+  document.getElementById('sbMorale').textContent = m.morale ? m.morale : '—';
+  document.getElementById('sbTrust').textContent = m.trust ? m.trust : '—';
+  document.getElementById('sbTurnover').textContent = m.turnoverAnnual + '%';
+}
+
+// ── ADD ROLE / DRILL MODALS ────────────────────────────────────────
+function showAddRoleModal() {
+  const select = document.getElementById('newRoleReportsTo');
+  select.innerHTML = '<option value="">— None (top level) —</option>';
+  roles.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    opt.textContent = r.title + ' (' + r.type + ')';
+    select.appendChild(opt);
+  });
+  document.getElementById('addRoleModal').classList.add('active');
+}
+function confirmAddRole() {
+  const type = document.getElementById('newRoleType').value;
+  const title = document.getElementById('newRoleTitle').value.trim() || 'New Role';
+  const spec = document.getElementById('newRoleSpec').value;
+  const reportsToVal = document.getElementById('newRoleReportsTo').value;
+  const reportsTo = reportsToVal ? parseInt(reportsToVal) : null;
+  const count = parseInt(document.getElementById('newRoleCount').value) || 1;
+  const capacity = parseInt(document.getElementById('newRoleCapacity').value) || 100;
+  roles.push({
+    id: roleIdCounter++, type, title, specialization: spec, reportsTo,
+    count, capacity,
+    utilization: 65, morale: 85, avgTenureMonths: 12,
+    onboardingPeople: 0, incomingComm: 0, outgoingComm: 0,
+    isCritical: false, componentId: 0
+  });
+  closeModal('addRoleModal');
+  recomputeAll();
+  renderAll();
+}
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function showDrill(role) {
+  const reports = getDirectReports(role.id);
+  const totalReports = reports.reduce((s, r) => s + r.count, 0);
+  const parent = roles.find(r => r.id === role.reportsTo);
+  document.getElementById('drillTitle').textContent = role.title;
+  document.getElementById('drillContent').innerHTML = `
+    <div class="drill-grid">
+      <div class="drill-label">Type</div><div class="drill-value">${role.type.toUpperCase()}</div>
+      <div class="drill-label">Specialization</div><div class="drill-value">${role.specialization}</div>
+      <div class="drill-label">People in role</div><div class="drill-value">${role.count}</div>
+      <div class="drill-label">Utilization</div>
+        <div class="drill-value" style="color:${role.utilization > 100 ? '#D64A4A' : role.utilization > 80 ? '#F0A830' : '#6BA84A'}">${Math.round(role.utilization)}%</div>
+      <div class="drill-label">Morale</div>
+        <div class="drill-value" style="color:${role.morale > 70 ? '#6BA84A' : role.morale > 50 ? '#F0A830' : '#D64A4A'}">${Math.round(role.morale)}/100</div>
+      <div class="drill-label">Reports to</div><div class="drill-value">${parent ? parent.title : '— (top level)'}</div>
+      <div class="drill-label">Direct reports</div><div class="drill-value">${totalReports} people across ${reports.length} role(s)</div>
+      <div class="drill-label">Critical node</div>
+        <div class="drill-value" style="color:${role.isCritical ? '#D64A4A' : '#6BA84A'}">${role.isCritical ? 'Yes — bus-factor risk' : 'No'}</div>
+      <div class="drill-label">Onboarding</div><div class="drill-value">${role.onboardingPeople || 0} ramping</div>
+      <div class="drill-label">Comm centrality</div><div class="drill-value">${role.incomingComm.toFixed(1)} in / ${role.outgoingComm.toFixed(1)} out</div>
+    </div>
+    ${reports.length ? `<div style="margin-top:0.7rem;color:#9AAABB;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;">Direct reports</div>
+      ${reports.map(r => `<div style="padding-left:0.6rem;font-size:0.75rem;color:#E8EAEC;">· ${escapeHtml(r.title)} ×${r.count}</div>`).join('')}` : ''}
+    <div style="display:flex;gap:0.4rem;margin-top:1rem;flex-wrap:wrap;">
+      <button class="btn btn-sm btn-primary" onclick="incrementRole(${role.id})">+ Add Person</button>
+      <button class="btn btn-sm btn-ghost" onclick="decrementRole(${role.id})">− Remove Person</button>
+      <button class="btn btn-sm btn-danger" onclick="removeRole(${role.id})">Delete Role</button>
+    </div>
+  `;
+  document.getElementById('drillModal').classList.add('active');
+}
+function incrementRole(id) {
+  const r = roles.find(x => x.id === id);
+  if (r) { r.count++; r.onboardingPeople = (r.onboardingPeople || 0) + 1; recomputeAll(); renderAll(); }
+  closeModal('drillModal');
+}
+function decrementRole(id) {
+  const r = roles.find(x => x.id === id);
+  if (r && r.count > 0) { r.count--; recomputeAll(); renderAll(); }
+  closeModal('drillModal');
+}
+function removeRole(id) {
+  roles = roles.filter(r => r.id !== id);
+  roles.forEach(r => { if (r.reportsTo === id) r.reportsTo = null; });
+  closeModal('drillModal');
+  recomputeAll();
+  renderAll();
+}
+
+// ── WHAT-IF MODE ───────────────────────────────────────────────────
+// User picks a structural change; we fork sim state, run shadow forward N months,
+// compare end-state metrics. Compare against the trajectory of "do nothing".
+function startWhatIf() {
+  if (!roles.length) return;
+  const choice = prompt(
+    'What-if scenarios:\n' +
+    '  1 — Hire one extra Senior Engineer\n' +
+    '  2 — Add a Manager between top role and ICs\n' +
+    '  3 — Remove all VPs (flatten by one level)\n' +
+    '  4 — Hire one extra PM\n' +
+    'Enter 1-4:', '1'
+  );
+  const n = parseInt(choice);
+  if (![1, 2, 3, 4].includes(n)) return;
+  const titles = {
+    1: '+ Senior Engineer', 2: '+ Mid-layer Manager',
+    3: '− Flatten (remove VPs)', 4: '+ Project Manager'
+  };
+  // Snapshot baseline state and roles
+  whatIf = {
+    title: titles[n],
+    fromMonth: simState.month,
+    horizonMonths: 12,
+    baselineMetrics: JSON.parse(JSON.stringify(simState.metrics)),
+    shadowState: snapshotSim(),
+    shadowRoles: snapshotRoles(),
+    completed: false,
+    finalAlt: null
+  };
+  // Apply the change to shadow roles
+  applyWhatIfChange(n, whatIf.shadowRoles);
+  document.getElementById('whatifBtn').textContent = '⇆ What-If: running...';
+  document.getElementById('whatifStrip').classList.add('active');
+  document.getElementById('whatifTitle').textContent = whatIf.title + ' · running 12mo';
+  // Shadow simulation runs alongside main; we kick it via advanceShadow each step
+  // But also: we run it to completion immediately so user gets a result fast.
+  runShadowToHorizon();
+}
+function snapshotSim() { return JSON.parse(JSON.stringify(simState)); }
+function snapshotRoles() { return JSON.parse(JSON.stringify(roles)); }
+
+function applyWhatIfChange(n, shadowRoles) {
+  if (n === 1) {
+    const eng = shadowRoles.find(r => r.specialization === 'engineering' && r.type === 'ic');
+    if (eng) eng.count += 1;
+  } else if (n === 2) {
+    // Add a manager under highest role
+    const top = shadowRoles.find(r => r.reportsTo === null);
+    if (top) {
+      const newId = Math.max(...shadowRoles.map(x => x.id)) + 1;
+      shadowRoles.push({
+        id: newId, type: 'manager', title: 'Mid Manager',
+        specialization: 'pm', reportsTo: top.id, count: 1, capacity: 100,
+        utilization: 70, morale: 80, avgTenureMonths: 6,
+        onboardingPeople: 1, incomingComm: 0, outgoingComm: 0, isCritical: false, componentId: 0
+      });
+      // Re-parent some ICs to the new manager
+      const ics = shadowRoles.filter(r => r.type === 'ic' && r.reportsTo === top.id);
+      ics.slice(0, Math.ceil(ics.length / 2)).forEach(ic => ic.reportsTo = newId);
+    }
+  } else if (n === 3) {
+    // Remove all VPs, re-parent their reports up
+    const vps = shadowRoles.filter(r => r.type === 'vp');
+    vps.forEach(vp => {
+      const newParent = vp.reportsTo;
+      shadowRoles.forEach(r => { if (r.reportsTo === vp.id) r.reportsTo = newParent; });
+    });
+    // Filter out VPs
+    const keep = shadowRoles.filter(r => r.type !== 'vp');
+    shadowRoles.length = 0;
+    keep.forEach(r => shadowRoles.push(r));
+  } else if (n === 4) {
+    const pm = shadowRoles.find(r => r.specialization === 'pm' && r.type === 'ic');
+    if (pm) pm.count += 1;
+  }
+}
+
+// We run a self-contained shadow sim using a parallel model, NOT touching live state.
+function runShadowToHorizon() {
+  if (!whatIf) return;
+  const savedRoles = roles;
+  const savedSim = simState;
+  // Swap in shadow
+  roles = whatIf.shadowRoles;
+  simState = whatIf.shadowState;
+  simState.running = false;
+
+  for (let i = 0; i < whatIf.horizonMonths; i++) {
+    simState.month++;
+    const hireRate = parseFloat(document.getElementById('hiringRate').value) || 0;
+    const cKey = document.getElementById('complexitySelect').value;
+    applyHiring(hireRate);
+    applyProjectPipeline(cKey);
+    updateOnboarding();
+    updateUtilization(cKey);
+    updateMorale();
+    updateTrust();
+    updateAsyncMaturity();
+    computeCommNetwork();
+    recomputeAll();
+    applyTurnover();
+  }
+  whatIf.finalAlt = JSON.parse(JSON.stringify(simState.metrics));
+
+  // Now run baseline (no change) for the same number of months from same starting point
+  roles = JSON.parse(JSON.stringify(savedRoles));
+  simState = JSON.parse(JSON.stringify(savedSim));
+  for (let i = 0; i < whatIf.horizonMonths; i++) {
+    simState.month++;
+    const hireRate = parseFloat(document.getElementById('hiringRate').value) || 0;
+    const cKey = document.getElementById('complexitySelect').value;
+    applyHiring(hireRate);
+    applyProjectPipeline(cKey);
+    updateOnboarding();
+    updateUtilization(cKey);
+    updateMorale();
+    updateTrust();
+    updateAsyncMaturity();
+    computeCommNetwork();
+    recomputeAll();
+    applyTurnover();
+  }
+  whatIf.finalBaseline = JSON.parse(JSON.stringify(simState.metrics));
+
+  // Restore live state
+  roles = savedRoles;
+  simState = savedSim;
+  computeCommNetwork();
+  recomputeAll();
+
+  whatIf.completed = true;
+  renderWhatIfStrip();
+}
+
+function advanceShadow() { /* shadow is already pre-simulated to horizon */ }
+
+function renderWhatIfStrip() {
+  if (!whatIf || !whatIf.completed) return;
+  const a = whatIf.finalAlt;
+  const b = whatIf.finalBaseline;
+  document.getElementById('whatifTitle').textContent = whatIf.title + ' · 12mo result';
+  function setDelta(valueId, deltaId, alt, base, suffix, betterIsHigher) {
+    document.getElementById(valueId).textContent = alt + (suffix || '');
+    const diff = alt - base;
+    const sign = diff > 0 ? '+' : '';
+    const isPos = betterIsHigher ? diff > 0 : diff < 0;
+    const isNeg = betterIsHigher ? diff < 0 : diff > 0;
+    const el = document.getElementById(deltaId);
+    el.textContent = (diff === 0 ? 'Δ 0' : ('Δ ' + sign + diff.toFixed(1))) + (suffix || '') + ' vs do-nothing';
+    el.className = 'whatif-delta ' + (isPos ? 'delta-pos' : (isNeg ? 'delta-neg' : ''));
+  }
+  setDelta('whatifEff',  'whatifEffDelta',  a.efficiency,      b.efficiency,      '',  true);
+  setDelta('whatifLat',  'whatifLatDelta',  a.decisionLatency, b.decisionLatency, 'd', false);
+  setDelta('whatifSucc', 'whatifSuccDelta', a.successRate,     b.successRate,     '%', true);
+}
+
+function acceptWhatIf() {
+  if (!whatIf || !whatIf.completed) return;
+  // Apply the structural change to the live roles (not the simulated forward state — just the change itself)
+  // We reapply the change to a fresh copy to avoid copying simulated drift
+  applyWhatIfChange(whatIfChoiceFromTitle(whatIf.title), roles);
+  closeWhatIf();
+  recomputeAll();
+  renderAll();
+}
+function whatIfChoiceFromTitle(title) {
+  if (title.includes('Senior Engineer')) return 1;
+  if (title.includes('Mid-layer'))      return 2;
+  if (title.includes('Flatten'))        return 3;
+  if (title.includes('Project Manager'))return 4;
+  return 0;
+}
+function closeWhatIf() {
+  whatIf = null;
+  document.getElementById('whatifStrip').classList.remove('active');
+  document.getElementById('whatifBtn').textContent = '⇆ What-If';
+}
+
+// ── EVENT WIRING ───────────────────────────────────────────────────
+document.getElementById('speedSlider').addEventListener('input', function() {
+  simState.speed = parseInt(this.value);
+  document.getElementById('speedLabel').textContent = simState.speed + '×';
+  if (simState.running) { stopSim(); startSim(); }
+});
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+});
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (roles.length) renderCommGraph();
+    if (timelineChart) timelineChart.resize();
+    renderTimeline();
+  }, 80);
+});
+
+// ── INIT ───────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initTimeline();
+  loadPreset('small');
+});
+</script>
+
+<!--
+================================================================================
+CHANGELOG — Opus deepening (v2.0, May 2026)
+
+Replaces v1's independent-metric model with a coupled state simulation. The
+seven Opus handoff targets are addressed as follows:
+
+1. DECISION LATENCY MODEL  → updated in recomputeAll()
+   - Keeps depth term, but adds:
+     * bandwidth queueing: senior nodes above 95% util add ~0.45d each
+     * span penalty per overspanned manager
+     * info-fidelity multiplier: (1 - lossPerHop)^depth, where loss grows
+       with meeting overhead (more meetings = more game-of-telephone)
+     * fidelity multiplier inflates latency when info gets re-litigated
+   - Result: nonlinear growth with depth × overload × overhead
+
+2. MEETING OVERHEAD  → updated in recomputeAll()
+   - Per-role meetings/week from base recurring + reports + spec breadth +
+     projects/person + executive cascade
+   - Per-meeting cost 1.6h (incl. prep/recovery), context-switch tax of
+     0.5 * sqrt(meetings) — sub-linear penalty
+   - Cross-functional load scales with org size: small co-located teams
+     don't pay the full spec tax (crossFnScale ramps from hc=8 to hc=28)
+   - Async-substitution discount grows with org maturity (up to 22% off)
+   - Healthy small orgs land near 20–25%, stressed mid-size orgs hit 30–35%
+
+3. PROJECT SUCCESS COUPLING  → updated in recomputeAll() + applyProjectPipeline
+   - Logistic combination of slack, morale, trust, overhead, latency
+   - Project pipeline now tracks per-project health
+   - When a project's health drops below 0.3, it pulls resources, damaging
+     the health of OTHER projects (delay cascade)
+   - Distressed-project share drags successRate down at the end
+
+4. COMMUNICATION NETWORK  → computeCommNetwork()
+   - Reporting edges plus informal cross-functional edges between same-spec
+     roles in different lineages, weighted by active-project density
+   - Bridge edges between PM and engineering roles
+   - Critical-node detection from incoming centrality (>= 5)
+   - Connected-component analysis on cross-fn edges → silo count
+   - Visualization adds overload halos and orange cross-fn lines
+
+5. FEEDBACK LOOPS & TIPPING POINTS  → updateMorale, updateTrust, applyTurnover
+   - Overhead/latency → reversed decisions accumulator → trust decay
+   - Trust low → trust tax on utilization (verification work)
+   - Overload → morale drop (first-order lag)
+   - Low morale + overload → voluntary turnover → hiringDebt
+   - Hiring debt + onboarding → manager tax → more overload (loop closes)
+   - Tipping points detected from efficiency 2nd derivative when eff < 60
+
+6. ORGANIZATIONAL PATHOLOGIES  → detectPathologies()
+   - Peter Principle: managers with high span + high util + low tenure
+   - Conway's Law: ≥4 specs + active projects + multiple silos
+   - Fiefdom: any role > 35% of incoming comm
+   - Silos: >1 connected component in cross-fn graph
+   - Hiring Debt, Trust Collapse, Morale Crisis as dynamic flags
+
+7. WHAT-IF / SENSITIVITY  → startWhatIf(), runShadowToHorizon()
+   - Forks state, runs both alternative AND do-nothing forward 12 months
+   - Compares end-state efficiency, latency, success rate
+   - Apply or discard. Live sim untouched until apply.
+   - 4 canned scenarios: hire eng, add mgr layer, flatten by removing VPs,
+     hire PM. Easy to extend — see applyWhatIfChange().
+
+KEY DATA CONTRACTS
+
+  roles[i] = {
+    id, type, title, specialization, reportsTo,
+    count, capacity, utilization, morale, avgTenureMonths,
+    onboardingPeople, incomingComm, outgoingComm,
+    isCritical, componentId
+  }
+
+  simState = {
+    running, month, speed, hiringAccum, projectAccum, hiringDebt,
+    activeProjects, projectCounter,
+    trust, reversedDecisions, asyncMaturity,
+    history{...}, metrics{...}, tippingPoints[], pathologies[]
+  }
+
+  metrics = {
+    decisionLatency, meetingOverhead, successRate, headcount,
+    avgSpan, commDensity, criticalNodes, efficiency,
+    morale, trust, turnoverAnnual, asyncSubstitution,
+    infoFidelity, siloCount
+  }
+
+EXTENSIBILITY NOTES
+
+- More what-if scenarios: extend applyWhatIfChange() and the prompt list.
+- Per-role policy levers (e.g. "this manager has a deputy") would slot
+  cleanly into computeCommNetwork() and updateUtilization().
+- Pathology library expansion: each detector is a pure function of state,
+  add new ones to detectPathologies() without touching the loop.
+================================================================================
+-->
+
+</body>
+</html>
