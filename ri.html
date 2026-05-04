@@ -4,22 +4,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research &amp; Innovation — Alaska Geotechnical Tools</title>
+<title>Research &amp; Innovation &mdash; MFI Alaska Geo Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
 min-height: 100vh;
 background: #2E3A47;
 color: #E8EAEC;
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 }
 
 body::before {
-content: '';
+content: ‘’;
 position: fixed;
 inset: 0;
 background-image:
@@ -50,7 +50,7 @@ height: 52px;
 .dot-3 { background: #3dba7e; }
 
 .topbar-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 11px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -58,25 +58,91 @@ text-transform: uppercase;
 color: #9AAABB;
 }
 
-.home-link {
-display: flex;
-align-items: center;
-gap: 8px;
-text-decoration: none;
-font-family: 'IBM Plex Mono', monospace;
+.topbar-right {
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
-font-weight: 500;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-color: #9AAABB;
-border: 1px solid #3A4A5C;
-border-radius: 2px;
-padding: 5px 12px;
-transition: color 0.2s, border-color 0.2s;
+color: #4A6070;
+letter-spacing: 0.06em;
 }
 
-.home-link:hover { color: #b794f4; border-color: #b794f4; }
-.home-link::before { content: '←'; font-size: 12px; }
+/* ── SITE NAV BANNER ── */
+.site-nav {
+position: relative;
+z-index: 9;
+background: #1E2D3A;
+border-bottom: 1px solid #3A4A5C;
+padding: 0 40px;
+display: flex;
+align-items: stretch;
+gap: 0;
+overflow-x: auto;
+}
+
+.site-nav::-webkit-scrollbar { display: none; }
+
+.nav-item {
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+min-width: 0;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-item:hover { background: #263240; }
+.nav-item.active { background: #263240; border-bottom: 2px solid #b794f4; }
+
+.nav-item-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #E8EAEC;
+margin-bottom: 3px;
+white-space: nowrap;
+}
+
+.nav-item.active .nav-item-label { color: #b794f4; }
+
+.nav-item-desc {
+font-family: ‘IBM Plex Sans’, sans-serif;
+font-size: 10px;
+font-weight: 300;
+color: #4A6070;
+white-space: nowrap;
+}
+
+.nav-item:hover .nav-item-desc { color: #9AAABB; }
+
+.nav-home {
+display: flex;
+align-items: center;
+padding: 10px 20px;
+text-decoration: none;
+border-right: 1px solid #2E3A47;
+margin-right: 8px;
+transition: background 0.2s;
+flex-shrink: 0;
+}
+
+.nav-home:hover { background: #263240; }
+
+.nav-home-label {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #4A6070;
+white-space: nowrap;
+transition: color 0.2s;
+}
+
+.nav-home:hover .nav-home-label { color: #9AAABB; }
 
 /* ── WRAPPER ── */
 .wrapper {
@@ -88,32 +154,10 @@ padding: 64px 40px 80px;
 }
 
 @media (max-width: 560px) {
-.wrapper { padding: 40px 20px 60px; }
-.topbar  { padding: 0 20px; }
+.wrapper  { padding: 40px 20px 60px; }
+.topbar   { padding: 0 20px; }
+.site-nav { padding: 0 20px; }
 }
-
-/* ── BREADCRUMB ── */
-.breadcrumb {
-display: flex;
-align-items: center;
-gap: 8px;
-font-family: 'IBM Plex Mono', monospace;
-font-size: 10px;
-color: #4A6070;
-letter-spacing: 0.08em;
-margin-bottom: 40px;
-animation: fadeUp 0.3s ease both;
-}
-
-.breadcrumb a {
-color: #9AAABB;
-text-decoration: none;
-transition: color 0.15s;
-}
-
-.breadcrumb a:hover { color: #b794f4; }
-.breadcrumb-sep { color: #4A6070; }
-.breadcrumb-current { color: #b794f4; }
 
 /* ── HERO ── */
 .hero {
@@ -123,7 +167,7 @@ animation-delay: 0.05s;
 }
 
 .hero-tag {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 10px;
 font-weight: 600;
 letter-spacing: 0.22em;
@@ -136,7 +180,7 @@ gap: 10px;
 }
 
 .hero-tag::before {
-content: '';
+content: ‘’;
 display: inline-block;
 width: 24px;
 height: 1px;
@@ -144,7 +188,7 @@ background: #b794f4;
 }
 
 .hero-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: clamp(22px, 3.5vw, 36px);
 font-weight: 700;
 line-height: 1.1;
@@ -156,7 +200,7 @@ margin-bottom: 18px;
 .hero-title span { color: #b794f4; }
 
 .hero-sub {
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 14px;
 font-weight: 300;
 color: #9AAABB;
@@ -173,7 +217,7 @@ margin-bottom: 36px;
 }
 
 .divider-label {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.18em;
@@ -187,11 +231,12 @@ white-space: nowrap;
 /* ── GRID ── */
 .app-grid {
 display: grid;
-grid-template-columns: repeat(2, 1fr);
+grid-template-columns: repeat(3, 1fr);
 gap: 14px;
 margin-bottom: 64px;
 }
 
+@media (max-width: 860px) { .app-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .app-grid { grid-template-columns: 1fr; } }
 
 /* ── APP CARD ── */
@@ -201,7 +246,7 @@ text-decoration: none;
 background: #1A2530;
 border: 1px solid #3A4A5C;
 border-radius: 3px;
-padding: 24px 24px 20px;
+padding: 24px 24px 48px;
 position: relative;
 overflow: hidden;
 cursor: pointer;
@@ -209,8 +254,12 @@ transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 animation: fadeUp 0.5s ease both;
 }
 
-.app-card:nth-child(1) { animation-delay: 0.10s; }
-.app-card:nth-child(2) { animation-delay: 0.16s; }
+.app-card:nth-child(1) { animation-delay: 0.06s; }
+.app-card:nth-child(2) { animation-delay: 0.12s; }
+.app-card:nth-child(3) { animation-delay: 0.18s; }
+.app-card:nth-child(4) { animation-delay: 0.24s; }
+.app-card:nth-child(5) { animation-delay: 0.30s; }
+.app-card:nth-child(6) { animation-delay: 0.36s; }
 
 @keyframes fadeUp {
 from { opacity: 0; transform: translateY(14px); }
@@ -218,7 +267,7 @@ to   { opacity: 1; transform: translateY(0); }
 }
 
 .app-card::before {
-content: '';
+content: ‘’;
 position: absolute;
 left: 0; top: 0; bottom: 0;
 width: 3px;
@@ -227,7 +276,7 @@ transition: opacity 0.2s;
 }
 
 .app-card::after {
-content: '';
+content: ‘’;
 position: absolute;
 inset: 0;
 opacity: 0;
@@ -244,7 +293,7 @@ box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 .app-card:hover::after  { opacity: 0.06; }
 
 .card-num {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 9px;
 font-weight: 600;
 letter-spacing: 0.14em;
@@ -255,7 +304,7 @@ margin-bottom: 14px;
 .card-icon { font-size: 26px; margin-bottom: 12px; display: block; line-height: 1; }
 
 .card-title {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 12px;
 font-weight: 600;
 letter-spacing: 0.02em;
@@ -266,7 +315,7 @@ transition: color 0.2s;
 }
 
 .card-desc {
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
 color: #9AAABB;
@@ -277,7 +326,7 @@ margin-bottom: 16px;
 .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
 .tag {
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 8px;
 font-weight: 500;
 letter-spacing: 0.1em;
@@ -291,21 +340,21 @@ background: #263240;
 
 .tag.wip      { border-color: #4A6070; color: #4A6070; }
 .tag.complete { border-color: #3dba7e; color: #3dba7e; }
-.tag.draft    { border-color: #f0a500; color: #f0a500; }
+.tag.planned  { border-color: #4A6070; color: #4A6070; }
 
 .card-arrow {
 position: absolute;
 bottom: 18px;
 right: 20px;
-font-family: 'IBM Plex Mono', monospace;
+font-family: ‘IBM Plex Mono’, monospace;
 font-size: 15px;
 color: #4A6070;
 transition: color 0.2s, transform 0.2s;
 }
 
-/* ── PER-CARD COLORS ── */
+/* ── PER-CARD HARDCODED COLORS ── */
 
-/* RI-01 AI / Geo-Agg — violet #b794f4 */
+/* RI01 AI Data Analysis — violet #b794f4 */
 .card-ai::before { background: #b794f4; }
 .card-ai::after  { background: radial-gradient(ellipse at 20% 50%, #b794f4 0%, transparent 70%); }
 .card-ai:hover   { border-color: #b794f4; }
@@ -313,7 +362,7 @@ transition: color 0.2s, transform 0.2s;
 .card-ai:hover .card-arrow { color: #b794f4; transform: translate(3px, -2px); }
 .card-ai .card-num         { color: #b794f4; }
 
-/* RI-02 Thaw Consolidation — ice blue #63b3ed */
+/* RI02 Thaw Consolidation — ice blue #63b3ed */
 .card-thaw::before { background: #63b3ed; }
 .card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
 .card-thaw:hover   { border-color: #63b3ed; }
@@ -321,63 +370,106 @@ transition: color 0.2s, transform 0.2s;
 .card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
 .card-thaw .card-num         { color: #63b3ed; }
 
-/* RI-03 impact-crater — ice blue #63b3ed */
-.card-thaw::before { background: #63b3ed; }
-.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-thaw:hover   { border-color: #63b3ed; }
-.card-thaw:hover .card-title { color: #63b3ed; }
-.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-thaw .card-num         { color: #63b3ed; }
+/* RI03 Impact Crater — burnt orange #e07b4a */
+.card-impact::before { background: #e07b4a; }
+.card-impact::after  { background: radial-gradient(ellipse at 20% 50%, #e07b4a 0%, transparent 70%); }
+.card-impact:hover   { border-color: #e07b4a; }
+.card-impact:hover .card-title { color: #e07b4a; }
+.card-impact:hover .card-arrow { color: #e07b4a; transform: translate(3px, -2px); }
+.card-impact .card-num         { color: #e07b4a; }
 
-/* RI-04 Subsurface 3D Consolidation — ice blue #63b3ed */
-.card-thaw::before { background: #63b3ed; }
-.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-thaw:hover   { border-color: #63b3ed; }
-.card-thaw:hover .card-title { color: #63b3ed; }
-.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-thaw .card-num         { color: #63b3ed; }
+/* RI04 Subsurface 3D — teal #2ec4b6 */
+.card-sub3d::before { background: #2ec4b6; }
+.card-sub3d::after  { background: radial-gradient(ellipse at 20% 50%, #2ec4b6 0%, transparent 70%); }
+.card-sub3d:hover   { border-color: #2ec4b6; }
+.card-sub3d:hover .card-title { color: #2ec4b6; }
+.card-sub3d:hover .card-arrow { color: #2ec4b6; transform: translate(3px, -2px); }
+.card-sub3d .card-num         { color: #2ec4b6; }
 
-/* RI-05 slope Stability — ice blue #63b3ed */
-.card-thaw::before { background: #63b3ed; }
-.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-thaw:hover   { border-color: #63b3ed; }
-.card-thaw:hover .card-title { color: #63b3ed; }
-.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-thaw .card-num         { color: #63b3ed; }
+/* RI05 Slope Stability — green #3dba7e */
+.card-slope::before { background: #3dba7e; }
+.card-slope::after  { background: radial-gradient(ellipse at 20% 50%, #3dba7e 0%, transparent 70%); }
+.card-slope:hover   { border-color: #3dba7e; }
+.card-slope:hover .card-title { color: #3dba7e; }
+.card-slope:hover .card-arrow { color: #3dba7e; transform: translate(3px, -2px); }
+.card-slope .card-num         { color: #3dba7e; }
 
-/* RI-06 Depositional Simulator — ice blue #63b3ed */
-.card-thaw::before { background: #63b3ed; }
-.card-thaw::after  { background: radial-gradient(ellipse at 20% 50%, #63b3ed 0%, transparent 70%); }
-.card-thaw:hover   { border-color: #63b3ed; }
-.card-thaw:hover .card-title { color: #63b3ed; }
-.card-thaw:hover .card-arrow { color: #63b3ed; transform: translate(3px, -2px); }
-.card-thaw .card-num         { color: #63b3ed; }
- 
+/* RI06 Depositional Simulator — deep teal #4db6ac */
+.card-depo::before { background: #4db6ac; }
+.card-depo::after  { background: radial-gradient(ellipse at 20% 50%, #4db6ac 0%, transparent 70%); }
+.card-depo:hover   { border-color: #4db6ac; }
+.card-depo:hover .card-title { color: #4db6ac; }
+.card-depo:hover .card-arrow { color: #4db6ac; transform: translate(3px, -2px); }
+.card-depo .card-num         { color: #4db6ac; }
+
 /* ── FOOTER ── */
 .footer {
 border-top: 1px solid #3A4A5C;
-padding-top: 24px;
+padding-top: 32px;
 display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+.footer-top {
+display: flex;
+align-items: flex-start;
 justify-content: space-between;
 flex-wrap: wrap;
-gap: 12px;
-font-family: 'IBM Plex Mono', monospace;
-font-size: 10px;
-color: #4A6070;
-letter-spacing: 0.06em;
+gap: 16px;
 }
 
-.footer a {
+.footer-author {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 11px;
 color: #9AAABB;
-text-decoration: none;
-transition: color 0.15s;
+letter-spacing: 0.06em;
+line-height: 1.9;
 }
 
-.footer a:hover { color: #b794f4; }
+.footer-author strong { color: #E8EAEC; font-weight: 600; }
+
+.footer-author a {
+color: #4a9eff;
+text-decoration: none;
+opacity: 0.8;
+transition: opacity 0.15s;
+}
+
+.footer-author a:hover { opacity: 1; text-decoration: underline; }
+
+.footer-badge {
+font-family: ‘IBM Plex Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 5px 12px;
+border: 1px solid #3A4A5C;
+border-radius: 2px;
+color: #4A6070;
+white-space: nowrap;
+align-self: flex-start;
+}
+
+.status-dot {
+display: inline-block;
+width: 6px; height: 6px;
+border-radius: 50%;
+background: #3dba7e;
+margin-right: 6px;
+position: relative;
+top: -1px;
+box-shadow: 0 0 6px #3dba7e;
+animation: pulse 2.5s ease infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50%       { opacity: 0.35; }
+}
 
 .footer-disclaimer {
-width: 100%;
-font-family: 'IBM Plex Sans', sans-serif;
+font-family: ‘IBM Plex Sans’, sans-serif;
 font-size: 11px;
 font-weight: 300;
 font-style: italic;
@@ -385,7 +477,7 @@ color: #4A6070;
 line-height: 1.7;
 border-top: 1px solid #3A4A5C;
 padding-top: 16px;
-margin-top: 8px;
+max-width: 780px;
 }
 </style>
 
@@ -403,34 +495,47 @@ margin-top: 8px;
     </div>
     <div class="topbar-title">Research &amp; Innovation</div>
   </div>
-  <div style="display:flex;gap:6px">
-    <a class="home-link" href="geol.html">← Tools</a>
-    <a class="home-link" href="index.html">Home</a>
-  </div>
+  <div class="topbar-right">mfimpact.com &nbsp;&middot;&nbsp; v2.0</div>
 </div>
 
+<!-- SITE NAV BANNER -->
+
+<nav class="site-nav">
+  <a class="nav-home" href="index.html">
+    <span class="nav-home-label">&#8592; Home</span>
+  </a>
+  <a class="nav-item" href="geol.html">
+    <span class="nav-item-label">GL &mdash; Geology &amp; Field</span>
+    <span class="nav-item-desc">Field ID, logging, investigation, GIS</span>
+  </a>
+  <a class="nav-item" href="geot.html">
+    <span class="nav-item-label">GT &mdash; Geotechnical Design</span>
+    <span class="nav-item-desc">Pavement, frost, ESAL calculators</span>
+  </a>
+  <a class="nav-item active" href="ri.html">
+    <span class="nav-item-label">RI &mdash; Research &amp; Innovation</span>
+    <span class="nav-item-desc">AI analysis, modeling, simulation</span>
+  </a>
+  <a class="nav-item" href="pm.html">
+    <span class="nav-item-label">PM &mdash; Project Management</span>
+    <span class="nav-item-desc">PMI study tools, planning aids</span>
+  </a>
+</nav>
+
 <div class="wrapper">
-
-  <!-- BREADCRUMB -->
-
-  <div class="breadcrumb">
-    <a href="geol.html">Tool Index</a>
-    <span class="breadcrumb-sep">›</span>
-    <span class="breadcrumb-current">Research &amp; Innovation</span>
-  </div>
 
   <!-- HERO -->
 
   <div class="hero">
-    <div class="hero-tag">RI — Research &amp; Innovation</div>
+    <div class="hero-tag">RI &mdash; Research &amp; Innovation</div>
     <h1 class="hero-title">Research &amp;<br><span>Innovation</span> Tools</h1>
-    <p class="hero-sub">AI-assisted data analysis, computational models, and independent research tools. Planetary geology, regional Alaska geoscience, and quantitative modeling experiments. In active development — outputs are exploratory and should be verified independently.</p>
+    <p class="hero-sub">AI-assisted data analysis, computational models, and independent research experiments. Tools in this section range from applied Alaska geoscience to planetary geology and numerical simulation. All are in active development &mdash; outputs are exploratory and should be independently verified before use in any professional context.</p>
   </div>
 
   <!-- DIVIDER -->
 
   <div class="divider">
-    <span class="divider-label">Available Tools</span>
+    <span class="divider-label">RI &mdash; Available Tools</span>
     <div class="divider-line"></div>
   </div>
 
@@ -438,107 +543,115 @@ margin-top: 8px;
 
   <div class="app-grid">
 
-<!-- RI-01: AI Historical Data Analysis / Geo-Agg -->
+```
+<!-- RI01: AI Historical Data Analysis -->
 <a class="app-card card-ai" href="ri/geo-agg.html">
-  <div class="card-num">RI-01 — Analysis</div>
+  <div class="card-num">RI01 &mdash; Analysis</div>
   <span class="card-icon">📡</span>
-  <div class="card-title">AI Historical<br>Data Analysis</div>
-  <p class="card-desc">Map-based geotechnical data aggregator with AI-assisted analysis. Aggregate historical borehole, climate, and geotechnical data for site characterization and regional trend analysis.</p>
+  <div class="card-title">AI Geotechnical<br>Data Analysis</div>
+  <p class="card-desc">Map-based tool for aggregating and analyzing historical geotechnical datasets using a multi-agent AI pipeline. Draw a study area polygon, submit a data request, and receive a synthesized site characterization report. Municipality of Anchorage borehole and geotechnical data is the first live source. Planned agents: Retrieval Coordinator, Harmonization, Quality Scoring, and Report Synthesis.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">AI</span>
-    <span class="tag">Geospatial</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">AI Pipeline</span>
+    <span class="tag">Borehole Data</span>
     <span class="tag">Alaska</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-<!-- RI-02: Thaw Consolidation Model -->
+<!-- RI02: Thaw Consolidation Model -->
 <a class="app-card card-thaw" href="ri/thaw_consolidation.html">
-  <div class="card-num">RI-02 — Modeling</div>
+  <div class="card-num">RI02 &mdash; Modeling</div>
   <span class="card-icon">🧊</span>
   <div class="card-title">Thaw Consolidation<br>Model</div>
-  <p class="card-desc">1D thaw consolidation model for estimating settlement in thawing permafrost. Couples the Stefan equation with Terzaghi consolidation theory. Planned expansion to 2D. Math capstone project.</p>
+  <p class="card-desc">1D finite difference model for estimating heat transfer and settlement in thawing permafrost soils. Phase 1 implements the heat equation with an animated soil column and thaw front tracking. Phase 2 will couple Terzaghi consolidation theory for pore pressure and settlement output. Phase 3 targets the enthalpy method and a 2D cross-section view. Graduate math capstone project &mdash; theoretical rigor is a primary goal.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">1D Model</span>
-    <span class="tag">Thaw</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">FDM</span>
     <span class="tag">Permafrost</span>
+    <span class="tag">Settlement</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-  </div>
-<!-- RI-03: Impact Crater / impact -->
-<a class="app-card card-ai" href="ri/impact-crater.html">
-  <div class="card-num">RI-03 — Impace Crater</div>
-  <span class="card-icon">💀</span>
+<!-- RI03: Impact Crater Analysis -->
+<a class="app-card card-impact" href="ri/impact-crater.html">
+  <div class="card-num">RI03 &mdash; Planetary</div>
+  <span class="card-icon">☄️</span>
   <div class="card-title">Impact Crater<br>Analysis</div>
-  <p class="card-desc">Impact crater tool (under construction).</p>
+  <p class="card-desc">Planetary geology tool for analyzing impact crater morphology, scaling relationships, and subsurface structural effects. Explores the intersection of planetary geoscience and terrestrial geotechnical concepts &mdash; shock metamorphism, ejecta dynamics, and crater scaling laws. Independent research project; methodology subject to revision.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
     <span class="tag">Planetary</span>
-    <span class="tag">Geospatial-ish</span>
-    <span class="tag">Cool</span>
+    <span class="tag">Morphology</span>
+    <span class="tag">Scaling Laws</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
-<!-- RI-04: subsurface 3d -->
-<a class="app-card card-thaw" href="ri/subsurface-3d.html">
-  <div class="card-num">RI-04 — Subsurface Modeling</div>
-  <span class="card-icon">🌐</span>
-  <div class="card-title">Subsurface Visualizing<br>Model</div>
-  <p class="card-desc">First attempt at 3D modelling tools to visualize subsurface borings.</p>
+<!-- RI04: Subsurface 3D Visualization -->
+<a class="app-card card-sub3d" href="ri/subsurface-3d.html">
+  <div class="card-num">RI04 &mdash; Visualization</div>
+  <span class="card-icon">🗃️</span>
+  <div class="card-title">Subsurface 3D<br>Visualization</div>
+  <p class="card-desc">Three-dimensional visualization tool for subsurface borehole and stratigraphic data. Input boring logs with depth, soil unit, and sample data to generate an interactive 3D subsurface model. Intended to complement the RI01 data aggregation tool by providing a spatial view of site characterization results. Early development &mdash; interface and data format subject to change.</p>
   <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
+    <span class="tag wip">&#x1F6A7; In Progress</span>
     <span class="tag">3D Model</span>
-    <span class="tag">Geology</span>
-    <span class="tag">Geotechnical</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-  </div>
- <!-- RI-05: AI Historical Data Analysis / Geo-Agg -->
-<a class="app-card card-ai" href="ri/slope-stability-3d.html">
-  <div class="card-num">RI-05 — Slope Stability</div>
-  <span class="card-icon">🍕</span>
-  <div class="card-title">AI Historical<br>Data Analysis</div>
-  <p class="card-desc">Slope Stability modeller (under construction).</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">Slope</span>
-    <span class="tag">Geotechnical</span>
-    <span class="tag">Geology</span>
-  </div>
-  <div class="card-arrow">↗</div>
-</a>
-
-<!-- RI-02: Thaw Consolidation Model -->
-<a class="app-card card-thaw" href="ri/depositional-simulator.html">
-  <div class="card-num">RI-06 — Modeling</div>
-  <span class="card-icon">🌊</span>
-  <div class="card-title">Depositional Simulator<br>Model</div>
-  <p class="card-desc">Depositional Simulator. Ambitious, largest project. subject to significant changes.</p>
-  <div class="card-tags">
-    <span class="tag wip">🚧 In Progress</span>
-    <span class="tag">Large Project</span>
     <span class="tag">Stratigraphy</span>
-    <span class="tag">Geology</span>
+    <span class="tag">Borings</span>
   </div>
-  <div class="card-arrow">↗</div>
+  <div class="card-arrow">&#8599;</div>
 </a>
 
+<!-- RI05: Slope Stability -->
+<a class="app-card card-slope" href="ri/slope-stability-3d.html">
+  <div class="card-num">RI05 &mdash; Stability</div>
+  <span class="card-icon">⛰️</span>
+  <div class="card-title">Slope Stability<br>Analysis</div>
+  <p class="card-desc">Interactive slope stability modeler implementing limit equilibrium methods for circular and planar failure surfaces. Alaska-relevant conditions &mdash; frozen/thawing slope materials, excess pore pressure from seasonal thaw, and weak marine clay failure planes (Bootlegger Cove Formation) &mdash; are planned as primary inputs. Early development; scope subject to refinement.</p>
+  <div class="card-tags">
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">Limit Equilibrium</span>
+    <span class="tag">Alaska</span>
+    <span class="tag">Thaw Slopes</span>
   </div>
- 
+  <div class="card-arrow">&#8599;</div>
+</a>
+
+<!-- RI06: Depositional Simulator -->
+<a class="app-card card-depo" href="ri/depositional-simulator.html">
+  <div class="card-num">RI06 &mdash; Simulation</div>
+  <span class="card-icon">🌊</span>
+  <div class="card-title">Depositional<br>Simulator</div>
+  <p class="card-desc">Ambitious long-term simulation project modeling sedimentary and glacial depositional processes through time. Aims to generate synthetic stratigraphic sequences reflecting Alaska depositional environments &mdash; glaciomarine, alluvial, aeolian loess, and lacustrine. Intended as both a research tool and an educational visualization. Largest and most speculative project in this suite; architecture and scope subject to significant revision.</p>
+  <div class="card-tags">
+    <span class="tag wip">&#x1F6A7; In Progress</span>
+    <span class="tag">Stratigraphy</span>
+    <span class="tag">Glaciomarine</span>
+    <span class="tag">Simulation</span>
+  </div>
+  <div class="card-arrow">&#8599;</div>
+</a>
+```
+
+  </div>
+
   <!-- FOOTER -->
 
   <div class="footer">
-    <span>Alaska Geotechnical Tools &nbsp;·&nbsp; <a href="geol.html">← Tool Index</a> &nbsp;·&nbsp; <a href="index.html">Home</a></span>
-    <span>2 tools &nbsp;·&nbsp; 2 in progress</span>
+    <div class="footer-top">
+      <div class="footer-author">
+        <div><strong>Ian Minnock</strong> &nbsp;&middot;&nbsp; CPG, PMP, PMI-ACP</div>
+        <div><a href="mailto:ian.minnock@mfimpact.com">ian.minnock@mfimpact.com</a> &nbsp;&middot;&nbsp; <a href="contact.html">Contact / Feedback</a></div>
+        <div>&#169; 2026 MFI &nbsp;&middot;&nbsp; Last updated: May 2026</div>
+      </div>
+      <div class="footer-badge">
+        <span class="status-dot"></span>6 tools &nbsp;&middot;&nbsp; 6 in progress
+      </div>
+    </div>
     <div class="footer-disclaimer">
-      This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities or any government agency. All tool outputs are design aids and should be verified by a qualified professional before use.
+      This site is an independent personal project by Ian Minnock and is not affiliated with, endorsed by, or developed on behalf of the Alaska Department of Transportation &amp; Public Facilities or any government agency. References to agency specifications are for informational purposes only. All tool outputs are design aids and should be verified by a qualified professional before use.
     </div>
   </div>
 
