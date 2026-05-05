@@ -1138,7 +1138,11 @@ function checkObstacleEvent(gnd, matType, dt) {
   if (gnd.dropstones) { obstacleChance = 0.002; obstacleType = 'dropstone'; }
   if (gnd.permafrost && matType === 'frozen') { obstacleChance = 0.001; obstacleType = 'icelens'; }
 
-  if (Math.random() < obstacleChance * (dt * sim.speed)) {
+  /* FIX 4: obstacleChance probability also had the double-speed bug.
+     dt is already speed-scaled (realDt * sim.speed), so multiplying by
+     sim.speed again caused obstacles to fire speed^2 times too often.
+     At speed 5x this caused chain-obstacle stalls in thick cobble layers. */
+  if (Math.random() < obstacleChance * dt) {
     sim.obstacleActive = true;
     sim.obstacleTimer = 3 + Math.random() * 5;
     sim.obstacleDepth = sim.depth;
