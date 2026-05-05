@@ -552,9 +552,17 @@ transition: all 0.15s;
    disturbance physics, permafrost thaw zone, bit breakage,
    borehole deviation, operator decisions.
    Ian Minnock / MFI - Alaska Geotechnical Tools
+
+   v2.0.1 BUG FIXES:
+   1. tick() decisionPending branch now calls rAF — loop no longer
+      dies silently when a modal is triggered.
+   2. obstacleTimer decremented by dt only (was dt*sim.speed —
+      double-multiplied since dt is already speed-scaled).
+   3. resumeFromDecision() cancels any stale rAF before requesting
+      a new one — prevents duplicate animation loops.
    ============================================================ */
 
-/* GROUND CONDITION DEFINITIONS - unchanged from Phase 1 */
+/* GROUND CONDITION DEFINITIONS */
 const GROUNDS = {
   softclay: {
     name: 'Soft Clay / Silty Clay',
@@ -691,7 +699,7 @@ const GROUNDS = {
   }
 };
 
-/* DRILLING METHOD DEFINITIONS - unchanged from Phase 1 */
+/* DRILLING METHOD DEFINITIONS */
 const METHODS = {
   auger: {
     name: 'Auger (Continuous Flight)',
@@ -786,10 +794,6 @@ function getMaterialType(uscs) {
    PHYSICS HELPERS - Phase 2
    ============================================================ */
 
-/* Sigmoid hardness response. Replaces Phase 1 linear penalty.
-   Each method has its own h50 (hardness at 50% efficiency) and k
-   (curve steepness). Auger collapses near rock; sonic stays flat;
-   percussion handles hard ground best. */
 function hardnessResponse(method, h) {
   const cal = {
     auger:      { h50: 0.55, k: 12 },
@@ -803,23 +807,16 @@ function hardnessResponse(method, h) {
   return 1.0 / (1.0 + Math.exp(c.k * (h - c.h50)));
 }
 
-/* Hydrostatic / overburden effect on penetration. Deeper holes
-   demand more cuttings-lift effort. Mud-rotary partially offsets
-   via hydrostatic balance; air-percussion suffers more. */
 function hydrostaticEffect(method, depth) {
   const baseLoss = depth / 200;
   const offset = (method === 'rotary') ? 0.4 : (method === 'percussion' ? 1.3 : 1.0);
   return Math.max(0.55, 1.0 - baseLoss * offset);
 }
 
-/* Bit wear effect on penetration efficiency. Fresh = 1.0,
-   worn-out (1.0 wear) = 0.4. */
 function bitWearEffect(wear) {
   return Math.max(0.4, 1.0 - 0.6 * wear);
 }
 
-/* Force efficiency curve - diminishing returns peaking near
-   method-optimal force, falling above (overstress). */
 function forceEfficiency(method, force) {
   const opt = { auger: 30, rotary: 40, sonic: 30, percussion: 50, directpush: 70, cabletool: 25 };
   const F_opt = opt[method] || 35;
@@ -828,7 +825,6 @@ function forceEfficiency(method, force) {
   return Math.max(0.7, 1.0 - 0.15 * (ratio - 1.0));
 }
 
-/* RPM efficiency - bell-shaped, peaks at midrange. */
 function rpmEfficiency(method, rpm) {
   const m = METHODS[method];
   if (m.rpmRange[1] === 0) return 1.0;
@@ -838,8 +834,6 @@ function rpmEfficiency(method, rpm) {
   return Math.max(0.5, 1.0 - 0.4 * offset * offset);
 }
 
-/* Layer-contact transition factor - returns >1 within 0.4 m of
-   a hardness boundary. Used for torque/pressure spikes. */
 function contactTransitionFactor(depth, layers) {
   let top = 0;
   for (const layer of layers) {
@@ -861,7 +855,6 @@ let sim = {
   penRateHistory: [], animPhase: 0,
   obstacleActive: false, obstacleTimer: 0, obstacleDepth: -1, obstacleType: '',
   statusMsg: '', statusType: 'normal', complete: false, particles: [],
-  /* Phase 2 physics state */
   bitWear: 0, bitBroken: false, mudCakeThickness: 0, thawRadius: 0,
   holeDeviation: 0, decisionPending: false, thinLayerLoss: 0, prevLayerName: ''
 };
@@ -994,20 +987,33 @@ function resetSim() {
   resultsPanel.classList.remove('visible');
 }
 
-/* MAIN LOOP */
+/* ============================================================
+   MAIN LOOP
+   FIX 1: When decisionPending, keep the render loop alive by
+   continuing to request animation frames. Previously the loop
+   died here, causing a silent stall if the modal somehow failed
+   to appear or was dismissed abnormally.
+   ============================================================ */
 function tick(ts) {
-  if (!sim.running || sim.paused || sim.decisionPending) return;
+  if (!sim.running || sim.paused) return;
   if (!sim.lastTick) sim.lastTick = ts;
   const realDt = (ts - sim.lastTick) / 1000;
   sim.lastTick = ts;
   const dt = Math.min(realDt * sim.speed, 0.5);
+
+  /* FIX 1: keep rendering while decision modal is shown */
+  if (sim.decisionPending) {
+    drawCrossSection(); drawAllGauges(); updateNumericDisplays();
+    sim.rafId = requestAnimationFrame(tick);
+    return;
+  }
 
   const gnd = GROUNDS[sim.ground];
   const method = METHODS[sim.method];
   const layer = getLayerAt(sim.depth, gnd.layers);
   const matType = getMaterialType(layer.uscs);
 
-  /* Phase 2: layer-crossing thin-layer loss accumulator */
+  /* thin-layer loss accumulator */
   if (layer.name !== sim.prevLayerName && sim.prevLayerName !== '') {
     const prevLayer = gnd.layers.find(l => l.name === sim.prevLayerName);
     if (prevLayer) {
@@ -1021,22 +1027,25 @@ function tick(ts) {
   sim.prevLayerName = layer.name;
 
   checkObstacleEvent(gnd, matType, dt);
+
+  /* If obstacle check triggered a decision, yield to modal */
   if (sim.decisionPending) {
     drawCrossSection(); drawAllGauges(); updateNumericDisplays();
+    sim.rafId = requestAnimationFrame(tick);
     return;
   }
 
-  /* Phase 2: bit wear */
+  /* bit wear */
   const wearRateFactor = { auger: 1.2, rotary: 0.8, sonic: 0.4, percussion: 1.5, directpush: 1.0, cabletool: 0.5 }[sim.method] || 1.0;
   sim.bitWear = Math.min(1.0, sim.bitWear + layer.hardness * (sim.downForce / 50) * wearRateFactor * 0.0008 * dt * sim.speed);
 
-  /* Phase 2: mud cake buildup (rotary only) */
+  /* mud cake buildup (rotary only) */
   if (method.fluid === 'mud') {
     const mudGrowth = (matType === 'sand' || matType === 'clay') ? 0.005 : 0.001;
     sim.mudCakeThickness = Math.min(1.0, sim.mudCakeThickness + mudGrowth * dt * sim.speed);
   }
 
-  /* Phase 2: thaw radius around casing in permafrost */
+  /* thaw radius in permafrost */
   if (gnd.permafrost && matType === 'frozen') {
     const thawRate = { sonic: 0.0008, rotary: 0.0005, percussion: 0.0002, auger: 0.0001, directpush: 0.00005, cabletool: 0.0001 }[sim.method] || 0.0002;
     sim.thawRadius = Math.min(2.5, sim.thawRadius + thawRate * dt * sim.speed);
@@ -1068,11 +1077,7 @@ function tick(ts) {
 }
 
 /* ============================================================
-   PHASE 2 PHYSICS - computePenRate
-   Replaces Phase 1 linear lookup with: base * forceEff * rpmEff
-   * hardnessResponse(sigmoid) * hydrostaticEff * bitWearEff
-   * obstaclePenalty * deviationPenalty * depthLimitPenalty
-   * thawAssist
+   PENETRATION RATE
    ============================================================ */
 function computePenRate(method, matType, hardness) {
   if (sim.bitBroken) return 0.05;
@@ -1095,7 +1100,6 @@ function computePenRate(method, matType, hardness) {
     depthPen = Math.max(0.05, 1.0 - (sim.depth - 20) / 15);
   }
 
-  /* permafrost thaw radius assists sonic and rotary cutting */
   let thawAssist = 1.0;
   if (sim.thawRadius > 0.3 && matType === 'frozen') {
     if (sim.method === 'sonic' || sim.method === 'rotary') {
@@ -1107,11 +1111,19 @@ function computePenRate(method, matType, hardness) {
 }
 
 /* ============================================================
-   PHASE 2 PHYSICS - obstacles, bit breakage, deviation, decision
+   OBSTACLES, BIT BREAKAGE, DEVIATION, DECISION MODAL
+
+   FIX 2: obstacleTimer was decremented by (dt * sim.speed).
+   But dt is already speed-scaled (dt = realDt * sim.speed), so
+   at speed 3x the timer drained 9x too fast, and at 6-8x it
+   could expire within a single frame — causing the obstacle to
+   clear before the status message rendered, making some events
+   completely invisible. Now decrements by dt only.
    ============================================================ */
 function checkObstacleEvent(gnd, matType, dt) {
   if (sim.obstacleActive) {
-    sim.obstacleTimer -= dt * sim.speed;
+    /* FIX 2: was (dt * sim.speed) — dt is already speed-scaled */
+    sim.obstacleTimer -= dt;
     if (sim.obstacleTimer <= 0) {
       sim.obstacleActive = false;
       setStatus('Obstacle cleared \u2014 drilling resumed', 'normal');
@@ -1132,7 +1144,7 @@ function checkObstacleEvent(gnd, matType, dt) {
     sim.obstacleDepth = sim.depth;
     sim.obstacleType = obstacleType;
 
-    /* Phase 2: bit breakage check (vulnerable methods on hard obstacles) */
+    /* bit breakage check */
     const breakRisk = computeBreakageRisk(obstacleType);
     if (Math.random() < breakRisk) {
       sim.bitBroken = true;
@@ -1141,14 +1153,14 @@ function checkObstacleEvent(gnd, matType, dt) {
       return;
     }
 
-    /* Phase 2: borehole deviation on cobble/dropstone glancing hits */
+    /* borehole deviation on cobble/dropstone glancing hits */
     if (obstacleType === 'cobble' || obstacleType === 'dropstone') {
       if (Math.random() < 0.35) {
         sim.holeDeviation = Math.min(1.0, sim.holeDeviation + 0.15);
       }
     }
 
-    /* Phase 2: serious obstacle = operator decision modal */
+    /* serious obstacle = operator decision modal */
     const seriousObstacle = (obstacleType === 'boulder')
       || (obstacleType === 'cobble' && METHODS[sim.method].cobblesBlocked);
     if (seriousObstacle) {
@@ -1181,39 +1193,26 @@ function computeBreakageRisk(obstacleType) {
 }
 
 /* ============================================================
-   PHASE 2 PHYSICS - updateGaugeValues
-   Pressure: rotary hydraulics, sonic damping, percussion energy
-   decay with depth, layer-contact transition spikes.
-   Recovery: down-force disturbance, OCR clay benefit, sand bleed,
-   thin layer loss, bit wear smear, deviation alignment loss.
-   Torque: exponential spike at contacts/obstacles.
+   GAUGE VALUES
    ============================================================ */
 function updateGaugeValues(method, matType, layer, gnd) {
   const t = sim.animPhase;
 
-  /* PRESSURE - method-specific physics */
+  /* PRESSURE */
   let pressure = method.pressure.base;
 
   if (sim.method === 'rotary') {
-    /* mud rotary: P scales with flow rate (proxied by RPM) and
-       formation resistance. Mud cake thickness adds backpressure. */
     const flowFactor = (sim.rpm / 100);
     const resistance = 0.7 + layer.hardness * 0.8;
     const cakeFactor = 1.0 + sim.mudCakeThickness * 0.4;
     pressure = method.pressure.base * flowFactor * resistance * cakeFactor;
   } else if (sim.method === 'sonic') {
-    /* sonic vibration energy transfer; soft damping materials
-       (clay) absorb energy and feed pressure back. Frozen ground
-       transmits cleanly. */
     const damping = matType === 'clay' ? 1.4 : matType === 'frozen' ? 0.8 : 1.0;
     pressure = method.pressure.base * damping * (1 + layer.hardness * 0.3);
   } else if (sim.method === 'percussion') {
-    /* hammer energy decays with depth (longer drill string,
-       more energy lost to compression). */
     const depthDecay = 1.0 + sim.depth / 60;
     pressure = method.pressure.base * depthDecay * (0.7 + layer.hardness * 0.6);
   } else if (sim.method === 'auger') {
-    /* auger: low pressure; clay flute clogging accumulates with time */
     const clogging = matType === 'clay' ? (1.0 + sim.elapsed / 7200) : 1.0;
     pressure = method.pressure.base * clogging * (0.8 + layer.hardness * 0.5);
   } else if (sim.method === 'directpush') {
@@ -1228,25 +1227,20 @@ function updateGaugeValues(method, matType, layer, gnd) {
 
   sim.pressure = Math.max(0, Math.min(method.pressure.max, pressure));
 
-  /* RECOVERY - Phase 2 disturbance physics */
+  /* RECOVERY */
   let rec = method.recovery[matType] || method.recovery.mixed || 0.65;
 
-  /* down-force disturbance in soft materials */
   if (matType === 'clay' || matType === 'sand') {
     const forceDist = Math.max(0, (sim.downForce - 30) / 70);
     rec *= (1.0 - 0.35 * forceDist);
   }
-  /* OCR clay benefit - stiff clay holds together */
   if (matType === 'clay' && layer.hardness > 0.6) {
     rec *= (1.0 + Math.min(0.15, (layer.hardness - 0.6) * 0.4));
   }
-  /* water-saturated sand bleed-out */
   if (matType === 'sand' && sim.depth > gnd.waterDepth && gnd.waterDepth < 50) {
     rec *= 0.8;
   }
-  /* thin layer loss */
   rec *= (1.0 - sim.thinLayerLoss);
-  /* obstacle, wear, deviation penalties */
   if (sim.obstacleActive) rec *= 0.55;
   rec *= (1.0 - 0.15 * sim.bitWear);
   rec *= (1.0 - 0.1 * sim.holeDeviation);
@@ -1254,7 +1248,7 @@ function updateGaugeValues(method, matType, layer, gnd) {
 
   sim.recovery = Math.max(0.05, Math.min(1.0, rec + Math.sin(t * 0.1) * 0.02));
 
-  /* TORQUE - exponential transition spikes + obstacle */
+  /* TORQUE */
   if (method.torqueBase > 0) {
     let torque = method.torqueBase * layer.hardness * (sim.downForce / 25)
                * (sim.rpm / 60) * 0.5;
@@ -1268,7 +1262,7 @@ function updateGaugeValues(method, matType, layer, gnd) {
     sim.torque = 0;
   }
 
-  /* VIBRATION - sonic with material-dependent damping */
+  /* VIBRATION */
   if (method.vibration) {
     const matDamping = matType === 'clay' ? 0.8 : matType === 'frozen' ? 1.05 : 1.0;
     sim.vibAmp = method.vibAmp * matDamping + Math.sin(t * 0.2) * 1.2;
@@ -1294,7 +1288,6 @@ function updateStatusAuto(matType, layer, gnd) {
   if (sim.obstacleActive) return;
   if (sim.bitBroken) return;
 
-  /* Phase 2: surface significant diagnostic state */
   if (sim.bitWear > 0.7) {
     setStatus('Bit wear elevated (' + (sim.bitWear * 100).toFixed(0) + '%) \u2014 rate degrading, breakage risk on next obstacle', 'warning');
     return;
@@ -1327,7 +1320,9 @@ function updateStatusAuto(matType, layer, gnd) {
   }
 }
 
-/* OPERATOR DECISION MODAL */
+/* ============================================================
+   OPERATOR DECISION MODAL
+   ============================================================ */
 function offerOperatorDecision(kind, obstacleType) {
   sim.decisionPending = true;
 
@@ -1401,9 +1396,16 @@ function hideDecisionOverlay() {
   sim.decisionPending = false;
 }
 
+/* ============================================================
+   FIX 3: Cancel any stale rAF before starting a new loop.
+   Prevents duplicate animation loops if the modal was dismissed
+   while a rAF was already queued (e.g. from the decisionPending
+   render branch).
+   ============================================================ */
 function resumeFromDecision() {
   sim.lastTick = null;
   if (sim.running && !sim.complete && !sim.paused) {
+    cancelAnimationFrame(sim.rafId);
     sim.rafId = requestAnimationFrame(tick);
   }
 }
@@ -1431,7 +1433,7 @@ function updateNumericDisplays() {
   depthDisplay.textContent = sim.depth.toFixed(1) + ' m';
 }
 
-/* GAUGE CANVAS RENDERING - structurally unchanged from Phase 1 */
+/* GAUGE CANVAS RENDERING */
 function drawAllGauges() {
   const method = METHODS[sim.method];
   drawBarGauge(gcWater.getContext('2d'), gcWater.width, gcWater.height, sim.waterLevel < 50 ? (50 - sim.waterLevel) / 50 : 0, '#4A7FB8', '#B8D8E8');
@@ -1526,9 +1528,7 @@ function clearGaugeDisplays() {
 }
 
 /* ============================================================
-   CROSS-SECTION RENDERING - Phase 2 adds mud cake, thaw halo,
-   sand-instability halo, hole deviation, bit-state badges,
-   talik indicator.
+   CROSS-SECTION RENDERING
    ============================================================ */
 function drawCrossSection() {
   const W = csCanvas.width, H = csCanvas.height;
@@ -1542,7 +1542,6 @@ function drawCrossSection() {
   const totalDepth = sim.targetDepth * 1.05;
   function depthToY(d) { return MARGIN_TOP + (d / totalDepth) * drawH; }
 
-  /* formation layers */
   let layerTop = 0;
   gnd.layers.forEach(layer => {
     const layerBottom = Math.min(layer.depth, totalDepth);
@@ -1585,7 +1584,6 @@ function drawCrossSection() {
     layerTop = layerBottom;
   });
 
-  /* water table line */
   if (gnd.waterDepth < sim.targetDepth * 1.0) {
     const wy = depthToY(gnd.waterDepth);
     ctx.setLineDash([5, 4]);
@@ -1596,7 +1594,6 @@ function drawCrossSection() {
     ctx.font = '0.65rem IBM Plex Mono, Courier New, monospace';
     ctx.fillText('WT', W - MARGIN_RIGHT - 16, wy - 3);
 
-    /* Phase 2: talik indicator - permafrost ground with shallow water */
     if (gnd.permafrost && gnd.waterDepth < 5) {
       ctx.fillStyle = 'rgba(74,127,184,0.4)';
       ctx.fillRect(MARGIN_LEFT + drawW - 60, wy - 8, 56, 12);
@@ -1606,7 +1603,6 @@ function drawCrossSection() {
     }
   }
 
-  /* obstacle indicator */
   if (sim.obstacleActive && sim.obstacleDepth > 0) {
     const oy = depthToY(sim.obstacleDepth);
     ctx.fillStyle = '#D64A4A';
@@ -1618,7 +1614,6 @@ function drawCrossSection() {
     ctx.globalAlpha = 1.0;
   }
 
-  /* borehole geometry with Phase 2 deviation offset */
   const bhW = 18;
   const baseBhX = MARGIN_LEFT + drawW / 2 - bhW / 2;
   const bhX = baseBhX + sim.holeDeviation * 8;
@@ -1627,7 +1622,6 @@ function drawCrossSection() {
   ctx.fillStyle = 'rgba(46,58,71,0.82)';
   ctx.fillRect(bhX - 2, MARGIN_TOP, bhW + 4, bhDepthY - MARGIN_TOP);
 
-  /* Phase 2: thaw zone halo around casing in permafrost (only over frozen layers) */
   if (sim.thawRadius > 0.05) {
     const thawW = Math.min(40, sim.thawRadius * 18);
     const grad = ctx.createLinearGradient(bhX - thawW, 0, bhX + bhW + thawW, 0);
@@ -1646,12 +1640,10 @@ function drawCrossSection() {
     });
   }
 
-  /* borehole walls */
   ctx.fillStyle = '#1A2530';
   ctx.fillRect(bhX, MARGIN_TOP, 2, bhDepthY - MARGIN_TOP);
   ctx.fillRect(bhX + bhW - 2, MARGIN_TOP, 2, bhDepthY - MARGIN_TOP);
 
-  /* Phase 2: mud cake on rotary borehole walls */
   const method = METHODS[sim.method];
   if (sim.mudCakeThickness > 0.05 && method.fluid === 'mud') {
     const cakeW = Math.min(4, sim.mudCakeThickness * 5);
@@ -1660,7 +1652,6 @@ function drawCrossSection() {
     ctx.fillRect(bhX + bhW - 2 - cakeW, MARGIN_TOP, cakeW, bhDepthY - MARGIN_TOP);
   }
 
-  /* Phase 2: sand grain instability dots near bit (saturated sand, no mud) */
   const currentLayer = getLayerAt(sim.depth, gnd.layers);
   const currentMat = getMaterialType(currentLayer.uscs);
   if (currentMat === 'sand' && sim.depth > gnd.waterDepth && gnd.waterDepth < 50 && method.fluid !== 'mud') {
@@ -1675,7 +1666,6 @@ function drawCrossSection() {
     ctx.globalAlpha = 1.0;
   }
 
-  /* mud/water/air circulation */
   if (method.fluid === 'mud' || method.fluid === 'water') {
     const cA = sim.animPhase % 60 / 60;
     for (let i = 0; i < 4; i++) {
@@ -1697,7 +1687,6 @@ function drawCrossSection() {
 
   drawBitAnimation(ctx, bhX, bhX + bhW, bhDepthY);
 
-  /* depth axis */
   ctx.fillStyle = '#9AAABB';
   ctx.font = '0.68rem IBM Plex Mono, Courier New, monospace';
   const tickStep = totalDepth <= 20 ? 2 : totalDepth <= 40 ? 5 : 10;
@@ -1719,7 +1708,6 @@ function drawCrossSection() {
   ctx.moveTo(MARGIN_LEFT - 6, bhDepthY); ctx.lineTo(MARGIN_LEFT, bhDepthY);
   ctx.stroke();
 
-  /* progress bar */
   const pbX = W - MARGIN_RIGHT + 6, pbW = 8;
   ctx.fillStyle = '#1A2530'; ctx.fillRect(pbX, MARGIN_TOP, pbW, drawH);
   const progH = (sim.depth / sim.targetDepth) * drawH;
@@ -1728,9 +1716,7 @@ function drawCrossSection() {
   ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
   ctx.strokeRect(pbX, MARGIN_TOP, pbW, drawH);
 
-  /* Phase 2: bit-state badges */
   drawBitStateBadges(ctx, MARGIN_LEFT, MARGIN_TOP + 4);
-
   drawParticles(ctx);
 
   ctx.fillStyle = '#E8EAEC';
@@ -1740,7 +1726,6 @@ function drawCrossSection() {
   ctx.fillText('SURFACE', MARGIN_LEFT, MARGIN_TOP - 5);
 }
 
-/* Phase 2: bit-state badges */
 function drawBitStateBadges(ctx, x0, y0) {
   const badges = [];
   if (sim.bitWear > 0.05) {
@@ -1775,7 +1760,6 @@ function drawBitStateBadges(ctx, x0, y0) {
   });
 }
 
-/* BIT ANIMATIONS - bit color reflects broken state in Phase 2 */
 function drawBitAnimation(ctx, bitL, bitR, bitY) {
   const cx = (bitL + bitR) / 2;
   const method = sim.method;
@@ -1854,7 +1838,6 @@ function drawBitAnimation(ctx, bitL, bitR, bitY) {
     if (hammered) {
       ctx.fillStyle = 'rgba(255,200,0,0.6)';
       ctx.beginPath(); ctx.arc(cx, bitY, 8, 0, Math.PI * 2); ctx.fill();
-      /* Phase 2: percussion cuttings ejection on impact */
       if (Math.random() < 0.3) spawnCuttingsParticles(cx, bitY);
     }
     ctx.fillStyle = 'rgba(200,210,220,0.5)';
@@ -1912,7 +1895,6 @@ function spawnDebrisParticles() {
   }
 }
 
-/* Phase 2: percussion-specific upward cuttings spray */
 function spawnCuttingsParticles(cx, cy) {
   const gnd = GROUNDS[sim.ground];
   const layer = getLayerAt(sim.depth, gnd.layers);
@@ -2219,38 +2201,17 @@ drawIdle();
 clearGaugeDisplays();
 
 /* ============================================================
-   OPUS HANDOFF (Phase 2 complete \u2014 Phase 3 candidates)
-
-   Phase 2 implemented this session:
-   - Sigmoid hardness response curves per method (replaces linear)
-   - Hydrostatic / overburden depth effect on penetration
-   - Bit wear accumulator (visible badge, affects rate + recovery)
-   - Method-specific force and RPM efficiency curves
-   - Rotary mud hydraulics (flow * resistance * mud cake)
-   - Sonic vibration energy with material damping
-   - Percussion hammer energy decay with depth
-   - Auger flute clogging in clay over time
-   - Layer-contact transition spikes (pressure + torque)
-   - Recovery: down-force disturbance, OCR clay benefit, sand
-     bleed-out below WT, thin layer loss, wear smear, deviation
-   - Permafrost thaw zone radial expansion + sonic differential
-   - Mud cake visualization on rotary borehole walls
-   - Sand instability halo near bit (saturated, no-mud)
-   - Talik indicator on permafrost with shallow water
-   - Bit breakage risk on hard obstacles (vulnerable methods)
-   - Borehole deviation on cobble/dropstone glancing hits
-   - Operator decision modal: push through / skip / pull rods
-   - Bit-state badges on cross-section
-   - Cuttings ejection particle spray for percussion impacts
-
-   Phase 3 candidates for further deepening:
-   - True 1D pore-pressure FDM coupled to penetration (RI02-style)
-   - Bit hydraulics: nozzle pressure drop and jet impact modeling
-   - Sonic resonant frequency tuning (vibration mode shapes)
-   - Cuttings transport in annulus (Reynolds-dependent)
-   - Hole stability collapse (Mohr-Coulomb on borehole wall)
-   - Cost analysis layer (rental, crew, consumables per method)
-   - Side-by-side comparative run analysis
+   v2.0.1 FIXES SUMMARY
+   1. tick() — decisionPending branch now calls rAF so the render
+      loop stays alive while the operator decision modal is shown.
+      Previously the loop died silently on any modal trigger.
+   2. checkObstacleEvent() — obstacleTimer was decremented by
+      (dt * sim.speed); dt is already speed-scaled so this was a
+      double multiply. At speed 6-8x the timer expired in <1 frame,
+      making most cobble/boulder events invisible and stalling
+      blocked-method runs with no prompt. Fixed to dt only.
+   3. resumeFromDecision() — now calls cancelAnimationFrame before
+      requestAnimationFrame to prevent duplicate loops.
    ============================================================ */
 </script>
 
