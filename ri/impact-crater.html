@@ -4,16 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RI03 — Impact Crater Scaling Calculator | MFI Geotechnical Tools</title>
+  <title>RI03 &#8212; Impact Crater Scaling Calculator | MFI Geotechnical Tools</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 ```
 body {
-  background: #2E3A47;
+  background-color: #2E3A47;
   color: #E8EAEC;
   font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
   font-size: 0.95rem;
@@ -28,49 +29,32 @@ a:hover { text-decoration: underline; }
 
 /* ── HEADER ── */
 header {
-  background: #2E3A47;
+  background-color: #2E3A47;
   border-bottom: 2px solid #D4651A;
   padding: 1.2rem 2rem 1rem;
 }
-.breadcrumb {
-  font-size: 0.8rem;
-  color: #9AAABB;
-  margin-bottom: 0.5rem;
-}
+.breadcrumb { font-size: 0.8rem; color: #9AAABB; margin-bottom: 0.5rem; }
 .breadcrumb a { color: #9AAABB; }
 .breadcrumb a:hover { color: #D4651A; }
 .module-id {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #D4651A;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 0.2rem;
+  font-size: 0.75rem; font-weight: 700; color: #D4651A;
+  letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.2rem;
 }
-header h1 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #E8EAEC;
-  line-height: 1.2;
-}
-.subtitle {
-  font-size: 0.8rem;
-  color: #9AAABB;
-  margin-top: 0.25rem;
-}
+header h1 { font-size: 1.35rem; font-weight: 700; color: #E8EAEC; line-height: 1.2; }
+.subtitle { font-size: 0.8rem; color: #9AAABB; margin-top: 0.25rem; }
 
-/* ── MAIN LAYOUT ── */
+/* ── MAIN ── */
 main {
   flex: 1;
   padding: 1.5rem 2rem;
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  background-color: #2E3A47;
 }
 
-/* ── FRAMING NOTE ── */
 .framing-note {
-  background: #3A4A5C;
+  background-color: #3A4A5C;
   border-left: 3px solid #D4651A;
   padding: 0.8rem 1rem;
   font-size: 0.82rem;
@@ -80,50 +64,35 @@ main {
 }
 .framing-note strong { color: #E8EAEC; }
 
-/* ── GRID ── */
-.tool-grid {
+/* ── TOP GRID: inputs left, viz right ── */
+.top-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 40% 1fr;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  align-items: start;
 }
-@media (max-width: 800px) {
-  .tool-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 900px) { .top-grid { grid-template-columns: 1fr; } }
 
 /* ── CARDS ── */
 .card {
-  background: #3A4A5C;
+  background-color: #3A4A5C;
   border: 1px solid #4A6070;
   padding: 1.2rem;
 }
 .card-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #D4651A;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  font-size: 0.78rem; font-weight: 700; color: #D4651A;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 1rem; padding-bottom: 0.5rem;
   border-bottom: 1px solid #4A6070;
 }
 
-/* ── FORM ELEMENTS ── */
-.field-group {
-  margin-bottom: 0.9rem;
-}
-label {
-  display: block;
-  font-size: 0.78rem;
-  color: #9AAABB;
-  margin-bottom: 0.3rem;
-}
-label span.req { color: #D4651A; }
-input[type="number"],
-input[type="text"],
-select {
+/* ── FORM ── */
+.field-group { margin-bottom: 0.9rem; }
+label { display: block; font-size: 0.78rem; color: #9AAABB; margin-bottom: 0.3rem; }
+input[type="number"], input[type="text"], select {
   width: 100%;
-  background: #2E3A47;
+  background-color: #2E3A47;
   border: 1px solid #4A6070;
   color: #E8EAEC;
   font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
@@ -132,237 +101,230 @@ select {
   outline: none;
   transition: border-color 0.15s;
 }
-input[type="number"]:focus,
-input[type="text"]:focus,
-select:focus {
-  border-color: #D4651A;
-}
-select option { background: #2E3A47; }
-.field-hint {
-  font-size: 0.72rem;
-  color: #9AAABB;
-  margin-top: 0.2rem;
-}
+input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: #D4651A; }
+select option { background-color: #2E3A47; }
 
-/* ── GRAVITY PRESETS ── */
-.preset-row {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-top: 0.4rem;
-}
+.preset-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.4rem; }
 .preset-btn {
-  background: #4A6070;
-  color: #E8EAEC;
-  border: none;
+  background-color: #4A6070; color: #E8EAEC; border: none;
   font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.72rem;
-  padding: 0.25rem 0.55rem;
-  cursor: pointer;
-  transition: background 0.15s;
+  font-size: 0.72rem; padding: 0.25rem 0.55rem; cursor: pointer; transition: background-color 0.15s;
 }
-.preset-btn:hover { background: #D4651A; }
+.preset-btn:hover { background-color: #D4651A; }
 
-/* ── CALCULATE BUTTON ── */
+/* ── BUTTONS ── */
 .calc-btn {
-  background: #D4651A;
-  color: #fff;
-  border: none;
+  background-color: #D4651A; color: #fff; border: none;
   font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
-  font-size: 0.9rem;
-  font-weight: 700;
-  padding: 0.7rem 1.5rem;
-  cursor: pointer;
-  width: 100%;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  transition: background 0.15s;
-  margin-top: 0.5rem;
+  font-size: 0.9rem; font-weight: 700; padding: 0.7rem 1.5rem;
+  cursor: pointer; width: 100%; letter-spacing: 0.05em;
+  text-transform: uppercase; transition: background-color 0.15s; margin-top: 0.5rem;
 }
-.calc-btn:hover { background: #b8541a; }
+.calc-btn:hover { background-color: #b8541a; }
+.sec-btn {
+  background-color: #4A6070; color: #E8EAEC; border: none;
+  font-family: 'IBM Plex Mono', 'Courier New', Consolas, monospace;
+  font-size: 0.78rem; padding: 0.35rem 0.75rem; cursor: pointer; transition: background-color 0.15s;
+}
+.sec-btn:hover { background-color: #D4651A; }
+.sec-btn.active { background-color: #D4651A; }
 
 /* ── RESULTS ── */
 .results-card {
-  background: #3A4A5C;
-  border: 1px solid #4A6070;
-  padding: 1.2rem;
-  margin-bottom: 1.5rem;
+  background-color: #3A4A5C; border: 1px solid #4A6070;
+  padding: 1.2rem; margin-bottom: 1.5rem;
 }
-.results-card .card-title { margin-bottom: 1rem; }
-
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem; margin-bottom: 1rem;
 }
-.result-box {
-  background: #2E3A47;
-  border: 1px solid #4A6070;
-  padding: 0.7rem 0.8rem;
-}
-.result-label {
-  font-size: 0.72rem;
-  color: #9AAABB;
-  margin-bottom: 0.2rem;
-}
-.result-value {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #D4651A;
-  line-height: 1.2;
-}
-.result-sub {
-  font-size: 0.72rem;
-  color: #9AAABB;
-  margin-top: 0.15rem;
-}
+.result-box { background-color: #2E3A47; border: 1px solid #4A6070; padding: 0.7rem 0.8rem; }
+.result-label { font-size: 0.72rem; color: #9AAABB; margin-bottom: 0.2rem; }
+.result-value { font-size: 1.05rem; font-weight: 700; color: #D4651A; line-height: 1.2; }
+.result-sub { font-size: 0.72rem; color: #9AAABB; margin-top: 0.15rem; }
 
-/* Pi-group display */
-.pi-row {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  margin: 0.8rem 0;
-}
-.pi-box {
-  background: #2E3A47;
-  border: 1px solid #4A6070;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.8rem;
-}
+.pi-row { display: flex; gap: 0.8rem; flex-wrap: wrap; margin: 0.8rem 0; }
+.pi-box { background-color: #2E3A47; border: 1px solid #4A6070; padding: 0.5rem 0.8rem; font-size: 0.8rem; }
 .pi-box .pi-label { color: #9AAABB; font-size: 0.72rem; }
 .pi-box .pi-val { color: #D4651A; font-weight: 700; }
 
 .uncertainty-note {
-  font-size: 0.75rem;
-  color: #9AAABB;
-  background: #2E3A47;
-  border-left: 2px solid #4A6070;
-  padding: 0.5rem 0.8rem;
-  margin-top: 0.8rem;
-  font-style: italic;
+  font-size: 0.75rem; color: #9AAABB; background-color: #2E3A47;
+  border-left: 2px solid #4A6070; padding: 0.5rem 0.8rem;
+  margin-top: 0.8rem; font-style: italic;
+}
+.results-placeholder { color: #4A6070; font-size: 0.85rem; text-align: center; padding: 2rem 1rem; }
+
+/* ── VIZ PANEL ── */
+.viz-wrapper {
+  background-color: #2E3A47;
+  border: 1px solid #4A6070;
+  display: flex;
+  flex-direction: column;
+}
+.viz-header {
+  background-color: #3A4A5C;
+  border-bottom: 1px solid #4A6070;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.viz-title { font-size: 0.78rem; font-weight: 700; color: #D4651A; letter-spacing: 0.1em; text-transform: uppercase; }
+.viz-btns { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+#canvas-container {
+  position: relative;
+  background-color: #2E3A47;
+  width: 100%;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+}
+#viz-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #2E3A47;
 }
 
-.results-placeholder {
+/* HUD overlay */
+#viz-hud {
+  position: absolute;
+  top: 0.6rem; left: 0.7rem;
+  font-size: 0.72rem;
+  color: #E8EAEC;
+  pointer-events: none;
+  line-height: 1.8;
+}
+#hud-phase {
+  font-weight: 700; color: #D4651A; font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}
+.hud-line { color: #9AAABB; }
+.hud-val { color: #E8EAEC; }
+
+#viz-placeholder {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
   color: #4A6070;
   font-size: 0.85rem;
-  text-align: center;
-  padding: 2rem 1rem;
+  pointer-events: none;
+}
+#viz-placeholder .big { font-size: 2.5rem; margin-bottom: 0.5rem; color: #3A4A5C; }
+
+/* dimension labels canvas */
+#label-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
 }
 
-/* ── COLLAPSIBLE SECTIONS ── */
+/* ── ANIMATION CONTROLS ── */
+.anim-controls {
+  background-color: #3A4A5C;
+  border-top: 1px solid #4A6070;
+  padding: 0.8rem 1rem;
+}
+.anim-row1 { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.phase-label {
+  font-size: 0.72rem; color: #9AAABB;
+  margin-left: auto;
+  font-style: italic;
+}
+.anim-row2 { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.anim-row2 label { font-size: 0.72rem; color: #9AAABB; margin-bottom: 0; white-space: nowrap; }
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #2E3A47;
+  border: 1px solid #4A6070;
+  height: 6px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background-color: #D4651A;
+  border-radius: 50%;
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background-color: #D4651A;
+  border: none; border-radius: 50%;
+  cursor: pointer;
+}
+#speed-slider { width: 100px; }
+#timeline-slider { flex: 1; min-width: 120px; }
+.keyframe-labels {
+  display: flex; justify-content: space-between;
+  font-size: 0.65rem; color: #4A6070;
+  margin-top: 0.15rem;
+}
+
+/* ── COLLAPSIBLE ── */
+.collapsible-wrap { margin-bottom: 1.5rem; }
 .collapsible-header {
-  background: #2E3A47;
+  background-color: #2E3A47;
   border: 1px solid #4A6070;
   padding: 0.7rem 1rem;
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #D4651A;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.78rem; font-weight: 700; color: #D4651A;
+  letter-spacing: 0.1em; text-transform: uppercase;
   user-select: none;
-  margin-bottom: 0;
 }
-.collapsible-header:hover { background: #3A4A5C; }
+.collapsible-header:hover { background-color: #3A4A5C; }
 .collapsible-toggle { font-size: 0.9rem; color: #9AAABB; }
 .collapsible-body {
-  background: #3A4A5C;
-  border: 1px solid #4A6070;
-  border-top: none;
-  padding: 1.2rem;
-  display: none;
+  background-color: #3A4A5C; border: 1px solid #4A6070;
+  border-top: none; padding: 1.2rem; display: none;
 }
 .collapsible-body.open { display: block; }
-.collapsible-wrap { margin-bottom: 1.5rem; }
 
-/* ── GEOTECHNICAL PANEL ── */
-.geo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-.geo-box {
-  background: #2E3A47;
-  border: 1px solid #4A6070;
-  padding: 0.7rem 0.8rem;
-}
+/* ── GEO PANEL ── */
+.geo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; margin-bottom: 1rem; }
+.geo-box { background-color: #2E3A47; border: 1px solid #4A6070; padding: 0.7rem 0.8rem; }
 .geo-label { font-size: 0.72rem; color: #9AAABB; margin-bottom: 0.2rem; }
 .geo-value { font-size: 0.95rem; font-weight: 700; color: #D4651A; }
 .geo-sub { font-size: 0.7rem; color: #9AAABB; margin-top: 0.15rem; }
 
-.pga-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-  margin-top: 0.8rem;
-}
+.pga-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.8rem; }
 .pga-table th {
-  background: #2E3A47;
-  color: #9AAABB;
-  font-weight: 700;
-  padding: 0.4rem 0.6rem;
-  text-align: left;
-  border-bottom: 1px solid #4A6070;
+  background-color: #2E3A47; color: #9AAABB; font-weight: 700;
+  padding: 0.4rem 0.6rem; text-align: left; border-bottom: 1px solid #4A6070;
 }
-.pga-table td {
-  padding: 0.35rem 0.6rem;
-  border-bottom: 1px solid #2E3A47;
-  color: #E8EAEC;
-}
-.pga-table tr:nth-child(even) td { background: #2E3A47; }
+.pga-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #2E3A47; color: #E8EAEC; }
+.pga-table tr:nth-child(even) td { background-color: #2E3A47; }
 .pga-table .pga-val { color: #D4651A; font-weight: 700; }
-.pga-note {
-  font-size: 0.72rem;
-  color: #9AAABB;
-  margin-top: 0.5rem;
-  font-style: italic;
-}
+.pga-note { font-size: 0.72rem; color: #9AAABB; margin-top: 0.5rem; font-style: italic; }
 
-/* ── REFERENCE TABLE ── */
-.ref-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
+/* ── REF TABLE ── */
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
 .ref-table th {
-  background: #2E3A47;
-  color: #9AAABB;
-  font-weight: 700;
-  padding: 0.45rem 0.7rem;
-  text-align: left;
-  border-bottom: 2px solid #D4651A;
-  white-space: nowrap;
+  background-color: #2E3A47; color: #9AAABB; font-weight: 700;
+  padding: 0.45rem 0.7rem; text-align: left; border-bottom: 2px solid #D4651A; white-space: nowrap;
 }
-.ref-table td {
-  padding: 0.4rem 0.7rem;
-  border-bottom: 1px solid #2E3A47;
-  color: #E8EAEC;
-  vertical-align: top;
-}
-.ref-table tr:nth-child(even) td { background: #2E3A47; }
+.ref-table td { padding: 0.4rem 0.7rem; border-bottom: 1px solid #2E3A47; color: #E8EAEC; vertical-align: top; }
+.ref-table tr:nth-child(even) td { background-color: #2E3A47; }
 .ref-table .crater-name { color: #D4651A; font-weight: 700; }
 .ref-table .notes-col { color: #9AAABB; font-size: 0.75rem; }
 
 /* ── FOOTER ── */
 footer {
-  background: #2E3A47;
-  border-top: 1px solid #4A6070;
-  padding: 1rem 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 2rem;
-  font-size: 0.72rem;
-  color: #9AAABB;
+  background-color: #2E3A47; border-top: 1px solid #4A6070;
+  padding: 1rem 2rem; display: flex; flex-wrap: wrap;
+  gap: 0.5rem 2rem; font-size: 0.72rem; color: #9AAABB;
 }
 footer span { display: block; }
 
-/* ── CUSTOM INPUT TOGGLE ── */
 .custom-field { display: none; margin-top: 0.5rem; }
 .custom-field.visible { display: block; }
 ```
@@ -375,7 +337,7 @@ footer span { display: block; }
   <div class="breadcrumb"><a href="research-index.html">&#8592; Research &amp; AI</a></div>
   <div class="module-id">RI03</div>
   <h1>Impact Crater Scaling Calculator</h1>
-  <p class="subtitle">Pi-group scaling laws &#8212; Holsapple (1993) / Melosh (1989)</p>
+  <p class="subtitle">Pi-group scaling laws &#8212; Holsapple (1993) / Melosh (1989) &#8212; v2 with 3D Visualization</p>
 </header>
 
 <main>
@@ -383,31 +345,28 @@ footer span { display: block; }
   <div class="framing-note">
     <strong>Geotechnical connection:</strong> Pi-group scaling is the same dimensional analysis framework
     applied to dynamic loading in geotechnical engineering&#8212;penetration resistance, pile driving energy,
-    and blast-induced ground deformation all follow analogous scaling laws. Impact cratering simply extends
-    this to hypervelocity regimes where material response governs crater morphology the same way soil
+    and blast-induced ground deformation all follow analogous scaling laws. Impact cratering extends this
+    to hypervelocity regimes where material response governs crater morphology the same way soil
     strength governs bearing capacity under dynamic loads.
   </div>
 
-  <div class="tool-grid">
+  <!-- ── TOP: inputs + 3D viz ── -->
+
+  <div class="top-grid">
 
 ```
-<!-- LEFT: INPUTS -->
+<!-- LEFT: inputs + text results -->
 <div>
-  <div class="card">
+  <div class="card" style="margin-bottom:1rem;">
     <div class="card-title">Impactor Parameters</div>
-
     <div class="field-group">
       <label>Diameter (m)</label>
       <input type="number" id="imp-diameter" value="50" min="0.001" step="any">
     </div>
-
     <div class="field-group">
-      <label>Velocity (km/s)
-        <span class="field-hint" style="display:inline; margin-left:0.5rem;">11&#8211;70 km/s typical; Earth escape &#8776; 11.2 km/s</span>
-      </label>
+      <label>Velocity (km/s) &#8212; 11&#8211;70 km/s typical</label>
       <input type="number" id="imp-velocity" value="20" min="0.1" step="any">
     </div>
-
     <div class="field-group">
       <label>Density (kg/m&#179;)</label>
       <select id="imp-density-sel" onchange="handleImpDensity()">
@@ -420,18 +379,14 @@ footer span { display: block; }
         <input type="number" id="imp-density-val" value="3000" min="1" step="any" placeholder="kg/m&#179;">
       </div>
     </div>
-
     <div class="field-group">
-      <label>Impact Angle (degrees from horizontal)
-        <span class="field-hint" style="display:inline; margin-left:0.5rem;">45&#176; is most probable</span>
-      </label>
+      <label>Impact Angle (degrees from horizontal) &#8212; 45&#176; most probable</label>
       <input type="number" id="imp-angle" value="45" min="1" max="90" step="any">
     </div>
   </div>
 
-  <div class="card" style="margin-top:1rem;">
+  <div class="card" style="margin-bottom:1rem;">
     <div class="card-title">Target &amp; Environment</div>
-
     <div class="field-group">
       <label>Target Material</label>
       <select id="target-sel" onchange="handleTarget()">
@@ -442,23 +397,19 @@ footer span { display: block; }
         <option value="custom">Custom</option>
       </select>
     </div>
-
-    <div id="target-fields">
-      <div class="field-group">
-        <label>Target Density (kg/m&#179;)</label>
-        <input type="number" id="tgt-density" value="1700" min="1" step="any">
-      </div>
-      <div class="field-group">
-        <label>Strength Y (Pa) &#8212; 0 for purely gravity-dominated</label>
-        <input type="number" id="tgt-strength" value="0" min="0" step="any">
-      </div>
-      <div class="field-group">
-        <label>Porosity (0&#8211;1)</label>
-        <input type="number" id="tgt-porosity" value="0.35" min="0" max="1" step="0.01">
-      </div>
+    <div class="field-group">
+      <label>Target Density (kg/m&#179;)</label>
+      <input type="number" id="tgt-density" value="1700" min="1" step="any">
     </div>
-
-    <div class="field-group" style="margin-top:0.8rem;">
+    <div class="field-group">
+      <label>Strength Y (Pa) &#8212; 0 for gravity-dominated</label>
+      <input type="number" id="tgt-strength" value="0" min="0" step="any">
+    </div>
+    <div class="field-group">
+      <label>Porosity (0&#8211;1)</label>
+      <input type="number" id="tgt-porosity" value="0.35" min="0" max="1" step="0.01">
+    </div>
+    <div class="field-group">
       <label>Gravity (m/s&#178;)</label>
       <input type="number" id="gravity" value="9.81" min="0.01" step="any">
       <div class="preset-row">
@@ -468,126 +419,111 @@ footer span { display: block; }
         <button class="preset-btn" onclick="setGravity(0.28)">Ceres</button>
       </div>
     </div>
-
-    <button class="calc-btn" onclick="calculate()">&#9654; Calculate</button>
+    <button class="calc-btn" onclick="calculateAndVisualize()">&#9654; Calculate &amp; Visualize Crater</button>
   </div>
-</div>
 
-<!-- RIGHT: RESULTS -->
-<div>
+  <!-- text results -->
   <div class="results-card" id="results-panel">
-    <div class="card-title">RI03 &#8212; Output</div>
-    <div class="results-placeholder" id="results-placeholder">
-      Set parameters and click Calculate to generate crater estimates.
-    </div>
+    <div class="card-title">RI03 &#8212; Scaling Output</div>
+    <div class="results-placeholder" id="results-placeholder">Set parameters and click Calculate to generate crater estimates.</div>
     <div id="results-content" style="display:none;">
-
       <div class="result-grid" id="result-boxes"></div>
-
       <div style="font-size:0.78rem; color:#9AAABB; margin:0.6rem 0 0.3rem;">Pi-Group Values</div>
       <div class="pi-row" id="pi-boxes"></div>
-
       <div class="uncertainty-note">
         Outputs are first-order estimates. Holsapple (1993) pi-group scaling carries ~factor-of-2 uncertainty.
         Validate against known craters before applying to research contexts.
       </div>
+    </div>
+  </div>
+</div>
 
+<!-- RIGHT: 3D visualization -->
+<div class="viz-wrapper">
+  <div class="viz-header">
+    <span class="viz-title">3D Impact Sequence</span>
+    <div class="viz-btns">
+      <button class="sec-btn" id="btn-reset-view" onclick="resetView()">Reset View</button>
+      <button class="sec-btn" id="btn-xsection" onclick="toggleXSection()">Cross-Section</button>
+    </div>
+  </div>
+
+  <div id="canvas-container">
+    <canvas id="viz-canvas"></canvas>
+    <canvas id="label-canvas"></canvas>
+    <div id="viz-hud" style="display:none;">
+      <div id="hud-phase">&#8212;</div>
+      <div id="hud-lines"></div>
+    </div>
+    <div id="viz-placeholder">
+      <div class="big">&#9678;</div>
+      <div>Calculate to run impact sequence</div>
+    </div>
+  </div>
+
+  <div class="anim-controls">
+    <div class="anim-row1">
+      <button class="sec-btn" id="btn-play" onclick="animPlay()">&#9654; Play</button>
+      <button class="sec-btn" onclick="animPause()">&#9646;&#9646; Pause</button>
+      <button class="sec-btn" onclick="animReset()">&#8635; Reset</button>
+      <span class="phase-label" id="phase-label">&#8212;</span>
+    </div>
+    <div class="anim-row2">
+      <label>Speed:</label>
+      <input type="range" id="speed-slider" min="25" max="200" value="100" step="25">
+      <span id="speed-label" style="font-size:0.72rem; color:#D4651A; min-width:2.5rem;">1.0&#215;</span>
+      <label style="margin-left:0.5rem;">Timeline:</label>
+      <input type="range" id="timeline-slider" min="0" max="1000" value="0" oninput="scrubTimeline(this.value)">
+    </div>
+    <div class="keyframe-labels">
+      <span>Approach</span><span>Atmosphere</span><span>Impact</span><span>Formation</span><span>Final</span>
     </div>
   </div>
 </div>
 ```
 
-  </div><!-- /tool-grid -->
+  </div><!-- /top-grid -->
 
-  <!-- GEOTECHNICAL ANALOG PANEL -->
+  <!-- GEO PANEL -->
 
   <div class="collapsible-wrap">
     <div class="collapsible-header" onclick="toggleSection('geo-body', this)">
       Geotechnical Analog &#8212; Dynamic Loading &amp; Ground Motion
-      <span class="collapsible-toggle" id="geo-toggle">&#9660;</span>
+      <span class="collapsible-toggle">&#9660;</span>
     </div>
     <div class="collapsible-body" id="geo-body">
-      <div id="geo-placeholder" style="color:#4A6070; font-size:0.85rem; padding:0.5rem 0;">
-        Run a calculation first to populate this panel.
-      </div>
+      <div id="geo-placeholder" style="color:#4A6070; font-size:0.85rem; padding:0.5rem 0;">Run a calculation first to populate this panel.</div>
       <div id="geo-content" style="display:none;">
         <div class="geo-grid" id="geo-boxes"></div>
-        <div style="font-size:0.78rem; color:#9AAABB; margin:0.8rem 0 0.4rem; font-weight:700;">
-          Peak Ground Acceleration Estimates
-        </div>
+        <div style="font-size:0.78rem; color:#9AAABB; margin:0.8rem 0 0.4rem; font-weight:700;">Peak Ground Acceleration Estimates</div>
         <table class="pga-table">
-          <thead>
-            <tr>
-              <th>Distance</th>
-              <th>PGA (g)</th>
-              <th>Interpretation</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Distance</th><th>PGA (g)</th><th>Interpretation</th></tr></thead>
           <tbody id="pga-tbody"></tbody>
         </table>
         <div class="pga-note">
           PGA estimates use simplified empirical scaling (PGA_g &#8776; 0.1 &#215; (E/E&#8320;)^(1/3) / r^1.7).
-          Flagged as rough estimate only&#8212;not for engineering design. Atkinson-Boore GMPEs should be
-          used for formal seismic hazard assessment.
+          Flagged as rough estimate only&#8212;not for engineering design.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- REFERENCE CRATERS -->
+  <!-- REF TABLE -->
 
   <div class="collapsible-wrap">
     <div class="collapsible-header" onclick="toggleSection('ref-body', this)">
       Reference Craters &#8212; Scale Comparison
-      <span class="collapsible-toggle" id="ref-toggle">&#9660;</span>
+      <span class="collapsible-toggle">&#9660;</span>
     </div>
     <div class="collapsible-body" id="ref-body">
       <table class="ref-table">
-        <thead>
-          <tr>
-            <th>Crater</th>
-            <th>Body</th>
-            <th>Diameter</th>
-            <th>Impactor Est.</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Crater</th><th>Body</th><th>Diameter</th><th>Impactor Est.</th><th>Notes</th></tr></thead>
         <tbody>
-          <tr>
-            <td class="crater-name">Barringer (Meteor Crater)</td>
-            <td>Earth</td>
-            <td>1.2 km</td>
-            <td>~50 m iron</td>
-            <td class="notes-col">Arizona, USA; best-preserved simple crater</td>
-          </tr>
-          <tr>
-            <td class="crater-name">Chicxulub</td>
-            <td>Earth</td>
-            <td>~180 km</td>
-            <td>~10 km rocky</td>
-            <td class="notes-col">K-Pg boundary; Yucatan, Mexico</td>
-          </tr>
-          <tr>
-            <td class="crater-name">Tycho</td>
-            <td>Moon</td>
-            <td>85 km</td>
-            <td>~4 km</td>
-            <td class="notes-col">Ray crater; ~108 Ma</td>
-          </tr>
-          <tr>
-            <td class="crater-name">Hellas Planitia</td>
-            <td>Mars</td>
-            <td>~2,300 km</td>
-            <td>~400 km</td>
-            <td class="notes-col">Ancient impact basin; deepest point on Mars</td>
-          </tr>
-          <tr>
-            <td class="crater-name">Vredefort</td>
-            <td>Earth</td>
-            <td>~300 km</td>
-            <td>~15 km</td>
-            <td class="notes-col">South Africa; oldest confirmed impact structure</td>
-          </tr>
+          <tr><td class="crater-name">Barringer (Meteor Crater)</td><td>Earth</td><td>1.2 km</td><td>~50 m iron</td><td class="notes-col">Arizona, USA; best-preserved simple crater</td></tr>
+          <tr><td class="crater-name">Chicxulub</td><td>Earth</td><td>~180 km</td><td>~10 km rocky</td><td class="notes-col">K-Pg boundary; Yucat&#225;n, Mexico</td></tr>
+          <tr><td class="crater-name">Tycho</td><td>Moon</td><td>85 km</td><td>~4 km</td><td class="notes-col">Ray crater; ~108 Ma</td></tr>
+          <tr><td class="crater-name">Hellas Planitia</td><td>Mars</td><td>~2,300 km</td><td>~400 km</td><td class="notes-col">Ancient impact basin; deepest point on Mars</td></tr>
+          <tr><td class="crater-name">Vredefort</td><td>Earth</td><td>~300 km</td><td>~15 km</td><td class="notes-col">South Africa; oldest confirmed impact structure</td></tr>
         </tbody>
       </table>
     </div>
@@ -599,262 +535,708 @@ footer span { display: block; }
   <span>RI03 &#8212; Impact Crater Scaling Calculator</span>
   <span>Independent personal project &#8212; not affiliated with any government agency or employer</span>
   <span>Ian Minnock, CPG, PMP, PMI-ACP &#8212; ian.minnock@mfimpact.com</span>
-  <span>v1.0 &#8212; May 2026</span>
+  <span>v2.0 &#8212; May 2026</span>
 </footer>
 
 <script>
-  // ── TARGET PRESETS ──
-  var TARGET_PRESETS = {
-    sand:   { density: 1700,  strength: 0,      porosity: 0.35, K1: 0.20, mu: 0.55 },
-    rock:   { density: 2700,  strength: 5e7,    porosity: 0.05, K1: 0.132, mu: 0.41 },
-    porous: { density: 2000,  strength: 1e6,    porosity: 0.25, K1: 0.20, mu: 0.55 },
-    ice:    { density: 917,   strength: 1e5,    porosity: 0.02, K1: 0.2,  mu: 0.55 },
-    custom: { density: 2700,  strength: 5e7,    porosity: 0.05, K1: 0.132, mu: 0.41 }
-  };
+// ═══════════════════════════════════════════════
+// SECTION 1: CALCULATION ENGINE (unchanged from v1)
+// ═══════════════════════════════════════════════
 
-  function handleTarget() {
-    var sel = document.getElementById('target-sel').value;
-    if (sel === 'custom') return;
-    var p = TARGET_PRESETS[sel];
-    document.getElementById('tgt-density').value   = p.density;
-    document.getElementById('tgt-strength').value  = p.strength;
-    document.getElementById('tgt-porosity').value  = p.porosity;
+var TARGET_PRESETS = {
+  sand:   { density: 1700,  strength: 0,    porosity: 0.35, K1: 0.20,  mu: 0.55 },
+  rock:   { density: 2700,  strength: 5e7,  porosity: 0.05, K1: 0.132, mu: 0.41 },
+  porous: { density: 2000,  strength: 1e6,  porosity: 0.25, K1: 0.20,  mu: 0.55 },
+  ice:    { density: 917,   strength: 1e5,  porosity: 0.02, K1: 0.2,   mu: 0.55 },
+  custom: { density: 2700,  strength: 5e7,  porosity: 0.05, K1: 0.132, mu: 0.41 }
+};
+
+function handleTarget() {
+  var sel = document.getElementById('target-sel').value;
+  if (sel === 'custom') return;
+  var p = TARGET_PRESETS[sel];
+  document.getElementById('tgt-density').value  = p.density;
+  document.getElementById('tgt-strength').value = p.strength;
+  document.getElementById('tgt-porosity').value = p.porosity;
+}
+function handleImpDensity() {
+  var sel = document.getElementById('imp-density-sel').value;
+  var cf  = document.getElementById('imp-density-custom');
+  if (sel === 'custom') { cf.classList.add('visible'); }
+  else { cf.classList.remove('visible'); document.getElementById('imp-density-val').value = sel; }
+}
+function setGravity(val) { document.getElementById('gravity').value = val; }
+
+function toggleSection(bodyId, header) {
+  var body = document.getElementById(bodyId);
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  var tog = header.querySelector('.collapsible-toggle');
+  if (tog) tog.textContent = isOpen ? '\u25BC' : '\u25B2';
+}
+
+function fmt(n, dec)  { if (n === null || isNaN(n)) return 'N/A'; return n.toFixed(dec !== undefined ? dec : 3); }
+function fmtSci(n)    { if (n === null || isNaN(n)) return 'N/A'; return n.toExponential(3); }
+function fmtNum(n) {
+  if (n === null || isNaN(n)) return 'N/A';
+  if (Math.abs(n) >= 1e9)  return (n/1e9).toFixed(2)+' Gt';
+  if (Math.abs(n) >= 1e6)  return (n/1e6).toFixed(2)+' Mt';
+  if (Math.abs(n) >= 1e3)  return (n/1e3).toFixed(2)+' kt';
+  return n.toFixed(2)+' t';
+}
+
+// Stores last calculation result for viz
+var lastCalc = null;
+
+function runCalc() {
+  var PI = Math.PI;
+  var d_i   = parseFloat(document.getElementById('imp-diameter').value);
+  var v_kms = parseFloat(document.getElementById('imp-velocity').value);
+  var sel_d = document.getElementById('imp-density-sel').value;
+  var rho_i = sel_d === 'custom' ? parseFloat(document.getElementById('imp-density-val').value) : parseFloat(sel_d);
+  var theta_deg = parseFloat(document.getElementById('imp-angle').value);
+  var g     = parseFloat(document.getElementById('gravity').value);
+  var tsel  = document.getElementById('target-sel').value;
+  var rho_t = parseFloat(document.getElementById('tgt-density').value);
+  var Y     = parseFloat(document.getElementById('tgt-strength').value);
+
+  if (isNaN(d_i)||isNaN(v_kms)||isNaN(rho_i)||isNaN(theta_deg)||isNaN(g)||isNaN(rho_t)||isNaN(Y)) {
+    alert('Please fill in all numeric fields before calculating.'); return null;
   }
 
-  function handleImpDensity() {
-    var sel = document.getElementById('imp-density-sel').value;
-    var cf  = document.getElementById('imp-density-custom');
-    if (sel === 'custom') {
-      cf.classList.add('visible');
+  var preset = TARGET_PRESETS[tsel] || TARGET_PRESETS.rock;
+  var K1 = preset.K1, mu = preset.mu;
+  var v     = v_kms * 1000;
+  var a     = d_i / 2;
+  var theta = theta_deg * PI / 180;
+  var vol_i = (4/3) * PI * Math.pow(a, 3);
+  var m_i   = rho_i * vol_i;
+  var KE    = 0.5 * m_i * Math.pow(v, 2);
+  var Pi2   = 1.61 * g * a / Math.pow(v, 2);
+  var Pi3   = Y / (rho_t * Math.pow(v, 2));
+  var Pi2_eff = Pi2 + Pi3;
+  var exp_grav = -3 * mu / (2 + mu);
+  var V_t   = K1 * (m_i / rho_t) * Math.pow(Pi2_eff, exp_grav);
+  var Pi_V  = rho_t * V_t / m_i;
+  var R_t   = Math.pow(3 * V_t / PI, 1/3);
+  var D_t   = 2 * R_t;
+  var angle_corr = Math.pow(Math.sin(theta), 0.33);
+  D_t = D_t * angle_corr;
+  V_t = V_t * angle_corr;
+  var D_sc  = 4000 * (9.81 / g);
+  var D_f   = D_t < D_sc ? D_t : D_t * Math.pow(D_t / D_sc, 0.13);
+  var depth = 0.2 * D_f;
+  var R_ej  = 2.3 * (D_f / 2);
+  var V_ej  = 0.114 * Math.pow(D_f, 3);
+  var TNT_J = 4.184e9;
+  var tnt_eq_t = KE / TNT_J;
+  var tnt_kt = tnt_eq_t / 1000;
+  var tnt_mt = tnt_kt / 1000;
+  var tsar_frac = tnt_mt / 50;
+  var Mw = (Math.log10(KE) - 4.8) / 1.5;
+  var E0 = 1e15;
+  function pga_g(r_km) { var r = r_km*1000; return 0.1 * Math.pow(KE/E0, 1/3) / Math.pow(r, 1.7) * Math.pow(1000, 1.7); }
+
+  return { d_i, v_kms, v, rho_i, theta_deg, theta, g, tsel, rho_t, Y, m_i, vol_i,
+           KE, Pi2, Pi3, Pi_V, D_t, D_f, D_sc, depth, R_ej, V_ej,
+           tnt_eq_t, tnt_kt, tnt_mt, tsar_frac, Mw, angle_corr,
+           pga1: pga_g(1), pga10: pga_g(10), pga100: pga_g(100) };
+}
+
+function renderResults(c) {
+  document.getElementById('results-placeholder').style.display = 'none';
+  document.getElementById('results-content').style.display = 'block';
+
+  var rb = document.getElementById('result-boxes');
+  rb.innerHTML = [
+    box('Transient Crater Diameter',
+        c.D_t >= 1000 ? fmt(c.D_t/1000,3)+' km' : fmt(c.D_t,1)+' m',
+        c.D_t >= 1000 ? '('+fmt(c.D_t,0)+' m)' : '('+fmt(c.D_t/1000,3)+' km)'),
+    box('Final Crater Diameter',
+        c.D_f >= 1000 ? fmt(c.D_f/1000,3)+' km' : fmt(c.D_f,1)+' m',
+        c.D_f >= c.D_sc ? 'Complex crater (gravity collapse applied)' : 'Simple crater morphology'),
+    box('Crater Depth', c.depth >= 1000 ? fmt(c.depth/1000,3)+' km' : fmt(c.depth,1)+' m', 'Depth/diameter ~0.2'),
+    box('Ejecta Blanket Radius', c.R_ej >= 1000 ? fmt(c.R_ej/1000,3)+' km' : fmt(c.R_ej,1)+' m', 'Outer limit approximation'),
+    box('Ejecta Volume', fmtSci(c.V_ej)+' m&#179;', 'Approximate; scales as D_f&#179;'),
+    box('Kinetic Energy', fmtSci(c.KE)+' J', fmtNum(c.tnt_eq_t)+' TNT equivalent'),
+    box('TNT Equivalent',
+        c.tnt_mt >= 1 ? fmt(c.tnt_mt,2)+' MT' : fmt(c.tnt_kt,3)+' kT',
+        c.tsar_frac >= 0.01 ? fmt(c.tsar_frac,3)+'&#215; Tsar Bomba (50 MT)' : fmt(c.tnt_kt,4)+' kT vs. Tsar Bomba'),
+    box('Seismic Equivalent Mw', 'M<sub>w</sub> '+fmt(c.Mw,1), 'log&#8321;&#8320;(E) = 1.5&#8201;M<sub>w</sub> + 4.8')
+  ].join('');
+
+  document.getElementById('pi-boxes').innerHTML =
+    piBox('&#960;&#8322; (gravity)', c.Pi2.toExponential(3)) +
+    piBox('&#960;&#8323; (strength)', c.Pi3.toExponential(3)) +
+    piBox('&#960;_V (volume)', c.Pi_V.toExponential(3)) +
+    piBox('Angle corr.', fmt(c.angle_corr,4));
+
+  document.getElementById('geo-placeholder').style.display = 'none';
+  document.getElementById('geo-content').style.display = 'block';
+  document.getElementById('geo-boxes').innerHTML = [
+    gbox('Kinetic Energy', fmtSci(c.KE)+' J', ''),
+    gbox('TNT Equivalent',
+         c.tnt_mt >= 1 ? fmt(c.tnt_mt,2)+' megatonnes' : fmt(c.tnt_kt,3)+' kilotonnes',
+         c.tsar_frac >= 0.01 ? fmt(c.tsar_frac,3)+'&#215; Tsar Bomba (50 MT)' : 'Tsar Bomba fraction: '+c.tsar_frac.toExponential(2)),
+    gbox('Seismic M<sub>w</sub>', fmt(c.Mw,1), 'M<sub>w</sub> 6.0 &#8776; 1 kT; M<sub>w</sub> 9.0 &#8776; Sumatra 2004'),
+    gbox('Impactor Mass', fmtSci(c.m_i)+' kg', 'Volume '+fmtSci(c.vol_i)+' m&#179;')
+  ].join('');
+
+  function pgaLabel(p) {
+    if (p > 1.0)   return 'Extreme &#8212; structural collapse';
+    if (p > 0.5)   return 'Severe &#8212; major structural damage';
+    if (p > 0.1)   return 'Strong &#8212; significant damage possible';
+    if (p > 0.02)  return 'Moderate &#8212; light damage';
+    if (p > 0.003) return 'Light &#8212; felt by most';
+    return 'Minor &#8212; barely perceptible';
+  }
+  document.getElementById('pga-tbody').innerHTML = [
+    ['1 km', c.pga1], ['10 km', c.pga10], ['100 km', c.pga100]
+  ].map(function(r) {
+    return '<tr><td>'+r[0]+'</td><td class="pga-val">'+r[1].toExponential(2)+' g</td><td>'+pgaLabel(r[1])+'</td></tr>';
+  }).join('');
+}
+
+function box(label, value, sub) {
+  return '<div class="result-box"><div class="result-label">'+label+'</div><div class="result-value">'+value+'</div>'+(sub?'<div class="result-sub">'+sub+'</div>':'')+'</div>';
+}
+function piBox(label, val) {
+  return '<div class="pi-box"><div class="pi-label">'+label+'</div><div class="pi-val">'+val+'</div></div>';
+}
+function gbox(label, val, sub) {
+  return '<div class="geo-box"><div class="geo-label">'+label+'</div><div class="geo-value">'+val+'</div>'+(sub?'<div class="geo-sub">'+sub+'</div>':'')+'</div>';
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 2: THREE.JS VISUALIZATION ENGINE
+// ═══════════════════════════════════════════════
+
+var VIZ = {
+  scene: null, camera: null, renderer: null,
+  impactor: null, impactorTrail: null, planet: null, atmoMesh: null,
+  craterGroup: null, ejectaParticles: [],
+  flashLight: null, animLight: null,
+  clock: null,
+  running: false, speed: 1.0,
+  t: 0,       // animation time 0..1 (normalized)
+  calc: null, // cached calc result
+  xSection: false,
+  mouse: { down: false, button: 0, x: 0, y: 0 },
+  camOrbit: { theta: 0.6, phi: 1.0, radius: 5 },
+  camTarget: new THREE.Vector3(0, 0, 0),
+  labelCtx: null
+};
+
+// Phase boundaries (normalized 0..1)
+var PHASES = {
+  APPROACH:    [0,    0.30],
+  ATMOSPHERE:  [0.30, 0.50],
+  IMPACT:      [0.50, 0.55],
+  FORMATION:   [0.55, 0.80],
+  FINAL:       [0.80, 1.00]
+};
+
+function phaseOf(t) {
+  if (t < 0.30) return 'Impactor in space';
+  if (t < 0.50) return 'Entering atmosphere';
+  if (t < 0.55) return 'Impact!';
+  if (t < 0.80) return 'Crater formation';
+  return 'Final state';
+}
+
+function initViz() {
+  var container = document.getElementById('canvas-container');
+  var canvas    = document.getElementById('viz-canvas');
+  var W = container.clientWidth;
+  var H = container.clientHeight;
+
+  // Label canvas
+  var lc = document.getElementById('label-canvas');
+  lc.width  = W; lc.height = H;
+  VIZ.labelCtx = lc.getContext('2d');
+
+  // Scene
+  VIZ.scene = new THREE.Scene();
+  VIZ.scene.background = new THREE.Color(0x2E3A47);
+
+  // Camera
+  VIZ.camera = new THREE.PerspectiveCamera(45, W/H, 0.01, 1000);
+  VIZ.clock  = new THREE.Clock();
+
+  // Renderer
+  VIZ.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  VIZ.renderer.setSize(W, H);
+  VIZ.renderer.setPixelRatio(window.devicePixelRatio || 1);
+  VIZ.renderer.setClearColor(0x2E3A47, 1);
+  VIZ.renderer.domElement.style.backgroundColor = '#2E3A47';
+
+  // Lights
+  var ambient = new THREE.AmbientLight(0x334455, 1.2);
+  VIZ.scene.add(ambient);
+  var sun = new THREE.DirectionalLight(0xffffff, 1.5);
+  sun.position.set(8, 6, 4);
+  VIZ.scene.add(sun);
+
+  VIZ.flashLight = new THREE.PointLight(0xFFFF00, 0, 3);
+  VIZ.flashLight.position.set(0, 0, 0);
+  VIZ.scene.add(VIZ.flashLight);
+
+  VIZ.animLight = new THREE.PointLight(0x4A9EFF, 0, 4);
+  VIZ.animLight.position.set(0, 1, 0);
+  VIZ.scene.add(VIZ.animLight);
+
+  // Mouse controls
+  canvas.addEventListener('mousedown', function(e) {
+    VIZ.mouse.down = true; VIZ.mouse.button = e.button;
+    VIZ.mouse.x = e.clientX; VIZ.mouse.y = e.clientY;
+  });
+  window.addEventListener('mouseup',   function() { VIZ.mouse.down = false; });
+  window.addEventListener('mousemove', function(e) {
+    if (!VIZ.mouse.down) return;
+    var dx = e.clientX - VIZ.mouse.x;
+    var dy = e.clientY - VIZ.mouse.y;
+    VIZ.mouse.x = e.clientX; VIZ.mouse.y = e.clientY;
+    if (VIZ.mouse.button === 0) {
+      VIZ.camOrbit.theta -= dx * 0.008;
+      VIZ.camOrbit.phi   = Math.max(0.15, Math.min(Math.PI - 0.15, VIZ.camOrbit.phi + dy * 0.008));
+    } else if (VIZ.mouse.button === 2) {
+      VIZ.camTarget.x -= dx * 0.006;
+      VIZ.camTarget.y += dy * 0.006;
+    }
+    updateCamera();
+  });
+  canvas.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    VIZ.camOrbit.radius = Math.max(1.5, Math.min(20, VIZ.camOrbit.radius + e.deltaY * 0.005));
+    updateCamera();
+  }, { passive: false });
+  canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  window.addEventListener('resize', function() {
+    var W2 = container.clientWidth, H2 = container.clientHeight;
+    VIZ.camera.aspect = W2 / H2;
+    VIZ.camera.updateProjectionMatrix();
+    VIZ.renderer.setSize(W2, H2);
+    lc.width = W2; lc.height = H2;
+  });
+
+  setDefaultCam();
+  renderLoop();
+}
+
+function setDefaultCam() {
+  VIZ.camOrbit.theta = 0.5;
+  VIZ.camOrbit.phi   = 1.0;
+  VIZ.camOrbit.radius = 5;
+  VIZ.camTarget.set(0, 0, 0);
+  updateCamera();
+}
+
+function updateCamera() {
+  var r = VIZ.camOrbit.radius;
+  var t = VIZ.camOrbit.theta;
+  var p = VIZ.camOrbit.phi;
+  VIZ.camera.position.set(
+    VIZ.camTarget.x + r * Math.sin(p) * Math.sin(t),
+    VIZ.camTarget.y + r * Math.cos(p),
+    VIZ.camTarget.z + r * Math.sin(p) * Math.cos(t)
+  );
+  VIZ.camera.lookAt(VIZ.camTarget);
+}
+
+function resetView() {
+  setDefaultCam();
+  if (VIZ.xSection) toggleXSection();
+}
+
+function toggleXSection() {
+  VIZ.xSection = !VIZ.xSection;
+  document.getElementById('btn-xsection').classList.toggle('active', VIZ.xSection);
+  if (VIZ.xSection) {
+    VIZ.camOrbit.theta = 0;
+    VIZ.camOrbit.phi   = Math.PI / 2;
+    VIZ.camOrbit.radius = 4;
+    VIZ.camTarget.set(0, 0, 0);
+    updateCamera();
+  } else {
+    setDefaultCam();
+  }
+}
+
+function buildScene(calc) {
+  // Clear old objects
+  while (VIZ.scene.children.length) { VIZ.scene.remove(VIZ.scene.children[0]); }
+  VIZ.ejectaParticles = [];
+
+  // Re-add lights
+  var ambient = new THREE.AmbientLight(0x334455, 1.2);
+  VIZ.scene.add(ambient);
+  var sun = new THREE.DirectionalLight(0xffffff, 1.5);
+  sun.position.set(8, 6, 4);
+  VIZ.scene.add(sun);
+
+  VIZ.flashLight = new THREE.PointLight(0xFFFF00, 0, 3);
+  VIZ.flashLight.position.set(0, 0, 0);
+  VIZ.scene.add(VIZ.flashLight);
+
+  VIZ.animLight = new THREE.PointLight(0x4A9EFF, 0, 4);
+  VIZ.animLight.position.set(0, 1, 0);
+  VIZ.scene.add(VIZ.animLight);
+
+  // Starfield
+  var starGeo = new THREE.BufferGeometry();
+  var starPos = [];
+  for (var i = 0; i < 800; i++) {
+    starPos.push((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+  var starMat = new THREE.PointsMaterial({ color: 0x9AAABB, size: 0.06 });
+  VIZ.scene.add(new THREE.Points(starGeo, starMat));
+
+  // Target surface (flat disc + horizon sphere for planet effect)
+  var tsel = document.getElementById('target-sel').value;
+  var surfColor = tsel === 'sand' ? 0x8B7355 : tsel === 'ice' ? 0x8AAAC8 : tsel === 'porous' ? 0x7A6A5A : 0x5A5A5A;
+
+  // Planet sphere (big, mostly below frame)
+  var planetGeo = new THREE.SphereGeometry(8, 32, 32);
+  var planetMat = new THREE.MeshLambertMaterial({ color: surfColor });
+  VIZ.planet = new THREE.Mesh(planetGeo, planetMat);
+  VIZ.planet.position.set(0, -8, 0);
+  VIZ.scene.add(VIZ.planet);
+
+  // Surface grid
+  var gridHelper = new THREE.GridHelper(4, 20, 0x4A6070, 0x3A4A5C);
+  gridHelper.position.set(0, 0, 0);
+  VIZ.scene.add(gridHelper);
+
+  // Atmosphere glow ring (thin torus)
+  var atmoGeo = new THREE.TorusGeometry(8.25, 0.18, 8, 64);
+  var atmoMat = new THREE.MeshBasicMaterial({ color: 0x4A9EFF, transparent: true, opacity: 0 });
+  VIZ.atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+  VIZ.atmoMesh.position.set(0, -8, 0);
+  VIZ.atmoMesh.rotation.x = Math.PI / 2;
+  VIZ.scene.add(VIZ.atmoMesh);
+
+  // Impactor
+  // Scale visually: clamp to reasonable scene size (0.04 to 0.25)
+  var impR = Math.max(0.04, Math.min(0.25, calc.d_i / 200));
+  var impGeo = new THREE.SphereGeometry(impR, 16, 16);
+  var impMat = new THREE.MeshLambertMaterial({ color: 0xAA8855, emissive: 0x221100 });
+  VIZ.impactor = new THREE.Mesh(impGeo, impMat);
+  VIZ.scene.add(VIZ.impactor);
+
+  // Trail geometry (line)
+  var trailPts = [];
+  for (var j = 0; j < 30; j++) trailPts.push(new THREE.Vector3(0, 0, 0));
+  var trailGeo = new THREE.BufferGeometry().setFromPoints(trailPts);
+  var trailMat = new THREE.LineBasicMaterial({ color: 0x4A9EFF, transparent: true, opacity: 0 });
+  VIZ.impactorTrail = new THREE.Line(trailGeo, trailMat);
+  VIZ.scene.add(VIZ.impactorTrail);
+
+  // Crater group (populated during formation phase)
+  VIZ.craterGroup = new THREE.Group();
+  VIZ.scene.add(VIZ.craterGroup);
+
+  // Ejecta particles (pre-create, hide initially)
+  var ejCount = 60;
+  for (var k = 0; k < ejCount; k++) {
+    var ejGeo = new THREE.SphereGeometry(0.025, 6, 6);
+    var ejMat = new THREE.MeshBasicMaterial({ color: 0xFF6600 });
+    var ej = new THREE.Mesh(ejGeo, ejMat);
+    ej.visible = false;
+    // Random ejection angle
+    var ejAngle  = (k / ejCount) * Math.PI * 2;
+    var ejElev   = 0.3 + Math.random() * 0.8;  // radians above horizontal
+    var ejSpeed  = 0.8 + Math.random() * 1.2;
+    ej.userData  = { angle: ejAngle, elev: ejElev, speed: ejSpeed, born: 0 };
+    VIZ.scene.add(ej);
+    VIZ.ejectaParticles.push(ej);
+  }
+}
+
+// Impactor world position as function of t
+function impactorPosition(t, calc) {
+  // Approach from upper-right along impact angle
+  var angleRad = calc.theta;  // from horizontal
+  var startDist = 4.5;
+  // At t=0: far away; at t=0.55: at surface (0,0,0)
+  var progress = Math.min(t / 0.55, 1.0);
+  // Decelerate slightly in atmosphere phase (0.30..0.50)
+  var effProgress = progress;
+  if (t > 0.30 && t < 0.55) {
+    // slight drag: ease-in the last 20%
+    var atmoFrac = (t - 0.30) / 0.25;
+    effProgress = progress * (1 - 0.06 * atmoFrac);
+  }
+  var dist = startDist * (1 - effProgress);
+  // Trajectory direction: from angle
+  var dx = -Math.cos(angleRad) * dist;
+  var dy =  Math.sin(angleRad) * dist;
+  return new THREE.Vector3(dx, dy, 0);
+}
+
+// Trail history buffer
+var trailHistory = [];
+
+function updateViz(t, calc) {
+  if (!VIZ.impactor) return;
+
+  // ── IMPACTOR ──
+  var phase = phaseOf(t);
+  var pos   = impactorPosition(t, calc);
+
+  // Hide impactor at/after impact
+  if (t >= 0.55) {
+    VIZ.impactor.visible = false;
+    VIZ.impactorTrail.material.opacity = 0;
+  } else {
+    VIZ.impactor.visible = true;
+    VIZ.impactor.position.copy(pos);
+
+    // Color: normal -> heating (orange -> white) in atmosphere phase
+    var impColor;
+    if (t < 0.30) {
+      impColor = new THREE.Color(0xAA8855);
+      VIZ.animLight.intensity = 0;
     } else {
-      cf.classList.remove('visible');
-      document.getElementById('imp-density-val').value = sel;
+      var heat = (t - 0.30) / 0.25;
+      impColor = new THREE.Color().lerpColors(
+        new THREE.Color(0xFF6600), new THREE.Color(0xFFFFFF), heat * 0.8);
+      VIZ.animLight.intensity = heat * 1.5;
+      VIZ.animLight.color.set(0x4A9EFF);
+      VIZ.animLight.position.copy(pos);
+    }
+    VIZ.impactor.material.emissive.copy(impColor).multiplyScalar(0.6);
+
+    // Trail
+    trailHistory.unshift(pos.clone());
+    if (trailHistory.length > 30) trailHistory.pop();
+    var trailPts2 = trailHistory.concat(
+      Array(Math.max(0, 30 - trailHistory.length)).fill(trailHistory[trailHistory.length-1] || pos)
+    );
+    VIZ.impactorTrail.geometry.setFromPoints(trailPts2);
+    VIZ.impactorTrail.material.opacity = t > 0.20 ? Math.min(1, (t-0.20)/0.10) : 0;
+    VIZ.impactorTrail.material.color.set(t < 0.30 ? 0x9AAABB : 0x4A9EFF);
+  }
+
+  // Atmosphere glow
+  if (t >= 0.28 && t < 0.55) {
+    VIZ.atmoMesh.material.opacity = Math.sin(((t-0.28)/0.27) * Math.PI) * 0.5;
+  } else {
+    VIZ.atmoMesh.material.opacity = 0;
+  }
+
+  // ── FLASH ──
+  if (t >= 0.50 && t < 0.58) {
+    var flashT = (t - 0.50) / 0.08;
+    VIZ.flashLight.intensity = Math.sin(flashT * Math.PI) * 4;
+    VIZ.flashLight.color.set(0xFFFF00);
+  } else {
+    VIZ.flashLight.intensity = 0;
+  }
+
+  // ── CRATER FORMATION ──
+  if (t >= 0.55) {
+    // Clear old crater meshes each frame, rebuild based on t
+    while (VIZ.craterGroup.children.length) VIZ.craterGroup.remove(VIZ.craterGroup.children[0]);
+
+    var formT = Math.min((t - 0.55) / 0.25, 1.0);  // 0..1 over formation phase
+    var finalR = Math.max(0.04, Math.min(1.5, calc.D_f / 600));  // visual scale
+    var craterR = finalR * formT;
+    var craterD = craterR * 0.4;  // depth visual
+
+    if (craterR > 0.01) {
+      // Depression ring
+      var ringGeo = new THREE.TorusGeometry(craterR, craterR * 0.08, 8, 40);
+      var rimColor = 0x7A5C3A;
+      var ringMat = new THREE.MeshLambertMaterial({ color: rimColor });
+      var ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.01;
+      VIZ.craterGroup.add(ring);
+
+      // Crater floor disc
+      var floorGeo = new THREE.CircleGeometry(craterR * 0.9, 32);
+      var floorMat = new THREE.MeshLambertMaterial({ color: 0x1A1A2E });
+      var floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -craterD;
+      VIZ.craterGroup.add(floor);
+
+      // Ejecta blanket (translucent ring)
+      if (t > 0.65) {
+        var ejBlanketT = Math.min((t - 0.65) / 0.15, 1.0);
+        var ejR = Math.max(0.1, Math.min(3.0, calc.R_ej / 500));
+        var blankGeo = new THREE.RingGeometry(craterR * 1.1, ejR * ejBlanketT, 32);
+        var blankMat = new THREE.MeshBasicMaterial({
+          color: 0x7A5C3A, transparent: true, opacity: 0.25, side: THREE.DoubleSide
+        });
+        var blank = new THREE.Mesh(blankGeo, blankMat);
+        blank.rotation.x = -Math.PI / 2;
+        blank.position.y = 0.005;
+        VIZ.craterGroup.add(blank);
+      }
+
+      // Shockwave ring (expands outward early in formation)
+      if (t < 0.70) {
+        var swT = (t - 0.55) / 0.15;
+        var swR = swT * finalR * 3;
+        var swGeo = new THREE.RingGeometry(swR * 0.88, swR, 32);
+        var swMat = new THREE.MeshBasicMaterial({
+          color: 0xFFFF00, transparent: true, opacity: Math.max(0, 0.6 - swT * 0.6), side: THREE.DoubleSide
+        });
+        var sw = new THREE.Mesh(swGeo, swMat);
+        sw.rotation.x = -Math.PI / 2;
+        sw.position.y = 0.02;
+        VIZ.craterGroup.add(sw);
+      }
     }
   }
 
-  function setGravity(val) {
-    document.getElementById('gravity').value = val;
+  // ── EJECTA ──
+  var ejActive = t >= 0.55 && t < 0.85;
+  VIZ.ejectaParticles.forEach(function(ej, idx) {
+    if (!ejActive) { ej.visible = false; return; }
+    var ejT = (t - 0.55) / 0.30;
+    var spd = ej.userData.speed;
+    var elev = ej.userData.elev;
+    var ang  = ej.userData.angle;
+    var phase_ej = ejT * spd;
+    // Ballistic: horizontal + gravity arc
+    var horiz = phase_ej * 1.0;
+    var vert  = phase_ej * Math.tan(elev) - 2.5 * phase_ej * phase_ej;
+    if (vert < -0.05) { ej.visible = false; return; }
+    ej.visible = true;
+    ej.position.set(
+      Math.cos(ang) * horiz,
+      Math.max(0, vert),
+      Math.sin(ang) * horiz
+    );
+    // Color: hot to cool
+    var coolT = Math.min(1, ejT * 2);
+    var ejColor = new THREE.Color().lerpColors(new THREE.Color(0xFF6600), new THREE.Color(0x888888), coolT);
+    ej.material.color.copy(ejColor);
+  });
+
+  // ── HUD ──
+  var hud = document.getElementById('viz-hud');
+  hud.style.display = 'block';
+  document.getElementById('hud-phase').textContent = phase;
+
+  var lines = '';
+  if (t < 0.50) {
+    var dist3d = pos.length();
+    var altKm  = Math.max(0, (dist3d - 0.5) * 80);
+    var curV   = calc.v_kms * (t < 0.30 ? 1.0 : 1.0 - 0.06 * ((t-0.30)/0.25));
+    lines += '<div class="hud-line">Velocity: <span class="hud-val">'+curV.toFixed(1)+' km/s</span></div>';
+    lines += '<div class="hud-line">Altitude: <span class="hud-val">'+altKm.toFixed(0)+' km</span></div>';
+    lines += '<div class="hud-line">Diameter: <span class="hud-val">'+calc.d_i+' m</span></div>';
+    lines += '<div class="hud-line">Angle: <span class="hud-val">'+calc.theta_deg+'&#176;</span></div>';
+  } else if (t < 0.60) {
+    var tntStr = calc.tnt_mt >= 1 ? fmt(calc.tnt_mt,1)+' MT' : fmt(calc.tnt_kt,1)+' kT';
+    lines += '<div class="hud-line">Energy: <span class="hud-val">'+tntStr+' TNT</span></div>';
+    lines += '<div class="hud-line">Kinetic: <span class="hud-val">'+fmtSci(calc.KE)+' J</span></div>';
+  } else {
+    var Df_str = calc.D_f >= 1000 ? fmt(calc.D_f/1000,2)+' km' : fmt(calc.D_f,0)+' m';
+    var dep_str= calc.depth >= 1000 ? fmt(calc.depth/1000,2)+' km' : fmt(calc.depth,0)+' m';
+    lines += '<div class="hud-line">Crater diameter: <span class="hud-val">'+Df_str+'</span></div>';
+    lines += '<div class="hud-line">Crater depth: <span class="hud-val">'+dep_str+'</span></div>';
+    lines += '<div class="hud-line">Ejecta radius: <span class="hud-val">'+(calc.R_ej>=1000?fmt(calc.R_ej/1000,1)+' km':fmt(calc.R_ej,0)+' m')+'</span></div>';
+    lines += '<div class="hud-line">M<sub>w</sub>: <span class="hud-val">'+fmt(calc.Mw,1)+'</span></div>';
+  }
+  document.getElementById('hud-lines').innerHTML = lines;
+
+  // Phase label
+  document.getElementById('phase-label').textContent = phase;
+
+  // Timeline slider (keep in sync unless user is scrubbing)
+  if (VIZ.running) {
+    document.getElementById('timeline-slider').value = Math.round(t * 1000);
+  }
+}
+
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+  if (!VIZ.renderer) return;
+
+  if (VIZ.running && VIZ.calc) {
+    var dt = VIZ.clock.getDelta() * VIZ.speed * 0.08;
+    VIZ.t = Math.min(1.0, VIZ.t + dt);
+    if (VIZ.t >= 1.0) { VIZ.running = false; document.getElementById('btn-play').textContent = '\u25B6 Play'; }
+    updateViz(VIZ.t, VIZ.calc);
   }
 
-  function toggleSection(bodyId, header) {
-    var body = document.getElementById(bodyId);
-    var isOpen = body.classList.contains('open');
-    body.classList.toggle('open', !isOpen);
-    // find the toggle span inside header
-    var tog = header.querySelector('.collapsible-toggle');
-    if (tog) tog.textContent = isOpen ? '\u25BC' : '\u25B2';
+  VIZ.renderer.render(VIZ.scene, VIZ.camera);
+}
+
+// ── ANIMATION CONTROLS ──
+function animPlay() {
+  if (!VIZ.calc) return;
+  if (VIZ.t >= 1.0) { VIZ.t = 0; trailHistory = []; buildScene(VIZ.calc); }
+  VIZ.running = true;
+  VIZ.clock.getDelta(); // flush
+  document.getElementById('btn-play').textContent = '\u23F8 Running';
+}
+function animPause() {
+  VIZ.running = false;
+  document.getElementById('btn-play').textContent = '\u25B6 Play';
+}
+function animReset() {
+  VIZ.running = false;
+  VIZ.t = 0;
+  trailHistory = [];
+  document.getElementById('btn-play').textContent = '\u25B6 Play';
+  document.getElementById('timeline-slider').value = 0;
+  if (VIZ.calc) { buildScene(VIZ.calc); updateViz(0, VIZ.calc); }
+}
+function scrubTimeline(val) {
+  VIZ.running = false;
+  document.getElementById('btn-play').textContent = '\u25B6 Play';
+  VIZ.t = parseInt(val) / 1000;
+  if (VIZ.calc) {
+    // Rebuild scene to get clean state at this t
+    trailHistory = [];
+    buildScene(VIZ.calc);
+    // Replay position silently up to t
+    updateViz(VIZ.t, VIZ.calc);
   }
+}
 
-  // ── FORMATTING HELPERS ──
-  function fmt(n, dec) {
-    if (n === null || isNaN(n)) return 'N/A';
-    return n.toFixed(dec !== undefined ? dec : 3);
-  }
-  function fmtSci(n) {
-    if (n === null || isNaN(n)) return 'N/A';
-    return n.toExponential(3);
-  }
-  function fmtNum(n) {
-    if (n === null || isNaN(n)) return 'N/A';
-    if (Math.abs(n) >= 1e9)  return (n / 1e9).toFixed(2) + ' Gt';
-    if (Math.abs(n) >= 1e6)  return (n / 1e6).toFixed(2) + ' Mt';
-    if (Math.abs(n) >= 1e3)  return (n / 1e3).toFixed(2) + ' kt';
-    return n.toFixed(2) + ' t';
-  }
+// Speed slider
+document.getElementById('speed-slider').addEventListener('input', function() {
+  var pct = parseInt(this.value);
+  VIZ.speed = pct / 100;
+  document.getElementById('speed-label').textContent = VIZ.speed.toFixed(2).replace(/\.?0+$/, '')+'&#215;';
+});
 
-  // ── MAIN CALCULATION ──
-  function calculate() {
-    var PI = Math.PI;
+// ── ENTRY POINT ──
+function calculateAndVisualize() {
+  var c = runCalc();
+  if (!c) return;
+  lastCalc = c;
+  renderResults(c);
 
-    // Inputs
-    var d_i   = parseFloat(document.getElementById('imp-diameter').value);
-    var v_kms = parseFloat(document.getElementById('imp-velocity').value);
-    var sel_d = document.getElementById('imp-density-sel').value;
-    var rho_i = sel_d === 'custom'
-                  ? parseFloat(document.getElementById('imp-density-val').value)
-                  : parseFloat(sel_d);
-    var theta_deg = parseFloat(document.getElementById('imp-angle').value);
-    var g     = parseFloat(document.getElementById('gravity').value);
+  // Init Three.js on first run
+  if (!VIZ.renderer) { initViz(); }
 
-    var tsel  = document.getElementById('target-sel').value;
-    var rho_t = parseFloat(document.getElementById('tgt-density').value);
-    var Y     = parseFloat(document.getElementById('tgt-strength').value);
+  // Hide placeholder
+  document.getElementById('viz-placeholder').style.display = 'none';
 
-    if (isNaN(d_i) || isNaN(v_kms) || isNaN(rho_i) || isNaN(theta_deg) ||
-        isNaN(g)   || isNaN(rho_t) || isNaN(Y)) {
-      alert('Please fill in all numeric fields before calculating.');
-      return;
-    }
+  // Store calc result, build scene, reset and autoplay
+  VIZ.calc = c;
+  VIZ.t = 0;
+  trailHistory = [];
+  buildScene(c);
+  updateViz(0, c);
+  setDefaultCam();
 
-    // Derived target scaling constants
-    var preset = TARGET_PRESETS[tsel] || TARGET_PRESETS.rock;
-    var K1 = preset.K1;
-    var mu = preset.mu;
+  // Slight delay then auto-play
+  setTimeout(function() { animPlay(); }, 300);
+}
 
-    var v   = v_kms * 1000;           // m/s
-    var a   = d_i / 2;                // impactor radius (m)
-    var theta = theta_deg * PI / 180; // radians
+// Legacy alias kept for any inline calls
+function calculate() { calculateAndVisualize(); }
 
-    // Impactor mass
-    var vol_i = (4/3) * PI * Math.pow(a, 3);
-    var m_i   = rho_i * vol_i;
-
-    // Kinetic energy
-    var KE    = 0.5 * m_i * Math.pow(v, 2);
-
-    // Pi groups
-    var Pi2   = 1.61 * g * a / Math.pow(v, 2);
-    var Pi3   = Y   / (rho_t * Math.pow(v, 2));
-
-    // Transient volume (gravity-dominated; strength correction applied if Pi3 significant)
-    var Pi2_eff = Pi2 + Pi3;   // combined pi group
-    var exp_grav = -3 * mu / (2 + mu);
-    var V_t   = K1 * (m_i / rho_t) * Math.pow(Pi2_eff, exp_grav);
-
-    // Pi_V
-    var Pi_V  = rho_t * V_t / m_i;
-
-    // Transient radius (simplified spherical)
-    var R_t   = Math.pow(3 * V_t / PI, 1/3);
-    var D_t   = 2 * R_t;
-
-    // Angle correction (sin(theta)^0.33)
-    var angle_corr = Math.pow(Math.sin(theta), 0.33);
-    D_t = D_t * angle_corr;
-    V_t = V_t * angle_corr;
-
-    // Simple-to-complex transition (Earth reference; scale by gravity)
-    var D_sc  = 4000 * (9.81 / g);
-
-    // Final crater diameter
-    var D_f;
-    if (D_t < D_sc) {
-      D_f = D_t;  // simple crater
-    } else {
-      D_f = D_t * Math.pow(D_t / D_sc, 0.13);  // complex crater collapse
-    }
-
-    // Depth, ejecta
-    var depth = 0.2 * D_f;
-    var R_ej  = 2.3 * (D_f / 2);
-    var V_ej  = 0.114 * Math.pow(D_f, 3);
-
-    // Energy conversions
-    var TNT_J    = 4.184e9;
-    var tnt_eq_t = KE / TNT_J;           // tonnes TNT
-    var tnt_kt   = tnt_eq_t / 1000;
-    var tnt_mt   = tnt_kt  / 1000;
-    var tsar_mt  = 50;                   // Tsar Bomba ~50 MT
-    var tsar_frac = tnt_mt / tsar_mt;
-
-    // Seismic Mw: log10(E) = 1.5*Mw + 4.8  =>  Mw = (log10(E) - 4.8) / 1.5
-    var Mw = (Math.log10(KE) - 4.8) / 1.5;
-
-    // PGA estimates at 1, 10, 100 km
-    var E0 = 1e15;  // reference energy (J)
-    function pga_g(r_km) {
-      var r = r_km * 1000;
-      return 0.1 * Math.pow(KE / E0, 1/3) / Math.pow(r, 1.7) * Math.pow(1000, 1.7);
-    }
-    var pga1   = pga_g(1);
-    var pga10  = pga_g(10);
-    var pga100 = pga_g(100);
-
-    // ── RENDER RESULTS ──
-    document.getElementById('results-placeholder').style.display = 'none';
-    document.getElementById('results-content').style.display = 'block';
-
-    var rb = document.getElementById('result-boxes');
-    rb.innerHTML = [
-      box('Transient Crater Diameter',
-          D_t >= 1000 ? fmt(D_t/1000,3)+' km' : fmt(D_t,1)+' m',
-          D_t >= 1000 ? '('+fmt(D_t,0)+' m)' : '('+fmt(D_t/1000,3)+' km)'),
-      box('Final Crater Diameter',
-          D_f >= 1000 ? fmt(D_f/1000,3)+' km' : fmt(D_f,1)+' m',
-          D_f >= D_sc ? 'Complex crater (gravity collapse applied)' : 'Simple crater morphology'),
-      box('Crater Depth',
-          depth >= 1000 ? fmt(depth/1000,3)+' km' : fmt(depth,1)+' m',
-          'Depth/diameter ~0.2 (simple craters)'),
-      box('Ejecta Blanket Radius',
-          R_ej >= 1000 ? fmt(R_ej/1000,3)+' km' : fmt(R_ej,1)+' m',
-          'Outer limit approximation'),
-      box('Ejecta Volume',
-          fmtSci(V_ej)+' m&#179;',
-          'Approximate; scales as D_f&#179;'),
-      box('Kinetic Energy',
-          fmtSci(KE)+' J',
-          fmtNum(tnt_eq_t)+' TNT equivalent'),
-      box('TNT Equivalent',
-          tnt_mt >= 1 ? fmt(tnt_mt,2)+' MT' : fmt(tnt_kt,3)+' kT',
-          tsar_frac >= 0.01
-            ? fmt(tsar_frac,3)+'&#215; Tsar Bomba (50 MT)'
-            : fmt(tnt_kt,4)+' kT vs. Tsar Bomba 50,000 kT'),
-      box('Seismic Equivalent Mw',
-          'M<sub>w</sub> '+fmt(Mw,1),
-          'log&#8321;&#8320;(E) = 1.5&#8201;M<sub>w</sub> + 4.8')
-    ].join('');
-
-    var pb = document.getElementById('pi-boxes');
-    pb.innerHTML = piBox('&#960;&#8322; (gravity)', Pi2.toExponential(3))
-                 + piBox('&#960;&#8323; (strength)', Pi3.toExponential(3))
-                 + piBox('&#960;_V (volume)', Pi_V.toExponential(3))
-                 + piBox('Angle corr.', fmt(angle_corr,4));
-
-    // ── GEO PANEL ──
-    document.getElementById('geo-placeholder').style.display = 'none';
-    document.getElementById('geo-content').style.display = 'block';
-
-    var gb = document.getElementById('geo-boxes');
-    gb.innerHTML = [
-      gbox('Kinetic Energy', fmtSci(KE)+' J', ''),
-      gbox('TNT Equivalent',
-           tnt_mt >= 1 ? fmt(tnt_mt,2)+' megatonnes' : fmt(tnt_kt,3)+' kilotonnes',
-           tsar_frac >= 0.01 ? fmt(tsar_frac,3)+'&#215; Tsar Bomba (50 MT)' : 'Tsar Bomba fraction: '+tsar_frac.toExponential(2)),
-      gbox('Seismic M<sub>w</sub>', fmt(Mw,1),
-           'M<sub>w</sub> 6.0 &#8776; 1 kT TNT; M<sub>w</sub> 9.0 &#8776; Sumatra 2004'),
-      gbox('Impactor Mass', fmtSci(m_i)+' kg', 'Volume '+fmtSci(vol_i)+' m&#179;')
-    ].join('');
-
-    function pgaLabel(p) {
-      if (p > 1.0) return 'Extreme &#8212; structural collapse';
-      if (p > 0.5) return 'Severe &#8212; major structural damage';
-      if (p > 0.1) return 'Strong &#8212; significant damage possible';
-      if (p > 0.02) return 'Moderate &#8212; light damage';
-      if (p > 0.003) return 'Light &#8212; felt by most';
-      return 'Minor &#8212; barely perceptible';
-    }
-    document.getElementById('pga-tbody').innerHTML = [
-      ['1 km',  pga1],
-      ['10 km', pga10],
-      ['100 km',pga100]
-    ].map(function(row) {
-      return '<tr><td>'+row[0]+'</td>'
-           + '<td class="pga-val">'+row[1].toExponential(2)+' g</td>'
-           + '<td>'+pgaLabel(row[1])+'</td></tr>';
-    }).join('');
-  }
-
-  // ── COMPONENT BUILDERS ──
-  function box(label, value, sub) {
-    return '<div class="result-box">'
-         + '<div class="result-label">'+label+'</div>'
-         + '<div class="result-value">'+value+'</div>'
-         + (sub ? '<div class="result-sub">'+sub+'</div>' : '')
-         + '</div>';
-  }
-  function piBox(label, val) {
-    return '<div class="pi-box">'
-         + '<div class="pi-label">'+label+'</div>'
-         + '<div class="pi-val">'+val+'</div>'
-         + '</div>';
-  }
-  function gbox(label, val, sub) {
-    return '<div class="geo-box">'
-         + '<div class="geo-label">'+label+'</div>'
-         + '<div class="geo-value">'+val+'</div>'
-         + (sub ? '<div class="geo-sub">'+sub+'</div>' : '')
-         + '</div>';
-  }
 </script>
 
 </body>
