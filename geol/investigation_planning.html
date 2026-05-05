@@ -4,572 +4,2254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Drill Rig &amp; Method Selector</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<title>GL03 &mdash; Drilling Methods Simulator | MFI Alaska Geo Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#2E3A47;--bg2:#1A2530;--bg3:#263240;--bg4:#3A4A5C;
-  --border:#4A6070;--border2:#3A4A5C;
-  --text:#E8EAEC;--muted:#9AAABB;--dim:#263240;
-  --accent:#D4651A;--teal:#2ec4b6;--green:#3dba7e;--red:#e05a2b;--purple:#9b72cf;--blue:#4a9eff;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background-color: #2E3A47;
+color: #E8EAEC;
+font-family: ‘IBM Plex Mono’, ‘Courier New’, Consolas, monospace;
+font-size: 0.9rem;
+min-height: 100vh;
 }
-html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans)}
-body::before{content:'';position:fixed;inset:0;
-  background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.015) 39px,rgba(255,255,255,.015) 40px),
-  repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.015) 39px,rgba(255,255,255,.015) 40px);
-  pointer-events:none;z-index:0}
-.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px 80px}
 
-/* HEADER */
-.hdr{border-bottom:1px solid var(--border2);padding:28px 0 20px;margin-bottom:36px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.hdr-eye{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
-.hdr-title{font-family:var(--mono);font-size:22px;font-weight:600;letter-spacing:-.02em}
-.hdr-title span{color:var(--accent)}
-.back{font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:6px 14px;border-radius:3px;transition:all .15s;letter-spacing:.05em}
-.back:hover{color:var(--accent);border-color:var(--accent)}
+a { color: #9AAABB; text-decoration: none; }
+a:hover { color: #D4651A; }
 
-/* STEP CARD */
-.step{background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin-bottom:20px;transition:border-color .2s}
-.step.active{border-color:var(--border2)}
-.step.complete{border-color:rgba(61,186,126,.3)}
-.step-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
-.step-num{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--muted);flex-shrink:0}
-.step-num.done{color:var(--green)}
-.step-label{font-family:var(--mono);font-size:13px;font-weight:600;flex:1}
-.step-check{font-size:14px;margin-left:auto;color:var(--green);display:none}
-.step.complete .step-check{display:block}
-.step-summary{font-family:var(--mono);font-size:11px;color:var(--teal);margin-left:auto;display:none}
-.step.complete.collapsed .step-summary{display:block}
-.step-body{padding:0 18px 18px;border-top:1px solid var(--border)}
-.step.collapsed .step-body{display:none}
-.step.collapsed{border-color:var(--border)}
+header {
+background-color: #1A2530;
+border-bottom: 2px solid #D4651A;
+padding: 1.2rem 1.5rem;
+}
+.breadcrumb { font-size: 0.75rem; color: #9AAABB; margin-bottom: 0.4rem; }
+.header-title { display: flex; align-items: baseline; gap: 1rem; }
+.module-id { color: #D4651A; font-weight: 700; font-size: 1rem; }
+header h1 { color: #E8EAEC; font-size: 1.3rem; font-weight: 700; }
+.header-sub { margin-top: 0.35rem; color: #9AAABB; font-size: 0.8rem; }
 
-/* OPTION GRID */
-.opt-grid{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px}
-.opt-grid.single .opt:hover{border-color:var(--accent)}
-.opt-grid.single .opt.sel{border-color:var(--accent)!important;color:var(--accent)!important;background:rgba(240,165,0,.08)!important;box-shadow:0 0 0 1px var(--accent)}
+.setup-panel {
+background-color: #3A4A5C;
+border-bottom: 1px solid #4A6070;
+padding: 1rem 1.5rem;
+}
+.setup-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr auto;
+gap: 1rem;
+align-items: end;
+}
+.setup-group label {
+display: block;
+font-size: 0.75rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 0.35rem;
+}
+.setup-group select,
+.setup-group input[type=“range”] {
+width: 100%;
+background-color: #2E3A47;
+color: #E8EAEC;
+border: 1px solid #4A6070;
+padding: 0.45rem 0.6rem;
+font-family: inherit;
+font-size: 0.85rem;
+appearance: none;
+-webkit-appearance: none;
+cursor: pointer;
+outline: none;
+}
+.setup-group select:focus,
+.setup-group input[type=“range”]:focus { border-color: #D4651A; }
+.setup-group select option { background-color: #2E3A47; }
+.depth-val { font-size: 0.75rem; color: #D4651A; margin-top: 0.2rem; }
+.btn-start {
+background-color: #D4651A;
+color: #fff;
+border: none;
+padding: 0.55rem 1.4rem;
+font-family: inherit;
+font-size: 0.9rem;
+font-weight: 700;
+cursor: pointer;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+white-space: nowrap;
+transition: background-color 0.15s;
+}
+.btn-start:hover { background-color: #b85515; }
+.btn-start:disabled { background-color: #4A6070; cursor: not-allowed; }
 
-.opt-grid.multi .opt:hover{border-color:var(--teal)}
-.opt-grid.multi .opt.sel{border-color:var(--teal)!important;color:var(--teal)!important;background:rgba(46,196,182,.08)!important;box-shadow:0 0 0 1px var(--teal)}
+.main-layout {
+display: grid;
+grid-template-columns: 60% 40%;
+height: calc(100vh - 220px);
+min-height: 520px;
+}
 
-.opt{font-family:var(--mono);font-size:12px;padding:9px 14px;border:1px solid var(--border2);border-radius:3px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;background:var(--bg3);line-height:1.4}
-.opt-note{font-size:10px;color:var(--dim);margin-top:3px}
+.cs-panel {
+background-color: #2E3A47;
+border-right: 1px solid #4A6070;
+display: flex;
+flex-direction: column;
+padding: 0.5rem;
+position: relative;
+}
+.cs-panel h2 {
+font-size: 0.75rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+margin-bottom: 0.4rem;
+padding: 0 0.3rem;
+}
+#cs-canvas { background-color: #2E3A47; flex: 1; display: block; width: 100%; }
 
-/* RANGE SLIDER */
-.slider-wrap{padding-top:16px}
-.slider-label{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.slider-val{font-size:14px;color:var(--accent);font-weight:600}
-input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border2);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg);box-shadow:0 0 0 2px var(--accent)}
-.depth-marks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:6px}
+.gauges-panel {
+background-color: #2E3A47;
+display: flex;
+flex-direction: column;
+padding: 0.6rem;
+gap: 0.5rem;
+overflow-y: auto;
+}
+.gauges-panel h2 {
+font-size: 0.75rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+.gauge-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.gauge-card {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+padding: 0.5rem 0.6rem;
+position: relative;
+}
+.gauge-label {
+font-size: 0.7rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+margin-bottom: 0.3rem;
+}
+.gauge-value { font-size: 1.1rem; font-weight: 700; color: #D4651A; }
+.gauge-unit { font-size: 0.65rem; color: #9AAABB; margin-left: 0.2rem; }
+canvas.mini-gauge { display: block; width: 100%; background-color: #3A4A5C; }
+.gauge-full {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+padding: 0.5rem 0.6rem;
+}
+.status-box {
+background-color: #1A2530;
+border: 1px solid #4A6070;
+border-left: 3px solid #D4651A;
+padding: 0.5rem 0.7rem;
+font-size: 0.75rem;
+color: #9AAABB;
+min-height: 3.5rem;
+flex-shrink: 0;
+}
+.status-box .status-event { color: #D4651A; font-weight: 700; }
+.status-box .status-normal { color: #6BA84A; }
+.status-box .status-warning { color: #D4651A; }
+.status-box .status-critical { color: #D64A4A; font-weight: 700; }
 
-/* SECTION DIVIDER */
-.sdiv{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);padding:14px 0 6px;border-top:1px solid var(--border);margin-top:10px}
+.controls-bar {
+background-color: #1A2530;
+border-top: 1px solid #4A6070;
+padding: 0.6rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1.2rem;
+flex-wrap: wrap;
+}
+.ctrl-btn {
+background-color: #4A6070;
+color: #E8EAEC;
+border: none;
+padding: 0.4rem 0.9rem;
+font-family: inherit;
+font-size: 0.8rem;
+cursor: pointer;
+transition: background-color 0.15s;
+}
+.ctrl-btn:hover { background-color: #5a7080; }
+.ctrl-btn.active { background-color: #D4651A; }
+.ctrl-group { display: flex; align-items: center; gap: 0.5rem; }
+.ctrl-group label {
+font-size: 0.72rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+white-space: nowrap;
+}
+.ctrl-group input[type=“range”] { width: 90px; accent-color: #D4651A; cursor: pointer; }
+.ctrl-val { font-size: 0.75rem; color: #D4651A; min-width: 2.5rem; }
+.time-display { margin-left: auto; font-size: 0.8rem; color: #9AAABB; }
+.time-display span { color: #E8EAEC; font-weight: 700; }
+.btn-export {
+background-color: #3A4A5C;
+color: #9AAABB;
+border: 1px solid #4A6070;
+padding: 0.4rem 0.8rem;
+font-family: inherit;
+font-size: 0.75rem;
+cursor: pointer;
+transition: all 0.15s;
+}
+.btn-export:hover { color: #E8EAEC; border-color: #9AAABB; }
 
-/* NEXT BUTTON */
-.next-btn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:9px 22px;border-radius:3px;cursor:pointer;transition:all .15s;border:1px solid var(--accent);background:var(--accent);color:var(--bg);margin-top:16px;font-weight:600}
-.next-btn:hover{background:#ffc233;border-color:#ffc233}
-.next-btn:disabled{background:var(--bg3);border-color:var(--border2);color:var(--dim);cursor:not-allowed}
+.results-panel {
+background-color: #2E3A47;
+border-top: 2px solid #4A6070;
+display: none;
+}
+.results-panel.visible { display: block; }
+.results-header {
+background-color: #3A4A5C;
+padding: 0.6rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+cursor: pointer;
+border-bottom: 1px solid #4A6070;
+}
+.results-header h3 {
+font-size: 0.85rem;
+color: #D4651A;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+}
+.results-body { padding: 1rem 1.5rem; }
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.result-stat {
+background-color: #3A4A5C;
+border: 1px solid #4A6070;
+padding: 0.6rem 0.8rem;
+}
+.result-stat .r-label {
+font-size: 0.7rem;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+margin-bottom: 0.2rem;
+}
+.result-stat .r-val { font-size: 1.1rem; font-weight: 700; color: #D4651A; }
+.log-table-wrap { overflow-x: auto; margin-bottom: 1rem; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.log-table th {
+background-color: #1A2530;
+color: #9AAABB;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+padding: 0.4rem 0.7rem;
+text-align: left;
+border-bottom: 1px solid #4A6070;
+}
+.log-table td {
+padding: 0.35rem 0.7rem;
+border-bottom: 1px solid #3A4A5C;
+color: #E8EAEC;
+}
+.log-table tr:nth-child(even) td { background-color: #3A4A5C; }
+.analysis-box {
+background-color: #1A2530;
+border-left: 3px solid #D4651A;
+padding: 0.8rem 1rem;
+font-size: 0.8rem;
+color: #9AAABB;
+line-height: 1.6;
+}
+.analysis-box strong { color: #D4651A; }
 
-/* RESULT PANEL */
-#resultPanel{display:none;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:24px;margin-top:8px}
-.res-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+footer {
+background-color: #1A2530;
+border-top: 1px solid #4A6070;
+padding: 0.7rem 1.5rem;
+font-size: 0.7rem;
+color: #9AAABB;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 0.4rem;
+}
+footer .footer-notice { font-style: italic; }
 
-.res-primary{background:var(--bg3);border:1px solid rgba(240,165,0,.3);border-radius:4px;padding:18px;margin-bottom:16px}
-.res-primary-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.res-rig{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
-.res-method{font-family:var(--mono);font-size:13px;color:var(--teal);margin-bottom:12px}
-.res-rationale{font-size:13px;color:var(--muted);line-height:1.7}
+.gauge-card.dimmed { opacity: 0.35; }
 
-.res-alt{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:14px;margin-bottom:10px}
-.res-alt:last-child{margin-bottom:0}
-.res-alt-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.res-alt-rig{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
-.res-alt-method{font-family:var(--mono);font-size:11px;color:var(--teal);margin-bottom:6px}
-.res-alt-note{font-size:12px;color:var(--muted);line-height:1.6}
+#decision-overlay {
+display: none;
+position: fixed;
+inset: 0;
+background-color: rgba(26, 37, 48, 0.78);
+z-index: 999;
+align-items: center;
+justify-content: center;
+}
+#decision-overlay.visible { display: flex; }
+.decision-card {
+background-color: #1A2530;
+border: 2px solid #D4651A;
+padding: 1.4rem 1.6rem;
+max-width: 460px;
+width: 90%;
+}
+.decision-card h3 {
+color: #D4651A;
+font-size: 0.9rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 0.6rem;
+}
+.decision-card p {
+color: #E8EAEC;
+font-size: 0.85rem;
+line-height: 1.5;
+margin-bottom: 1rem;
+}
+.dec-detail {
+color: #9AAABB;
+font-size: 0.75rem;
+background-color: #2E3A47;
+padding: 0.6rem 0.8rem;
+border-left: 2px solid #4A6070;
+margin-bottom: 1rem;
+line-height: 1.5;
+}
+.decision-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.dec-btn {
+background-color: #3A4A5C;
+color: #E8EAEC;
+border: 1px solid #4A6070;
+padding: 0.6rem 0.8rem;
+font-family: inherit;
+font-size: 0.8rem;
+cursor: pointer;
+text-align: left;
+transition: all 0.15s;
+}
+.dec-btn:hover { background-color: #4A6070; border-color: #D4651A; }
+.dec-btn-title { color: #D4651A; font-weight: 700; display: block; margin-bottom: 0.2rem; }
+.dec-btn-sub { color: #9AAABB; font-size: 0.7rem; }
 
-.res-flags{margin-top:16px}
-.res-flags-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
-.flag{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.5}
-.flag:last-child{border-bottom:none}
-.flag-icon{color:var(--red);flex-shrink:0;font-size:13px}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #2E3A47; }
+::-webkit-scrollbar-thumb { background: #4A6070; }
+::-webkit-scrollbar-thumb:hover { background: #D4651A; }
 
-.reset-btn{font-family:var(--mono);font-size:11px;padding:8px 18px;border-radius:3px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--muted);margin-top:16px;transition:all .15s}
-.reset-btn:hover{border-color:var(--text);color:var(--text)}
+@media (max-width: 900px) {
+.setup-grid { grid-template-columns: 1fr 1fr; }
+.main-layout { grid-template-columns: 1fr; height: auto; }
+.cs-panel { min-height: 380px; }
+.gauges-panel { max-height: 400px; }
+}
 </style>
 
 </head>
 <body>
-<div class="wrap">
 
-<div class="hdr">
-  <div>
-    <div class="hdr-eye">Geotechnical Field Reference — Alaska DOT</div>
-    <div class="hdr-title">Drill Rig &amp; Method <span>Selector</span></div>
+<header>
+  <div class="breadcrumb">
+    <a href="geol-index.html">&#8592; Geology &amp; Field Tools</a> &nbsp;|&nbsp;
+    <a href="tool-index.html">Tool Index</a>
   </div>
-  <div style="display:flex;gap:6px">
-    <a class="back" href="../geol.html">← Tools</a>
-    <a class="back" href="../index.html">Home</a>
+  <div class="header-title">
+    <span class="module-id">GL03</span>
+    <h1>Drilling Methods Simulator</h1>
   </div>
-</div>
+  <p class="header-sub">Select a drilling method and ground condition &mdash; watch pressure, RPM, penetration rate, and bit mechanics respond in real time</p>
+</header>
 
-<!-- STEP 1: PURPOSE -->
-
-<div class="step active" id="s1">
-  <div class="step-hdr" onclick="toggleStep('s1')">
-    <span class="step-num" id="s1-num">01</span>
-    <span class="step-label">Project Purpose</span>
-    <span class="step-summary" id="s1-sum"></span>
-    <span class="step-check">✓</span>
-  </div>
-  <div class="step-body">
-    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Select the primary purpose. This sets baseline investigation requirements.</div>
-    <div class="opt-grid single" id="purposeGrid">
-      <div class="opt" data-id="pave" onclick="pickPurpose(this)">Pavement Preservation<div class="opt-note">Overlay, mill &amp; fill, rehab</div></div>
-      <div class="opt" data-id="newroad" onclick="pickPurpose(this)">New Road<div class="opt-note">Full corridor investigation</div></div>
-      <div class="opt" data-id="culvert" onclick="pickPurpose(this)">Culvert<div class="opt-note">Replacement or new installation</div></div>
-      <div class="opt" data-id="bridge" onclick="pickPurpose(this)">Bridge<div class="opt-note">Foundation investigation</div></div>
-      <div class="opt" data-id="runway" onclick="pickPurpose(this)">Runway / Airstrip<div class="opt-note">Airport pavement</div></div>
-      <div class="opt" data-id="lightpole" onclick="pickPurpose(this)">Light Pole / Sign<div class="opt-note">Shallow foundation</div></div>
-      <div class="opt" data-id="structfound" onclick="pickPurpose(this)">Structure Foundation<div class="opt-note">Building, wall, heavy structure</div></div>
-      <div class="opt" data-id="basin" onclick="pickPurpose(this)">Settlement Basin / Pond<div class="opt-note">Retention, infiltration</div></div>
-      <div class="opt" data-id="slope" onclick="pickPurpose(this)">Slope Stabilization<div class="opt-note">Landslide, cut/fill failure</div></div>
-      <div class="opt" data-id="utility" onclick="pickPurpose(this)">Utility Trench / Pipeline<div class="opt-note">Underground utilities</div></div>
-      <div class="opt" data-id="embankment" onclick="pickPurpose(this)">Embankment / Fill<div class="opt-note">Road fills, levees</div></div>
-      <div class="opt" data-id="village" onclick="pickPurpose(this)">Remote / Village Work<div class="opt-note">Off-road, fly-in sites</div></div>
+<div class="setup-panel">
+  <div class="setup-grid">
+    <div class="setup-group">
+      <label>Drilling Method</label>
+      <select id="sel-method">
+        <option value="auger">Auger (Continuous Flight)</option>
+        <option value="rotary">Rotary Mud Rotary</option>
+        <option value="sonic">Sonic</option>
+        <option value="percussion">Percussion (Pneumatic)</option>
+        <option value="directpush">Direct Push</option>
+        <option value="cabletool">Cable Tool</option>
+      </select>
     </div>
-    <button class="next-btn" id="s1-next" disabled onclick="nextStep('s1','s2')">Next →</button>
-  </div>
-</div>
-
-<!-- STEP 2: ACCESS -->
-
-<div class="step collapsed" id="s2">
-  <div class="step-hdr" onclick="toggleStep('s2')">
-    <span class="step-num" id="s2-num">02</span>
-    <span class="step-label">Site Access</span>
-    <span class="step-summary" id="s2-sum"></span>
-    <span class="step-check">✓</span>
-  </div>
-  <div class="step-body">
-    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">How does equipment reach the site?</div>
-    <div class="opt-grid single" id="accessGrid">
-      <div class="opt" data-id="road" onclick="pickAccess(this)">Road Access<div class="opt-note">Site reachable by truck on maintained road</div></div>
-      <div class="opt" data-id="offroad" onclick="pickAccess(this)">Off-Road / Limited Access<div class="opt-note">Requires tracked equipment, soft terrain, steep grades, or no maintained road</div></div>
-      <div class="opt" data-id="flyin" onclick="pickAccess(this)">Fly-In Only<div class="opt-note">Remote site reachable only by fixed-wing or helicopter — weight and size are critical constraints</div></div>
+    <div class="setup-group">
+      <label>Ground Condition</label>
+      <select id="sel-ground">
+        <option value="softclay">Soft Clay / Silty Clay &mdash; CL/ML</option>
+        <option value="glaciofluvial">Glaciofluvial Sand &amp; Gravel &mdash; SP/GW</option>
+        <option value="loessgravel">Loess over Dense Gravel &mdash; ML/GP</option>
+        <option value="weatheredrock">Weathered Bedrock / Rock Core &mdash; R2&ndash;R4</option>
+        <option value="glacialtill">Glacial Till (Lodgement) &mdash; GC/GM</option>
+        <option value="muskeg">Organic / Muskeg over Silt &mdash; PT/OL/ML</option>
+        <option value="alluvium">River Alluvium (Mixed Grain) &mdash; SM/SP/GW</option>
+        <option value="permafrost">Permafrost with Ice-Rich Silt &mdash; ML</option>
+        <option value="outwash">Quaternary Outwash (Cobbles) &mdash; GP</option>
+        <option value="bootlegger">Bootlegger Cove (Glaciomarine) &mdash; CL/CH</option>
+      </select>
     </div>
-    <button class="next-btn" id="s2-next" disabled onclick="nextStep('s2','s3')">Next →</button>
-  </div>
-</div>
-
-<!-- STEP 3: DEPTH -->
-
-<div class="step collapsed" id="s3">
-  <div class="step-hdr" onclick="toggleStep('s3')">
-    <span class="step-num" id="s3-num">03</span>
-    <span class="step-label">Expected Investigation Depth</span>
-    <span class="step-summary" id="s3-sum"></span>
-    <span class="step-check">✓</span>
-  </div>
-  <div class="step-body">
-    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Maximum anticipated depth for any single test hole or boring.</div>
-    <div class="slider-wrap">
-      <div class="slider-label"><span>Target Depth</span><span class="slider-val" id="depthVal">20 ft</span></div>
-      <input type="range" id="depthSlider" min="1" max="150" value="20" oninput="updateDepth(this.value)">
-      <div class="depth-marks"><span>1 ft</span><span>25 ft</span><span>50 ft</span><span>100 ft</span><span>150 ft</span></div>
+    <div class="setup-group">
+      <label>Target Depth &mdash; <span id="depth-lbl">30</span> m</label>
+      <input type="range" id="depth-slider" min="10" max="50" value="30" step="5">
+      <div class="depth-val">10 m &ndash; 50 m range</div>
     </div>
-    <div id="depthNote" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--teal);line-height:1.6"></div>
-    <button class="next-btn" id="s3-next" onclick="nextStep('s3','s4')">Next →</button>
-  </div>
-</div>
-
-<!-- STEP 4: GROUND CONDITIONS -->
-
-<div class="step collapsed" id="s4">
-  <div class="step-hdr" onclick="toggleStep('s4')">
-    <span class="step-num" id="s4-num">04</span>
-    <span class="step-label">Expected Ground Conditions</span>
-    <span class="step-summary" id="s4-sum"></span>
-    <span class="step-check">✓</span>
-  </div>
-  <div class="step-body">
-    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">Select all that may apply. These are anticipated conditions — not confirmed.</div>
-    <div class="opt-grid multi" id="condGrid">
-      <div class="opt" data-id="cobbles" onclick="toggleCond(this)">Cobbles Expected<div class="opt-note">Cobble-dominated gravels (&gt;3")</div></div>
-      <div class="opt" data-id="boulders" onclick="toggleCond(this)">Boulders Possible<div class="opt-note">Individual boulders that may block advancement</div></div>
-      <div class="opt" data-id="boulder_size" onclick="toggleCond(this)">Need Boulder Size / Extent<div class="opt-note">Mapping boulders for design (e.g. excavation, pile layout)</div></div>
-      <div class="opt" data-id="bedrock" onclick="toggleCond(this)">Bedrock Anticipated<div class="opt-note">Need to determine depth or core into rock</div></div>
-      <div class="opt" data-id="core_rock" onclick="toggleCond(this)">Rock Core Required<div class="opt-note">RQD, fracture logging, lab testing of rock</div></div>
-      <div class="opt" data-id="heave" onclick="toggleCond(this)">Heaving / Caving Soils<div class="opt-note">Loose sands, silts below water table — hole won't stay open</div></div>
-      <div class="opt" data-id="gw_shallow" onclick="toggleCond(this)">Shallow Groundwater<div class="opt-note">Groundwater within the boring interval</div></div>
-      <div class="opt" data-id="permafrost" onclick="toggleCond(this)">Permafrost / Frozen Ground<div class="opt-note">Expect ice-rich or frozen materials</div></div>
-      <div class="opt" data-id="soft_soil" onclick="toggleCond(this)">Very Soft Soils<div class="opt-note">Organic, peaty, or soft fine-grained soils</div></div>
-      <div class="opt" data-id="none" onclick="toggleCond(this)">No Special Conditions<div class="opt-note">Relatively uniform, drill-friendly soils expected</div></div>
+    <div class="setup-group">
+      <button class="btn-start" id="btn-start">&#9654; Start Simulation</button>
     </div>
-    <button class="next-btn" id="s4-next" onclick="nextStep('s4','s5')">Next →</button>
   </div>
 </div>
 
-<!-- STEP 5: SAMPLING -->
-
-<div class="step collapsed" id="s5">
-  <div class="step-hdr" onclick="toggleStep('s5')">
-    <span class="step-num" id="s5-num">05</span>
-    <span class="step-label">Sampling Requirements</span>
-    <span class="step-summary" id="s5-sum"></span>
-    <span class="step-check">✓</span>
+<div class="main-layout">
+  <div class="cs-panel">
+    <h2>Subsurface Cross-Section &amp; Bit Animation</h2>
+    <canvas id="cs-canvas"></canvas>
   </div>
-  <div class="step-body">
-    <div style="font-size:12px;color:var(--muted);padding-top:14px;line-height:1.6">What sampling is required from the boring?</div>
-    <div class="opt-grid multi" id="sampGrid">
-      <div class="opt" data-id="spt" onclick="toggleSamp(this)">SPT (Standard Penetration Test)<div class="opt-note">2" split spoon, blow counts, disturbed sample</div></div>
-      <div class="opt" data-id="modcal" onclick="toggleSamp(this)">Modified California (3" Split Spoon)<div class="opt-note">Larger sample, common in Alaska — good for gravelly soils</div></div>
-      <div class="opt" data-id="shelby" onclick="toggleSamp(this)">Shelby Tube (Undisturbed)<div class="opt-note">Soft cohesive soils — needed for strength and consolidation testing</div></div>
-      <div class="opt" data-id="continuous" onclick="toggleSamp(this)">Continuous Sampling<div class="opt-note">Sample every foot — critical stratigraphy, contamination, or thin layer detection</div></div>
-      <div class="opt" data-id="rock_core" onclick="toggleSamp(this)">Rock Core (NQ/HQ/PQ)<div class="opt-note">Oriented core for RQD, fracture logging, rock strength</div></div>
-      <div class="opt" data-id="no_sample" onclick="toggleSamp(this)">No Sample Required<div class="opt-note">Depth to refusal only, water level, or probe only</div></div>
+
+  <div class="gauges-panel">
+    <h2>Live Drilling Gauges</h2>
+
+```
+<div class="gauge-row">
+  <div class="gauge-card" id="g-waterlevel">
+    <div class="gauge-label">Water Level</div>
+    <canvas class="mini-gauge" id="gc-water" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-water">&#8212;</div><span class="gauge-unit">m</span>
+  </div>
+  <div class="gauge-card" id="g-pressure">
+    <div class="gauge-label">Pressure</div>
+    <canvas class="mini-gauge" id="gc-pressure" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-pressure">&#8212;</div><span class="gauge-unit">psi</span>
+  </div>
+</div>
+
+<div class="gauge-row">
+  <div class="gauge-card" id="g-downforce">
+    <div class="gauge-label">Down Force</div>
+    <canvas class="mini-gauge" id="gc-force" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-force">&#8212;</div><span class="gauge-unit">kN</span>
+  </div>
+  <div class="gauge-card" id="g-rpm">
+    <div class="gauge-label" id="lbl-rpm">RPM</div>
+    <canvas class="mini-gauge" id="gc-rpm" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-rpm">&#8212;</div><span class="gauge-unit" id="unit-rpm">rpm</span>
+  </div>
+</div>
+
+<div class="gauge-full">
+  <div class="gauge-label">Penetration Rate &mdash; history</div>
+  <canvas id="gc-penrate" width="300" height="70" style="display:block;width:100%;background-color:#3A4A5C;"></canvas>
+  <div style="display:flex;justify-content:space-between;margin-top:0.2rem;">
+    <div class="gauge-value" id="gv-pen">&#8212;</div><span class="gauge-unit">m/hr</span>
+    <span style="font-size:0.68rem;color:#9AAABB;" id="pen-range">0 &ndash; 25 m/hr</span>
+  </div>
+</div>
+
+<div class="gauge-row">
+  <div class="gauge-card" id="g-recovery">
+    <div class="gauge-label">Core Recovery</div>
+    <canvas class="mini-gauge" id="gc-recovery" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-recovery">&#8212;</div><span class="gauge-unit">%</span>
+  </div>
+  <div class="gauge-card" id="g-torque">
+    <div class="gauge-label">Torque</div>
+    <canvas class="mini-gauge" id="gc-torque" width="120" height="70"></canvas>
+    <div class="gauge-value" id="gv-torque">&#8212;</div><span class="gauge-unit">kN&middot;m</span>
+  </div>
+</div>
+
+<div class="gauge-card" id="g-vibration">
+  <div class="gauge-label">Vibration Amplitude (Sonic)</div>
+  <canvas class="mini-gauge" id="gc-vib" width="120" height="50"></canvas>
+  <div class="gauge-value" id="gv-vib">&#8212;</div><span class="gauge-unit">mm/s</span>
+</div>
+
+<div class="status-box" id="status-box">
+  <span style="color:#4A6070;">&mdash; Awaiting simulation start &mdash;</span>
+</div>
+```
+
+  </div>
+</div>
+
+<div class="controls-bar">
+  <button class="ctrl-btn" id="btn-pause" disabled>&#9646;&#9646; Pause</button>
+  <button class="ctrl-btn" id="btn-reset">&#8635; Reset</button>
+
+  <div class="ctrl-group">
+    <label>Speed</label>
+    <input type="range" id="speed-slider" min="1" max="8" value="3" step="1">
+    <span class="ctrl-val" id="speed-val">3&times;</span>
+  </div>
+
+  <div class="ctrl-group">
+    <label>Down Force</label>
+    <input type="range" id="force-ctrl" min="5" max="100" value="25" step="5">
+    <span class="ctrl-val" id="force-ctrlval">25 kN</span>
+  </div>
+
+  <div class="ctrl-group" id="rpm-ctrl-group">
+    <label>RPM</label>
+    <input type="range" id="rpm-ctrl" min="10" max="200" value="60" step="10">
+    <span class="ctrl-val" id="rpm-ctrlval">60</span>
+  </div>
+
+<button class="btn-export" id="btn-export" disabled>⇩ Export Log (CSV)</button>
+
+  <div class="time-display">
+    Elapsed: <span id="time-display">0h 00m</span> &nbsp;|&nbsp; Depth: <span id="depth-display">0.0 m</span>
+  </div>
+</div>
+
+<div class="results-panel" id="results-panel">
+  <div class="results-header" id="results-toggle">
+    <h3>&#9660; Drilling Results &amp; Analysis</h3>
+    <span style="font-size:0.72rem;color:#9AAABB;">Click to collapse</span>
+  </div>
+  <div class="results-body" id="results-body">
+    <div class="results-grid" id="results-stats"></div>
+    <div class="log-table-wrap">
+      <table class="log-table" id="log-table">
+        <thead><tr>
+          <th>Depth (m)</th><th>Material</th><th>Pen. Rate (m/hr)</th>
+          <th>Pressure (psi)</th><th>Down Force (kN)</th>
+          <th>Recovery (%)</th><th>Sample Quality</th><th>Notes</th>
+        </tr></thead>
+        <tbody id="log-tbody"></tbody>
+      </table>
     </div>
-    <button class="next-btn" id="s5-next" onclick="getResult()">Generate Recommendation →</button>
+    <div class="analysis-box" id="analysis-box"></div>
   </div>
 </div>
 
-<!-- RESULT -->
-
-<div id="resultPanel">
-  <div class="res-eyebrow">Recommendation</div>
-  <div class="res-primary" id="resPrimary"></div>
-  <div id="resAlts"></div>
-  <div class="res-flags" id="resFlags" style="display:none">
-    <div class="res-flags-label">⚠ Flags &amp; Considerations</div>
-    <div id="resFlagList"></div>
+<div id="decision-overlay">
+  <div class="decision-card">
+    <h3 id="dec-title">Operator Decision</h3>
+    <p id="dec-message"></p>
+    <div class="dec-detail" id="dec-detail"></div>
+    <div class="decision-options" id="dec-options"></div>
   </div>
-  <button class="reset-btn" onclick="resetAll()">↺ Start Over</button>
 </div>
 
-</div><!-- end wrap -->
+<footer>
+  <span>GL03 &mdash; Drilling Methods Simulator &nbsp;|&nbsp; MFI Alaska Geotechnical Tools &nbsp;|&nbsp; v2.0 (Phase 2 &mdash; Physics)</span>
+  <span class="footer-notice">Independent personal project &mdash; Ian Minnock, CPG, PMP, PMI-ACP &nbsp;|&nbsp; Not affiliated with Alaska DOT&amp;PF or any government agency. For educational use only.</span>
+</footer>
 
 <script>
-// STATE
-let state = {
-  purpose: null,
-  access: null,
-  depth: 20,
-  conditions: new Set(),
-  sampling: new Set()
+/* ============================================================
+   GL03 - DRILLING METHODS SIMULATOR
+   Phase 2 - Physics deepening: bit-rock interaction, hydrostatic
+   effect, bit wear, method-specific efficiency curves, rotary
+   hydraulics, sonic damping, percussion energy decay, recovery
+   disturbance physics, permafrost thaw zone, bit breakage,
+   borehole deviation, operator decisions.
+   Ian Minnock / MFI - Alaska Geotechnical Tools
+   ============================================================ */
+
+/* GROUND CONDITION DEFINITIONS - unchanged from Phase 1 */
+const GROUNDS = {
+  softclay: {
+    name: 'Soft Clay / Silty Clay',
+    context: 'Lacustrine and overbank deposits \u2014 Cook Inlet basin, Susitna lowlands',
+    layers: [
+      { name: 'Topsoil / Organics', uscs: 'OL', depth: 1.5, color: '#5A4A32', hardness: 0.3 },
+      { name: 'Soft Silty Clay', uscs: 'CL-ML', depth: 8, color: '#8FA8A0', hardness: 0.38 },
+      { name: 'Soft to Medium Clay', uscs: 'CL', depth: 22, color: '#7A9890', hardness: 0.45 },
+      { name: 'Stiff Clay', uscs: 'CH', depth: 40, color: '#6A8880', hardness: 0.62 },
+      { name: 'Very Stiff Clay', uscs: 'CH', depth: 60, color: '#4A6860', hardness: 0.76 }
+    ],
+    waterDepth: 2.5
+  },
+  glaciofluvial: {
+    name: 'Glaciofluvial Sand & Gravel',
+    context: 'Active floodplain and terrace deposits \u2014 Cook Inlet, Matanuska, Knik drainages',
+    layers: [
+      { name: 'Topsoil / Silt', uscs: 'ML', depth: 0.8, color: '#B8A880', hardness: 0.28 },
+      { name: 'Loose to Med. Sand', uscs: 'SP', depth: 4, color: '#D4B870', hardness: 0.48 },
+      { name: 'Sand & Gravel', uscs: 'SW-GW', depth: 12, color: '#C0A060', hardness: 0.62 },
+      { name: 'Dense Gravel', uscs: 'GW', depth: 28, color: '#A08040', hardness: 0.78 },
+      { name: 'Dense Cobble/Gravel', uscs: 'GP', depth: 45, color: '#7A6A50', hardness: 0.88 },
+      { name: 'Bedrock', uscs: 'Rock', depth: 60, color: '#404850', hardness: 1.0 }
+    ],
+    waterDepth: 3.0,
+    cobbles: true
+  },
+  loessgravel: {
+    name: 'Loess over Dense Gravel',
+    context: 'P\u00e9w\u00e9 loess cap over Pleistocene outwash \u2014 Tanana Valley, Fairbanks area',
+    layers: [
+      { name: 'Loess (silt)', uscs: 'ML', depth: 3.5, color: '#C8B888', hardness: 0.3 },
+      { name: 'Silty Loess', uscs: 'ML', depth: 8, color: '#B8A878', hardness: 0.35 },
+      { name: 'Ice-Cemented Silt', uscs: 'ML-Nf', depth: 12, color: '#A8C0C8', hardness: 0.78 },
+      { name: 'Dense Outwash Gravel', uscs: 'GP', depth: 30, color: '#7A6A50', hardness: 0.85 },
+      { name: 'Cobble / Boulder Zone', uscs: 'GP', depth: 45, color: '#6A5A40', hardness: 0.92 },
+      { name: 'Bedrock', uscs: 'Rock', depth: 60, color: '#404850', hardness: 1.0 }
+    ],
+    waterDepth: 10.0,
+    cobbles: true,
+    permafrost: true
+  },
+  weatheredrock: {
+    name: 'Weathered Bedrock / Rock Core',
+    context: 'Upland bedrock exposures \u2014 SE Alaska, Chugach Mts., Alaska Range flanks',
+    layers: [
+      { name: 'Colluvium / Residual', uscs: 'GC', depth: 1.5, color: '#7A7060', hardness: 0.52 },
+      { name: 'Highly Weathered (R1)', uscs: 'Rock', depth: 5, color: '#606870', hardness: 0.72 },
+      { name: 'Moderately Weathered (R2)', uscs: 'Rock', depth: 14, color: '#505860', hardness: 0.86 },
+      { name: 'Slightly Weathered (R3)', uscs: 'Rock', depth: 28, color: '#404850', hardness: 0.94 },
+      { name: 'Fresh Rock (R4)', uscs: 'Rock', depth: 60, color: '#303840', hardness: 1.0 }
+    ],
+    waterDepth: 5.0,
+    boulders: true
+  },
+  glacialtill: {
+    name: 'Glacial Till (Lodgement)',
+    context: 'Overconsolidated subglacial till \u2014 Kenai Peninsula, Prince William Sound',
+    layers: [
+      { name: 'Topsoil / Duff', uscs: 'OL', depth: 0.5, color: '#5A4A32', hardness: 0.22 },
+      { name: 'Ablation Till', uscs: 'GM', depth: 3, color: '#8A8070', hardness: 0.58 },
+      { name: 'Lodgement Till', uscs: 'GC', depth: 18, color: '#706860', hardness: 0.82 },
+      { name: 'Dense Till (OC)', uscs: 'GC', depth: 35, color: '#605858', hardness: 0.90 },
+      { name: 'Bedrock', uscs: 'Rock', depth: 60, color: '#404850', hardness: 1.0 }
+    ],
+    waterDepth: 4.5,
+    cobbles: true
+  },
+  muskeg: {
+    name: 'Organic / Muskeg over Silt',
+    context: 'Peat bog over lacustrine silt \u2014 Kenai Lowlands, Interior wetlands, Mat-Su flats',
+    layers: [
+      { name: 'Living Moss / Peat', uscs: 'PT', depth: 1.2, color: '#3A4A2A', hardness: 0.12 },
+      { name: 'Fibrous Peat', uscs: 'PT', depth: 3.5, color: '#4A5A30', hardness: 0.18 },
+      { name: 'Organic Silt', uscs: 'OL', depth: 6, color: '#5A5838', hardness: 0.28 },
+      { name: 'Lacustrine Silt', uscs: 'ML', depth: 16, color: '#8A9888', hardness: 0.36 },
+      { name: 'Soft Clay', uscs: 'CL', depth: 30, color: '#7A8878', hardness: 0.45 },
+      { name: 'Dense Sand / Gravel', uscs: 'SW', depth: 60, color: '#A09060', hardness: 0.72 }
+    ],
+    waterDepth: 0.5
+  },
+  alluvium: {
+    name: 'River Alluvium (Mixed Grain)',
+    context: 'Active floodplain stratigraphy \u2014 braided river systems, bridge/culvert sites',
+    layers: [
+      { name: 'Recent Alluvium', uscs: 'SM', depth: 1.5, color: '#C0A870', hardness: 0.32 },
+      { name: 'Fine to Med. Sand', uscs: 'SP', depth: 5, color: '#D0B870', hardness: 0.44 },
+      { name: 'Silty Sand', uscs: 'SM', depth: 9, color: '#B89860', hardness: 0.50 },
+      { name: 'Gravel & Sand', uscs: 'GW-SW', depth: 18, color: '#9A8050', hardness: 0.70 },
+      { name: 'Dense Gravel', uscs: 'GW', depth: 32, color: '#807040', hardness: 0.80 },
+      { name: 'Dense Cobble/Gravel', uscs: 'GP', depth: 50, color: '#6A5A38', hardness: 0.90 }
+    ],
+    waterDepth: 1.5,
+    cobbles: true
+  },
+  permafrost: {
+    name: 'Permafrost with Ice-Rich Silt',
+    context: 'Continuous permafrost with ground ice \u2014 Interior and Arctic Alaska (P\u00e9w\u00e9 / ASTM D4083)',
+    layers: [
+      { name: 'Active Layer / Moss', uscs: 'OL', depth: 0.8, color: '#5A4A32', hardness: 0.3 },
+      { name: 'Frozen Silt (Nf)', uscs: 'ML-Nf', depth: 5, color: '#A8C8D8', hardness: 0.9 },
+      { name: 'Ice-Rich Silt (Vx)', uscs: 'ML-Vx', depth: 15, color: '#B8D8E8', hardness: 0.95 },
+      { name: 'Massive Ice (Vc)', uscs: 'ICE-Vc', depth: 22, color: '#D0ECF8', hardness: 1.0 },
+      { name: 'Frozen Silt below ice', uscs: 'ML-Nb', depth: 60, color: '#90B0C8', hardness: 0.88 }
+    ],
+    waterDepth: 99,
+    permafrost: true
+  },
+  outwash: {
+    name: 'Quaternary Outwash (Cobbles)',
+    context: 'Pleistocene outwash fans \u2014 Mat-Su Valley, Copper River basin, Karlstrom (1964)',
+    layers: [
+      { name: 'Loess / Silt Cap', uscs: 'ML', depth: 1.5, color: '#B8A880', hardness: 0.4 },
+      { name: 'Cobble Gravel', uscs: 'GP', depth: 10, color: '#7A6A5A', hardness: 0.88 },
+      { name: 'Dense Cobble/Sand', uscs: 'GW', depth: 25, color: '#6A5A4A', hardness: 0.9 },
+      { name: 'Gravelly Sand', uscs: 'SW-SM', depth: 40, color: '#B09060', hardness: 0.75 },
+      { name: 'Bedrock', uscs: 'Rock', depth: 60, color: '#404850', hardness: 1.0 }
+    ],
+    waterDepth: 8.0,
+    cobbles: true
+  },
+  bootlegger: {
+    name: 'Bootlegger Cove (Glaciomarine)',
+    context: 'Anchorage bowl glaciomarine clay \u2014 Cook Inlet margins (Updike & Carpenter 1986)',
+    layers: [
+      { name: 'Estuarine Fill', uscs: 'ML', depth: 2.0, color: '#9A9080', hardness: 0.35 },
+      { name: 'Bootlegger Cove Fm.', uscs: 'CL/CH', depth: 10, color: '#5A7890', hardness: 0.55 },
+      { name: 'BCF \u2014 Dropstone Zone', uscs: 'CL+Gravel', depth: 20, color: '#4A6880', hardness: 0.65 },
+      { name: 'Dense Clay', uscs: 'CH', depth: 35, color: '#3A5870', hardness: 0.72 },
+      { name: 'Glacial Till', uscs: 'GC', depth: 60, color: '#6A6060', hardness: 0.85 }
+    ],
+    waterDepth: 2.0,
+    dropstones: true
+  }
 };
 
-// ── STEP LOGIC ──
-function toggleStep(id){
-  const el=document.getElementById(id);
-  if(el.classList.contains('collapsed')) el.classList.remove('collapsed');
-  else if(el.classList.contains('complete')) el.classList.add('collapsed');
+/* DRILLING METHOD DEFINITIONS - unchanged from Phase 1 */
+const METHODS = {
+  auger: {
+    name: 'Auger (Continuous Flight)',
+    baseRate: { clay: 18, sand: 12, rock: 2, frozen: 1, cobble: 3, mixed: 10 },
+    pressure: { base: 10, max: 40 },
+    rpmRange: [30, 80],
+    torqueBase: 5,
+    recovery: { clay: 0.85, sand: 0.70, rock: 0.20, frozen: 0.40, cobble: 0.30, mixed: 0.65 },
+    fluid: 'none',
+    sampleQuality: { clay: 'Good', sand: 'Moderate', rock: 'Poor', frozen: 'Poor', cobble: 'Poor', mixed: 'Moderate' },
+    cobblesBlocked: true,
+    vibration: false
+  },
+  rotary: {
+    name: 'Rotary Mud Rotary',
+    baseRate: { clay: 10, sand: 8, rock: 2, frozen: 1.5, cobble: 5, mixed: 8 },
+    pressure: { base: 120, max: 250 },
+    rpmRange: [50, 150],
+    torqueBase: 15,
+    recovery: { clay: 0.72, sand: 0.65, rock: 0.55, frozen: 0.45, cobble: 0.60, mixed: 0.68 },
+    fluid: 'mud',
+    sampleQuality: { clay: 'Moderate', sand: 'Moderate', rock: 'Good (core)', frozen: 'Poor', cobble: 'Moderate', mixed: 'Moderate' },
+    cobblesBlocked: false,
+    vibration: false
+  },
+  sonic: {
+    name: 'Sonic',
+    baseRate: { clay: 14, sand: 12, rock: 3, frozen: 2, cobble: 8, mixed: 12 },
+    pressure: { base: 80, max: 180 },
+    rpmRange: [0, 0],
+    torqueBase: 0,
+    recovery: { clay: 0.90, sand: 0.85, rock: 0.70, frozen: 0.50, cobble: 0.75, mixed: 0.85 },
+    fluid: 'water',
+    sampleQuality: { clay: 'Excellent', sand: 'Good', rock: 'Good', frozen: 'Moderate', cobble: 'Good', mixed: 'Good' },
+    cobblesBlocked: false,
+    vibration: true,
+    vibAmp: 7.5
+  },
+  percussion: {
+    name: 'Percussion (Pneumatic)',
+    baseRate: { clay: 6, sand: 8, rock: 5, frozen: 3, cobble: 6, mixed: 7 },
+    pressure: { base: 55, max: 120 },
+    rpmRange: [0, 0],
+    torqueBase: 0,
+    recovery: { clay: 0.55, sand: 0.60, rock: 0.65, frozen: 0.45, cobble: 0.62, mixed: 0.60 },
+    fluid: 'air',
+    sampleQuality: { clay: 'Poor', sand: 'Poor', rock: 'Moderate', frozen: 'Poor', cobble: 'Moderate', mixed: 'Poor' },
+    cobblesBlocked: false,
+    vibration: false
+  },
+  directpush: {
+    name: 'Direct Push',
+    baseRate: { clay: 10, sand: 9, rock: 0.5, frozen: 0.3, cobble: 1.5, mixed: 6 },
+    pressure: { base: 30, max: 90 },
+    rpmRange: [0, 0],
+    torqueBase: 0,
+    recovery: { clay: 0.40, sand: 0.45, rock: 0.10, frozen: 0.15, cobble: 0.20, mixed: 0.35 },
+    fluid: 'none',
+    sampleQuality: { clay: 'Disturbed', sand: 'Disturbed', rock: 'Very Poor', frozen: 'Very Poor', cobble: 'Very Poor', mixed: 'Disturbed' },
+    cobblesBlocked: true,
+    depthLimit: 30,
+    vibration: false
+  },
+  cabletool: {
+    name: 'Cable Tool',
+    baseRate: { clay: 4, sand: 5, rock: 2, frozen: 1, cobble: 2, mixed: 3.5 },
+    pressure: { base: 5, max: 15 },
+    rpmRange: [0, 0],
+    torqueBase: 0,
+    recovery: { clay: 0.88, sand: 0.80, rock: 0.75, frozen: 0.50, cobble: 0.40, mixed: 0.78 },
+    fluid: 'water',
+    sampleQuality: { clay: 'Good', sand: 'Good', rock: 'Good', frozen: 'Moderate', cobble: 'Poor', mixed: 'Good' },
+    cobblesBlocked: true,
+    vibration: false
+  }
+};
+
+function getMaterialType(uscs) {
+  const u = uscs.toUpperCase();
+  if (u.includes('ICE') || u.includes('NF') || u.includes('VX') || u.includes('VC') || u.includes('NB')) return 'frozen';
+  if (u.includes('ROCK') || u.includes('R0') || u.includes('R1') || u.includes('R2') || u.includes('R3')) return 'rock';
+  if (u.includes('GP') || u.includes('GW') || u.includes('GC') || u.includes('GM')) {
+    if (u.includes('COBBLE') || u.includes('+GRAVEL')) return 'cobble';
+    return 'cobble';
+  }
+  if (u.includes('SP') || u.includes('SW') || u.includes('SM') || u.includes('SC') || u.includes('ML')) return 'sand';
+  if (u.includes('CL') || u.includes('CH') || u.includes('OL') || u.includes('OH') || u.includes('MH')) return 'clay';
+  return 'mixed';
 }
 
-function nextStep(current, next){
-  const cur=document.getElementById(current);
-  cur.classList.add('complete','collapsed');
-  const nxt=document.getElementById(next);
-  nxt.classList.remove('collapsed');
-  nxt.scrollIntoView({behavior:'smooth',block:'start'});
+/* ============================================================
+   PHYSICS HELPERS - Phase 2
+   ============================================================ */
+
+/* Sigmoid hardness response. Replaces Phase 1 linear penalty.
+   Each method has its own h50 (hardness at 50% efficiency) and k
+   (curve steepness). Auger collapses near rock; sonic stays flat;
+   percussion handles hard ground best. */
+function hardnessResponse(method, h) {
+  const cal = {
+    auger:      { h50: 0.55, k: 12 },
+    rotary:     { h50: 0.78, k: 8  },
+    sonic:      { h50: 0.82, k: 5  },
+    percussion: { h50: 0.92, k: 6  },
+    directpush: { h50: 0.45, k: 14 },
+    cabletool:  { h50: 0.70, k: 7  }
+  };
+  const c = cal[method] || { h50: 0.65, k: 8 };
+  return 1.0 / (1.0 + Math.exp(c.k * (h - c.h50)));
 }
 
-// ── PURPOSE ──
-function pickPurpose(el){
-  document.querySelectorAll('#purposeGrid .opt').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-  state.purpose = el.dataset.id;
-  document.getElementById('s1-next').disabled = false;
-  document.getElementById('s1-sum').textContent = el.childNodes[0].textContent.trim();
+/* Hydrostatic / overburden effect on penetration. Deeper holes
+   demand more cuttings-lift effort. Mud-rotary partially offsets
+   via hydrostatic balance; air-percussion suffers more. */
+function hydrostaticEffect(method, depth) {
+  const baseLoss = depth / 200;
+  const offset = (method === 'rotary') ? 0.4 : (method === 'percussion' ? 1.3 : 1.0);
+  return Math.max(0.55, 1.0 - baseLoss * offset);
 }
 
-// ── ACCESS ──
-function pickAccess(el){
-  document.querySelectorAll('#accessGrid .opt').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-  state.access = el.dataset.id;
-  document.getElementById('s2-next').disabled = false;
-  document.getElementById('s2-sum').textContent = el.childNodes[0].textContent.trim();
+/* Bit wear effect on penetration efficiency. Fresh = 1.0,
+   worn-out (1.0 wear) = 0.4. */
+function bitWearEffect(wear) {
+  return Math.max(0.4, 1.0 - 0.6 * wear);
 }
 
-// ── DEPTH ──
-function updateDepth(v){
-  v = parseInt(v);
-  state.depth = v;
-  const el = document.getElementById('depthVal');
-  el.textContent = v + ' ft';
-  const note = document.getElementById('depthNote');
-  if(v <= 1) note.textContent = '→ Hand-dug test pit territory (≤1 ft). Consider whether any mechanized equipment is justified.';
-  else if(v <= 5) note.textContent = '→ Shallow range. Hand auger, soil probe, or Geoprobe may be sufficient.';
-  else if(v <= 15) note.textContent = '→ Shallow boring range. Geoprobe, Minuteman, or HSA capable.';
-  else if(v <= 40) note.textContent = '→ Standard boring depth. HSA with CME rig is the workhorse here.';
-  else if(v <= 80) note.textContent = '→ Moderate-deep boring. CME 75/85 with HSA or cased rotary. Consider drilling fluid if caving anticipated.';
-  else note.textContent = '→ Deep boring. CME 85 or equivalent required. Water wash or cased rotary likely needed. Sonic is worth considering.';
-  document.getElementById('s3-sum').textContent = v + ' ft';
+/* Force efficiency curve - diminishing returns peaking near
+   method-optimal force, falling above (overstress). */
+function forceEfficiency(method, force) {
+  const opt = { auger: 30, rotary: 40, sonic: 30, percussion: 50, directpush: 70, cabletool: 25 };
+  const F_opt = opt[method] || 35;
+  const ratio = force / F_opt;
+  if (ratio < 1.0) return 0.55 + 0.45 * ratio;
+  return Math.max(0.7, 1.0 - 0.15 * (ratio - 1.0));
 }
 
-// ── CONDITIONS ──
-function toggleCond(el){
-  const id = el.dataset.id;
-  if(id === 'none'){
-    state.conditions.clear();
-    document.querySelectorAll('#condGrid .opt').forEach(o=>o.classList.remove('sel'));
-    el.classList.add('sel');
-    state.conditions.add('none');
+/* RPM efficiency - bell-shaped, peaks at midrange. */
+function rpmEfficiency(method, rpm) {
+  const m = METHODS[method];
+  if (m.rpmRange[1] === 0) return 1.0;
+  const mid = (m.rpmRange[0] + m.rpmRange[1]) / 2;
+  const halfWidth = (m.rpmRange[1] - m.rpmRange[0]) / 2;
+  const offset = Math.abs(rpm - mid) / halfWidth;
+  return Math.max(0.5, 1.0 - 0.4 * offset * offset);
+}
+
+/* Layer-contact transition factor - returns >1 within 0.4 m of
+   a hardness boundary. Used for torque/pressure spikes. */
+function contactTransitionFactor(depth, layers) {
+  let top = 0;
+  for (const layer of layers) {
+    const dist = Math.abs(depth - layer.depth);
+    if (dist < 0.4 && depth > top) {
+      return 1.0 + 1.5 * Math.exp(-dist * 8);
+    }
+    top = layer.depth;
+  }
+  return 1.0;
+}
+
+/* SIMULATION STATE */
+let sim = {
+  running: false, paused: false, depth: 0, targetDepth: 30, elapsed: 0,
+  method: 'auger', ground: 'softclay', speed: 3, downForce: 25, rpm: 60,
+  pressure: 0, penRate: 0, recovery: 0, torque: 0, vibAmp: 0, waterLevel: 5,
+  rafId: null, lastTick: null, drillLog: [], logInterval: 2, nextLogDepth: 0,
+  penRateHistory: [], animPhase: 0,
+  obstacleActive: false, obstacleTimer: 0, obstacleDepth: -1, obstacleType: '',
+  statusMsg: '', statusType: 'normal', complete: false, particles: [],
+  /* Phase 2 physics state */
+  bitWear: 0, bitBroken: false, mudCakeThickness: 0, thawRadius: 0,
+  holeDeviation: 0, decisionPending: false, thinLayerLoss: 0, prevLayerName: ''
+};
+
+/* DOM REFS */
+const csCanvas = document.getElementById('cs-canvas');
+const csCtx = csCanvas.getContext('2d');
+const gcWater = document.getElementById('gc-water');
+const gcPressure = document.getElementById('gc-pressure');
+const gcForce = document.getElementById('gc-force');
+const gcRpm = document.getElementById('gc-rpm');
+const gcPenrate = document.getElementById('gc-penrate');
+const gcRecovery = document.getElementById('gc-recovery');
+const gcTorque = document.getElementById('gc-torque');
+const gcVib = document.getElementById('gc-vib');
+
+const selMethod = document.getElementById('sel-method');
+const selGround = document.getElementById('sel-ground');
+const depthSlider = document.getElementById('depth-slider');
+const depthLbl = document.getElementById('depth-lbl');
+const btnStart = document.getElementById('btn-start');
+const btnPause = document.getElementById('btn-pause');
+const btnReset = document.getElementById('btn-reset');
+const speedSlider = document.getElementById('speed-slider');
+const speedVal = document.getElementById('speed-val');
+const forceCtrl = document.getElementById('force-ctrl');
+const forceCtrlVal = document.getElementById('force-ctrlval');
+const rpmCtrl = document.getElementById('rpm-ctrl');
+const rpmCtrlVal = document.getElementById('rpm-ctrlval');
+const btnExport = document.getElementById('btn-export');
+const timeDisplay = document.getElementById('time-display');
+const depthDisplay = document.getElementById('depth-display');
+const statusBox = document.getElementById('status-box');
+const resultsPanel = document.getElementById('results-panel');
+const resultsToggle = document.getElementById('results-toggle');
+const resultStats = document.getElementById('results-stats');
+const logTbody = document.getElementById('log-tbody');
+const analysisBox = document.getElementById('analysis-box');
+const decisionOverlay = document.getElementById('decision-overlay');
+
+/* SETUP CONTROLS */
+depthSlider.addEventListener('input', () => { depthLbl.textContent = depthSlider.value; });
+speedSlider.addEventListener('input', () => { sim.speed = parseInt(speedSlider.value); speedVal.textContent = sim.speed + '\u00d7'; });
+forceCtrl.addEventListener('input', () => { sim.downForce = parseInt(forceCtrl.value); forceCtrlVal.textContent = sim.downForce + ' kN'; });
+rpmCtrl.addEventListener('input', () => { sim.rpm = parseInt(rpmCtrl.value); rpmCtrlVal.textContent = sim.rpm; });
+
+resultsToggle.addEventListener('click', () => {
+  const rb = document.getElementById('results-body');
+  rb.style.display = rb.style.display === 'none' ? 'block' : 'none';
+});
+
+btnStart.addEventListener('click', startSim);
+btnPause.addEventListener('click', togglePause);
+btnReset.addEventListener('click', resetSim);
+btnExport.addEventListener('click', exportCSV);
+
+function resizeCanvas() {
+  const rect = csCanvas.parentElement.getBoundingClientRect();
+  csCanvas.width = Math.max(300, rect.width - 16);
+  csCanvas.height = Math.max(300, rect.height - 40);
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); if (!sim.running) drawIdle(); });
+
+function startSim() {
+  sim.method = selMethod.value;
+  sim.ground = selGround.value;
+  sim.targetDepth = parseInt(depthSlider.value);
+  sim.depth = 0; sim.elapsed = 0;
+  sim.running = true; sim.paused = false; sim.complete = false;
+  sim.drillLog = []; sim.nextLogDepth = 0;
+  sim.penRateHistory = []; sim.particles = [];
+  sim.obstacleActive = false; sim.obstacleTimer = 0; sim.obstacleDepth = -1; sim.obstacleType = '';
+  sim.bitWear = 0; sim.bitBroken = false; sim.mudCakeThickness = 0;
+  sim.thawRadius = 0; sim.holeDeviation = 0; sim.decisionPending = false;
+  sim.thinLayerLoss = 0; sim.prevLayerName = '';
+
+  const gnd = GROUNDS[sim.ground];
+  sim.waterLevel = gnd.waterDepth;
+
+  btnStart.disabled = true;
+  btnPause.disabled = false;
+  btnPause.textContent = '\u23f8 Pause';
+  btnExport.disabled = true;
+  resultsPanel.classList.remove('visible');
+
+  updateMethodGaugeUI();
+  setStatus('Simulation started \u2014 drilling through ' + gnd.name, 'normal');
+
+  sim.lastTick = null;
+  if (sim.rafId) cancelAnimationFrame(sim.rafId);
+  sim.rafId = requestAnimationFrame(tick);
+}
+
+function togglePause() {
+  if (!sim.running) return;
+  sim.paused = !sim.paused;
+  if (sim.paused) {
+    btnPause.textContent = '\u25b6 Resume';
+    btnPause.classList.add('active');
+    setStatus('Simulation paused', 'event');
   } else {
-    state.conditions.delete('none');
-    document.querySelector('#condGrid .opt[data-id="none"]').classList.remove('sel');
-    if(state.conditions.has(id)){state.conditions.delete(id);el.classList.remove('sel');}
-    else{state.conditions.add(id);el.classList.add('sel');}
+    btnPause.textContent = '\u23f8 Pause';
+    btnPause.classList.remove('active');
+    setStatus('Simulation resumed', 'normal');
+    sim.lastTick = null;
+    sim.rafId = requestAnimationFrame(tick);
   }
-  const count = state.conditions.size;
-  document.getElementById('s4-sum').textContent = count === 0 ? '' : count + ' selected';
 }
 
-// ── SAMPLING ──
-function toggleSamp(el){
-  const id = el.dataset.id;
-  if(id === 'no_sample'){
-    state.sampling.clear();
-    document.querySelectorAll('#sampGrid .opt').forEach(o=>o.classList.remove('sel'));
-    el.classList.add('sel');
-    state.sampling.add('no_sample');
-  } else {
-    state.sampling.delete('no_sample');
-    document.querySelector('#sampGrid .opt[data-id="no_sample"]').classList.remove('sel');
-    if(state.sampling.has(id)){state.sampling.delete(id);el.classList.remove('sel');}
-    else{state.sampling.add(id);el.classList.add('sel');}
-  }
-  const count = state.sampling.size;
-  document.getElementById('s5-sum').textContent = count === 0 ? '' : count + ' selected';
+function resetSim() {
+  cancelAnimationFrame(sim.rafId);
+  sim.running = false; sim.paused = false; sim.complete = false;
+  sim.depth = 0; sim.elapsed = 0;
+  sim.drillLog = []; sim.penRateHistory = []; sim.particles = [];
+  sim.bitWear = 0; sim.bitBroken = false; sim.mudCakeThickness = 0;
+  sim.thawRadius = 0; sim.holeDeviation = 0; sim.decisionPending = false;
+  sim.thinLayerLoss = 0;
+  hideDecisionOverlay();
+  btnStart.disabled = false;
+  btnPause.disabled = true;
+  btnPause.textContent = '\u23f8 Pause';
+  btnPause.classList.remove('active');
+  btnExport.disabled = true;
+  timeDisplay.textContent = '0h 00m';
+  depthDisplay.textContent = '0.0 m';
+  setStatus('\u2014 Awaiting simulation start \u2014', 'muted');
+  clearGaugeDisplays();
+  drawIdle();
+  resultsPanel.classList.remove('visible');
 }
 
-// ── RESULT ENGINE ──
-function getResult(){
-  // Close step 5
-  const s5=document.getElementById('s5');
-  s5.classList.add('complete','collapsed');
+/* MAIN LOOP */
+function tick(ts) {
+  if (!sim.running || sim.paused || sim.decisionPending) return;
+  if (!sim.lastTick) sim.lastTick = ts;
+  const realDt = (ts - sim.lastTick) / 1000;
+  sim.lastTick = ts;
+  const dt = Math.min(realDt * sim.speed, 0.5);
 
-  const {purpose, access, depth, conditions, sampling} = state;
+  const gnd = GROUNDS[sim.ground];
+  const method = METHODS[sim.method];
+  const layer = getLayerAt(sim.depth, gnd.layers);
+  const matType = getMaterialType(layer.uscs);
 
-  const hasCobbles = conditions.has('cobbles');
-  const hasBoulders = conditions.has('boulders');
-  const needBoulderSize = conditions.has('boulder_size');
-  const hasBedrock = conditions.has('bedrock');
-  const needRockCore = conditions.has('core_rock') || sampling.has('rock_core');
-  const hasHeave = conditions.has('heave');
-  const hasGW = conditions.has('gw_shallow');
-  const hasPermafrost = conditions.has('permafrost');
-  const hasSoft = conditions.has('soft_soil');
-  const needShelby = sampling.has('shelby');
-  const needContinuous = sampling.has('continuous');
-  const needSPT = sampling.has('spt');
-  const needModCal = sampling.has('modcal');
+  /* Phase 2: layer-crossing thin-layer loss accumulator */
+  if (layer.name !== sim.prevLayerName && sim.prevLayerName !== '') {
+    const prevLayer = gnd.layers.find(l => l.name === sim.prevLayerName);
+    if (prevLayer) {
+      const idx = gnd.layers.indexOf(prevLayer);
+      const prevTop = idx === 0 ? 0 : gnd.layers[idx - 1].depth;
+      const thickness = prevLayer.depth - prevTop;
+      if (thickness < 1.0) sim.thinLayerLoss = Math.min(0.4, sim.thinLayerLoss + 0.15);
+      else sim.thinLayerLoss = Math.max(0, sim.thinLayerLoss - 0.05);
+    }
+  }
+  sim.prevLayerName = layer.name;
 
-  // ── RIG SCORING ──
-  // Rigs: cme85, cme75, cme850track, geoprobe, minuteman
-  let scores = { cme85: 0, cme75: 0, cme850track: 0, geoprobe: 0, minuteman: 0 };
-  let flags = [];
-  let method = '';
-  let methodNote = '';
-
-  // Access
-  if(access === 'road'){
-    scores.cme85 += 3; scores.cme75 += 3; scores.cme850track += 1; scores.geoprobe += 2; scores.minuteman += 1;
-  } else if(access === 'offroad'){
-    scores.cme850track += 5; scores.cme85 -= 2; scores.cme75 -= 1; scores.geoprobe += 1; scores.minuteman += 1;
-    flags.push('Off-road access — tracked equipment preferred. Confirm ground pressure tolerances for soft terrain.');
-  } else if(access === 'flyin'){
-    scores.minuteman += 6; scores.geoprobe += 2; scores.cme85 -= 10; scores.cme75 -= 10; scores.cme850track -= 3;
-    flags.push('Fly-in site — equipment weight and footprint are critical. Minuteman or Geoprobe are the primary options. Coordinate with charter operator on max payload and loading constraints.');
+  checkObstacleEvent(gnd, matType, dt);
+  if (sim.decisionPending) {
+    drawCrossSection(); drawAllGauges(); updateNumericDisplays();
+    return;
   }
 
-  // Depth
-  if(depth <= 1){
-    scores.geoprobe -= 2; scores.cme75 -= 3; scores.cme85 -= 3;
-    flags.push('Depth ≤1 ft — hand-dug test pit is appropriate. Mechanized drilling likely not justified unless access or site conditions require it.');
-  } else if(depth <= 15){
-    scores.geoprobe += 3; scores.minuteman += 2;
-  } else if(depth <= 40){
-    scores.cme75 += 3; scores.cme85 += 2; scores.cme850track += 2; scores.geoprobe -= 1;
-  } else if(depth <= 80){
-    scores.cme75 += 2; scores.cme85 += 4; scores.cme850track += 2; scores.geoprobe -= 4; scores.minuteman -= 4;
+  /* Phase 2: bit wear */
+  const wearRateFactor = { auger: 1.2, rotary: 0.8, sonic: 0.4, percussion: 1.5, directpush: 1.0, cabletool: 0.5 }[sim.method] || 1.0;
+  sim.bitWear = Math.min(1.0, sim.bitWear + layer.hardness * (sim.downForce / 50) * wearRateFactor * 0.0008 * dt * sim.speed);
+
+  /* Phase 2: mud cake buildup (rotary only) */
+  if (method.fluid === 'mud') {
+    const mudGrowth = (matType === 'sand' || matType === 'clay') ? 0.005 : 0.001;
+    sim.mudCakeThickness = Math.min(1.0, sim.mudCakeThickness + mudGrowth * dt * sim.speed);
+  }
+
+  /* Phase 2: thaw radius around casing in permafrost */
+  if (gnd.permafrost && matType === 'frozen') {
+    const thawRate = { sonic: 0.0008, rotary: 0.0005, percussion: 0.0002, auger: 0.0001, directpush: 0.00005, cabletool: 0.0001 }[sim.method] || 0.0002;
+    sim.thawRadius = Math.min(2.5, sim.thawRadius + thawRate * dt * sim.speed);
+  } else if (sim.thawRadius > 0) {
+    const refreezeRate = sim.method === 'sonic' ? 0.00005 : 0.0002;
+    sim.thawRadius = Math.max(0, sim.thawRadius - refreezeRate * dt * sim.speed);
+  }
+
+  sim.penRate = computePenRate(method, matType, layer.hardness);
+  const depthAdvance = (sim.penRate / 3600) * dt * sim.speed * 3;
+  sim.depth = Math.min(sim.depth + depthAdvance, sim.targetDepth);
+  sim.elapsed += dt * sim.speed;
+
+  updateGaugeValues(method, matType, layer, gnd);
+  sim.animPhase += dt * 60;
+  updateParticles(dt, gnd);
+
+  drawCrossSection();
+  drawAllGauges();
+  updateNumericDisplays();
+
+  if (sim.depth >= sim.nextLogDepth) {
+    addLogEntry(layer, matType, method);
+    sim.nextLogDepth += sim.logInterval;
+  }
+
+  if (sim.depth >= sim.targetDepth) { finishSim(); return; }
+  sim.rafId = requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   PHASE 2 PHYSICS - computePenRate
+   Replaces Phase 1 linear lookup with: base * forceEff * rpmEff
+   * hardnessResponse(sigmoid) * hydrostaticEff * bitWearEff
+   * obstaclePenalty * deviationPenalty * depthLimitPenalty
+   * thawAssist
+   ============================================================ */
+function computePenRate(method, matType, hardness) {
+  if (sim.bitBroken) return 0.05;
+
+  let base = method.baseRate[matType] || method.baseRate.mixed;
+
+  const fEff   = forceEfficiency(sim.method, sim.downForce);
+  const rEff   = rpmEfficiency(sim.method, sim.rpm);
+  const hResp  = hardnessResponse(sim.method, hardness);
+  const hyd    = hydrostaticEffect(sim.method, sim.depth);
+  const wear   = bitWearEffect(sim.bitWear);
+
+  let obstPen = 1.0;
+  if (sim.obstacleActive) obstPen = method.cobblesBlocked ? 0.05 : 0.30;
+
+  const devPen = 1.0 - 0.3 * sim.holeDeviation;
+
+  let depthPen = 1.0;
+  if (sim.method === 'directpush' && sim.depth > 20) {
+    depthPen = Math.max(0.05, 1.0 - (sim.depth - 20) / 15);
+  }
+
+  /* permafrost thaw radius assists sonic and rotary cutting */
+  let thawAssist = 1.0;
+  if (sim.thawRadius > 0.3 && matType === 'frozen') {
+    if (sim.method === 'sonic' || sim.method === 'rotary') {
+      thawAssist = 1.0 + Math.min(0.2, sim.thawRadius * 0.1);
+    }
+  }
+
+  return Math.max(0.1, base * fEff * rEff * hResp * hyd * wear * obstPen * devPen * depthPen * thawAssist);
+}
+
+/* ============================================================
+   PHASE 2 PHYSICS - obstacles, bit breakage, deviation, decision
+   ============================================================ */
+function checkObstacleEvent(gnd, matType, dt) {
+  if (sim.obstacleActive) {
+    sim.obstacleTimer -= dt * sim.speed;
+    if (sim.obstacleTimer <= 0) {
+      sim.obstacleActive = false;
+      setStatus('Obstacle cleared \u2014 drilling resumed', 'normal');
+    }
+    return;
+  }
+
+  let obstacleChance = 0;
+  let obstacleType = '';
+  if (gnd.boulders && matType === 'rock') { obstacleChance = 0.003; obstacleType = 'boulder'; }
+  if (gnd.cobbles && matType === 'cobble') { obstacleChance = 0.004; obstacleType = 'cobble'; }
+  if (gnd.dropstones) { obstacleChance = 0.002; obstacleType = 'dropstone'; }
+  if (gnd.permafrost && matType === 'frozen') { obstacleChance = 0.001; obstacleType = 'icelens'; }
+
+  if (Math.random() < obstacleChance * (dt * sim.speed)) {
+    sim.obstacleActive = true;
+    sim.obstacleTimer = 3 + Math.random() * 5;
+    sim.obstacleDepth = sim.depth;
+    sim.obstacleType = obstacleType;
+
+    /* Phase 2: bit breakage check (vulnerable methods on hard obstacles) */
+    const breakRisk = computeBreakageRisk(obstacleType);
+    if (Math.random() < breakRisk) {
+      sim.bitBroken = true;
+      setStatus('CRITICAL: bit failure \u2014 tungsten carbide damaged on ' + obstacleType, 'critical');
+      offerOperatorDecision('bit_broken', obstacleType);
+      return;
+    }
+
+    /* Phase 2: borehole deviation on cobble/dropstone glancing hits */
+    if (obstacleType === 'cobble' || obstacleType === 'dropstone') {
+      if (Math.random() < 0.35) {
+        sim.holeDeviation = Math.min(1.0, sim.holeDeviation + 0.15);
+      }
+    }
+
+    /* Phase 2: serious obstacle = operator decision modal */
+    const seriousObstacle = (obstacleType === 'boulder')
+      || (obstacleType === 'cobble' && METHODS[sim.method].cobblesBlocked);
+    if (seriousObstacle) {
+      offerOperatorDecision('obstacle', obstacleType);
+      return;
+    }
+
+    const msgs = {
+      boulder: 'Boulder encountered \u2014 penetration stalled, torque spiking',
+      cobble: 'Cobble obstacle \u2014 bit bouncing, recovery degraded',
+      dropstone: 'Dropstone hit \u2014 bit deflection, rate reduced',
+      icelens: 'Ice lens \u2014 casing resistance elevated'
+    };
+    setStatus(msgs[obstacleType] || 'Obstacle encountered', 'event');
+    spawnDebrisParticles();
+  }
+}
+
+function computeBreakageRisk(obstacleType) {
+  const baseRisk = {
+    auger:      { boulder: 0.20, cobble: 0.10, dropstone: 0.05, icelens: 0.0 },
+    rotary:     { boulder: 0.04, cobble: 0.02, dropstone: 0.01, icelens: 0.0 },
+    sonic:      { boulder: 0.01, cobble: 0.005, dropstone: 0.005, icelens: 0.0 },
+    percussion: { boulder: 0.02, cobble: 0.01, dropstone: 0.02, icelens: 0.0 },
+    directpush: { boulder: 0.40, cobble: 0.25, dropstone: 0.15, icelens: 0.05 },
+    cabletool:  { boulder: 0.08, cobble: 0.06, dropstone: 0.04, icelens: 0.02 }
+  };
+  const r = (baseRisk[sim.method] || {})[obstacleType] || 0;
+  return r * (1 + sim.bitWear * 1.5);
+}
+
+/* ============================================================
+   PHASE 2 PHYSICS - updateGaugeValues
+   Pressure: rotary hydraulics, sonic damping, percussion energy
+   decay with depth, layer-contact transition spikes.
+   Recovery: down-force disturbance, OCR clay benefit, sand bleed,
+   thin layer loss, bit wear smear, deviation alignment loss.
+   Torque: exponential spike at contacts/obstacles.
+   ============================================================ */
+function updateGaugeValues(method, matType, layer, gnd) {
+  const t = sim.animPhase;
+
+  /* PRESSURE - method-specific physics */
+  let pressure = method.pressure.base;
+
+  if (sim.method === 'rotary') {
+    /* mud rotary: P scales with flow rate (proxied by RPM) and
+       formation resistance. Mud cake thickness adds backpressure. */
+    const flowFactor = (sim.rpm / 100);
+    const resistance = 0.7 + layer.hardness * 0.8;
+    const cakeFactor = 1.0 + sim.mudCakeThickness * 0.4;
+    pressure = method.pressure.base * flowFactor * resistance * cakeFactor;
+  } else if (sim.method === 'sonic') {
+    /* sonic vibration energy transfer; soft damping materials
+       (clay) absorb energy and feed pressure back. Frozen ground
+       transmits cleanly. */
+    const damping = matType === 'clay' ? 1.4 : matType === 'frozen' ? 0.8 : 1.0;
+    pressure = method.pressure.base * damping * (1 + layer.hardness * 0.3);
+  } else if (sim.method === 'percussion') {
+    /* hammer energy decays with depth (longer drill string,
+       more energy lost to compression). */
+    const depthDecay = 1.0 + sim.depth / 60;
+    pressure = method.pressure.base * depthDecay * (0.7 + layer.hardness * 0.6);
+  } else if (sim.method === 'auger') {
+    /* auger: low pressure; clay flute clogging accumulates with time */
+    const clogging = matType === 'clay' ? (1.0 + sim.elapsed / 7200) : 1.0;
+    pressure = method.pressure.base * clogging * (0.8 + layer.hardness * 0.5);
+  } else if (sim.method === 'directpush') {
+    pressure = method.pressure.base * (1 + sim.downForce / 100) * (0.8 + layer.hardness * 0.7);
   } else {
-    scores.cme85 += 6; scores.cme75 += 1; scores.cme850track += 2; scores.geoprobe -= 8; scores.minuteman -= 8;
-    flags.push('Depth >80 ft — verify rig capacity and rod/casing string requirements. CME 85 is the preferred rig at this depth range.');
+    pressure = method.pressure.base * (0.9 + layer.hardness * 0.4);
   }
 
-  // Cobbles / boulders
-  if(hasCobbles || hasBoulders){
-    scores.geoprobe -= 5; scores.minuteman -= 3;
-    scores.cme85 += 2; scores.cme75 += 2; scores.cme850track += 2;
-    flags.push('Cobbles/boulders anticipated — HSA advancement may be difficult or refused. Have driven casing or air hammer as backup.');
-    if(hasCobbles && depth > 20) flags.push('HSA is generally not viable in cobble-dominated material at depth. Plan for water wash with driven casing or DTH hammer from the start.');
+  pressure *= contactTransitionFactor(sim.depth, gnd.layers);
+  if (sim.obstacleActive) pressure *= 1.6;
+  pressure += Math.sin(t * 0.3) * 4 + Math.sin(t * 0.7) * 2;
+
+  sim.pressure = Math.max(0, Math.min(method.pressure.max, pressure));
+
+  /* RECOVERY - Phase 2 disturbance physics */
+  let rec = method.recovery[matType] || method.recovery.mixed || 0.65;
+
+  /* down-force disturbance in soft materials */
+  if (matType === 'clay' || matType === 'sand') {
+    const forceDist = Math.max(0, (sim.downForce - 30) / 70);
+    rec *= (1.0 - 0.35 * forceDist);
   }
-  if(needBoulderSize){
-    flags.push('Boulder size/extent mapping required — sonic drilling is the most capable tool for continuous core through bouldery material without misrepresenting stratigraphy. DTH hammer can confirm depth to refusal but cannot extract continuous core.');
-    scores.cme85 += 1; // sonic upgrade note handled in method
+  /* OCR clay benefit - stiff clay holds together */
+  if (matType === 'clay' && layer.hardness > 0.6) {
+    rec *= (1.0 + Math.min(0.15, (layer.hardness - 0.6) * 0.4));
+  }
+  /* water-saturated sand bleed-out */
+  if (matType === 'sand' && sim.depth > gnd.waterDepth && gnd.waterDepth < 50) {
+    rec *= 0.8;
+  }
+  /* thin layer loss */
+  rec *= (1.0 - sim.thinLayerLoss);
+  /* obstacle, wear, deviation penalties */
+  if (sim.obstacleActive) rec *= 0.55;
+  rec *= (1.0 - 0.15 * sim.bitWear);
+  rec *= (1.0 - 0.1 * sim.holeDeviation);
+  if (matType === 'rock' && sim.method === 'auger') rec = 0.05;
+
+  sim.recovery = Math.max(0.05, Math.min(1.0, rec + Math.sin(t * 0.1) * 0.02));
+
+  /* TORQUE - exponential transition spikes + obstacle */
+  if (method.torqueBase > 0) {
+    let torque = method.torqueBase * layer.hardness * (sim.downForce / 25)
+               * (sim.rpm / 60) * 0.5;
+    const tf = contactTransitionFactor(sim.depth, gnd.layers);
+    if (tf > 1.05) torque *= Math.pow(tf, 1.6);
+    if (sim.obstacleActive) torque *= 3.0;
+    torque *= (1.0 + sim.bitWear * 0.6);
+    torque += Math.sin(t * 0.4) * 1.5;
+    sim.torque = Math.max(0, torque);
+  } else {
+    sim.torque = 0;
   }
 
-  // Bedrock / rock core
-  if(hasBedrock){
-    scores.cme85 += 2; scores.cme75 += 1; scores.cme850track += 1; scores.geoprobe -= 3; scores.minuteman -= 3;
-  }
-  if(needRockCore){
-    scores.cme85 += 3; scores.cme75 += 2; scores.cme850track += 2; scores.geoprobe -= 5; scores.minuteman -= 5;
-    flags.push('Rock core required — wire-line rotary coring (NQ/HQ) needed. Confirm rig has rotary coring head and appropriate core barrels on mobilization.');
-  }
-
-  // Heave / caving
-  if(hasHeave || hasGW){
-    scores.cme85 += 2; scores.cme75 += 2; scores.cme850track += 2;
-    flags.push('Heaving or caving soils / shallow groundwater — HSA may not hold borehole open. Plan for driven casing or hollow stem with drilling fluid as contingency.');
+  /* VIBRATION - sonic with material-dependent damping */
+  if (method.vibration) {
+    const matDamping = matType === 'clay' ? 0.8 : matType === 'frozen' ? 1.05 : 1.0;
+    sim.vibAmp = method.vibAmp * matDamping + Math.sin(t * 0.2) * 1.2;
+  } else {
+    sim.vibAmp = 0;
   }
 
-  // Permafrost
-  if(hasPermafrost){
-    flags.push('Permafrost anticipated — standard HSA may be difficult to advance through ice-rich frozen ground. Rotary with air or water flush may be needed. Consider steam or hot water thaw for shallow work. Protect test holes from solar gain.');
-    scores.cme85 += 1; scores.cme850track += 2;
+  if (sim.depth > gnd.waterDepth && gnd.waterDepth < 50) {
+    sim.waterLevel = gnd.waterDepth + Math.sin(t * 0.05) * 0.2;
+  } else {
+    sim.waterLevel = gnd.waterDepth;
   }
 
-  // Soft soils / Shelby
-  if(hasSoft || needShelby){
-    flags.push('Soft soils / undisturbed sampling required — advance HSA slowly and push Shelby tubes without rotation. Ensure sampler is clean and cutting shoe is sharp. Document any sample disturbance.');
+  if (sim.penRateHistory.length === 0 || sim.animPhase % 30 < 1) {
+    sim.penRateHistory.push(sim.penRate);
+    if (sim.penRateHistory.length > 120) sim.penRateHistory.shift();
   }
 
-  // Sampling needs vs. Geoprobe/Minuteman
-  if(needSPT || needModCal){
-    scores.geoprobe -= 3; scores.minuteman -= 2;
-    scores.cme75 += 2; scores.cme85 += 2; scores.cme850track += 2;
+  updateStatusAuto(matType, layer, gnd);
+}
+
+function updateStatusAuto(matType, layer, gnd) {
+  if (sim.obstacleActive) return;
+  if (sim.bitBroken) return;
+
+  /* Phase 2: surface significant diagnostic state */
+  if (sim.bitWear > 0.7) {
+    setStatus('Bit wear elevated (' + (sim.bitWear * 100).toFixed(0) + '%) \u2014 rate degrading, breakage risk on next obstacle', 'warning');
+    return;
   }
-  if(needContinuous){
-    flags.push('Continuous sampling requested — increases time and cost significantly. Confirm with client/PM that this is required before mobilizing.');
+  if (sim.holeDeviation > 0.5) {
+    setStatus('Borehole deviation accumulating (' + (sim.holeDeviation * 100).toFixed(0) + '%) \u2014 sample alignment compromised', 'warning');
+    return;
+  }
+  if (sim.thawRadius > 0.5 && matType === 'frozen') {
+    setStatus('Thaw zone expanding around casing (' + sim.thawRadius.toFixed(2) + ' m radius) \u2014 thermal management active', 'warning');
+    return;
+  }
+  if (sim.mudCakeThickness > 0.5 && sim.method === 'rotary') {
+    setStatus('Mud cake well-developed \u2014 hole stability good, slight backpressure', 'normal');
+    return;
   }
 
-  // Purpose adjustments
-  if(purpose === 'bridge' || purpose === 'structfound'){
-    scores.cme85 += 2; scores.cme75 += 1;
-    flags.push('Foundation investigation — confirm boring depths reach adequate bearing material or refusal. Structural loads and settlement analysis will drive minimum boring depths.');
+  const msgs = {
+    frozen: 'Drilling frozen ground \u2014 ' + (sim.method === 'sonic' ? 'sonic vibration assisting penetration' : 'reduced rates expected in permafrost'),
+    rock: 'Drilling rock (' + layer.name + ') \u2014 ' + (sim.method === 'percussion' ? 'percussion optimal for this material' : 'hard formation, penetration rate reduced'),
+    cobble: 'Coarse material (' + layer.name + ') \u2014 ' + (METHODS[sim.method].cobblesBlocked ? 'method struggles with cobbles' : 'method handling cobbles'),
+    clay: 'Drilling ' + layer.name + ' (' + layer.uscs + ') \u2014 ' + (sim.method === 'auger' ? 'auger optimal, good flute clearance' : 'normal progress'),
+    sand: 'Drilling ' + layer.name + ' (' + layer.uscs + ') \u2014 ' + (sim.method === 'rotary' ? 'mud circulation stabilizing walls' : 'monitor hole stability'),
+    mixed: 'Drilling ' + layer.name + ' \u2014 mixed conditions'
+  };
+  if (sim.depth > sim.waterLevel && gnd.waterDepth < 50) {
+    setStatus('Below water table \u2014 ' + layer.name + ' | fluid/pressure management required', 'event');
+  } else {
+    setStatus(msgs[matType] || msgs.mixed, 'normal');
   }
-  if(purpose === 'village' || purpose === 'runway'){
-    scores.minuteman += 2; scores.cme850track += 1;
-  }
-  if(purpose === 'lightpole' || purpose === 'basin'){
-    scores.geoprobe += 1; scores.minuteman += 1;
+}
+
+/* OPERATOR DECISION MODAL */
+function offerOperatorDecision(kind, obstacleType) {
+  sim.decisionPending = true;
+
+  const titleEl = document.getElementById('dec-title');
+  const msgEl = document.getElementById('dec-message');
+  const detEl = document.getElementById('dec-detail');
+  const optEl = document.getElementById('dec-options');
+  optEl.innerHTML = '';
+
+  if (kind === 'bit_broken') {
+    titleEl.textContent = 'Bit Failure - Operator Decision';
+    msgEl.innerHTML = 'The drill bit has broken on ' + obstacleType + ' material at ' + sim.depth.toFixed(1) + ' m. Tungsten carbide cutters are damaged.';
+    detEl.innerHTML = 'Bit wear at failure: ' + (sim.bitWear * 100).toFixed(0) + '% \u00b7 Method: ' + METHODS[sim.method].name + ' \u00b7 Continuing with damaged bit will produce extremely slow rates and poor recovery.';
+    addDecisionOption(optEl, 'Pull rods &amp; replace bit', 'Adds 2 hr to schedule, restores bit to fresh', () => {
+      sim.bitBroken = false; sim.bitWear = 0; sim.elapsed += 7200;
+      hideDecisionOverlay();
+      setStatus('Bit replaced \u2014 drilling resumed with fresh tooling', 'normal');
+      resumeFromDecision();
+    });
+    addDecisionOption(optEl, 'Continue with damaged bit', 'Penetration drops ~95%, recovery near zero', () => {
+      hideDecisionOverlay();
+      setStatus('Continuing with damaged bit \u2014 severely degraded performance', 'critical');
+      resumeFromDecision();
+    });
+    addDecisionOption(optEl, 'Abandon hole', 'End simulation at current depth', () => {
+      hideDecisionOverlay();
+      sim.targetDepth = sim.depth;
+      finishSim();
+    });
+  } else if (kind === 'obstacle') {
+    titleEl.textContent = 'Obstacle Encountered - Operator Decision';
+    const obstName = { boulder: 'Boulder', cobble: 'Cobble', dropstone: 'Glacial dropstone', icelens: 'Ice lens' }[obstacleType] || 'Obstacle';
+    msgEl.innerHTML = obstName + ' at ' + sim.depth.toFixed(1) + ' m \u2014 ' + METHODS[sim.method].name + ' is struggling with this material.';
+    detEl.innerHTML = 'Bit wear: ' + (sim.bitWear * 100).toFixed(0) + '% \u00b7 Pressure: ' + sim.pressure.toFixed(0) + ' psi \u00b7 Torque: ' + sim.torque.toFixed(1) + ' kN\u00b7m. Continuing aggressively risks bit failure (~' + (computeBreakageRisk(obstacleType) * 100).toFixed(0) + '%).';
+    addDecisionOption(optEl, 'Push through with extra force', 'Sets force to 80 kN, ~25% breakage risk', () => {
+      sim.downForce = 80; forceCtrl.value = 80; forceCtrlVal.textContent = '80 kN';
+      hideDecisionOverlay();
+      setStatus('Increased down force to 80 kN \u2014 pushing through obstacle', 'event');
+      resumeFromDecision();
+    });
+    addDecisionOption(optEl, 'Skip layer (overdrill)', 'Advance 0.5 m, no recovery this interval', () => {
+      sim.depth = Math.min(sim.targetDepth, sim.depth + 0.5);
+      sim.obstacleActive = false; sim.recovery = 0.05;
+      hideDecisionOverlay();
+      setStatus('Skipped through obstacle \u2014 no recovery for this interval', 'event');
+      resumeFromDecision();
+    });
+    addDecisionOption(optEl, 'Pull rods &amp; switch tool', 'Adds 1 hr; bit refresh + clear obstacle', () => {
+      sim.elapsed += 3600;
+      sim.bitWear = Math.max(0, sim.bitWear - 0.3);
+      sim.obstacleActive = false;
+      hideDecisionOverlay();
+      setStatus('Tool switched \u2014 drilling resumed with fresher bit', 'normal');
+      resumeFromDecision();
+    });
   }
 
-  // ── DETERMINE TOP RIGS ──
-  const rigData = {
-    cme85: { name: 'CME 85 (Truck-Mounted)', short: 'CME 85', desc: 'High-capacity truck-mounted rotary rig. The workhorse for deep borings, bridge investigations, and projects requiring rock coring. Requires road access.' },
-    cme75: { name: 'CME 75 (Truck-Mounted)', short: 'CME 75', desc: 'Standard truck-mounted rig. Capable and versatile for most road-accessible geotechnical borings to moderate depth. Common DOT&PF project rig.' },
-    cme850track: { name: 'CME 850 (Track-Mounted)', short: 'CME 850 Track', desc: 'Tracked version of the CME 850 — good off-road capability while retaining full drilling capacity. Useful for soft terrain, side slopes, and limited-access sites.' },
-    geoprobe: { name: 'Geoprobe (Direct Push)', short: 'Geoprobe', desc: 'Lightweight direct-push rig. Fast and efficient in cohesive and fine-grained soils to shallow/moderate depth. Limited in coarse-grained or deep applications.' },
-    minuteman: { name: 'Minuteman (Portable)', short: 'Minuteman', desc: 'Man-portable drill rig. The only option for fly-in or extremely remote sites. Limited depth and torque — best suited for shallow borings in accessible soils.' }
+  decisionOverlay.classList.add('visible');
+}
+
+function addDecisionOption(parent, title, sub, onclick) {
+  const btn = document.createElement('button');
+  btn.className = 'dec-btn';
+  btn.innerHTML = '<span class="dec-btn-title">' + title + '</span><span class="dec-btn-sub">' + sub + '</span>';
+  btn.addEventListener('click', onclick);
+  parent.appendChild(btn);
+}
+
+function hideDecisionOverlay() {
+  decisionOverlay.classList.remove('visible');
+  sim.decisionPending = false;
+}
+
+function resumeFromDecision() {
+  sim.lastTick = null;
+  if (sim.running && !sim.complete && !sim.paused) {
+    sim.rafId = requestAnimationFrame(tick);
+  }
+}
+
+
+function updateNumericDisplays() {
+  document.getElementById('gv-water').textContent = sim.waterLevel < 50 ? sim.waterLevel.toFixed(1) : 'N/A';
+  document.getElementById('gv-pressure').textContent = sim.pressure.toFixed(0);
+  document.getElementById('gv-force').textContent = sim.downForce;
+  document.getElementById('gv-pen').textContent = sim.penRate.toFixed(1);
+  document.getElementById('gv-recovery').textContent = (sim.recovery * 100).toFixed(0);
+  document.getElementById('gv-torque').textContent = sim.torque.toFixed(1);
+  document.getElementById('gv-vib').textContent = sim.vibAmp.toFixed(1);
+
+  const method = METHODS[sim.method];
+  if (method.rpmRange[1] === 0) {
+    document.getElementById('gv-rpm').textContent = sim.method === 'percussion' ? '120' : '0';
+  } else {
+    document.getElementById('gv-rpm').textContent = sim.rpm;
+  }
+
+  const hrs = Math.floor(sim.elapsed / 3600);
+  const mins = Math.floor((sim.elapsed % 3600) / 60);
+  timeDisplay.textContent = hrs + 'h ' + String(mins).padStart(2, '0') + 'm';
+  depthDisplay.textContent = sim.depth.toFixed(1) + ' m';
+}
+
+/* GAUGE CANVAS RENDERING - structurally unchanged from Phase 1 */
+function drawAllGauges() {
+  const method = METHODS[sim.method];
+  drawBarGauge(gcWater.getContext('2d'), gcWater.width, gcWater.height, sim.waterLevel < 50 ? (50 - sim.waterLevel) / 50 : 0, '#4A7FB8', '#B8D8E8');
+  drawDialGauge(gcPressure.getContext('2d'), gcPressure.width, gcPressure.height, sim.pressure / method.pressure.max);
+  drawBarGauge(gcForce.getContext('2d'), gcForce.width, gcForce.height, sim.downForce / 100, '#D4651A', '#6A3010');
+  drawDialGauge(gcRpm.getContext('2d'), gcRpm.width, gcRpm.height, method.rpmRange[1] > 0 ? sim.rpm / 200 : (sim.method === 'percussion' ? 0.6 : 0));
+  drawPenRateChart(gcPenrate.getContext('2d'), gcPenrate.width, gcPenrate.height);
+  drawBarGauge(gcRecovery.getContext('2d'), gcRecovery.width, gcRecovery.height, sim.recovery, '#6BA84A', '#2A5820');
+  if (method.torqueBase > 0) {
+    drawDialGauge(gcTorque.getContext('2d'), gcTorque.width, gcTorque.height, Math.min(1, sim.torque / 40));
+    document.getElementById('g-torque').classList.remove('dimmed');
+  } else {
+    document.getElementById('g-torque').classList.add('dimmed');
+    clearGaugeCanvas(gcTorque);
+  }
+  if (method.vibration) {
+    drawBarGauge(gcVib.getContext('2d'), gcVib.width, gcVib.height, sim.vibAmp / 10, '#9AAABB', '#4A6070');
+    document.getElementById('g-vibration').classList.remove('dimmed');
+  } else {
+    document.getElementById('g-vibration').classList.add('dimmed');
+    clearGaugeCanvas(gcVib);
+  }
+}
+
+function drawBarGauge(ctx, w, h, frac, colFill, colBg) {
+  ctx.fillStyle = '#3A4A5C'; ctx.fillRect(0, 0, w, h);
+  const barH = Math.max(0, Math.min(h - 6, (h - 6) * frac));
+  const barY = h - 3 - barH;
+  ctx.fillStyle = colBg || '#2E3A47'; ctx.fillRect(4, 3, w - 8, h - 6);
+  ctx.fillStyle = colFill; ctx.fillRect(4, barY, w - 8, barH);
+  ctx.strokeStyle = '#2E3A47'; ctx.lineWidth = 1;
+  for (let i = 1; i < 5; i++) {
+    const y = 3 + (h - 6) * (i / 5);
+    ctx.beginPath(); ctx.moveTo(4, y); ctx.lineTo(w - 4, y); ctx.stroke();
+  }
+}
+
+function drawDialGauge(ctx, w, h, frac) {
+  ctx.fillStyle = '#3A4A5C'; ctx.fillRect(0, 0, w, h);
+  const cx = w / 2, cy = h * 0.6, r = Math.min(w, h) * 0.38;
+  const startA = Math.PI * 0.75, endA = Math.PI * 2.25;
+  ctx.beginPath(); ctx.arc(cx, cy, r, startA, endA);
+  ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 6; ctx.stroke();
+  const zoneColors = ['#6BA84A', '#D4651A', '#D64A4A'];
+  const zones = [0.6, 0.85, 1.0];
+  let prev = startA;
+  zones.forEach((z, i) => {
+    const angle = startA + (endA - startA) * z;
+    ctx.beginPath(); ctx.arc(cx, cy, r, prev, angle);
+    ctx.strokeStyle = zoneColors[i]; ctx.lineWidth = 4; ctx.stroke();
+    prev = angle;
+  });
+  const angle = startA + (endA - startA) * Math.min(1, Math.max(0, frac));
+  ctx.beginPath(); ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + Math.cos(angle) * r * 0.85, cy + Math.sin(angle) * r * 0.85);
+  ctx.strokeStyle = '#E8EAEC'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#D4651A'; ctx.fill();
+}
+
+function drawPenRateChart(ctx, w, h) {
+  ctx.fillStyle = '#3A4A5C'; ctx.fillRect(0, 0, w, h);
+  const hist = sim.penRateHistory;
+  if (hist.length < 2) return;
+  const maxVal = 30;
+  ctx.strokeStyle = '#D4651A'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  hist.forEach((v, i) => {
+    const x = (i / (hist.length - 1)) * w;
+    const y = h - 4 - (v / maxVal) * (h - 8);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
+  [0.33, 0.66].forEach(f => {
+    ctx.beginPath();
+    ctx.moveTo(0, h * (1 - f)); ctx.lineTo(w, h * (1 - f));
+    ctx.stroke();
+  });
+}
+
+function clearGaugeCanvas(canv) {
+  const ctx = canv.getContext('2d');
+  ctx.fillStyle = '#3A4A5C'; ctx.fillRect(0, 0, canv.width, canv.height);
+}
+
+function clearGaugeDisplays() {
+  ['gv-water','gv-pressure','gv-force','gv-rpm','gv-pen','gv-recovery','gv-torque','gv-vib'].forEach(id => {
+    document.getElementById(id).textContent = '\u2014';
+  });
+  [gcWater, gcPressure, gcForce, gcRpm, gcPenrate, gcRecovery, gcTorque, gcVib].forEach(clearGaugeCanvas);
+}
+
+/* ============================================================
+   CROSS-SECTION RENDERING - Phase 2 adds mud cake, thaw halo,
+   sand-instability halo, hole deviation, bit-state badges,
+   talik indicator.
+   ============================================================ */
+function drawCrossSection() {
+  const W = csCanvas.width, H = csCanvas.height;
+  const ctx = csCtx;
+  ctx.fillStyle = '#2E3A47'; ctx.fillRect(0, 0, W, H);
+
+  const gnd = GROUNDS[sim.ground];
+  const MARGIN_LEFT = 52, MARGIN_RIGHT = 30, MARGIN_TOP = 20, MARGIN_BOTTOM = 30;
+  const drawW = W - MARGIN_LEFT - MARGIN_RIGHT;
+  const drawH = H - MARGIN_TOP - MARGIN_BOTTOM;
+  const totalDepth = sim.targetDepth * 1.05;
+  function depthToY(d) { return MARGIN_TOP + (d / totalDepth) * drawH; }
+
+  /* formation layers */
+  let layerTop = 0;
+  gnd.layers.forEach(layer => {
+    const layerBottom = Math.min(layer.depth, totalDepth);
+    const y0 = depthToY(layerTop), y1 = depthToY(layerBottom);
+    ctx.fillStyle = layer.color; ctx.globalAlpha = 0.85;
+    ctx.fillRect(MARGIN_LEFT, y0, drawW, y1 - y0);
+    ctx.globalAlpha = 1.0;
+    if (getMaterialType(layer.uscs) === 'rock') {
+      ctx.fillStyle = '#606A70';
+      for (let ty = y0 + 4; ty < y1 - 4; ty += 10) {
+        for (let tx = MARGIN_LEFT + 5; tx < MARGIN_LEFT + drawW - 5; tx += 20) {
+          ctx.beginPath(); ctx.arc(tx + (ty % 10), ty, 3, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+    if (getMaterialType(layer.uscs) === 'cobble') {
+      ctx.fillStyle = '#5A4A3A';
+      for (let ty = y0 + 5; ty < y1 - 5; ty += 14) {
+        for (let tx = MARGIN_LEFT + 8; tx < MARGIN_LEFT + drawW - 8; tx += 18) {
+          ctx.beginPath(); ctx.ellipse(tx + (ty % 8), ty, 5, 3.5, 0.4, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+    if (getMaterialType(layer.uscs) === 'frozen') {
+      ctx.strokeStyle = 'rgba(200,230,255,0.25)'; ctx.lineWidth = 0.5;
+      for (let ty = y0; ty < y1; ty += 8) {
+        ctx.beginPath();
+        ctx.moveTo(MARGIN_LEFT, ty); ctx.lineTo(MARGIN_LEFT + drawW, ty + 4);
+        ctx.stroke();
+      }
+    }
+    const lh = y1 - y0;
+    if (lh > 14) {
+      ctx.fillStyle = '#E8EAEC';
+      ctx.font = '0.65rem IBM Plex Mono, Courier New, monospace';
+      ctx.globalAlpha = 0.9;
+      ctx.fillText(layer.uscs, MARGIN_LEFT + 4, (y0 + y1) / 2 + 4);
+      ctx.globalAlpha = 1.0;
+    }
+    layerTop = layerBottom;
+  });
+
+  /* water table line */
+  if (gnd.waterDepth < sim.targetDepth * 1.0) {
+    const wy = depthToY(gnd.waterDepth);
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = '#4A7FB8'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(MARGIN_LEFT, wy); ctx.lineTo(MARGIN_LEFT + drawW, wy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#4A7FB8';
+    ctx.font = '0.65rem IBM Plex Mono, Courier New, monospace';
+    ctx.fillText('WT', W - MARGIN_RIGHT - 16, wy - 3);
+
+    /* Phase 2: talik indicator - permafrost ground with shallow water */
+    if (gnd.permafrost && gnd.waterDepth < 5) {
+      ctx.fillStyle = 'rgba(74,127,184,0.4)';
+      ctx.fillRect(MARGIN_LEFT + drawW - 60, wy - 8, 56, 12);
+      ctx.fillStyle = '#E8EAEC';
+      ctx.font = '0.6rem IBM Plex Mono, monospace';
+      ctx.fillText('TALIK', MARGIN_LEFT + drawW - 52, wy);
+    }
+  }
+
+  /* obstacle indicator */
+  if (sim.obstacleActive && sim.obstacleDepth > 0) {
+    const oy = depthToY(sim.obstacleDepth);
+    ctx.fillStyle = '#D64A4A';
+    ctx.globalAlpha = 0.6 + Math.sin(sim.animPhase * 0.2) * 0.3;
+    ctx.beginPath();
+    const bx = MARGIN_LEFT + drawW / 2;
+    ctx.moveTo(bx, oy - 6); ctx.lineTo(bx - 6, oy + 6); ctx.lineTo(bx + 6, oy + 6);
+    ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 1.0;
+  }
+
+  /* borehole geometry with Phase 2 deviation offset */
+  const bhW = 18;
+  const baseBhX = MARGIN_LEFT + drawW / 2 - bhW / 2;
+  const bhX = baseBhX + sim.holeDeviation * 8;
+  const bhDepthY = depthToY(sim.depth);
+
+  ctx.fillStyle = 'rgba(46,58,71,0.82)';
+  ctx.fillRect(bhX - 2, MARGIN_TOP, bhW + 4, bhDepthY - MARGIN_TOP);
+
+  /* Phase 2: thaw zone halo around casing in permafrost (only over frozen layers) */
+  if (sim.thawRadius > 0.05) {
+    const thawW = Math.min(40, sim.thawRadius * 18);
+    const grad = ctx.createLinearGradient(bhX - thawW, 0, bhX + bhW + thawW, 0);
+    grad.addColorStop(0, 'rgba(212,101,26,0)');
+    grad.addColorStop(0.5, 'rgba(212,101,26,0.22)');
+    grad.addColorStop(1, 'rgba(212,101,26,0)');
+    ctx.fillStyle = grad;
+    let lTop = 0;
+    gnd.layers.forEach(layer => {
+      const lBot = Math.min(layer.depth, sim.depth);
+      if (getMaterialType(layer.uscs) === 'frozen' && lBot > lTop) {
+        const y0 = depthToY(lTop), y1 = depthToY(lBot);
+        ctx.fillRect(bhX - thawW, y0, bhW + thawW * 2, y1 - y0);
+      }
+      lTop = layer.depth;
+    });
+  }
+
+  /* borehole walls */
+  ctx.fillStyle = '#1A2530';
+  ctx.fillRect(bhX, MARGIN_TOP, 2, bhDepthY - MARGIN_TOP);
+  ctx.fillRect(bhX + bhW - 2, MARGIN_TOP, 2, bhDepthY - MARGIN_TOP);
+
+  /* Phase 2: mud cake on rotary borehole walls */
+  const method = METHODS[sim.method];
+  if (sim.mudCakeThickness > 0.05 && method.fluid === 'mud') {
+    const cakeW = Math.min(4, sim.mudCakeThickness * 5);
+    ctx.fillStyle = 'rgba(154,170,187,0.55)';
+    ctx.fillRect(bhX + 2, MARGIN_TOP, cakeW, bhDepthY - MARGIN_TOP);
+    ctx.fillRect(bhX + bhW - 2 - cakeW, MARGIN_TOP, cakeW, bhDepthY - MARGIN_TOP);
+  }
+
+  /* Phase 2: sand grain instability dots near bit (saturated sand, no mud) */
+  const currentLayer = getLayerAt(sim.depth, gnd.layers);
+  const currentMat = getMaterialType(currentLayer.uscs);
+  if (currentMat === 'sand' && sim.depth > gnd.waterDepth && gnd.waterDepth < 50 && method.fluid !== 'mud') {
+    ctx.fillStyle = 'rgba(212,101,26,0.6)';
+    for (let i = 0; i < 6; i++) {
+      const sx = bhX - 3 + Math.random() * (bhW + 6);
+      const sy = bhDepthY - 12 + Math.random() * 14;
+      const dotPhase = (sim.animPhase * 0.05 + i * 0.7) % 1.0;
+      ctx.globalAlpha = 0.4 + dotPhase * 0.5;
+      ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+  }
+
+  /* mud/water/air circulation */
+  if (method.fluid === 'mud' || method.fluid === 'water') {
+    const cA = sim.animPhase % 60 / 60;
+    for (let i = 0; i < 4; i++) {
+      const frac = ((cA + i * 0.25) % 1.0);
+      const fy = MARGIN_TOP + frac * (bhDepthY - MARGIN_TOP);
+      ctx.fillStyle = method.fluid === 'mud' ? 'rgba(74,127,184,0.6)' : 'rgba(100,180,210,0.5)';
+      ctx.beginPath(); ctx.arc(bhX + 5, fy, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(bhX + bhW - 5, fy, 2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  if (method.fluid === 'air' && sim.running) {
+    for (let i = 0; i < 3; i++) {
+      const frac = 1.0 - ((sim.animPhase * 0.02 + i * 0.33) % 1.0);
+      const fy = MARGIN_TOP + frac * (bhDepthY - MARGIN_TOP);
+      ctx.fillStyle = 'rgba(200,210,220,0.4)';
+      ctx.beginPath(); ctx.arc(bhX + bhW / 2, fy, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  drawBitAnimation(ctx, bhX, bhX + bhW, bhDepthY);
+
+  /* depth axis */
+  ctx.fillStyle = '#9AAABB';
+  ctx.font = '0.68rem IBM Plex Mono, Courier New, monospace';
+  const tickStep = totalDepth <= 20 ? 2 : totalDepth <= 40 ? 5 : 10;
+  for (let d = 0; d <= totalDepth; d += tickStep) {
+    const ty = depthToY(d);
+    ctx.fillStyle = '#9AAABB';
+    ctx.fillText(d + 'm', 2, ty + 4);
+    ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(MARGIN_LEFT, ty); ctx.lineTo(MARGIN_LEFT + drawW, ty); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  ctx.fillStyle = '#D4651A';
+  ctx.font = 'bold 0.72rem IBM Plex Mono, Courier New, monospace';
+  ctx.fillText(sim.depth.toFixed(1) + 'm', 2, bhDepthY + 4);
+  ctx.strokeStyle = '#D4651A'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(MARGIN_LEFT - 6, bhDepthY); ctx.lineTo(MARGIN_LEFT, bhDepthY);
+  ctx.stroke();
+
+  /* progress bar */
+  const pbX = W - MARGIN_RIGHT + 6, pbW = 8;
+  ctx.fillStyle = '#1A2530'; ctx.fillRect(pbX, MARGIN_TOP, pbW, drawH);
+  const progH = (sim.depth / sim.targetDepth) * drawH;
+  ctx.fillStyle = '#D4651A';
+  ctx.fillRect(pbX, MARGIN_TOP + drawH - progH, pbW, progH);
+  ctx.strokeStyle = '#4A6070'; ctx.lineWidth = 0.5;
+  ctx.strokeRect(pbX, MARGIN_TOP, pbW, drawH);
+
+  /* Phase 2: bit-state badges */
+  drawBitStateBadges(ctx, MARGIN_LEFT, MARGIN_TOP + 4);
+
+  drawParticles(ctx);
+
+  ctx.fillStyle = '#E8EAEC';
+  ctx.fillRect(bhX - 4, MARGIN_TOP, bhW + 8, 5);
+  ctx.fillStyle = '#9AAABB';
+  ctx.font = '0.6rem IBM Plex Mono, Courier New, monospace';
+  ctx.fillText('SURFACE', MARGIN_LEFT, MARGIN_TOP - 5);
+}
+
+/* Phase 2: bit-state badges */
+function drawBitStateBadges(ctx, x0, y0) {
+  const badges = [];
+  if (sim.bitWear > 0.05) {
+    badges.push({
+      label: 'BIT WEAR ' + (sim.bitWear * 100).toFixed(0) + '%',
+      color: sim.bitWear > 0.7 ? '#D64A4A' : sim.bitWear > 0.4 ? '#D4651A' : '#6BA84A'
+    });
+  }
+  if (sim.bitBroken) badges.push({ label: 'BIT BROKEN', color: '#D64A4A' });
+  if (sim.holeDeviation > 0.05) {
+    badges.push({
+      label: 'DEVIATION ' + (sim.holeDeviation * 100).toFixed(0) + '%',
+      color: sim.holeDeviation > 0.5 ? '#D4651A' : '#9AAABB'
+    });
+  }
+  if (sim.mudCakeThickness > 0.1) {
+    badges.push({ label: 'MUD CAKE ' + (sim.mudCakeThickness * 100).toFixed(0) + '%', color: '#4A7FB8' });
+  }
+  if (sim.thawRadius > 0.05) {
+    badges.push({ label: 'THAW ' + sim.thawRadius.toFixed(2) + 'm', color: '#D4651A' });
+  }
+  let by = y0;
+  ctx.font = '0.6rem IBM Plex Mono, monospace';
+  badges.forEach(b => {
+    const w = ctx.measureText(b.label).width + 10;
+    ctx.fillStyle = '#1A2530'; ctx.fillRect(x0 + 4, by, w, 14);
+    ctx.strokeStyle = b.color; ctx.lineWidth = 1;
+    ctx.strokeRect(x0 + 4, by, w, 14);
+    ctx.fillStyle = b.color;
+    ctx.fillText(b.label, x0 + 9, by + 10);
+    by += 17;
+  });
+}
+
+/* BIT ANIMATIONS - bit color reflects broken state in Phase 2 */
+function drawBitAnimation(ctx, bitL, bitR, bitY) {
+  const cx = (bitL + bitR) / 2;
+  const method = sim.method;
+  const t = sim.animPhase;
+  ctx.save();
+
+  if (method === 'auger') {
+    const rot = t * 0.08;
+    ctx.strokeStyle = '#C8A96E'; ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) {
+      const ang = rot + (i / 3) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(ang) * 7, bitY - 20);
+      ctx.bezierCurveTo(
+        cx + Math.cos(ang + 1) * 7, bitY - 12,
+        cx + Math.cos(ang + 2) * 7, bitY - 6,
+        cx + Math.cos(ang + 3) * 5, bitY
+      );
+      ctx.stroke();
+    }
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY + 10); ctx.lineTo(bitL + 2, bitY); ctx.lineTo(bitR - 2, bitY);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#D4651A'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, bitY - 8, 4, rot, rot + Math.PI * 1.5); ctx.stroke();
+  } else if (method === 'rotary') {
+    const rot = t * 0.12;
+    ctx.fillStyle = '#505A60'; ctx.strokeStyle = '#7A8A90'; ctx.lineWidth = 1.5;
+    for (let i = 0; i < 3; i++) {
+      const ang = rot + (i / 3) * Math.PI * 2;
+      const ox = cx + Math.cos(ang) * 5, oy = bitY + Math.sin(ang) * 2;
+      ctx.beginPath(); ctx.ellipse(ox, oy, 4, 3, ang, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+    }
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY + 12); ctx.lineTo(bitL + 1, bitY); ctx.lineTo(bitR - 1, bitY);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(74,127,184,0.6)'; ctx.lineWidth = 1;
+    const flowAng = (t * 0.04) % (Math.PI * 2);
+    ctx.beginPath(); ctx.arc(cx, bitY + 4, 8, flowAng, flowAng + Math.PI); ctx.stroke();
+  } else if (method === 'sonic') {
+    const vibY = Math.sin(t * 0.5) * 3;
+    ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(bitL - 3, bitY - 30 + vibY); ctx.lineTo(bitL - 3, bitY + vibY);
+    ctx.moveTo(bitR + 3, bitY - 30 + vibY); ctx.lineTo(bitR + 3, bitY + vibY);
+    ctx.stroke();
+    for (let i = 0; i < 3; i++) {
+      const vr = (t * 0.08 + i * 0.33) % 1.0;
+      ctx.strokeStyle = 'rgba(154,170,187,' + (0.6 - vr * 0.5) + ')';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx, bitY + vibY, (bitR - bitL) / 2 + 4 + vr * 8, 3 + vr * 3, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY + 10 + vibY); ctx.lineTo(bitL, bitY + vibY); ctx.lineTo(bitR, bitY + vibY);
+    ctx.closePath(); ctx.fill();
+  } else if (method === 'percussion') {
+    const impactPhase = t * 0.15;
+    const hammered = Math.abs(Math.sin(impactPhase)) > 0.9;
+    const hammerOffset = hammered ? 0 : -8 + Math.sin(impactPhase) * 8;
+    ctx.fillStyle = '#7A8A90';
+    ctx.fillRect(cx - 5, bitY - 22 + hammerOffset, 10, 14);
+    ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY - 8 + hammerOffset); ctx.lineTo(cx, bitY);
+    ctx.stroke();
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY + 10); ctx.lineTo(bitL + 2, bitY); ctx.lineTo(bitR - 2, bitY);
+    ctx.closePath(); ctx.fill();
+    if (hammered) {
+      ctx.fillStyle = 'rgba(255,200,0,0.6)';
+      ctx.beginPath(); ctx.arc(cx, bitY, 8, 0, Math.PI * 2); ctx.fill();
+      /* Phase 2: percussion cuttings ejection on impact */
+      if (Math.random() < 0.3) spawnCuttingsParticles(cx, bitY);
+    }
+    ctx.fillStyle = 'rgba(200,210,220,0.5)';
+    for (let i = 0; i < 2; i++) {
+      const bfrac = ((t * 0.04 + i * 0.5) % 1.0);
+      const by = bitY - bfrac * 25;
+      ctx.beginPath(); ctx.arc(bitL + 4 + i * 5, by, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+  } else if (method === 'directpush') {
+    const pushPhase = t * 0.2;
+    const push = Math.abs(Math.sin(pushPhase)) * 6;
+    ctx.fillStyle = '#7A8A90';
+    ctx.fillRect(cx - 4, bitY - 20 + push, 8, 16);
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY + 8 + push); ctx.lineTo(bitL + 3, bitY + push); ctx.lineTo(bitR - 3, bitY + push);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(212,101,26,0.7)';
+    const arrowY = bitY - 28 + push;
+    ctx.beginPath();
+    ctx.moveTo(cx, arrowY + 8); ctx.lineTo(cx - 4, arrowY); ctx.lineTo(cx + 4, arrowY);
+    ctx.closePath(); ctx.fill();
+  } else if (method === 'cabletool') {
+    const liftPhase = t * 0.05;
+    const liftFrac = (Math.sin(liftPhase) + 1) / 2;
+    const liftY = -liftFrac * 18;
+    ctx.strokeStyle = '#9AAABB'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cx, bitY - 40); ctx.lineTo(cx, bitY + liftY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#505A60';
+    ctx.fillRect(cx - 4, bitY + liftY, 8, 14);
+    ctx.fillStyle = sim.bitBroken ? '#D64A4A' : '#FFD700';
+    ctx.beginPath(); ctx.arc(cx, bitY + liftY + 14, 4, 0, Math.PI); ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+/* PARTICLES */
+function spawnDebrisParticles() {
+  const gnd = GROUNDS[sim.ground];
+  const layer = getLayerAt(sim.depth, gnd.layers);
+  for (let i = 0; i < 8; i++) {
+    const ang = Math.PI + Math.random() * Math.PI;
+    const spd = 20 + Math.random() * 30;
+    sim.particles.push({
+      x: csCanvas.width / 2 + (Math.random() - 0.5) * 10, y: null,
+      vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+      life: 1.0, decay: 0.03 + Math.random() * 0.04,
+      color: layer.color, size: 2 + Math.random() * 3
+    });
+  }
+}
+
+/* Phase 2: percussion-specific upward cuttings spray */
+function spawnCuttingsParticles(cx, cy) {
+  const gnd = GROUNDS[sim.ground];
+  const layer = getLayerAt(sim.depth, gnd.layers);
+  for (let i = 0; i < 4; i++) {
+    const ang = -Math.PI / 2 + (Math.random() - 0.5) * 1.0;
+    const spd = 30 + Math.random() * 40;
+    sim.particles.push({
+      x: cx + (Math.random() - 0.5) * 4, y: cy,
+      vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+      life: 0.8, decay: 0.04,
+      color: layer.color, size: 1.2 + Math.random() * 1.5
+    });
+  }
+}
+
+function updateParticles(dt, gnd) {
+  sim.particles = sim.particles.filter(p => p.life > 0);
+  sim.particles.forEach(p => {
+    p.x += p.vx * dt;
+    p.vy += 30 * dt;
+    p.life -= p.decay;
+  });
+}
+
+function drawParticles(ctx) {
+  const MARGIN_TOP = 20, MARGIN_BOTTOM = 30;
+  const totalDepth = sim.targetDepth * 1.05;
+  const drawH = csCanvas.height - MARGIN_TOP - MARGIN_BOTTOM;
+  const bitY = MARGIN_TOP + (sim.depth / totalDepth) * drawH;
+
+  sim.particles.forEach(p => {
+    if (p.y === null) { p.y = bitY; return; }
+    p.y += p.vy * 0.016;
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.life * 0.8;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1.0;
+  });
+}
+
+/* IDLE DRAW */
+function drawIdle() {
+  resizeCanvas();
+  const W = csCanvas.width, H = csCanvas.height;
+  const ctx = csCtx;
+  ctx.fillStyle = '#2E3A47'; ctx.fillRect(0, 0, W, H);
+
+  const gnd = GROUNDS[document.getElementById('sel-ground').value];
+  const MARGIN_LEFT = 52, MARGIN_RIGHT = 30, MARGIN_TOP = 20, MARGIN_BOTTOM = 30;
+  const drawH = H - MARGIN_TOP - MARGIN_BOTTOM;
+  const drawW = W - MARGIN_LEFT - MARGIN_RIGHT;
+  const totalDepth = parseInt(document.getElementById('depth-slider').value) * 1.05;
+
+  let lTop = 0;
+  gnd.layers.forEach(layer => {
+    const lBot = Math.min(layer.depth, totalDepth);
+    const y0 = MARGIN_TOP + (lTop / totalDepth) * drawH;
+    const y1 = MARGIN_TOP + (lBot / totalDepth) * drawH;
+    ctx.fillStyle = layer.color; ctx.globalAlpha = 0.7;
+    ctx.fillRect(MARGIN_LEFT, y0, drawW, y1 - y0);
+    ctx.globalAlpha = 1.0;
+    const lh = y1 - y0;
+    if (lh > 14) {
+      ctx.fillStyle = '#E8EAEC';
+      ctx.font = '0.65rem IBM Plex Mono, Courier New, monospace';
+      ctx.globalAlpha = 0.8;
+      ctx.fillText(layer.uscs, MARGIN_LEFT + 4, (y0 + y1) / 2 + 4);
+      if (lh > 24) {
+        ctx.font = '0.58rem IBM Plex Mono, Courier New, monospace';
+        ctx.fillText(layer.name, MARGIN_LEFT + 28, (y0 + y1) / 2 + 4);
+      }
+      ctx.globalAlpha = 1.0;
+    }
+    lTop = lBot;
+  });
+
+  ctx.fillStyle = '#9AAABB';
+  ctx.font = '0.68rem IBM Plex Mono, Courier New, monospace';
+  const td = parseInt(document.getElementById('depth-slider').value);
+  const tickStep = td <= 20 ? 2 : td <= 40 ? 5 : 10;
+  for (let d = 0; d <= totalDepth; d += tickStep) {
+    const ty = MARGIN_TOP + (d / totalDepth) * drawH;
+    ctx.fillText(d + 'm', 2, ty + 4);
+  }
+
+  ctx.fillStyle = '#D4651A';
+  ctx.font = 'bold 0.8rem IBM Plex Mono, Courier New, monospace';
+  ctx.globalAlpha = 0.7;
+  ctx.fillText('Press [Start Simulation] to begin', MARGIN_LEFT + 10, H / 2 - 8);
+  ctx.globalAlpha = 1.0;
+
+  if (gnd.context) {
+    ctx.fillStyle = '#9AAABB';
+    ctx.font = '0.65rem IBM Plex Mono, Courier New, monospace';
+    ctx.globalAlpha = 0.85;
+    const maxW = drawW - 10;
+    const words = gnd.context.split(' ');
+    let line = '', lineY = H - MARGIN_BOTTOM - 18;
+    const lines = [];
+    words.forEach(w => {
+      const test = line ? line + ' ' + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    });
+    if (line) lines.push(line);
+    lines.slice(-2).forEach((l, i) => ctx.fillText(l, MARGIN_LEFT + 4, lineY + i * 14));
+    ctx.globalAlpha = 1.0;
+  }
+}
+
+/* HELPERS */
+function getLayerAt(depth, layers) {
+  let top = 0;
+  for (const layer of layers) {
+    if (depth <= layer.depth) return layer;
+    top = layer.depth;
+  }
+  return layers[layers.length - 1];
+}
+
+function setStatus(msg, type) {
+  sim.statusMsg = msg; sim.statusType = type;
+  const cls = type === 'event' ? 'status-event'
+    : type === 'normal' ? 'status-normal'
+    : type === 'warning' ? 'status-warning'
+    : type === 'critical' ? 'status-critical' : '';
+  statusBox.innerHTML = cls ? '<span class="' + cls + '">' + msg + '</span>' : msg;
+}
+
+function updateMethodGaugeUI() {
+  const method = METHODS[sim.method];
+  const isRotary = sim.method === 'rotary' || sim.method === 'auger';
+  const isSonic = sim.method === 'sonic';
+  const isPercussion = sim.method === 'percussion';
+
+  if (isPercussion) {
+    document.getElementById('lbl-rpm').textContent = 'Impacts/sec';
+    document.getElementById('unit-rpm').textContent = '/s';
+    document.getElementById('rpm-ctrl-group').style.display = 'none';
+  } else if (isSonic) {
+    document.getElementById('lbl-rpm').textContent = 'Vibration Freq';
+    document.getElementById('unit-rpm').textContent = 'Hz';
+    document.getElementById('rpm-ctrl-group').style.display = 'none';
+  } else if (sim.method === 'directpush' || sim.method === 'cabletool') {
+    document.getElementById('lbl-rpm').textContent = 'Strokes';
+    document.getElementById('unit-rpm').textContent = '/min';
+    document.getElementById('rpm-ctrl-group').style.display = 'none';
+  } else {
+    document.getElementById('lbl-rpm').textContent = 'RPM';
+    document.getElementById('unit-rpm').textContent = 'rpm';
+    document.getElementById('rpm-ctrl-group').style.display = 'flex';
+    rpmCtrl.min = method.rpmRange[0];
+    rpmCtrl.max = method.rpmRange[1];
+    rpmCtrl.value = Math.round((method.rpmRange[0] + method.rpmRange[1]) / 2);
+    sim.rpm = parseInt(rpmCtrl.value);
+    rpmCtrlVal.textContent = sim.rpm;
+  }
+
+  if (isSonic) document.getElementById('g-vibration').classList.remove('dimmed');
+  else document.getElementById('g-vibration').classList.add('dimmed');
+  if (isRotary) document.getElementById('g-torque').classList.remove('dimmed');
+}
+
+function addLogEntry(layer, matType, method) {
+  const quality = method.sampleQuality[matType] || method.sampleQuality.mixed || 'Unknown';
+  const notes = buildNotes(matType, layer);
+  sim.drillLog.push({
+    depthFrom: Math.max(0, sim.depth - sim.logInterval).toFixed(1),
+    depthTo: sim.depth.toFixed(1),
+    material: layer.name + ' (' + layer.uscs + ')',
+    penRate: sim.penRate.toFixed(1),
+    pressure: sim.pressure.toFixed(0),
+    downForce: sim.downForce,
+    recovery: (sim.recovery * 100).toFixed(0),
+    quality, notes
+  });
+}
+
+function buildNotes(matType, layer) {
+  if (sim.bitBroken) return 'BIT FAILURE - degraded performance';
+  if (sim.obstacleActive) return 'Obstacle encountered';
+  if (sim.bitWear > 0.7) return 'Bit wear high - rate degraded';
+  if (sim.holeDeviation > 0.5) return 'Borehole deviation noted';
+  const noteMap = {
+    frozen: 'Frozen ground - reduced penetration',
+    rock: 'Hard formation - recovery monitored',
+    cobble: 'Coarse material - verify bit condition',
+    clay: 'Normal - ' + (sim.method === 'auger' ? 'good auger clearance' : 'stable'),
+    sand: 'Monitor hole stability',
+    mixed: 'Variable conditions'
+  };
+  return noteMap[matType] || '';
+}
+
+function finishSim() {
+  sim.running = false; sim.complete = true;
+  sim.depth = Math.min(sim.depth, sim.targetDepth);
+
+  cancelAnimationFrame(sim.rafId);
+  setStatus('Target depth ' + sim.targetDepth + ' m reached \u2014 drilling complete', 'event');
+  btnStart.disabled = false;
+  btnPause.disabled = true;
+  btnExport.disabled = false;
+
+  drawCrossSection(); drawAllGauges(); updateNumericDisplays();
+
+  buildResults();
+  resultsPanel.classList.add('visible');
+  resultsPanel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function buildResults() {
+  const method = METHODS[sim.method];
+  const gnd = GROUNDS[sim.ground];
+  const totalHrs = sim.elapsed / 3600;
+  const avgPen = sim.depth / (totalHrs || 0.01);
+  const avgRec = sim.drillLog.length > 0
+    ? sim.drillLog.reduce((s, e) => s + parseFloat(e.recovery), 0) / sim.drillLog.length
+    : 0;
+
+  resultStats.innerHTML =
+    '<div class="result-stat"><div class="r-label">Total Depth Drilled</div><div class="r-val">' + sim.depth.toFixed(1) + ' m</div></div>' +
+    '<div class="result-stat"><div class="r-label">Total Sim Time</div><div class="r-val">' + totalHrs.toFixed(1) + ' hrs</div></div>' +
+    '<div class="result-stat"><div class="r-label">Avg Penetration Rate</div><div class="r-val">' + avgPen.toFixed(1) + ' m/hr</div></div>' +
+    '<div class="result-stat"><div class="r-label">Avg Core Recovery</div><div class="r-val">' + avgRec.toFixed(0) + '%</div></div>' +
+    '<div class="result-stat"><div class="r-label">Final Bit Wear</div><div class="r-val">' + (sim.bitWear * 100).toFixed(0) + '%</div></div>' +
+    '<div class="result-stat"><div class="r-label">Hole Deviation</div><div class="r-val">' + (sim.holeDeviation * 100).toFixed(0) + '%</div></div>';
+
+  logTbody.innerHTML = sim.drillLog.map(e =>
+    '<tr><td>' + e.depthFrom + '&ndash;' + e.depthTo + '</td><td>' + e.material + '</td><td>' + e.penRate + '</td><td>' + e.pressure + '</td><td>' + e.downForce + '</td><td>' + e.recovery + '%</td><td>' + e.quality + '</td><td>' + e.notes + '</td></tr>'
+  ).join('');
+
+  analysisBox.innerHTML = buildAnalysis(method, gnd, avgPen, avgRec);
+}
+
+function buildAnalysis(method, gnd, avgPen, avgRec) {
+  const comparisons = {
+    auger: 'Auger is fastest in cohesive soils but fails in hard materials and cobbles. Sample quality is good in clay but poor in rock. No fluid required \u2014 simplest setup.',
+    rotary: 'Rotary mud rotary handles the widest range of materials. Mud circulation stabilizes the borehole but introduces sample disturbance. Best for mixed stratigraphy.',
+    sonic: 'Sonic delivers the best sample quality across most materials. Vibration assists penetration through difficult layers. Equipment cost is higher; casing can freeze in permafrost.',
+    percussion: 'Percussion excels in hard rock and cobbles where rotary struggles. Sample quality is poor \u2014 cuttings only, no undisturbed samples. Air circulation keeps hole clean.',
+    directpush: 'Direct push is fastest for shallow, soft-ground investigations but is depth-limited (~30 m) and cannot penetrate hard materials. Very low sample quality.',
+    cabletool: 'Cable tool is the slowest method but provides excellent samples in soft to medium materials. Not effective in cobbles. Traditional method \u2014 rarely used for new work.'
   };
 
-  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-  const topRig = sorted[0][0];
-  const altRigs = sorted.slice(1,3).filter(r=>r[1]>0);
+  const groundNote = {
+    softclay: 'Lacustrine and overbank clays in the Cook Inlet basin are typically soft to medium \u2014 auger and sonic are the preferred methods. Rotary works but the mud adds disturbance. Cable tool gives excellent samples if speed is not critical.',
+    glaciofluvial: 'Glaciofluvial terrace deposits present clean sand and gravel with high permeability and a shallow water table. Rotary mud is essential for borehole stability in the sand intervals; auger will collapse without casing. Cobble zones require percussion or rotary.',
+    loessgravel: 'Interior Alaska loess is easy to penetrate but ice-cemented intervals just below the permafrost table stall auger and direct push rigs. Rotary or sonic are needed once ice-cemented silt is encountered. Dense outwash gravel below requires percussion or rotary.',
+    weatheredrock: 'Rock core investigation requires rotary or percussion. Auger and direct push are stopped at the bedrock contact. Core recovery with rotary NQ/HQ wireline is the standard approach; percussion gives cuttings only. Track the RQD zone-by-zone.',
+    glacialtill: 'Overconsolidated lodgement till in the Kenai Peninsula is one of the most punishing drilling conditions \u2014 dense, cobble-matrix, high lateral stress. Sonic or rotary are required. Auger and direct push will deflect or refuse on cobbles within 3\u20135 m.',
+    muskeg: 'Muskeg and peat require lightweight equipment to avoid site damage and rig bog-down. Direct push or lightweight auger works well to the peat/silt contact. Below the organic layer, lacustrine silt is soft and auger-friendly. Water table is at or near the surface.',
+    alluvium: 'Active floodplain alluvium is highly variable \u2014 expect loose sand at the surface grading to cobble gravel at depth. Rotary mud is the most reliable method for maintaining borehole stability in saturated sand intervals. Cobble zones in the lower alluvium require percussion or a tricone bit.',
+    permafrost: 'Permafrost drilling is specialized \u2014 all penetration rates are reduced. Sonic casing can freeze to the borehole wall; rotary requires thermal management and fluid control. Ice-rich intervals (Vx, Vc) should be treated as near-zero penetration zones for planning purposes.',
+    outwash: 'Quaternary outwash with cobbles is one of the most challenging drilling conditions in Alaska. Percussion or rotary (tricone) are the only viable options for full depth. Auger, direct push, and cable tool all refuse on the cobble matrix within the first few meters.',
+    bootlegger: 'Bootlegger Cove glaciomarine clay has highly variable undrained shear strength and unpredictable dropstone distribution. Rotary or sonic are preferred. Empirical K estimation methods (Hazen, Kozeny-Carman) are unreliable in this unit \u2014 field hydraulic testing is required.'
+  };
 
-  // ── DETERMINE METHOD ──
-  let methods = [];
+  let phase2Notes = '<br><br><strong>Phase 2 physics summary:</strong> ';
+  const physNotes = [];
+  if (sim.bitWear > 0.5) physNotes.push('Bit wear ended at ' + (sim.bitWear * 100).toFixed(0) + '% \u2014 nontrivial degradation');
+  if (sim.bitBroken) physNotes.push('Bit failure occurred during this run');
+  if (sim.holeDeviation > 0.3) physNotes.push('Hole deviation reached ' + (sim.holeDeviation * 100).toFixed(0) + '% \u2014 sample alignment compromised');
+  if (sim.thawRadius > 0.3) physNotes.push('Thaw zone expanded to ' + sim.thawRadius.toFixed(2) + ' m around casing');
+  if (sim.mudCakeThickness > 0.3) physNotes.push('Mud cake developed to ' + (sim.mudCakeThickness * 100).toFixed(0) + '% \u2014 hole stable, slight backpressure');
+  phase2Notes += physNotes.length > 0 ? physNotes.join('; ') + '.' : 'No significant bit/hole/thermal events recorded.';
 
-  if(needRockCore){
-    methods.push({name:'Rotary Wire-Line Coring (NQ/HQ)',note:'Advance casing to rock surface, convert to wire-line coring. Use NQ for most investigations, HQ where sample diameter is critical. Log RQD and fracture frequency on all runs.'});
-  }
-  if((hasCobbles || hasBoulders) && depth > 15){
-    methods.push({name:'Water Wash / Driven Casing',note:'Drive casing through cobbly material with spud hammer; flush cuttings with water. Retrieve disturbed samples with split spoon or Modified Cal through casing. Best method when HSA refusal is anticipated.'});
-  }
-  if(hasHeave || (hasGW && depth > 20)){
-    methods.push({name:'Hollow Stem Auger (HSA) with Driven Casing Contingency',note:'Begin with HSA. If heaving or caving encountered below water table, switch to driven casing with water flush to maintain borehole stability.'});
-  }
-  if(access === 'flyin' || topRig === 'minuteman'){
-    methods.push({name:'Continuous Flight Auger / Hand Auger',note:'Portable auger tooling. Advance with portable power head. Depth typically limited to 20–30 ft in cooperative soils. Log cuttings carefully.'});
-  }
-  if(topRig === 'geoprobe' && !needSPT && !needModCal){
-    methods.push({name:'Direct Push (Geoprobe)',note:'Push Geoprobe rods and macro-core or SRS sampler into ground. No rotation. Fast in clays and silts. Cannot advance through gravel without switching to rotary.'});
-  }
-
-  // Default: HSA with split spoon
-  if(methods.length === 0 || (!hasCobbles && !hasBoulders && !needRockCore && !hasHeave)){
-    const samplerNote = needModCal
-      ? 'Use Modified California (3") split spoon sampler — preferred for gravelly soils and standard practice in Alaska for soil characterization.'
-      : 'Use standard SPT (2") split spoon or Modified California (3") split spoon per project spec.';
-    methods.unshift({name:'Hollow Stem Auger (HSA) — ' + (needModCal?'Modified Cal Sampler':'SPT / Modified Cal Sampler'),note:samplerNote});
-  }
-
-  if(needBoulderSize && !methods.some(m=>m.name.includes('Sonic'))){
-    flags.push('Consider sonic drilling if budget allows — continuous core through bouldery material with minimal sample disturbance is a significant advantage for boulder mapping.');
-  }
-
-  // ── RENDER ──
-  const primary = rigData[topRig];
-  let primaryHTML = `
-    <div class="res-primary-label">Primary Recommendation</div>
-    <div class="res-rig">${primary.name}</div>
-    <div class="res-method">Method: ${methods[0].name}</div>
-    <div class="res-rationale">${primary.desc}<br><br>${methods[0].note}</div>`;
-  document.getElementById('resPrimary').innerHTML = primaryHTML;
-
-  // Alternates
-  let altHTML = '';
-  if(altRigs.length){
-    altHTML += `<div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Alternates / Contingencies</div>`;
-    altRigs.forEach(([rigId])=>{
-      const r = rigData[rigId];
-      const altMethod = methods[1] || methods[0];
-      altHTML += `<div class="res-alt">
-        <div class="res-alt-label">Alternate</div>
-        <div class="res-alt-rig">${r.name}</div>
-        <div class="res-alt-method">Method: ${altMethod.name}</div>
-        <div class="res-alt-note">${r.desc}</div>
-      </div>`;
-    });
-  }
-  // Extra methods
-  if(methods.length > 1){
-    altHTML += `<div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Additional Methods to Consider</div>`;
-    methods.slice(1).forEach(m=>{
-      altHTML += `<div class="res-alt"><div class="res-alt-rig">${m.name}</div><div class="res-alt-note">${m.note}</div></div>`;
-    });
-  }
-  document.getElementById('resAlts').innerHTML = altHTML;
-
-  // Flags
-  if(flags.length){
-    document.getElementById('resFlags').style.display='block';
-    document.getElementById('resFlagList').innerHTML = flags.map(f=>`<div class="flag"><span class="flag-icon">⚠</span><span>${f}</span></div>`).join('');
-  } else {
-    document.getElementById('resFlags').style.display='none';
-  }
-
-  const panel = document.getElementById('resultPanel');
-  panel.style.display='block';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  return '<strong>' + method.name + ' in ' + gnd.name + ':</strong><br><br>'
+    + comparisons[sim.method] + '<br><br>'
+    + '<strong>Scenario Assessment:</strong> ' + groundNote[sim.ground] + '<br><br>'
+    + '<strong>This run:</strong> ' + avgPen.toFixed(1) + ' m/hr average penetration rate, ' + avgRec.toFixed(0) + '% average core recovery over ' + sim.depth.toFixed(1) + ' m.'
+    + phase2Notes;
 }
 
-function resetAll(){
-  state = {purpose:null, access:null, depth:20, conditions:new Set(), sampling:new Set()};
-  ['s1','s2','s3','s4','s5'].forEach(id=>{
-    const el=document.getElementById(id);
-    el.classList.remove('complete','collapsed');
-    if(id!=='s1') el.classList.add('collapsed');
+function exportCSV() {
+  const strip = s => String(s).replace(/&mdash;/g, '-').replace(/&ndash;/g, '-').replace(/&nbsp;/g, ' ').replace(/&middot;/g, '.').replace(/&amp;/g, '&').replace(/&#\d+;/g, '');
+  const rows = [['Depth From (m)', 'Depth To (m)', 'Material', 'Pen Rate (m/hr)', 'Pressure (psi)', 'Down Force (kN)', 'Recovery (%)', 'Sample Quality', 'Notes']];
+  sim.drillLog.forEach(e => {
+    rows.push([e.depthFrom, e.depthTo, '"' + strip(e.material) + '"', e.penRate, e.pressure, e.downForce, e.recovery, '"' + strip(e.quality) + '"', '"' + strip(e.notes) + '"']);
   });
-  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
-  document.querySelectorAll('.next-btn').forEach(b=>{if(b.id==='s1-next'||b.id==='s2-next') b.disabled=true;});
-  document.getElementById('depthSlider').value=20;
-  document.getElementById('depthVal').textContent='20 ft';
-  document.getElementById('depthNote').textContent='';
-  document.getElementById('resultPanel').style.display='none';
-  ['s1-sum','s2-sum','s3-sum','s4-sum','s5-sum'].forEach(id=>document.getElementById(id).textContent='');
-  window.scrollTo({top:0,behavior:'smooth'});
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'drilling_log_' + sim.method + '_' + sim.ground + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-// Set initial date hint
-updateDepth(20);
+selGround.addEventListener('change', () => {
+  if (!sim.running) {
+    drawIdle();
+    const gnd = GROUNDS[selGround.value];
+    if (gnd.context) {
+      statusBox.innerHTML = '<span style="color:#9AAABB;">' + gnd.context + '</span>';
+    }
+  }
+});
+selMethod.addEventListener('change', () => { if (!sim.running) drawIdle(); });
+depthSlider.addEventListener('input', () => { if (!sim.running) drawIdle(); });
+
+drawIdle();
+clearGaugeDisplays();
+
+/* ============================================================
+   OPUS HANDOFF (Phase 2 complete \u2014 Phase 3 candidates)
+
+   Phase 2 implemented this session:
+   - Sigmoid hardness response curves per method (replaces linear)
+   - Hydrostatic / overburden depth effect on penetration
+   - Bit wear accumulator (visible badge, affects rate + recovery)
+   - Method-specific force and RPM efficiency curves
+   - Rotary mud hydraulics (flow * resistance * mud cake)
+   - Sonic vibration energy with material damping
+   - Percussion hammer energy decay with depth
+   - Auger flute clogging in clay over time
+   - Layer-contact transition spikes (pressure + torque)
+   - Recovery: down-force disturbance, OCR clay benefit, sand
+     bleed-out below WT, thin layer loss, wear smear, deviation
+   - Permafrost thaw zone radial expansion + sonic differential
+   - Mud cake visualization on rotary borehole walls
+   - Sand instability halo near bit (saturated, no-mud)
+   - Talik indicator on permafrost with shallow water
+   - Bit breakage risk on hard obstacles (vulnerable methods)
+   - Borehole deviation on cobble/dropstone glancing hits
+   - Operator decision modal: push through / skip / pull rods
+   - Bit-state badges on cross-section
+   - Cuttings ejection particle spray for percussion impacts
+
+   Phase 3 candidates for further deepening:
+   - True 1D pore-pressure FDM coupled to penetration (RI02-style)
+   - Bit hydraulics: nozzle pressure drop and jet impact modeling
+   - Sonic resonant frequency tuning (vibration mode shapes)
+   - Cuttings transport in annulus (Reynolds-dependent)
+   - Hole stability collapse (Mohr-Coulomb on borehole wall)
+   - Cost analysis layer (rental, crew, consumables per method)
+   - Side-by-side comparative run analysis
+   ============================================================ */
 </script>
 
 </body>
