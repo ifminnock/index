@@ -995,6 +995,19 @@ function resetSim() {
    to appear or was dismissed abnormally.
    ============================================================ */
 function tick(ts) {
+  try {
+    _tick_inner(ts);
+  } catch(e) {
+    console.error('TICK EXCEPTION:', e, e.stack);
+    document.getElementById('debug-overlay').textContent = 
+      'TICK EXCEPTION: ' + e.message + ' | depth=' + sim.depth.toFixed(2) + 
+      ' active=' + sim.obstacleActive + ' pending=' + sim.decisionPending +
+      ' running=' + sim.running + ' paused=' + sim.paused;
+    // DO NOT re-queue rAF - let it die so we can see the error
+  }
+}
+
+function _tick_inner(ts) {
   if (!sim.running || sim.paused) return;
   if (!sim.lastTick) sim.lastTick = ts;
   const realDt = (ts - sim.lastTick) / 1000;
@@ -1074,6 +1087,20 @@ function tick(ts) {
 
   if (sim.depth >= sim.targetDepth) { finishSim(); return; }
   sim.rafId = requestAnimationFrame(tick);
+
+  // DEBUG: update overlay every frame
+  const _dbg = document.getElementById('debug-overlay');
+  if (_dbg) {
+    _dbg._count = (_dbg._count || 0) + 1;
+    _dbg.textContent = 'frame=' + _dbg._count + 
+      ' | depth=' + sim.depth.toFixed(2) + 
+      ' | obstacleActive=' + sim.obstacleActive + 
+      ' | obstacleTimer=' + sim.obstacleTimer.toFixed(2) +
+      ' | decisionPending=' + sim.decisionPending +
+      ' | penRate=' + (sim.penRate || 0).toFixed(2) +
+      ' | running=' + sim.running;
+  }
+
 }
 
 /* ============================================================
@@ -2217,6 +2244,38 @@ clearGaugeDisplays();
    3. resumeFromDecision() — now calls cancelAnimationFrame before
       requestAnimationFrame to prevent duplicate loops.
    ============================================================ */
+</script>
+
+<div id="debug-overlay" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-family:monospace;font-size:11px;padding:4px 8px;z-index:9999;pointer-events:none;white-space:nowrap;overflow:hidden;"></div>
+
+<script>
+// Watchdog: if tick stops being called while sim is running, report it
+let _lastTickTime = 0;
+let _watchdog = setInterval(() => {
+  const overlay = document.getElementById('debug-overlay');
+  if (!overlay) return;
+  const now = Date.now();
+  if (typeof sim !== 'undefined' && sim.running && !sim.paused && !sim.complete) {
+    const gap = now - _lastTickTime;
+    if (gap > 2000 && _lastTickTime > 0) {
+      overlay.style.color = '#f00';
+      overlay.style.color = '#f00';
+      overlay.textContent = 'LOOP DEAD (no tick for ' + (gap/1000).toFixed(1) + 's) | rafCalls=' + _rafCallCount + ' | obstacleActive=' + (typeof sim !== 'undefined' ? sim.obstacleActive : '?') + ' | decisionPending=' + (typeof sim !== 'undefined' ? sim.decisionPending : '?') + ' | running=' + (typeof sim !== 'undefined' ? sim.running : '?');
+    }
+  }
+}, 500);
+
+// Patch requestAnimationFrame to track last tick time
+
+// Track rAF calls separately from frame count
+let _rafCallCount = 0;
+const _origRAF2 = window.requestAnimationFrame.bind(window);
+window.requestAnimationFrame = function(cb) {
+  _rafCallCount++;
+  _lastTickTime = Date.now();
+  return _origRAF2(cb);
+};
+
 </script>
 
 </body>
