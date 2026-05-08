@@ -5,578 +5,384 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Chartered Realm — NPC Registry</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --parchment:#f4ead5;
-  --parchment-dark:#ede0c4;
-  --ink:#2a1a0a;
-  --ink-light:#3d2b1a;
-  --gold:#a07830;
-  --gold-light:#c8a87a;
-  --crimson:#7a1e1e;
-  --border:#c8a87a;
-  --blue-dark:#1e3a5a;
-}
-body{background:#2a1f10;font-family:'Crimson Text',Georgia,serif;color:var(--ink);padding:20px;min-height:100vh}
-
-.app{
-max-width:1100px;margin:0 auto;
-display:grid;
-grid-template-columns:260px 1fr;
-grid-template-rows:auto 1fr auto;
-background:var(–parchment);
-border:2px solid var(–gold);
-box-shadow:0 0 40px rgba(0,0,0,.6);
-min-height:600px;
-}
-
-/* HEADER */
-.app-header{
-grid-column:1/-1;
-background:#1a0f05;
-border-bottom:3px solid var(–gold);
-padding:14px 24px;
-text-align:center;
-position:relative;
-}
-.app-header h1{font-family:‘IM Fell English SC’,serif;color:var(–gold);font-size:20px;letter-spacing:3px;margin-bottom:2px}
-.app-header .sub{color:#c8b080;font-style:italic;font-size:12.5px;font-family:‘IM Fell English’,serif}
-.corner{position:absolute;top:50%;transform:translateY(-50%);color:var(–gold);font-size:24px;opacity:.4}
-.corner-l{left:16px}.corner-r{right:16px}
-
-/* SIDEBAR */
-.sidebar{
-grid-row:2;
-background:var(–parchment-dark);
-border-right:2px solid var(–border);
-padding:14px 12px;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-.sidebar-title{font-family:‘IM Fell English SC’,serif;font-size:9px;letter-spacing:3px;color:var(–gold);text-transform:uppercase;margin-bottom:8px;display:block}
-.npc-list{list-style:none;flex:1;overflow-y:auto;margin-bottom:10px}
-.npc-item{border-bottom:1px dotted rgba(160,120,48,.3)}
-.npc-row{display:flex;align-items:center;gap:6px;padding:6px 4px;cursor:pointer;transition:background .1s}
-.npc-row:hover{background:rgba(160,120,48,.1)}
-.npc-row.active{background:rgba(122,30,30,.1);border-left:3px solid var(–crimson);padding-left:5px}
-.npc-check{
-width:14px;height:14px;border:1px solid var(–gold);flex-shrink:0;
-background:rgba(255,255,255,.4);cursor:pointer;
-display:flex;align-items:center;justify-content:center;
-font-size:9px;color:transparent;transition:all .12s;
-}
-.npc-check.done{background:var(–gold);color:#1a0f05}
-.npc-check.done::after{content:‘✓’}
-.npc-name-display{font-size:13px;color:var(–ink-light);flex:1;line-height:1.2;word-break:break-word}
-.npc-subtag{font-size:9px;font-family:‘IM Fell English SC’,serif;letter-spacing:1px;color:var(–gold);opacity:.7;display:block}
-.npc-edit-btn{font-size:11px;color:var(–gold);background:none;border:none;cursor:pointer;opacity:.5;padding:2px 4px;line-height:1;flex-shrink:0}
-.npc-edit-btn:hover{opacity:1;color:var(–crimson)}
-.npc-name-input{font-family:‘Crimson Text’,serif;font-size:13px;color:var(–ink);border:none;border-bottom:1px solid var(–gold);background:transparent;outline:none;width:100%;padding:1px 2px}
-
-/* ADD NPC */
-.add-npc{border-top:1px solid rgba(160,120,48,.3);padding-top:10px;flex-shrink:0}
-.add-npc input,.add-npc select{
-font-family:‘Crimson Text’,serif;font-size:13px;color:var(–ink);
-border:1px solid var(–border);background:rgba(255,255,255,.5);
-padding:5px 8px;width:100%;outline:none;margin-bottom:6px;display:block;
-}
-.add-npc input::placeholder{color:rgba(160,120,48,.4);font-style:italic}
-.add-npc input:focus,.add-npc select:focus{border-color:var(–crimson)}
-.btn{
-font-family:‘IM Fell English SC’,serif;font-size:10px;letter-spacing:1px;
-border:1px solid var(–gold);background:rgba(160,120,48,.1);color:var(–gold);
-padding:6px 10px;cursor:pointer;width:100%;transition:all .12s;display:block;
-}
-.btn:hover{background:var(–gold);color:#1a0f05}
-.btn-sm{width:auto;padding:4px 10px;font-size:9px}
-.btn-crimson{border-color:var(–crimson);color:var(–crimson);background:rgba(122,30,30,.06)}
-.btn-crimson:hover{background:var(–crimson);color:var(–parchment)}
-
-/* FORM */
-.form-area{
-grid-row:2;
-padding:18px 22px;
-overflow-y:auto;
-}
-.form-placeholder{
-display:flex;align-items:center;justify-content:center;
-height:100%;color:rgba(160,120,48,.4);font-style:italic;font-size:14px;text-align:center;
-}
-
-.sec-label{display:block;font-family:‘IM Fell English SC’,serif;font-size:9px;letter-spacing:3px;color:var(–gold);text-transform:uppercase;margin-bottom:5px}
-.divider-bold{border:none;border-top:2px solid var(–gold);margin:14px 0;opacity:.5}
-
-.field{display:flex;flex-direction:column;margin-bottom:11px}
-.field label{font-family:‘IM Fell English SC’,serif;font-size:8.5px;letter-spacing:2px;color:var(–crimson);text-transform:uppercase;margin-bottom:3px}
-.field input[type=text]{
-border:none;border-bottom:1.5px solid var(–gold-light);
-background:transparent;font-family:‘Crimson Text’,serif;
-font-size:14.5px;color:var(–ink);padding:2px 4px;width:100%;outline:none;
-}
-.field input[type=text]:focus{border-bottom-color:var(–crimson);background:rgba(122,30,30,.02)}
-.field input[type=text]::placeholder{color:rgba(160,120,48,.35);font-style:italic;font-size:13px}
-.field select{
-border:none;border-bottom:1.5px solid var(–gold-light);background:transparent;
-font-family:‘Crimson Text’,serif;font-size:14.5px;color:var(–ink);
-padding:2px 22px 2px 4px;width:100%;outline:none;cursor:pointer;
-appearance:none;-webkit-appearance:none;
-background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%23a07830’/%3E%3C/svg%3E”);
-background-repeat:no-repeat;background-position:right 6px center;
-}
-.field select:focus{border-bottom-color:var(–crimson)}
-.field select option{background:#f4ead5;color:var(–ink);font-size:14px}
-.field textarea{
-border:1px solid var(–gold-light);background:rgba(255,255,255,.25);
-font-family:‘Crimson Text’,serif;font-size:13.5px;color:var(–ink);
-padding:6px 8px;width:100%;outline:none;resize:vertical;min-height:58px;line-height:1.65;
-}
-.field textarea:focus{border-color:var(–crimson)}
-.field textarea::placeholder{color:rgba(160,120,48,.35);font-style:italic}
-
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-
-/* TRAIT PILLS */
-.trait-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
-.trait-pill{
-font-family:‘Crimson Text’,serif;font-size:12px;
-border:1px solid var(–border);padding:2px 9px;cursor:pointer;
-color:var(–ink-light);background:rgba(255,255,255,.35);
-transition:all .12s;user-select:none;
-}
-.trait-pill:hover{border-color:var(–crimson)}
-.trait-pill.active{background:var(–crimson);border-color:var(–crimson);color:var(–parchment)}
-.trait-add{display:flex;gap:6px;margin-top:6px}
-.trait-add input{
-font-family:‘Crimson Text’,serif;font-size:13px;
-border:1px solid var(–border);background:rgba(255,255,255,.3);
-padding:3px 8px;outline:none;color:var(–ink);flex:1;
-}
-.trait-add input:focus{border-color:var(–crimson)}
-.trait-add button{
-font-family:‘IM Fell English SC’,serif;font-size:9px;letter-spacing:1px;
-border:1px solid var(–gold);background:rgba(160,120,48,.1);color:var(–gold);
-padding:3px 10px;cursor:pointer;white-space:nowrap;
-}
-.trait-add button:hover{background:var(–gold);color:#1a0f05}
-
-/* LORE BANNER */
-.lore-note{
-background:rgba(30,58,90,.07);border:1px solid rgba(58,90,122,.25);
-border-left:3px solid var(–blue-dark);padding:8px 12px;
-font-size:12px;color:#3a5a7a;font-style:italic;line-height:1.6;margin-bottom:12px;
-}
-.lore-label{font-family:‘IM Fell English SC’,serif;font-size:8px;letter-spacing:2px;color:var(–blue-dark);display:block;margin-bottom:3px}
-
-/* ACTION ROW */
-.action-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.action-row .btn{width:auto;padding:5px 14px}
-
-/* STATUS BAR */
-.status-bar{
-grid-column:1/-1;
-background:#1a0f05;border-top:2px solid var(–gold);
-padding:8px 20px;
-display:flex;align-items:center;justify-content:space-between;gap:12px;
-flex-wrap:wrap;
-}
-.status-count{font-family:‘IM Fell English SC’,serif;font-size:9px;letter-spacing:2px;color:#6a5030}
-.export-btns{display:flex;gap:8px}
-.export-btn{
-font-family:‘IM Fell English SC’,serif;font-size:9px;letter-spacing:1px;
-border:1px solid var(–gold);background:rgba(160,120,48,.1);color:var(–gold);
-padding:5px 14px;cursor:pointer;transition:all .12s;
-}
-.export-btn:hover{background:var(–gold);color:#1a0f05}
-.export-btn.primary{border-color:#c8a94a;background:rgba(200,169,74,.15);color:#c8a94a}
-.export-btn.primary:hover{background:#c8a94a;color:#1a0f05}
-
-@media(max-width:700px){
-.app{grid-template-columns:1fr}
-.sidebar{grid-row:auto;border-right:none;border-bottom:2px solid var(–border)}
-.form-area{grid-row:auto}
-.fg3{grid-template-columns:1fr 1fr}
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #2a1f10; font-family: Georgia, serif; min-height: 100vh; padding: 16px; }
+  input, select, textarea, button { font-family: Georgia, serif; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(160,120,48,.1); }
+  ::-webkit-scrollbar-thumb { background: rgba(160,120,48,.4); border-radius: 3px; }
 </style>
-
 </head>
 <body>
-<div class="app">
+<div id="root"></div>
 
-  <!-- HEADER -->
+<script type="text/babel">
+const { useState, useCallback } = React;
 
-  <div class="app-header">
-    <div class="corner corner-l">❧</div>
-    <h1>The Chartered Realm — NPC Registry</h1>
-    <div class="sub">Select a character · Fill the form · Export CSV for GM use</div>
-    <div class="corner corner-r">❧</div>
-  </div>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const C = {
+  gold: "#a07830", crimson: "#7a1e1e", parchment: "#f4ead5",
+  parchmentDark: "#ede0c4", ink: "#2a1a0a", inkLight: "#3d2b1a",
+  border: "#c8a87a", goldLight: "#c8a87a", blueDark: "#1e3a5a",
+};
 
-  <!-- SIDEBAR -->
-
-  <div class="sidebar">
-    <span class="sidebar-title">Known Characters</span>
-    <ul class="npc-list" id="npc-list"></ul>
-    <div class="add-npc">
-      <input type="text" id="new-npc-name" placeholder="New character name…">
-      <select id="new-npc-tag">
-        <option value="Major NPC">Major NPC</option>
-        <option value="Minor NPC">Minor NPC</option>
-        <option value="Lore / Background">Lore / Background</option>
-        <option value="Faction">Faction</option>
-      </select>
-      <button class="btn" onclick="addNPC()">+ Add Character</button>
-    </div>
-  </div>
-
-  <!-- FORM -->
-
-  <div class="form-area" id="form-area">
-    <div class="form-placeholder">Select a character from the list to begin.</div>
-  </div>
-
-  <!-- FOOTER -->
-
-  <div class="status-bar">
-    <span class="status-count" id="status-count">Loading…</span>
-    <div class="export-btns">
-      <button class="export-btn" onclick="exportJSON()">Export JSON</button>
-      <button class="export-btn primary" onclick="exportCSV()">Export CSV</button>
-    </div>
-  </div>
-
-</div><!-- /app -->
-
-<script>
-// ─── NPC DATA ──────────────────────────────────────────────────────────────
-const DEFAULT_NPCS = [
-  { id:1,  name:'The King',                    tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'',      gender:'',       title:'King of Cornerstone',                   role:'Major NPC',         alignment:'Neutral',    disposition:'Neutral',  arc:'Arc 1, Arc 2', wants:'', fears:'', traits:['Competent','Insecure','Well-meaning'],              leverage:'', notes:'Inherited stability but not the skills that built it. Recognizes his own incompetence. Occasional ego costs the party resources. Not a villain — a sympathetic obstacle.' }},
-  { id:2,  name:'Guild Master — Craftsmen',    tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'Old',   gender:'',       title:"Guild Master, Craftsmen's Guild",        role:'Major NPC',         alignment:'Variable',   disposition:'Neutral',  arc:'Arc 2',        wants:'', fears:'', traits:['Tired','Proud'],                                     leverage:'', notes:"Old and worn down. His deputy is ambitious and quietly negotiating with the Merchants' Guild — possible first betrayal the players encounter." }},
-  { id:3,  name:'Guild Master — Merchants',    tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'',      gender:'',       title:"Guild Master, Merchants' Guild",         role:'Major NPC',         alignment:'Antagonist', disposition:'Hostile',  arc:'Arc 2',        wants:'', fears:'', traits:[],                                                    leverage:'', notes:'Hostile by default. Will cooperate on the surface while actively working against the team. Ascended by purging a predecessor who was rediscovering PM knowledge. Fragments still in Guild archives.' }},
-  { id:4,  name:'Guild Master — Laborers',     tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'',      gender:'',       title:"Guild Master, Laborers' Union",          role:'Major NPC',         alignment:'Variable',   disposition:'Neutral',  arc:'Arc 2',        wants:'', fears:'', traits:[],                                                    leverage:'', notes:'' }},
-  { id:5,  name:'Guild Master — Scholars',     tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'',      gender:'',       title:"Guild Master, Scholars' Circle",         role:'Major NPC',         alignment:'Variable',   disposition:'Neutral',  arc:'Arc 2',        wants:'', fears:'', traits:[],                                                    leverage:'', notes:'' }},
-  { id:6,  name:"Craftsmen's Deputy",          tag:'Major NPC',         done:false, data:{ altName:'', race:'Human',             age:'',      gender:'',       title:"Deputy, Craftsmen's Guild",              role:'Major NPC',         alignment:'Antagonist', disposition:'Skeptical',arc:'Arc 2',        wants:'', fears:'', traits:['Ambitious'],                                         leverage:'', notes:"First betrayal players may encounter if not paying attention. Quietly negotiating with the Merchants' Guild behind the Guild Master's back." }},
-  { id:7,  name:'Droga Vorak',                 tag:'Major NPC',         done:false, data:{ altName:'', race:'Orc',              age:'',      gender:'',       title:'Warchief, Clan Vorak (The Iron Jaw)',    role:'Major NPC',         alignment:'Variable',   disposition:'Hostile',  arc:'Arc 1',        wants:'', fears:'', traits:['Pragmatic','Militarily sophisticated'],              leverage:'', notes:'Leads the siege of Cornerstone. Believes human settlements encroach on ancestral orcish grazing land — because they do. Will negotiate if convinced it is advantageous. Not irrational.' }},
-  { id:8,  name:'Ambassador Sylvari Aethon',   tag:'Major NPC',         done:false, data:{ altName:'', race:'Elf',              age:'',      gender:'',       title:'Ambassador, Aethis Lor (Elven Dominion)',role:'Major NPC',         alignment:'Variable',   disposition:'Skeptical',arc:'Arc 3',        wants:'', fears:'', traits:['Grieving','Diplomatically skilled'],                  leverage:'', notes:'Carries a thousand years of justified anger from The Severance. Diplomatic mission is real — so is the grief. Disposition minimum: Skeptical. Possibly connected to the anonymous Letters from the Field author.' }},
-  { id:9,  name:'Dragons (Northern Range)',     tag:'Lore / Background', done:false, data:{ altName:'', race:'Dragon',           age:'Ancient',gender:'',      title:'Territorial Sovereigns',                 role:'Lore / Background', alignment:'Neutral',    disposition:'Neutral',  arc:'Background',   wants:'', fears:'', traits:['Strategic','Long-term thinkers','Resource managers'],   leverage:'', notes:'Not random destruction. Oldest organized beings. Hoard = reserve fund + political legitimacy. A dragon encounter is a senior executive meeting. Stakeholder analysis non-optional. Named dragons TBD.' }},
-  { id:10, name:'Author — Letters from the Field', tag:'Lore / Background', done:false, data:{ altName:'', race:'Unknown (likely Elf)', age:'', gender:'', title:'Anonymous chronicler',             role:'Lore / Background', alignment:'Ally',       disposition:'Receptive',arc:'Background / Arc 3', wants:'', fears:'', traits:[],                                               leverage:'', notes:'GM plant — seed when appropriate to build Arc 3 intrigue. Likely a dissident elf who admires what the team is building. Possible connection to Ambassador Aethon. Identity TBD.' }},
+const TRAITS = [
+  "Pragmatic","Ambitious","Cautious","Loyal","Grieving","Proud",
+  "Strategic","Charismatic","Manipulative","Honest","Tired",
+  "Militarily sophisticated","Diplomatically skilled","Insecure",
+  "Well-meaning","Competitive","Reckless","Patient","Visionary",
+  "Bureaucratic","Competent","Cunning","Protective","Suspicious",
 ];
 
-const TRAITS_POOL = [
-  'Pragmatic','Ambitious','Cautious','Loyal','Grieving','Proud',
-  'Strategic','Charismatic','Manipulative','Honest','Tired',
-  'Militarily sophisticated','Diplomatically skilled','Insecure',
-  'Well-meaning','Competitive','Reckless','Patient','Visionary',
-  'Bureaucratic','Competent','Cunning','Protective','Suspicious'
+const SEED_NPCS = [
+  { id:1,  name:"The King",                        tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"",       gender:"", title:"King of Cornerstone",                    role:"Major NPC",         alignment:"Neutral",    disposition:"Neutral",   arc:"Arc 1, Arc 2",       wants:"", fears:"", traits:["Competent","Insecure","Well-meaning"],              leverage:"", notes:"Inherited stability but not the skills that built it. Recognizes his own incompetence. Occasional ego costs the party resources. Not a villain — a sympathetic obstacle." }},
+  { id:2,  name:"Guild Master — Craftsmen",         tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"Old",    gender:"", title:"Guild Master, Craftsmen's Guild",         role:"Major NPC",         alignment:"Variable",   disposition:"Neutral",   arc:"Arc 2",              wants:"", fears:"", traits:["Tired","Proud"],                                    leverage:"", notes:"Old and worn down. His deputy is ambitious and quietly negotiating with the Merchants' Guild — possible first betrayal players encounter." }},
+  { id:3,  name:"Guild Master — Merchants",         tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"",       gender:"", title:"Guild Master, Merchants' Guild",          role:"Major NPC",         alignment:"Antagonist", disposition:"Hostile",   arc:"Arc 2",              wants:"", fears:"", traits:[],                                              leverage:"", notes:"Hostile by default. Cooperates on the surface while actively working against the team. Ascended by purging a predecessor rediscovering PM knowledge. Fragments still in Guild archives." }},
+  { id:4,  name:"Guild Master — Laborers",          tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"",       gender:"", title:"Guild Master, Laborers' Union",           role:"Major NPC",         alignment:"Variable",   disposition:"Neutral",   arc:"Arc 2",              wants:"", fears:"", traits:[],                                              leverage:"", notes:"" }},
+  { id:5,  name:"Guild Master — Scholars",          tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"",       gender:"", title:"Guild Master, Scholars' Circle",          role:"Major NPC",         alignment:"Variable",   disposition:"Neutral",   arc:"Arc 2",              wants:"", fears:"", traits:[],                                              leverage:"", notes:"" }},
+  { id:6,  name:"Craftsmen's Deputy",               tag:"Major NPC",         done:false, data:{ altName:"", race:"Human",               age:"",       gender:"", title:"Deputy, Craftsmen's Guild",               role:"Major NPC",         alignment:"Antagonist", disposition:"Skeptical", arc:"Arc 2",              wants:"", fears:"", traits:["Ambitious"],                                   leverage:"", notes:"First betrayal players may encounter. Quietly negotiating with the Merchants' Guild behind the Guild Master's back." }},
+  { id:7,  name:"Droga Vorak",                      tag:"Major NPC",         done:false, data:{ altName:"", race:"Orc",                age:"",       gender:"", title:"Warchief, Clan Vorak (The Iron Jaw)",     role:"Major NPC",         alignment:"Variable",   disposition:"Hostile",   arc:"Arc 1",              wants:"", fears:"", traits:["Pragmatic","Militarily sophisticated"],         leverage:"", notes:"Leads the siege. Believes human settlements encroach on ancestral orcish land — they do. Will negotiate if advantageous. Not irrational." }},
+  { id:8,  name:"Ambassador Sylvari Aethon",        tag:"Major NPC",         done:false, data:{ altName:"", race:"Elf",                age:"",       gender:"", title:"Ambassador, Aethis Lor (Elven Dominion)", role:"Major NPC",         alignment:"Variable",   disposition:"Skeptical", arc:"Arc 3",              wants:"", fears:"", traits:["Grieving","Diplomatically skilled"],            leverage:"", notes:"Carries a thousand years of justified anger from The Severance. Diplomatic mission is real — so is the grief. Disposition floor: Skeptical. Possibly connected to the Letters from the Field author." }},
+  { id:9,  name:"Dragons (Northern Range)",         tag:"Lore / Background", done:false, data:{ altName:"", race:"Dragon",             age:"Ancient",gender:"", title:"Territorial Sovereigns",                  role:"Lore / Background", alignment:"Neutral",    disposition:"Neutral",   arc:"Background",         wants:"", fears:"", traits:["Strategic","Long-term thinkers","Resource managers"], leverage:"", notes:"Not random destruction. Hoard = reserve fund + political legitimacy. A dragon encounter is a senior executive meeting. Stakeholder analysis non-optional. Named dragons TBD." }},
+  { id:10, name:"Author — Letters from the Field",  tag:"Lore / Background", done:false, data:{ altName:"", race:"Unknown (likely Elf)", age:"",    gender:"", title:"Anonymous chronicler",                    role:"Lore / Background", alignment:"Ally",       disposition:"Receptive", arc:"Background / Arc 3", wants:"", fears:"", traits:[],                                              leverage:"", notes:"GM plant for Arc 3 intrigue. Likely a dissident elf who admires what the team is building. Possible connection to Aethon. Identity TBD." }},
 ];
 
-let npcs = JSON.parse(JSON.stringify(DEFAULT_NPCS));
-let activeId = null;
-let editingNameId = null;
+const clone = x => JSON.parse(JSON.stringify(x));
 
-// ─── SIDEBAR ───────────────────────────────────────────────────────────────
-function renderSidebar() {
-  const list = document.getElementById('npc-list');
-  list.innerHTML = '';
-  npcs.forEach(function(npc) {
-    const li = document.createElement('li');
-    li.className = 'npc-item';
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
-    const nameHtml = editingNameId === npc.id
-      ? '<input class="npc-name-input" id="ni-' + npc.id + '" value="' + escAttr(npc.name) + '" onblur="saveName(' + npc.id + ')" onkeydown="if(event.key===\'Enter\')saveName(' + npc.id + ')" onclick="event.stopPropagation()">'
-      : '<div class="npc-name-display">' + esc(npc.name) + '</div>';
-
-    li.innerHTML =
-      '<div class="npc-row' + (activeId === npc.id ? ' active' : '') + '" onclick="selectNPC(' + npc.id + ')">' +
-        '<div class="npc-check' + (npc.done ? ' done' : '') + '" onclick="event.stopPropagation();toggleDone(' + npc.id + ')"></div>' +
-        '<div style="flex:1;min-width:0">' +
-          nameHtml +
-          '<span class="npc-subtag">' + esc(npc.tag) + '</span>' +
-        '</div>' +
-        '<button class="npc-edit-btn" onclick="event.stopPropagation();startEdit(' + npc.id + ')" title="Rename">✎</button>' +
-      '</div>';
-
-    list.appendChild(li);
+function buildCSV(npcs) {
+  const H = ["Name","Alias","Race","Age","Gender","Title","Type","Alignment","Disposition","Arc","Wants","Fears","Traits","Leverage","Notes","Complete"];
+  const q = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const rows = npcs.map(n => {
+    const d = n.data;
+    return [n.name,d.altName,d.race,d.age,d.gender,d.title,d.role,d.alignment,d.disposition,d.arc,d.wants,d.fears,(d.traits||[]).join("; "),d.leverage,d.notes,n.done?"Yes":"No"].map(q).join(",");
   });
-
-  if (editingNameId !== null) {
-    setTimeout(function() {
-      var inp = document.getElementById('ni-' + editingNameId);
-      if (inp) { inp.focus(); inp.select(); }
-    }, 20);
-  }
-
-  updateStatus();
+  return "\uFEFF" + [H.join(","), ...rows].join("\r\n");
 }
 
-function startEdit(id) {
-  saveCurrentForm();
-  editingNameId = id;
-  renderSidebar();
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+function Field({ label, children }) {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", marginBottom:"11px" }}>
+      <label style={{ fontFamily:"Georgia,serif", fontSize:"8.5px", letterSpacing:"2px", color:C.crimson, textTransform:"uppercase", marginBottom:"3px" }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
 }
 
-function saveName(id) {
-  var inp = document.getElementById('ni-' + id);
-  if (inp) {
-    var npc = findNPC(id);
-    if (npc) npc.name = inp.value.trim() || npc.name;
-  }
-  editingNameId = null;
-  renderSidebar();
-  if (activeId === id) renderForm();
+const inputSt = { border:"none", borderBottom:`1.5px solid ${C.goldLight}`, background:"transparent", fontSize:"14px", color:C.ink, padding:"2px 4px", width:"100%", outline:"none" };
+const selectSt = { ...inputSt };
+const textareaSt = { border:`1px solid ${C.goldLight}`, background:"rgba(255,255,255,.25)", fontSize:"13px", color:C.ink, padding:"6px 8px", width:"100%", outline:"none", resize:"vertical", minHeight:"58px", lineHeight:"1.65" };
+
+function Sel({ id, value, opts, onChange }) {
+  return (
+    <select id={id} style={selectSt} value={value} onChange={e => onChange(e.target.value)}>
+      {opts.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  );
 }
 
-function toggleDone(id) {
-  var npc = findNPC(id);
-  if (npc) npc.done = !npc.done;
-  renderSidebar();
+// ─── MAIN APP ──────────────────────────────────────────────────────────────────
+function App() {
+  const [npcs,       setNpcs]       = useState(() => clone(SEED_NPCS));
+  const [activeId,   setActiveId]   = useState(null);
+  const [form,       setForm]       = useState(null);
+  const [newName,    setNewName]    = useState("");
+  const [newTag,     setNewTag]     = useState("Major NPC");
+  const [editId,     setEditId]     = useState(null);
+  const [editVal,    setEditVal]    = useState("");
+  const [customTrait,setCustomTrait]= useState("");
+  const [msg,        setMsg]        = useState("");
+
+  const flash = text => { setMsg(text); setTimeout(() => setMsg(""), 3000); };
+
+  // ── Select NPC ──
+  const selectNPC = useCallback((npc) => {
+    setActiveId(npc.id);
+    setForm(clone(npc.data));
+    setEditId(null);
+  }, []);
+
+  // ── Form field update ──
+  const upd = (key, val) => {
+    setForm(prev => {
+      const next = { ...prev, [key]: val };
+      setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, data: next, tag: key === "role" ? val : n.tag } : n));
+      return next;
+    });
+  };
+
+  // ── Toggle trait ──
+  const toggleTrait = t => {
+    const next = form.traits.includes(t) ? form.traits.filter(x => x !== t) : [...form.traits, t];
+    upd("traits", next);
+  };
+
+  const addCustomTrait = () => {
+    const v = customTrait.trim();
+    if (!v || form.traits.includes(v)) return;
+    upd("traits", [...form.traits, v]);
+    setCustomTrait("");
+  };
+
+  // ── Sidebar ops ──
+  const toggleDone = (id, e) => {
+    e.stopPropagation();
+    setNpcs(ns => ns.map(n => n.id === id ? { ...n, done: !n.done } : n));
+  };
+
+  const addNPC = () => {
+    const name = newName.trim();
+    if (!name) return;
+    const id = Date.now();
+    const npc = { id, name, tag: newTag, done: false, data: {
+      altName:"", race:"Human", age:"", gender:"", title:"",
+      role: newTag, alignment:"Neutral", disposition:"Neutral", arc:"",
+      wants:"", fears:"", traits:[], leverage:"", notes:""
+    }};
+    setNpcs(ns => [...ns, npc]);
+    setNewName("");
+    selectNPC(npc);
+  };
+
+  const deleteNPC = id => {
+    if (!window.confirm("Remove this character from the registry?")) return;
+    setNpcs(ns => ns.filter(n => n.id !== id));
+    if (activeId === id) { setActiveId(null); setForm(null); }
+  };
+
+  const saveEditName = id => {
+    const v = editVal.trim();
+    if (v) setNpcs(ns => ns.map(n => n.id === id ? { ...n, name: v } : n));
+    setEditId(null);
+  };
+
+  // ── Export ──
+  const exportCSV  = () => { downloadFile("CharteredRealm_NPCs.csv",  buildCSV(npcs),              "text/csv;charset=utf-8;"); flash("✓ CSV downloaded"); };
+  const exportJSON = () => { downloadFile("CharteredRealm_NPCs.json", JSON.stringify(npcs, null,2), "application/json");        flash("✓ JSON downloaded"); };
+
+  const active = npcs.find(n => n.id === activeId);
+  const doneCount = npcs.filter(n => n.done).length;
+
+  // ── RENDER ──
+  return (
+    <div style={{ maxWidth:"1100px", margin:"0 auto", display:"grid", gridTemplateColumns:"250px 1fr", gridTemplateRows:"auto 1fr auto", background:C.parchment, border:`2px solid ${C.gold}`, boxShadow:"0 0 40px rgba(0,0,0,.6)", minHeight:"680px" }}>
+
+      {/* HEADER */}
+      <div style={{ gridColumn:"1/-1", background:"#1a0f05", borderBottom:`3px solid ${C.gold}`, padding:"14px 24px", textAlign:"center" }}>
+        <div style={{ fontFamily:"Georgia,serif", color:C.gold, fontSize:"20px", letterSpacing:"3px", marginBottom:"2px" }}>The Chartered Realm — NPC Registry</div>
+        <div style={{ color:"#c8b080", fontStyle:"italic", fontSize:"13px" }}>Select a character · Fill the record · Export CSV</div>
+      </div>
+
+      {/* SIDEBAR */}
+      <div style={{ gridRow:"2", background:C.parchmentDark, borderRight:`2px solid ${C.border}`, padding:"12px", display:"flex", flexDirection:"column", overflow:"hidden" }}>
+        <span style={{ fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"8px", display:"block" }}>Known Characters</span>
+
+        <ul style={{ listStyle:"none", flex:1, overflowY:"auto", marginBottom:"10px" }}>
+          {npcs.map(npc => (
+            <li key={npc.id} style={{ borderBottom:"1px dotted rgba(160,120,48,.3)" }}>
+              <div
+                onClick={() => selectNPC(npc)}
+                style={{ display:"flex", alignItems:"center", gap:"6px", padding:"5px 4px", cursor:"pointer", background: activeId===npc.id ? "rgba(122,30,30,.1)" : "transparent", borderLeft: activeId===npc.id ? `3px solid ${C.crimson}` : "3px solid transparent" }}
+              >
+                {/* Done check */}
+                <div
+                  onClick={e => toggleDone(npc.id, e)}
+                  style={{ width:"14px", height:"14px", border:`1px solid ${C.gold}`, flexShrink:0, background: npc.done ? C.gold : "rgba(255,255,255,.4)", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"9px", color: npc.done ? "#1a0f05" : "transparent" }}
+                >{npc.done ? "✓" : ""}</div>
+
+                <div style={{ flex:1, minWidth:0 }}>
+                  {editId === npc.id
+                    ? <input autoFocus style={{ ...inputSt, fontSize:"13px" }} value={editVal}
+                        onChange={e => setEditVal(e.target.value)}
+                        onBlur={() => saveEditName(npc.id)}
+                        onKeyDown={e => { if (e.key==="Enter") saveEditName(npc.id); if (e.key==="Escape") setEditId(null); }}
+                        onClick={e => e.stopPropagation()} />
+                    : <div style={{ fontSize:"13px", color:C.inkLight, lineHeight:"1.2" }}>{npc.name}</div>
+                  }
+                  <span style={{ fontSize:"9px", color:C.gold, opacity:.7, letterSpacing:"1px", display:"block" }}>{npc.tag}</span>
+                </div>
+
+                <button
+                  onClick={e => { e.stopPropagation(); setEditId(npc.id); setEditVal(npc.name); }}
+                  style={{ fontSize:"11px", color:C.gold, background:"none", border:"none", cursor:"pointer", opacity:.5, padding:"2px 4px" }}
+                  title="Rename"
+                >✎</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* Add NPC */}
+        <div style={{ borderTop:"1px solid rgba(160,120,48,.3)", paddingTop:"10px", flexShrink:0 }}>
+          <input
+            style={{ fontSize:"13px", color:C.ink, border:`1px solid ${C.border}`, background:"rgba(255,255,255,.5)", padding:"5px 8px", width:"100%", outline:"none", marginBottom:"6px", display:"block" }}
+            placeholder="New character name…"
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && addNPC()}
+          />
+          <select
+            style={{ fontSize:"13px", color:C.ink, border:`1px solid ${C.border}`, background:"rgba(255,255,255,.5)", padding:"5px 8px", width:"100%", marginBottom:"6px", display:"block" }}
+            value={newTag} onChange={e => setNewTag(e.target.value)}
+          >
+            {["Major NPC","Minor NPC","Lore / Background","Faction"].map(t => <option key={t}>{t}</option>)}
+          </select>
+          <button
+            onClick={addNPC}
+            style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"6px 10px", cursor:"pointer", width:"100%" }}
+          >+ Add Character</button>
+        </div>
+      </div>
+
+      {/* FORM AREA */}
+      <div style={{ gridRow:"2", padding:"16px 20px", overflowY:"auto" }}>
+        {!form || !active
+          ? <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100%", color:"rgba(160,120,48,.4)", fontStyle:"italic", fontSize:"14px", textAlign:"center" }}>
+              Select a character from the list to begin.
+            </div>
+          : <>
+            {active.tag === "Lore / Background" &&
+              <div style={{ background:"rgba(30,58,90,.07)", border:"1px solid rgba(58,90,122,.25)", borderLeft:`3px solid ${C.blueDark}`, padding:"8px 12px", fontSize:"12px", color:"#3a5a7a", fontStyle:"italic", lineHeight:"1.6", marginBottom:"12px" }}>
+                <span style={{ fontSize:"8px", letterSpacing:"2px", color:C.blueDark, display:"block", marginBottom:"3px", textTransform:"uppercase" }}>Lore Entry</span>
+                Background character — not all fields apply. Fill what's useful for GM reference.
+              </div>
+            }
+
+            {/* IDENTITY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Core Identity</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"14px", marginBottom:"11px" }}>
+              <Field label="Name">
+                <input style={inputSt} value={active.name}
+                  onChange={e => setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, name: e.target.value } : n))} />
+              </Field>
+              <Field label="Alias / Nickname">
+                <input style={inputSt} placeholder="e.g. The Ironmaster…" value={form.altName} onChange={e => upd("altName", e.target.value)} />
+              </Field>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"12px", marginBottom:"11px" }}>
+              <Field label="Race"><Sel value={form.race} opts={["Human","Orc","Elf","Half-Elf","Dwarf","Dragon","Unknown","Other"]} onChange={v => upd("race",v)} /></Field>
+              <Field label="Age / Era"><input style={inputSt} placeholder="e.g. 60s, Ancient…" value={form.age} onChange={e => upd("age",e.target.value)} /></Field>
+              <Field label="Gender"><input style={inputSt} placeholder="e.g. Male, Female…" value={form.gender} onChange={e => upd("gender",e.target.value)} /></Field>
+            </div>
+            <Field label="Title / Role in World">
+              <input style={inputSt} placeholder="e.g. Warchief of Clan Vorak…" value={form.title} onChange={e => upd("title",e.target.value)} />
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* STORY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Story Function</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"12px", marginBottom:"11px" }}>
+              <Field label="Character Type"><Sel value={form.role} opts={["Major NPC","Minor NPC","Lore / Background","Faction"]} onChange={v => upd("role",v)} /></Field>
+              <Field label="Alignment"><Sel value={form.alignment} opts={["Ally","Variable","Neutral","Antagonist","Unknown"]} onChange={v => upd("alignment",v)} /></Field>
+              <Field label="Starting Disposition"><Sel value={form.disposition} opts={["Hostile","Skeptical","Neutral","Receptive","Committed","Unknown"]} onChange={v => upd("disposition",v)} /></Field>
+            </div>
+            <Field label="Arc(s) Involved">
+              <input style={inputSt} placeholder="e.g. Arc 1, Arc 2…" value={form.arc} onChange={e => upd("arc",e.target.value)} />
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* PSYCHOLOGY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Psychology</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"14px", marginBottom:"11px" }}>
+              <Field label="What do they want?">
+                <textarea style={textareaSt} placeholder="Primary goal or desire…" value={form.wants} onChange={e => upd("wants",e.target.value)} />
+              </Field>
+              <Field label="What are they afraid of?">
+                <textarea style={textareaSt} placeholder="Pressure point or vulnerability…" value={form.fears} onChange={e => upd("fears",e.target.value)} />
+              </Field>
+            </div>
+
+            <Field label={<>Dominant Traits <span style={{ fontStyle:"italic", fontSize:"10px", color:"#7a6040", textTransform:"none", letterSpacing:0 }}>— click to toggle</span></>}>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"5px", marginTop:"4px" }}>
+                {TRAITS.map(t => (
+                  <div key={t}
+                    onClick={() => toggleTrait(t)}
+                    style={{ fontSize:"12px", border:`1px solid ${form.traits.includes(t) ? C.crimson : C.border}`, padding:"2px 9px", cursor:"pointer", color: form.traits.includes(t) ? C.parchment : C.inkLight, background: form.traits.includes(t) ? C.crimson : "rgba(255,255,255,.35)", userSelect:"none" }}
+                  >{t}</div>
+                ))}
+                {form.traits.filter(t => !TRAITS.includes(t)).map(t => (
+                  <div key={t}
+                    onClick={() => toggleTrait(t)}
+                    style={{ fontSize:"12px", border:`1px solid ${C.crimson}`, padding:"2px 9px", cursor:"pointer", color:C.parchment, background:C.crimson, userSelect:"none" }}
+                  >{t} ✕</div>
+                ))}
+              </div>
+              <div style={{ display:"flex", gap:"6px", marginTop:"6px" }}>
+                <input
+                  style={{ ...inputSt, border:`1px solid ${C.border}`, padding:"3px 8px", flex:1 }}
+                  placeholder="Add custom trait…"
+                  value={customTrait}
+                  onChange={e => setCustomTrait(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addCustomTrait()}
+                />
+                <button onClick={addCustomTrait} style={{ fontSize:"9px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"3px 10px", cursor:"pointer" }}>Add</button>
+              </div>
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* TACTICAL */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Tactical Notes</span>
+            <Field label="Leverage / What Moves Them">
+              <textarea style={textareaSt} placeholder="What does the team have on them? What changes their position?" value={form.leverage} onChange={e => upd("leverage",e.target.value)} />
+            </Field>
+            <Field label="GM Notes">
+              <textarea style={{ ...textareaSt, minHeight:"80px" }} placeholder="Backstory, relationships, things to know when fleshing this character out…" value={form.notes} onChange={e => upd("notes",e.target.value)} />
+            </Field>
+
+            <div style={{ display:"flex", gap:"8px", marginTop:"12px" }}>
+              <button onClick={() => setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, done:true } : n))}
+                style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"5px 14px", cursor:"pointer" }}>
+                ✓ Mark Complete
+              </button>
+              <button onClick={() => deleteNPC(activeId)}
+                style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.crimson}`, background:"rgba(122,30,30,.06)", color:C.crimson, padding:"5px 14px", cursor:"pointer" }}>
+                Remove
+              </button>
+            </div>
+          </>
+        }
+      </div>
+
+      {/* FOOTER */}
+      <div style={{ gridColumn:"1/-1", background:"#1a0f05", borderTop:`2px solid ${C.gold}`, padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"8px" }}>
+        <span style={{ fontSize:"9px", letterSpacing:"2px", color:"#6a5030" }}>
+          {npcs.length} characters · {doneCount} complete
+          {msg && <span style={{ marginLeft:"12px", color:"#a0c8a0" }}>{msg}</span>}
+        </span>
+        <div style={{ display:"flex", gap:"8px" }}>
+          <button onClick={exportJSON} style={{ fontSize:"9px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"5px 14px", cursor:"pointer" }}>Export JSON</button>
+          <button onClick={exportCSV}  style={{ fontSize:"9px", letterSpacing:"1px", border:"1px solid #c8a94a",   background:"rgba(200,169,74,.15)", color:"#c8a94a",  padding:"5px 14px", cursor:"pointer" }}>Export CSV</button>
+        </div>
+      </div>
+
+    </div>
+  );
 }
 
-function addNPC() {
-  var nameEl = document.getElementById('new-npc-name');
-  var tagEl  = document.getElementById('new-npc-tag');
-  var name = nameEl.value.trim();
-  if (!name) { nameEl.focus(); return; }
-  var id = Date.now();
-  npcs.push({
-    id: id, name: name, tag: tagEl.value, done: false,
-    data: { altName:'', race:'Human', age:'', gender:'', title:'',
-            role: tagEl.value, alignment:'Neutral', disposition:'Neutral', arc:'',
-            wants:'', fears:'', traits:[], leverage:'', notes:'' }
-  });
-  nameEl.value = '';
-  renderSidebar();
-  selectNPC(id);
-}
-
-function deleteNPC(id) {
-  if (!confirm('Remove ' + (findNPC(id)||{name:'this character'}).name + '?')) return;
-  npcs = npcs.filter(function(n){ return n.id !== id; });
-  activeId = null;
-  editingNameId = null;
-  renderSidebar();
-  document.getElementById('form-area').innerHTML = '<div class="form-placeholder">Select a character from the list.</div>';
-}
-
-// ─── FORM ──────────────────────────────────────────────────────────────────
-function selectNPC(id) {
-  saveCurrentForm();
-  activeId = id;
-  editingNameId = null;
-  renderSidebar();
-  renderForm();
-}
-
-function saveCurrentForm() {
-  if (!activeId) return;
-  var npc = findNPC(activeId);
-  if (!npc) return;
-  function gv(id) { var el = document.getElementById(id); return el ? el.value : ''; }
-  var n = gv('f-name').trim();
-  if (n) npc.name = n;
-  npc.data.altName      = gv('f-altname');
-  npc.data.race         = gv('f-race');
-  npc.data.age          = gv('f-age');
-  npc.data.gender       = gv('f-gender');
-  npc.data.title        = gv('f-title');
-  npc.data.role         = gv('f-role');
-  npc.data.alignment    = gv('f-alignment');
-  npc.data.disposition  = gv('f-disposition');
-  npc.data.arc          = gv('f-arc');
-  npc.data.wants        = gv('f-wants');
-  npc.data.fears        = gv('f-fears');
-  npc.data.leverage     = gv('f-leverage');
-  npc.data.notes        = gv('f-notes');
-  npc.tag               = gv('f-role') || npc.tag;
-}
-
-function markDone(id) {
-  saveCurrentForm();
-  var npc = findNPC(id);
-  if (npc) npc.done = true;
-  renderSidebar();
-}
-
-function renderForm() {
-  var npc = findNPC(activeId);
-  var area = document.getElementById('form-area');
-  if (!npc) {
-    area.innerHTML = '<div class="form-placeholder">Select a character from the list.</div>';
-    return;
-  }
-  var d = npc.data;
-
-  var traitHtml = TRAITS_POOL.map(function(t) {
-    return '<div class="trait-pill' + (d.traits.indexOf(t) > -1 ? ' active' : '') +
-           '" onclick="toggleTrait(' + npc.id + ',\'' + escAttr(t) + '\')">' + esc(t) + '</div>';
-  }).join('');
-
-  // custom traits not in pool
-  d.traits.forEach(function(t) {
-    if (TRAITS_POOL.indexOf(t) === -1) {
-      traitHtml += '<div class="trait-pill active" onclick="toggleTrait(' + npc.id + ',\'' + escAttr(t) + '\')">' + esc(t) + ' ✕</div>';
-    }
-  });
-
-  var loreBanner = npc.tag === 'Lore / Background'
-    ? '<div class="lore-note"><span class="lore-label">Lore Entry</span>Background/lore character — not all fields apply. Fill what\'s useful for GM reference.</div>' : '';
-
-  function sel(fid, opts, cur) {
-    return '<select id="' + fid + '">' +
-      opts.map(function(o){ return '<option' + (o === cur ? ' selected' : '') + '>' + o + '</option>'; }).join('') +
-    '</select>';
-  }
-
-  area.innerHTML =
-    loreBanner +
-
-    '<span class="sec-label">Core Identity</span>' +
-    '<div class="fg2" style="margin-bottom:11px">' +
-      '<div class="field"><label>Name</label><input type="text" id="f-name" value="' + escAttr(npc.name) + '"></div>' +
-      '<div class="field"><label>Alias / Nickname</label><input type="text" id="f-altname" value="' + escAttr(d.altName) + '" placeholder="e.g. The Ironmaster…"></div>' +
-    '</div>' +
-    '<div class="fg3" style="margin-bottom:11px">' +
-      '<div class="field"><label>Race</label>' + sel('f-race',['Human','Orc','Elf','Half-Elf','Dwarf','Dragon','Unknown','Other'],d.race) + '</div>' +
-      '<div class="field"><label>Age / Era</label><input type="text" id="f-age" value="' + escAttr(d.age) + '" placeholder="e.g. 60s, Ancient…"></div>' +
-      '<div class="field"><label>Gender</label><input type="text" id="f-gender" value="' + escAttr(d.gender) + '" placeholder="e.g. Male, Female…"></div>' +
-    '</div>' +
-    '<div class="field"><label>Title / Role in World</label><input type="text" id="f-title" value="' + escAttr(d.title) + '" placeholder="e.g. Warchief of Clan Vorak…"></div>' +
-
-    '<hr class="divider-bold">' +
-    '<span class="sec-label">Story Function</span>' +
-    '<div class="fg3" style="margin-bottom:11px">' +
-      '<div class="field"><label>Character Type</label>' + sel('f-role',['Major NPC','Minor NPC','Lore / Background','Faction'],d.role) + '</div>' +
-      '<div class="field"><label>Alignment</label>'      + sel('f-alignment',['Ally','Variable','Neutral','Antagonist','Unknown'],d.alignment) + '</div>' +
-      '<div class="field"><label>Starting Disposition</label>' + sel('f-disposition',['Hostile','Skeptical','Neutral','Receptive','Committed','Unknown'],d.disposition) + '</div>' +
-    '</div>' +
-    '<div class="field"><label>Arc(s) Involved</label><input type="text" id="f-arc" value="' + escAttr(d.arc) + '" placeholder="e.g. Arc 1, Arc 2…"></div>' +
-
-    '<hr class="divider-bold">' +
-    '<span class="sec-label">Psychology</span>' +
-    '<div class="fg2" style="margin-bottom:11px">' +
-      '<div class="field"><label>What do they want?</label><textarea id="f-wants" placeholder="Primary goal or desire…">' + esc(d.wants) + '</textarea></div>' +
-
-```
-  '<div class="field"><label>What are they afraid of?</label><textarea id="f-fears" placeholder="Pressure point or vulnerability…">' + esc(d.fears) + '</textarea></div>' +
-'</div>' +
-'<div class="field" style="margin-bottom:11px">' +
-  '<label>Dominant Traits <span style="font-style:italic;font-family:\'Crimson Text\',serif;letter-spacing:0;text-transform:none;font-size:10px;color:#7a6040">— click to toggle</span></label>' +
-  '<div class="trait-pills" id="trait-pills">' + traitHtml + '</div>' +
-  '<div class="trait-add">' +
-    '<input type="text" id="custom-trait" placeholder="Add custom trait…" onkeydown="if(event.key===\'Enter\')addCustomTrait(' + npc.id + ')">' +
-    '<button onclick="addCustomTrait(' + npc.id + ')">Add</button>' +
-  '</div>' +
-'</div>' +
-
-'<hr class="divider-bold">' +
-'<span class="sec-label">Tactical Notes</span>' +
-'<div class="field" style="margin-bottom:11px"><label>Leverage / What Moves Them</label><textarea id="f-leverage" placeholder="What does the team have on them? What changes their position?">' + esc(d.leverage) + '</textarea></div>' +
-'<div class="field"><label>GM Notes</label><textarea id="f-notes" style="min-height:90px" placeholder="Backstory, NPC relationships, things to know when fleshing this character out…">' + esc(d.notes) + '</textarea></div>' +
-
-'<div class="action-row">' +
-  '<button class="btn btn-sm" onclick="saveAndMark(' + npc.id + ')">✓ Mark Complete</button>' +
-  '<button class="btn btn-sm btn-crimson" onclick="deleteNPC(' + npc.id + ')">Remove</button>' +
-'</div>';
-```
-
-}
-
-function saveAndMark(id) {
-saveCurrentForm();
-markDone(id);
-}
-
-function toggleTrait(id, trait) {
-saveCurrentForm();
-var npc = findNPC(id);
-var idx = npc.data.traits.indexOf(trait);
-if (idx > -1) npc.data.traits.splice(idx, 1);
-else npc.data.traits.push(trait);
-renderForm();
-}
-
-function addCustomTrait(id) {
-var inp = document.getElementById(‘custom-trait’);
-var val = inp.value.trim();
-if (!val) return;
-saveCurrentForm();
-var npc = findNPC(id);
-if (npc.data.traits.indexOf(val) === -1) npc.data.traits.push(val);
-inp.value = ‘’;
-renderForm();
-}
-
-// ─── EXPORT ────────────────────────────────────────────────────────────────
-function exportCSV() {
-saveCurrentForm();
-var headers = [‘Name’,‘Alias’,‘Race’,‘Age’,‘Gender’,‘Title’,‘Type’,‘Alignment’,‘Disposition’,‘Arc’,‘Wants’,‘Fears’,‘Traits’,‘Leverage’,‘Notes’,‘Complete’];
-var rows = npcs.map(function(n) {
-var d = n.data;
-function q(v) { return ‘”’ + String(v || ‘’).replace(/”/g, ‘””’) + ‘”’; }
-return [
-n.name, d.altName, d.race, d.age, d.gender, d.title,
-d.role, d.alignment, d.disposition, d.arc,
-d.wants, d.fears, d.traits.join(’; ‘), d.leverage, d.notes,
-n.done ? ‘Yes’ : ‘No’
-].map(q).join(’,’);
-});
-var csv = ‘\uFEFF’ + [headers.join(’,’)].concat(rows).join(’\r\n’); // BOM for Excel
-triggerDownload(‘CharteredRealm_NPCs.csv’, csv, ‘text/csv;charset=utf-8;’);
-}
-
-function exportJSON() {
-saveCurrentForm();
-var json = JSON.stringify(npcs, null, 2);
-triggerDownload(‘CharteredRealm_NPCs.json’, json, ‘application/json’);
-}
-
-function triggerDownload(filename, content, type) {
-try {
-// Try Blob / createObjectURL first (works in modern browsers + GitHub Pages)
-var blob = new Blob([content], { type: type });
-var url = URL.createObjectURL(blob);
-var a = document.createElement(‘a’);
-a.href = url;
-a.download = filename;
-document.body.appendChild(a);
-a.click();
-setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 1000);
-} catch(e) {
-// Fallback: data URI (works in sandboxed iframes)
-var b64 = btoa(unescape(encodeURIComponent(content)));
-var a2 = document.createElement(‘a’);
-a2.href = ‘data:’ + type + ‘;base64,’ + b64;
-a2.download = filename;
-document.body.appendChild(a2);
-a2.click();
-a2.remove();
-}
-}
-
-// ─── HELPERS ───────────────────────────────────────────────────────────────
-function findNPC(id) {
-return npcs.find(function(n){ return n.id === id; }) || null;
-}
-
-function esc(s) {
-return String(s || ‘’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’);
-}
-
-function escAttr(s) {
-return String(s || ‘’).replace(/”/g,’"’).replace(/’/g,’'’);
-}
-
-function updateStatus() {
-var done = npcs.filter(function(n){ return n.done; }).length;
-document.getElementById(‘status-count’).textContent = npcs.length + ’ characters · ’ + done + ’ complete’;
-}
-
-// ─── INIT ──────────────────────────────────────────────────────────────────
-window.addEventListener(‘beforeunload’, saveCurrentForm);
-renderSidebar();
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
 </script>
 
 </body>
