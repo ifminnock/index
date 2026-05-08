@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chartered Realm — NPC Registry</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #2a1f10; font-family: Georgia, serif; min-height: 100vh; padding: 16px; }
+  input, select, textarea, button { font-family: Georgia, serif; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(160,120,48,.1); }
+  ::-webkit-scrollbar-thumb { background: rgba(160,120,48,.4); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const C = {
+  gold: "#a07830", crimson: "#7a1e1e", parchment: "#f4ead5",
+  parchmentDark: "#ede0c4", ink: "#2a1a0a", inkLight: "#3d2b1a",
+  border: "#c8a87a", goldLight: "#c8a87a", blueDark: "#1e3a5a",
+};
+
+const TRAITS = [
+  "Pragmatic","Ambitious","Cautious","Loyal","Grieving","Proud",
+  "Strategic","Charismatic","Manipulative","Honest","Tired",
+  "Militarily sophisticated","Diplomatically skilled","Insecure",
+  "Well-meaning","Competitive","Reckless","Patient","Visionary",
+  "Bureaucratic","Competent","Cunning","Protective","Suspicious",
+];
+
+const SEED_NPCS = [];
+
+const clone = x => JSON.parse(JSON.stringify(x));
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function buildCSV(npcs) {
+  const H = ["Name","Alias","Race","Age","Gender","Title","Type","Alignment","Disposition","Arc","Wants","Fears","Traits","Leverage","Notes","Complete"];
+  const q = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const rows = npcs.map(n => {
+    const d = n.data;
+    return [n.name,d.altName,d.race,d.age,d.gender,d.title,d.role,d.alignment,d.disposition,d.arc,d.wants,d.fears,(d.traits||[]).join("; "),d.leverage,d.notes,n.done?"Yes":"No"].map(q).join(",");
+  });
+  return "\uFEFF" + [H.join(","), ...rows].join("\r\n");
+}
+
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+function Field({ label, children }) {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", marginBottom:"11px" }}>
+      <label style={{ fontFamily:"Georgia,serif", fontSize:"8.5px", letterSpacing:"2px", color:C.crimson, textTransform:"uppercase", marginBottom:"3px" }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputSt = { border:"none", borderBottom:`1.5px solid ${C.goldLight}`, background:"transparent", fontSize:"14px", color:C.ink, padding:"2px 4px", width:"100%", outline:"none" };
+const selectSt = { ...inputSt };
+const textareaSt = { border:`1px solid ${C.goldLight}`, background:"rgba(255,255,255,.25)", fontSize:"13px", color:C.ink, padding:"6px 8px", width:"100%", outline:"none", resize:"vertical", minHeight:"58px", lineHeight:"1.65" };
+
+function Sel({ id, value, opts, onChange }) {
+  return (
+    <select id={id} style={selectSt} value={value} onChange={e => onChange(e.target.value)}>
+      {opts.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  );
+}
+
+// ─── MAIN APP ──────────────────────────────────────────────────────────────────
+function App() {
+  const [npcs,       setNpcs]       = useState(() => clone(SEED_NPCS));
+  const [activeId,   setActiveId]   = useState(null);
+  const [form,       setForm]       = useState(null);
+  const [newName,    setNewName]    = useState("");
+  const [newTag,     setNewTag]     = useState("Major NPC");
+  const [editId,     setEditId]     = useState(null);
+  const [editVal,    setEditVal]    = useState("");
+  const [customTrait,setCustomTrait]= useState("");
+  const [msg,        setMsg]        = useState("");
+
+  const flash = text => { setMsg(text); setTimeout(() => setMsg(""), 3000); };
+
+  // ── Select NPC ──
+  const selectNPC = useCallback((npc) => {
+    setActiveId(npc.id);
+    setForm(clone(npc.data));
+    setEditId(null);
+  }, []);
+
+  // ── Form field update ──
+  const upd = (key, val) => {
+    setForm(prev => {
+      const next = { ...prev, [key]: val };
+      setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, data: next, tag: key === "role" ? val : n.tag } : n));
+      return next;
+    });
+  };
+
+  // ── Toggle trait ──
+  const toggleTrait = t => {
+    const next = form.traits.includes(t) ? form.traits.filter(x => x !== t) : [...form.traits, t];
+    upd("traits", next);
+  };
+
+  const addCustomTrait = () => {
+    const v = customTrait.trim();
+    if (!v || form.traits.includes(v)) return;
+    upd("traits", [...form.traits, v]);
+    setCustomTrait("");
+  };
+
+  // ── Sidebar ops ──
+  const toggleDone = (id, e) => {
+    e.stopPropagation();
+    setNpcs(ns => ns.map(n => n.id === id ? { ...n, done: !n.done } : n));
+  };
+
+  const addNPC = () => {
+    const name = newName.trim();
+    if (!name) return;
+    const id = Date.now();
+    const npc = { id, name, tag: newTag, done: false, data: {
+      altName:"", race:"Human", age:"", gender:"", title:"",
+      role: newTag, alignment:"Neutral", disposition:"Neutral", arc:"",
+      wants:"", fears:"", traits:[], leverage:"", notes:""
+    }};
+    setNpcs(ns => [...ns, npc]);
+    setNewName("");
+    selectNPC(npc);
+  };
+
+  const deleteNPC = id => {
+    if (!window.confirm("Remove this character from the registry?")) return;
+    setNpcs(ns => ns.filter(n => n.id !== id));
+    if (activeId === id) { setActiveId(null); setForm(null); }
+  };
+
+  const saveEditName = id => {
+    const v = editVal.trim();
+    if (v) setNpcs(ns => ns.map(n => n.id === id ? { ...n, name: v } : n));
+    setEditId(null);
+  };
+
+  // ── Export ──
+  const exportCSV  = () => { downloadFile("CharteredRealm_NPCs.csv",  buildCSV(npcs),              "text/csv;charset=utf-8;"); flash("✓ CSV downloaded"); };
+  const exportJSON = () => { downloadFile("CharteredRealm_NPCs.json", JSON.stringify(npcs, null,2), "application/json");        flash("✓ JSON downloaded"); };
+
+  const active = npcs.find(n => n.id === activeId);
+  const doneCount = npcs.filter(n => n.done).length;
+
+  // ── RENDER ──
+  return (
+    <div style={{ maxWidth:"1100px", margin:"0 auto", display:"grid", gridTemplateColumns:"250px 1fr", gridTemplateRows:"auto 1fr auto", background:C.parchment, border:`2px solid ${C.gold}`, boxShadow:"0 0 40px rgba(0,0,0,.6)", minHeight:"680px" }}>
+
+      {/* HEADER */}
+      <div style={{ gridColumn:"1/-1", background:"#1a0f05", borderBottom:`3px solid ${C.gold}`, padding:"14px 24px", textAlign:"center" }}>
+        <div style={{ fontFamily:"Georgia,serif", color:C.gold, fontSize:"20px", letterSpacing:"3px", marginBottom:"2px" }}>The Chartered Realm — NPC Registry</div>
+        <div style={{ color:"#c8b080", fontStyle:"italic", fontSize:"13px" }}>Select a character · Fill the record · Export CSV</div>
+      </div>
+
+      {/* SIDEBAR */}
+      <div style={{ gridRow:"2", background:C.parchmentDark, borderRight:`2px solid ${C.border}`, padding:"12px", display:"flex", flexDirection:"column", overflow:"hidden" }}>
+        <span style={{ fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"8px", display:"block" }}>Known Characters</span>
+
+        <ul style={{ listStyle:"none", flex:1, overflowY:"auto", marginBottom:"10px" }}>
+          {npcs.map(npc => (
+            <li key={npc.id} style={{ borderBottom:"1px dotted rgba(160,120,48,.3)" }}>
+              <div
+                onClick={() => selectNPC(npc)}
+                style={{ display:"flex", alignItems:"center", gap:"6px", padding:"5px 4px", cursor:"pointer", background: activeId===npc.id ? "rgba(122,30,30,.1)" : "transparent", borderLeft: activeId===npc.id ? `3px solid ${C.crimson}` : "3px solid transparent" }}
+              >
+                {/* Done check */}
+                <div
+                  onClick={e => toggleDone(npc.id, e)}
+                  style={{ width:"14px", height:"14px", border:`1px solid ${C.gold}`, flexShrink:0, background: npc.done ? C.gold : "rgba(255,255,255,.4)", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"9px", color: npc.done ? "#1a0f05" : "transparent" }}
+                >{npc.done ? "✓" : ""}</div>
+
+                <div style={{ flex:1, minWidth:0 }}>
+                  {editId === npc.id
+                    ? <input autoFocus style={{ ...inputSt, fontSize:"13px" }} value={editVal}
+                        onChange={e => setEditVal(e.target.value)}
+                        onBlur={() => saveEditName(npc.id)}
+                        onKeyDown={e => { if (e.key==="Enter") saveEditName(npc.id); if (e.key==="Escape") setEditId(null); }}
+                        onClick={e => e.stopPropagation()} />
+                    : <div style={{ fontSize:"13px", color:C.inkLight, lineHeight:"1.2" }}>{npc.name}</div>
+                  }
+                  <span style={{ fontSize:"9px", color:C.gold, opacity:.7, letterSpacing:"1px", display:"block" }}>{npc.tag}</span>
+                </div>
+
+                <button
+                  onClick={e => { e.stopPropagation(); setEditId(npc.id); setEditVal(npc.name); }}
+                  style={{ fontSize:"11px", color:C.gold, background:"none", border:"none", cursor:"pointer", opacity:.5, padding:"2px 4px" }}
+                  title="Rename"
+                >✎</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* Add NPC */}
+        <div style={{ borderTop:"1px solid rgba(160,120,48,.3)", paddingTop:"10px", flexShrink:0 }}>
+          <input
+            style={{ fontSize:"13px", color:C.ink, border:`1px solid ${C.border}`, background:"rgba(255,255,255,.5)", padding:"5px 8px", width:"100%", outline:"none", marginBottom:"6px", display:"block" }}
+            placeholder="New character name…"
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && addNPC()}
+          />
+          <select
+            style={{ fontSize:"13px", color:C.ink, border:`1px solid ${C.border}`, background:"rgba(255,255,255,.5)", padding:"5px 8px", width:"100%", marginBottom:"6px", display:"block" }}
+            value={newTag} onChange={e => setNewTag(e.target.value)}
+          >
+            {["Major NPC","Minor NPC","Lore / Background","Faction"].map(t => <option key={t}>{t}</option>)}
+          </select>
+          <button
+            onClick={addNPC}
+            style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"6px 10px", cursor:"pointer", width:"100%" }}
+          >+ Add Character</button>
+        </div>
+      </div>
+
+      {/* FORM AREA */}
+      <div style={{ gridRow:"2", padding:"16px 20px", overflowY:"auto" }}>
+        {!form || !active
+          ? <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100%", color:"rgba(160,120,48,.4)", fontStyle:"italic", fontSize:"14px", textAlign:"center" }}>
+              Select a character from the list to begin.
+            </div>
+          : <>
+            {active.tag === "Lore / Background" &&
+              <div style={{ background:"rgba(30,58,90,.07)", border:"1px solid rgba(58,90,122,.25)", borderLeft:`3px solid ${C.blueDark}`, padding:"8px 12px", fontSize:"12px", color:"#3a5a7a", fontStyle:"italic", lineHeight:"1.6", marginBottom:"12px" }}>
+                <span style={{ fontSize:"8px", letterSpacing:"2px", color:C.blueDark, display:"block", marginBottom:"3px", textTransform:"uppercase" }}>Lore Entry</span>
+                Background character — not all fields apply. Fill what's useful for GM reference.
+              </div>
+            }
+
+            {/* IDENTITY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Core Identity</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"14px", marginBottom:"11px" }}>
+              <Field label="Name">
+                <input style={inputSt} value={active.name}
+                  onChange={e => setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, name: e.target.value } : n))} />
+              </Field>
+              <Field label="Alias / Nickname">
+                <input style={inputSt} placeholder="e.g. The Ironmaster…" value={form.altName} onChange={e => upd("altName", e.target.value)} />
+              </Field>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"12px", marginBottom:"11px" }}>
+              <Field label="Race"><Sel value={form.race} opts={["Human","Orc","Elf","Half-Elf","Dwarf","Dragon","Unknown","Other"]} onChange={v => upd("race",v)} /></Field>
+              <Field label="Age / Era"><input style={inputSt} placeholder="e.g. 60s, Ancient…" value={form.age} onChange={e => upd("age",e.target.value)} /></Field>
+              <Field label="Gender"><input style={inputSt} placeholder="e.g. Male, Female…" value={form.gender} onChange={e => upd("gender",e.target.value)} /></Field>
+            </div>
+            <Field label="Title / Role in World">
+              <input style={inputSt} placeholder="e.g. Warchief of Clan Vorak…" value={form.title} onChange={e => upd("title",e.target.value)} />
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* STORY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Story Function</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"12px", marginBottom:"11px" }}>
+              <Field label="Character Type"><Sel value={form.role} opts={["Major NPC","Minor NPC","Lore / Background","Faction"]} onChange={v => upd("role",v)} /></Field>
+              <Field label="Alignment"><Sel value={form.alignment} opts={["Ally","Variable","Neutral","Antagonist","Unknown"]} onChange={v => upd("alignment",v)} /></Field>
+              <Field label="Starting Disposition"><Sel value={form.disposition} opts={["Hostile","Skeptical","Neutral","Receptive","Committed","Unknown"]} onChange={v => upd("disposition",v)} /></Field>
+            </div>
+            <Field label="Arc(s) Involved">
+              <input style={inputSt} placeholder="e.g. Arc 1, Arc 2…" value={form.arc} onChange={e => upd("arc",e.target.value)} />
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* PSYCHOLOGY */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Psychology</span>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"14px", marginBottom:"11px" }}>
+              <Field label="What do they want?">
+                <textarea style={textareaSt} placeholder="Primary goal or desire…" value={form.wants} onChange={e => upd("wants",e.target.value)} />
+              </Field>
+              <Field label="What are they afraid of?">
+                <textarea style={textareaSt} placeholder="Pressure point or vulnerability…" value={form.fears} onChange={e => upd("fears",e.target.value)} />
+              </Field>
+            </div>
+
+            <Field label={<>Dominant Traits <span style={{ fontStyle:"italic", fontSize:"10px", color:"#7a6040", textTransform:"none", letterSpacing:0 }}>— click to toggle</span></>}>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"5px", marginTop:"4px" }}>
+                {TRAITS.map(t => (
+                  <div key={t}
+                    onClick={() => toggleTrait(t)}
+                    style={{ fontSize:"12px", border:`1px solid ${form.traits.includes(t) ? C.crimson : C.border}`, padding:"2px 9px", cursor:"pointer", color: form.traits.includes(t) ? C.parchment : C.inkLight, background: form.traits.includes(t) ? C.crimson : "rgba(255,255,255,.35)", userSelect:"none" }}
+                  >{t}</div>
+                ))}
+                {form.traits.filter(t => !TRAITS.includes(t)).map(t => (
+                  <div key={t}
+                    onClick={() => toggleTrait(t)}
+                    style={{ fontSize:"12px", border:`1px solid ${C.crimson}`, padding:"2px 9px", cursor:"pointer", color:C.parchment, background:C.crimson, userSelect:"none" }}
+                  >{t} ✕</div>
+                ))}
+              </div>
+              <div style={{ display:"flex", gap:"6px", marginTop:"6px" }}>
+                <input
+                  style={{ ...inputSt, border:`1px solid ${C.border}`, padding:"3px 8px", flex:1 }}
+                  placeholder="Add custom trait…"
+                  value={customTrait}
+                  onChange={e => setCustomTrait(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addCustomTrait()}
+                />
+                <button onClick={addCustomTrait} style={{ fontSize:"9px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"3px 10px", cursor:"pointer" }}>Add</button>
+              </div>
+            </Field>
+
+            <hr style={{ border:"none", borderTop:`2px solid ${C.gold}`, margin:"14px 0", opacity:.5 }} />
+
+            {/* TACTICAL */}
+            <span style={{ display:"block", fontSize:"9px", letterSpacing:"3px", color:C.gold, textTransform:"uppercase", marginBottom:"5px" }}>Tactical Notes</span>
+            <Field label="Leverage / What Moves Them">
+              <textarea style={textareaSt} placeholder="What does the team have on them? What changes their position?" value={form.leverage} onChange={e => upd("leverage",e.target.value)} />
+            </Field>
+            <Field label="GM Notes">
+              <textarea style={{ ...textareaSt, minHeight:"80px" }} placeholder="Backstory, relationships, things to know when fleshing this character out…" value={form.notes} onChange={e => upd("notes",e.target.value)} />
+            </Field>
+
+            <div style={{ display:"flex", gap:"8px", marginTop:"12px" }}>
+              <button onClick={() => setNpcs(ns => ns.map(n => n.id === activeId ? { ...n, done:true } : n))}
+                style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"5px 14px", cursor:"pointer" }}>
+                ✓ Mark Complete
+              </button>
+              <button onClick={() => deleteNPC(activeId)}
+                style={{ fontSize:"10px", letterSpacing:"1px", border:`1px solid ${C.crimson}`, background:"rgba(122,30,30,.06)", color:C.crimson, padding:"5px 14px", cursor:"pointer" }}>
+                Remove
+              </button>
+            </div>
+          </>
+        }
+      </div>
+
+      {/* FOOTER */}
+      <div style={{ gridColumn:"1/-1", background:"#1a0f05", borderTop:`2px solid ${C.gold}`, padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"8px" }}>
+        <span style={{ fontSize:"9px", letterSpacing:"2px", color:"#6a5030" }}>
+          {npcs.length} characters · {doneCount} complete
+          {msg && <span style={{ marginLeft:"12px", color:"#a0c8a0" }}>{msg}</span>}
+        </span>
+        <div style={{ display:"flex", gap:"8px" }}>
+          <button onClick={exportJSON} style={{ fontSize:"9px", letterSpacing:"1px", border:`1px solid ${C.gold}`, background:"rgba(160,120,48,.1)", color:C.gold, padding:"5px 14px", cursor:"pointer" }}>Export JSON</button>
+          <button onClick={exportCSV}  style={{ fontSize:"9px", letterSpacing:"1px", border:"1px solid #c8a94a",   background:"rgba(200,169,74,.15)", color:"#c8a94a",  padding:"5px 14px", cursor:"pointer" }}>Export CSV</button>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+
+</body>
+</html>
