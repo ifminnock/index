@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chartered Realm — Character Sheet</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--parchment:#f4ead5;--ink:#2a1a0a;--ink-light:#3d2b1a;--gold:#a07830;--gold-light:#c8a87a;--crimson:#7a1e1e;--border:#c8a87a;--blue-dark:#1e3a5a}
+body{background:#2a1f10;font-family:'Crimson Text',Georgia,serif;color:var(--ink);padding:20px}
+.sheet{max-width:800px;margin:0 auto;background:var(--parchment);border:2px solid var(--gold);box-shadow:0 0 40px rgba(0,0,0,.6)}
+.sheet-header{background:#1a0f05;border-bottom:3px solid var(--gold);padding:16px 28px 12px;text-align:center;position:relative}
+.sheet-header h1{font-family:'IM Fell English SC',serif;color:var(--gold);font-size:22px;letter-spacing:3px;margin-bottom:2px}
+.sheet-header .sub{color:#c8b080;font-style:italic;font-size:13px;font-family:'IM Fell English',serif}
+.corner{position:absolute;top:50%;transform:translateY(-50%);color:var(--gold);font-size:26px;opacity:.4}
+.corner-l{left:18px}.corner-r{right:18px}
+.sheet-body{padding:18px 24px 22px}
+.sec-label{display:block;font-family:'IM Fell English SC',serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:5px}
+.divider{border:none;border-top:1px solid rgba(160,120,48,.4);margin:14px 0}
+.divider-bold{border:none;border-top:2px solid var(--gold);margin:16px 0;opacity:.55}
+.roll-reminder{background:var(--blue-dark);color:#c8d8e8;border:1px solid #3a5a7a;padding:9px 14px;font-size:12.5px;line-height:1.65;margin-bottom:14px}
+.roll-reminder strong{color:#7ab0d8}
+.rr-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px;align-items:center}
+.rb{display:inline-block;padding:1px 7px;font-family:'IM Fell English SC',serif;font-size:10px;letter-spacing:1px;border-radius:1px}
+.rb-s{background:#2a4a2a;color:#a0d0a0}.rb-p{background:#4a3a10;color:#d0b060}.rb-f{background:#4a1a1a;color:#d08080}
+.rr-rule{margin-left:auto;font-style:italic;font-size:11px;color:#7ab0d8}
+.field{display:flex;flex-direction:column}
+.field label{font-family:'IM Fell English SC',serif;font-size:8.5px;letter-spacing:2px;color:var(--crimson);text-transform:uppercase;margin-bottom:3px}
+.field input[type=text]{border:none;border-bottom:1.5px solid var(--gold-light);background:transparent;font-family:'Crimson Text',serif;font-size:15px;color:var(--ink);padding:2px 4px;width:100%;outline:none}
+.field input[type=text]:focus{border-bottom-color:var(--crimson);background:rgba(122,30,30,.03)}
+.field input[type=text]::placeholder{color:rgba(160,120,48,.35);font-style:italic;font-size:13px}
+.field select{border:none;border-bottom:1.5px solid var(--gold-light);background:transparent;font-family:'Crimson Text',serif;font-size:15px;color:var(--ink);padding:2px 22px 2px 4px;width:100%;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a07830'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;background-color:transparent}
+.field select:focus{border-bottom-color:var(--crimson)}
+.field select option{background:#f4ead5;color:var(--ink);font-size:14px}
+.id-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:12px}
+.id-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat-panel{background:rgba(26,15,5,.04);border:1px solid var(--border);padding:12px 14px}
+.stat-panel-title{font-family:'IM Fell English SC',serif;color:var(--crimson);font-size:12px;letter-spacing:1px;border-bottom:1px solid rgba(160,120,48,.3);padding-bottom:5px;margin-bottom:10px}
+.stat-panel-title em{float:right;font-family:'Crimson Text',serif;font-style:italic;font-size:10.5px;color:var(--gold);letter-spacing:0;margin-top:1px}
+.slot-label{font-size:10px;font-family:'IM Fell English SC',serif;color:var(--crimson);letter-spacing:1px;margin:8px 0 4px;border-top:1px dotted rgba(160,120,48,.25);padding-top:7px}
+.slot-label:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:8px}
+.stat-name{font-size:14.5px;font-weight:600;color:var(--ink-light);flex-shrink:0}
+.stat-desc{font-size:11px;color:#7a6040;font-style:italic;flex:1}
+.stat-check{width:20px;height:20px;border:1.5px solid var(--gold);background:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .12s;font-size:11px;color:transparent;user-select:none}
+.stat-check.active{background:var(--crimson);border-color:var(--crimson);color:#f4ead5}
+.stat-check.active::after{content:'✦'}
+.passive-block{border:1px solid var(--border);border-left:3px solid var(--crimson);background:rgba(122,30,30,.04);padding:10px 12px;min-height:80px;margin-bottom:12px}
+.passive-block.industry{border-left-color:var(--gold);background:rgba(160,120,48,.04)}
+.pb-title{font-family:'IM Fell English SC',serif;font-size:10px;letter-spacing:1px;color:var(--crimson);margin-bottom:3px}
+.passive-block.industry .pb-title{color:var(--gold)}
+.pb-passive{font-size:12px;color:var(--gold);font-style:italic;margin-bottom:4px}
+.pb-desc{font-size:13px;color:var(--ink-light);line-height:1.5}
+.pb-empty{font-size:13px;color:rgba(160,120,48,.4);font-style:italic}
+.intern-skills{margin-top:8px;display:none}
+.intern-skills.visible{display:block}
+.intern-skills-label{font-family:'IM Fell English SC',serif;font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;display:block}
+.intern-pick{display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px dotted rgba(160,120,48,.2);font-size:13px}
+.intern-pick:last-child{border-bottom:none}
+.intern-pick input[type=checkbox]{accent-color:var(--crimson);cursor:pointer;width:13px;height:13px;flex-shrink:0}
+.skill-list{list-style:none}
+.skill-item{display:flex;align-items:flex-start;gap:8px;padding:4px 0;border-bottom:1px dotted rgba(160,120,48,.2);font-size:13.5px}
+.skill-item:last-child{border-bottom:none}
+.skill-check{width:14px;height:14px;border:1px solid var(--gold);flex-shrink:0;margin-top:3px;cursor:pointer;background:rgba(255,255,255,.4);transition:background .12s}
+.skill-check.active{background:var(--gold)}
+.skill-name{font-weight:600;color:var(--ink)}
+.skill-bonus{font-family:'IM Fell English SC',serif;font-size:10px;color:var(--crimson);letter-spacing:1px;margin-left:4px}
+.skill-note{display:block;font-size:12px;font-style:italic;color:#7a6040;line-height:1.4}
+.concept-box{border:1px solid var(--border);background:rgba(255,255,255,.2);padding:6px 10px}
+.concept-box textarea{width:100%;background:transparent;border:none;font-family:'Crimson Text',serif;font-size:13.5px;color:var(--ink-light);resize:none;outline:none;line-height:1.65;min-height:52px}
+.concept-box textarea::placeholder{color:rgba(160,120,48,.4);font-style:italic}
+.sheet-footer{background:#1a0f05;border-top:2px solid var(--gold);padding:7px 20px;text-align:center;font-family:'IM Fell English SC',serif;font-size:9px;letter-spacing:2px;color:#6a5030}
+@media print{body{background:white;padding:0}.sheet{box-shadow:none;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="sheet-header">
+    <div class="corner corner-l">❧</div>
+    <h1>The Chartered Realm</h1>
+    <div class="sub">Character Record — PM Band of Cornerstone</div>
+    <div class="corner corner-r">❧</div>
+  </div>
+
+  <div class="sheet-body">
+    <div class="roll-reminder">
+      <strong>Making a Test:</strong> Describe your action. GM names the relevant stat. Roll 2d6. If that stat matches your dominant trait, add a d4. If a skill applies, add +1.
+      <div class="rr-row">
+        <span><span class="rb rb-s">10+</span> Full success</span>
+        <span><span class="rb rb-p">7–9</span> Partial / complication</span>
+        <span><span class="rb rb-f">6–</span> Failure with consequences</span>
+        <span class="rr-rule">Rule Zero: Apply a real PM concept correctly → GM may grant auto-success or +2.</span>
+      </div>
+    </div>
+
+```
+<span class="sec-label">Identity</span>
+<div class="id-grid">
+  <div class="field"><label>Character Name</label><input type="text" placeholder="Your name in the Realm…"></div>
+  <div class="field"><label>Player Name</label><input type="text" placeholder=""></div>
+</div>
+<div class="id-grid-2">
+  <div class="field">
+    <label>Job / Class</label>
+    <select id="job-select" onchange="updateJob()">
+      <option value="">— Select Job —</option>
+      <option>Project Manager</option>
+      <option>Program Manager</option>
+      <option>Portfolio Manager</option>
+      <option>Scrum Master</option>
+      <option>Product Owner</option>
+      <option>Change Manager</option>
+      <option>Subject Matter Expert</option>
+      <option>Intern</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Industry</label>
+    <select id="industry-select" onchange="updateIndustry()">
+      <option value="">— Select Industry —</option>
+      <option>Tech</option>
+      <option>Construction</option>
+      <option>Government</option>
+      <option>Healthcare</option>
+      <option>Communication</option>
+      <option>Finance</option>
+      <option>Manufacturing</option>
+      <option>Research</option>
+    </select>
+  </div>
+</div>
+
+<hr class="divider-bold">
+
+<div class="two-col">
+  <div>
+    <div class="stat-panel">
+      <div class="stat-panel-title">Dominant Traits <em>Mark one per slot · adds a d4</em></div>
+      <div class="slot-label">Slot I — Conflict · How you engage opposition</div>
+      <div class="stat-row"><span class="stat-name">Assertive</span><span class="stat-desc">You push, hold ground, and direct</span><div class="stat-check" onclick="toggleStat(this,'conflict')"></div></div>
+      <div class="stat-row"><span class="stat-name">Collaborative</span><span class="stat-desc">You build consensus and shared ownership</span><div class="stat-check" onclick="toggleStat(this,'conflict')"></div></div>
+      <div class="slot-label">Slot II — Evidence · How you process information</div>
+      <div class="stat-row"><span class="stat-name">Data-Minded</span><span class="stat-desc">Evidence, documentation, analysis</span><div class="stat-check" onclick="toggleStat(this,'evidence')"></div></div>
+      <div class="stat-row"><span class="stat-name">Instinct-Driven</span><span class="stat-desc">Pattern recognition, field judgment</span><div class="stat-check" onclick="toggleStat(this,'evidence')"></div></div>
+      <div class="slot-label">Slot III — Decision · How you act under pressure</div>
+      <div class="stat-row"><span class="stat-name">Pragmatic</span><span class="stat-desc">Critical path, efficient, unsentimental</span><div class="stat-check" onclick="toggleStat(this,'decision')"></div></div>
+      <div class="stat-row"><span class="stat-name">Conviction</span><span class="stat-desc">Vision-driven, persuasive, commits publicly</span><div class="stat-check" onclick="toggleStat(this,'decision')"></div></div>
+    </div>
+  </div>
+
+  <div>
+    <span class="sec-label">Job Passive</span>
+    <div class="passive-block" id="job-passive"><div class="pb-empty">Select a Job to see your passive ability.</div></div>
+    <div class="intern-skills" id="intern-skills">
+      <span class="intern-skills-label">Intern — Select Additional Skill (Any Industry)</span>
+      <div class="intern-pick"><input type="checkbox"><span>Tech · Rapid Iteration</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Construction · Something's Not Right Here</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Government · Executive Authority</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Healthcare · Bedside Manner</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Communication · Read the Room</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Finance · Money Minded</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Manufacturing · Process Optimization</span></div>
+      <div class="intern-pick"><input type="checkbox"><span>Research · Science Minded</span></div>
+    </div>
+    <span class="sec-label" style="margin-top:10px;display:block">Industry Skill</span>
+    <div class="passive-block industry" id="industry-passive"><div class="pb-empty">Select an Industry to see your skill.</div></div>
+    <span class="sec-label" style="margin-top:10px;display:block">Character Concept</span>
+    <div class="concept-box"><textarea placeholder="Who are you, and why does Cornerstone need you specifically?"></textarea></div>
+  </div>
+</div>
+
+<hr class="divider-bold">
+
+<span class="sec-label">General Skills</span>
+<ul class="skill-list">
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Exudes Psychological Safety</span><span class="skill-note">Forces honest NPC engagement, or triggers a roll if actively resisted.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Active Listening</span><span class="skill-note">Extract NPC's real concern beneath their stated position. No roll.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Decisive Action <span class="skill-bonus">+2</span></span><span class="skill-note">Commit publicly to one course. +2 to all supporting rolls. Failure is public — no quiet retreat.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">De-escalation</span><span class="skill-note">Lower scene tension one step on the disposition track. Cannot combine with pressure tactics same beat.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Data-Driven Argument <span class="skill-bonus">+1</span></span><span class="skill-note">+1 to any roll where documented evidence supports your position.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Delegation</span><span class="skill-note">Assign NPC task ownership. Success: NPC becomes asset. Failure: reluctance reveals useful information.</span></div></li>
+  <li class="skill-item"><div class="skill-check" onclick="this.classList.toggle('active')"></div><div><span class="skill-name">Change Management <span class="skill-bonus">+1</span></span><span class="skill-note">Address stakeholder's specific cost of a transition. Once per NPC per arc.</span></div></li>
+</ul>
+```
+
+  </div>
+
+  <div class="sheet-footer">The Chartered Realm &nbsp;·&nbsp; PMI Alaska Chapter &nbsp;·&nbsp; Engine Codex v0.6 &nbsp;·&nbsp; Character Record</div>
+</div>
+
+<script>
+const jobs={
+  'Project Manager':{passive:'Critical Eye',desc:'Designate one task or resource as "linchpin." If it fails, everyone at the table understands the cascading consequences before they happen.'},
+  'Program Manager':{passive:'Orchestration',desc:'When making decisions involving 3+ moving pieces, gain narrative clarity on all dependencies and interactions.'},
+  'Portfolio Manager':{passive:'Strategic Horizon',desc:'Once per arc, formally recommend that a project, plan, or effort be stopped. The GM must honestly assess whether that\'s correct and what stopping it frees up. Others can ignore the recommendation — not its accuracy.'},
+  'Scrum Master':{passive:'Retrospective Clarity',desc:'After each failed attempt, name one specific thing that went wrong. Subsequent attempts targeting that lesson get +1. Resets after one use.'},
+  'Product Owner':{passive:'Roadmap Vision',desc:'Ask the GM: "If we succeed, what does this system look like in three months?" The GM answers honestly.'},
+  'Change Manager':{passive:'Resistance Mapping',desc:'Once per scene: "What is this NPC\'s specific resistance to this change, and what would genuinely address it?" The GM answers honestly.'},
+  'Subject Matter Expert':{passive:'Domain Authority',desc:'Double all roll bonuses from your industry skill. +1 becomes +2. Scales with your industry choice.'},
+  'Intern':{passive:'Master of None',desc:'No traditional passive. Pick skills from any industry and start with +1 additional skill at creation. The generalist who covers any gap — this is not a joke option.'}
+};
+const industries={
+  'Tech':{skill:'Rapid Iteration',bonus:'',desc:'Once per scene, reroll one failed roll. The reroll stands. Cannot reroll a Fortune Check.'},
+  'Construction':{skill:"Something's Not Right Here",bonus:'+1 perceptive',desc:'+1 to all perceptive rolls. In Discovery scenes, the GM flags any physical integrity risk automatically — no roll required.'},
+  'Government':{skill:'Executive Authority',bonus:'+1 assertion',desc:'+1 to all assertion rolls during negotiations. Invoking law or formal process as leverage costs NPC political capital to dismiss.'},
+  'Healthcare':{skill:'Bedside Manner',bonus:'+1 trust / de-escalation',desc:'+1 to rolls building trust, reducing fear, or stabilizing a volatile NPC. Once per scene: ask GM to rank competing urgent demands by severity — no roll.'},
+  'Communication':{skill:'Read the Room',bonus:'+1 reception rolls',desc:'+1 to rolls involving body language, audience disposition, or message reception. Once per scene: GM reveals where the audience stands.'},
+  'Finance':{skill:'Money Minded',bonus:'+1 negotiations',desc:'+1 to purchase, sale, and resource negotiation rolls. Once per decision point: ask GM what any choice truly costs across all currencies — no roll.'},
+  'Manufacturing':{skill:'Process Optimization',bonus:'+1 Pragmatic rolls',desc:'+1 to all Pragmatic-based rolls. Once per scene: identify one redundant workflow step — removing it frees time, labor, or resources.'},
+  'Research':{skill:'Science Minded',bonus:'+1 Data-Minded rolls',desc:'+1 to all Data-Minded rolls. Before any major decision: ask GM if something similar has been tried in this world — GM answers honestly.'}
+};
+function toggleStat(el,slot){
+  el.closest('.stat-panel').querySelectorAll(`[onclick*="${slot}"]`).forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+}
+function updateJob(){
+  const val=document.getElementById('job-select').value;
+  const box=document.getElementById('job-passive');
+  const intern=document.getElementById('intern-skills');
+  if(!val||!jobs[val]){box.innerHTML='<div class="pb-empty">Select a Job to see your passive ability.</div>';intern.classList.remove('visible');return;}
+  const j=jobs[val];
+  box.innerHTML=`<div class="pb-title">${val}</div><div class="pb-passive">Passive: ${j.passive}</div><div class="pb-desc">${j.desc}</div>`;
+  intern.classList.toggle('visible',val==='Intern');
+}
+function updateIndustry(){
+  const val=document.getElementById('industry-select').value;
+  const box=document.getElementById('industry-passive');
+  if(!val||!industries[val]){box.innerHTML='<div class="pb-empty">Select an Industry to see your skill.</div>';return;}
+  const ind=industries[val];
+  box.innerHTML=`<div class="pb-title">${val} Industry</div><div class="pb-passive">${ind.skill}${ind.bonus?' &nbsp;·&nbsp; <span style="color:var(--crimson)">'+ind.bonus+'</span>':''}</div><div class="pb-desc">${ind.desc}</div>`;
+}
+</script>
+
+</body>
+</html>
