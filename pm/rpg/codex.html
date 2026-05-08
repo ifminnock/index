@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chartered Realm Codex — Engine Rulebook v0.7</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #2a1f10; font-family: Georgia, serif; color: #2a1a0a; padding: 0 0 60px; }
+
+.hdr { background: #1a0f05; border-bottom: 3px solid #a07830; padding: 32px 20px; text-align: center; }
+.hdr h1 { font-family: ‘Palatino Linotype’, Palatino, serif; color: #a07830; font-size: 28px; margin-bottom: 6px; }
+.hdr .sub { color: #c8b080; font-style: italic; font-size: 15px; }
+.hdr .meta { color: #7a6040; font-size: 12px; margin-top: 8px; letter-spacing: 1px; }
+
+.nav { background: #150d04; border-bottom: 1px solid #3a2810; padding: 8px; display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; position: sticky; top: 0; z-index: 100; }
+.nav a { color: #9a7840; font-size: 11px; text-decoration: none; padding: 4px 12px; border: 1px solid transparent; }
+.nav a:hover { color: #a07830; border-color: #3a2810; }
+
+.handoff { max-width: 1100px; margin: 24px auto; background: #1e3a5a; color: #c8d8e8; border: 1px solid #3a5a7a; padding: 20px 28px; font-size: 13px; line-height: 1.7; }
+.handoff h2 { color: #7ab0d8; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; font-family: Georgia, serif; }
+.handoff ul { padding-left: 18px; }
+.handoff li { margin-bottom: 4px; }
+.handoff .hf-section { margin-top: 12px; }
+.handoff .hf-label { color: #7ab0d8; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+.sec { display: grid; grid-template-columns: 1fr 240px; gap: 0; margin: 28px 0; }
+.main { background: #f4ead5; border: 1px solid #c8a87a; border-right: none; padding: 28px 36px; }
+.marg { background: #ede0c4; border: 1px solid #c8a87a; border-left: 2px dashed #c8a87a; padding: 12px 10px; display: flex; flex-direction: column; gap: 12px; }
+@media(max-width:800px) { .sec { grid-template-columns: 1fr; } .main { border-right: 1px solid #c8a87a; } .marg { border-top: 2px dashed #c8a87a; } }
+
+.ch { font-family: ‘Palatino Linotype’, Palatino, serif; color: #7a1e1e; font-size: 20px; border-bottom: 2px solid #a07830; padding-bottom: 6px; margin-bottom: 16px; }
+.ch .chnum { display: block; font-size: 10px; color: #a07830; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; font-family: Georgia, serif; }
+.sh { font-family: ‘Palatino Linotype’, Palatino, serif; font-style: italic; color: #7a1e1e; font-size: 16px; margin: 20px 0 8px; }
+.ssh { font-size: 10px; letter-spacing: 2px; color: #5a3a1a; text-transform: uppercase; margin: 14px 0 5px; font-family: Georgia, serif; font-weight: bold; }
+
+p { font-size: 14.5px; line-height: 1.75; color: #3d2b1a; margin-bottom: 8px; }
+ul, ol { margin: 8px 0 12px 20px; font-size: 14px; line-height: 1.7; color: #3d2b1a; }
+li { margin-bottom: 3px; }
+hr { border: none; border-top: 1px solid rgba(160,120,48,0.3); margin: 16px 0; }
+strong { color: #1a0f05; }
+
+.rule { border: 1px solid #b8945a; background: rgba(160,120,48,0.07); padding: 12px 16px; margin: 12px 0; }
+.rule p, .rule li { font-size: 14px; margin-bottom: 5px; }
+.stat { border: 1px solid #9a7040; background: rgba(26,19,10,0.04); padding: 12px 16px; margin: 8px 0; border-left: 4px solid #7a1e1e; }
+.stat .sn { font-size: 11px; letter-spacing: 2px; color: #7a1e1e; text-transform: uppercase; margin-bottom: 3px; font-family: Georgia, serif; }
+.stat p { font-size: 14px; }
+.job { border: 1px solid #b8945a; padding: 14px 16px; margin: 10px 0; background: rgba(255,255,255,0.08); }
+.job .jt { font-size: 12px; letter-spacing: 1px; color: #7a1e1e; text-transform: uppercase; margin-bottom: 2px; font-family: Georgia, serif; font-weight: bold; }
+.job .jp { font-style: italic; font-size: 12px; color: #a07830; }
+.job p { font-size: 14px; margin-top: 4px; }
+.sme-note { font-style: italic; color: #7a1e1e; font-size: 12px; display: block; margin-top: 3px; }
+.sme-box { background: rgba(122,30,30,0.06); border: 1px solid rgba(122,30,30,0.2); border-left: 3px solid #7a1e1e; padding: 10px 14px; margin: 12px 0; font-size: 13.5px; line-height: 1.6; }
+.sme-box strong { display: block; font-size: 10px; letter-spacing: 1px; color: #7a1e1e; margin-bottom: 3px; text-transform: uppercase; font-family: Georgia, serif; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+th { font-size: 10px; letter-spacing: 1px; color: #a07830; background: rgba(26,15,5,0.06); padding: 7px 10px; border: 1px solid #c8a87a; text-align: left; text-transform: uppercase; }
+td { padding: 7px 10px; border: 1px solid #d4b88a; vertical-align: top; line-height: 1.5; color: #3d2b1a; font-size: 13.5px; }
+tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+.rs { font-family: ‘Palatino Linotype’, Palatino, serif; color: #7a1e1e; font-weight: bold; }
+
+.ann { background: #fffbe8; border: 1px solid #c8a94a; border-left: 3px solid #c8a94a; padding: 8px 10px; font-size: 12.5px; line-height: 1.6; color: #4a2e00; }
+.ann.rev { border-left-color: #7a1e1e; background: #fff5f5; }
+.ann.exp { border-left-color: #1e3a5a; background: #f5f8ff; }
+.ann.wb { border-left-color: #3a6b3a; background: #f5fff5; }
+.ann .at { font-size: 9px; letter-spacing: 2px; color: #c8a94a; text-transform: uppercase; margin-bottom: 4px; font-family: Georgia, serif; }
+.ann.rev .at { color: #7a1e1e; }
+.ann.exp .at { color: #1e3a5a; }
+.ann.wb .at { color: #3a6b3a; }
+
+.lib-hdr { background: #1a0f05; border: 1px solid #a07830; padding: 16px 24px; text-align: center; }
+.lib-hdr h2 { font-family: ‘Palatino Linotype’, Palatino, serif; color: #a07830; font-size: 17px; }
+.lib-hdr p { color: #8a7050; font-size: 12px; font-style: italic; margin-top: 3px; }
+.lib-entry { background: #f4ead5; border: 1px solid #c8a87a; border-top: none; padding: 24px 32px; }
+.lib-entry .et { font-size: 10px; color: #a07830; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; font-family: Georgia, serif; }
+.lib-entry .en { font-family: ‘Palatino Linotype’, Palatino, serif; font-style: italic; font-size: 19px; color: #7a1e1e; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(160,120,48,0.3); }
+.stub { font-style: italic; color: #8a7050; font-size: 13px; border-left: 3px solid #c8a94a; padding-left: 12px; margin: 10px 0; }
+.stub::before { content: ‘[ STUB ]’; display: block; font-size: 9px; letter-spacing: 2px; color: #c8a94a; margin-bottom: 4px; font-family: Georgia, serif; }
+
+/* NPC CARDS */
+.npc-card { border: 1px solid #b8945a; padding: 16px 18px; margin: 12px 0; background: rgba(255,255,255,0.06); }
+.npc-name { font-family: ‘Palatino Linotype’, Palatino, serif; color: #7a1e1e; font-size: 16px; margin-bottom: 2px; }
+.npc-alias { font-size: 11px; color: #a07830; font-style: italic; letter-spacing: 1px; margin-bottom: 6px; }
+.npc-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.npc-tag { font-size: 10px; letter-spacing: 1px; background: rgba(122,30,30,0.08); border: 1px solid rgba(122,30,30,0.2); color: #7a1e1e; padding: 2px 8px; font-family: Georgia, serif; text-transform: uppercase; }
+.npc-tag.gold { background: rgba(160,120,48,0.08); border-color: rgba(160,120,48,0.3); color: #7a5820; }
+.npc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
+.npc-field { font-size: 13px; color: #3d2b1a; line-height: 1.5; }
+.npc-field strong { font-size: 10px; letter-spacing: 1px; color: #a07830; display: block; text-transform: uppercase; font-family: Georgia, serif; margin-bottom: 2px; }
+.npc-notes { font-size: 13px; color: #3d2b1a; line-height: 1.6; margin-top: 8px; padding-top: 8px; border-top: 1px dotted rgba(160,120,48,0.3); }
+.npc-notes strong { font-size: 10px; letter-spacing: 1px; color: #7a1e1e; display: block; text-transform: uppercase; font-family: Georgia, serif; margin-bottom: 3px; }
+.disp { display: inline-block; font-size: 10px; letter-spacing: 1px; padding: 2px 8px; text-transform: uppercase; font-family: Georgia, serif; border: 1px solid; }
+.disp-hostile { color: #7a1e1e; border-color: rgba(122,30,30,0.4); background: rgba(122,30,30,0.06); }
+.disp-skeptical { color: #7a5820; border-color: rgba(160,120,48,0.4); background: rgba(160,120,48,0.06); }
+.disp-neutral { color: #3a5a3a; border-color: rgba(58,90,58,0.4); background: rgba(58,90,58,0.06); }
+.disp-receptive { color: #1e3a5a; border-color: rgba(30,58,90,0.4); background: rgba(30,58,90,0.06); }
+
+.tl { display: grid; grid-template-columns: 100px 1fr; gap: 14px; margin-bottom: 14px; }
+.tly { font-size: 11px; color: #a07830; text-align: right; padding-top: 2px; border-right: 2px solid rgba(160,120,48,0.3); padding-right: 14px; font-family: Georgia, serif; }
+.tle p { font-size: 14px; }
+
+.letter { background: rgba(255,255,255,0.3); border: 1px solid #c8a87a; border-left: 4px solid #a07830; padding: 16px 20px; margin: 12px 0; font-style: italic; font-size: 14px; line-height: 1.8; color: #3d2b1a; }
+
+/* BACKLOG */
+.backlog-item { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dotted rgba(160,120,48,0.25); align-items: flex-start; font-size: 13.5px; }
+.backlog-item:last-child { border-bottom: none; }
+.bl-pri { font-size: 9px; letter-spacing: 1px; padding: 2px 7px; text-transform: uppercase; font-family: Georgia, serif; border: 1px solid; flex-shrink: 0; margin-top: 2px; }
+.bl-top { color: #7a1e1e; border-color: rgba(122,30,30,0.4); background: rgba(122,30,30,0.06); }
+.bl-high { color: #7a5820; border-color: rgba(160,120,48,0.4); background: rgba(160,120,48,0.08); }
+.bl-med { color: #3a5a3a; border-color: rgba(58,90,58,0.4); background: rgba(58,90,58,0.06); }
+.bl-low { color: #3a3a6a; border-color: rgba(58,58,106,0.3); background: rgba(58,58,106,0.04); }
+.bl-done { color: #7a7a6a; border-color: rgba(122,122,90,0.3); background: rgba(122,122,90,0.04); text-decoration: line-through; }
+.bl-text { flex: 1; color: #3d2b1a; line-height: 1.5; }
+.bl-note { font-size: 12px; font-style: italic; color: #7a6040; display: block; margin-top: 2px; }
+</style>
+
+</head>
+<body>
+
+<div class="hdr">
+  <h1>The Chartered Realm — Engine Codex</h1>
+  <div class="sub">Complete Game &amp; Universe Reference — PMI Alaska Chapter TTRPG</div>
+  <div class="meta">v0.7 &nbsp;·&nbsp; Revision Draft &nbsp;·&nbsp; May 2026 &nbsp;·&nbsp; Engine Rulebook — GM &amp; Player Rulebooks derived from this document</div>
+</div>
+
+<nav class="nav">
+  <a href="#handoff">Handoff</a>
+  <a href="#overview">Overview</a>
+  <a href="#lore">Lore</a>
+  <a href="#arcs">Arcs</a>
+  <a href="#tests">Tests</a>
+  <a href="#stats">Stats</a>
+  <a href="#jobs">Jobs</a>
+  <a href="#skills">Skills</a>
+  <a href="#scenes">Scenes</a>
+  <a href="#renown">Renown</a>
+  <a href="#factions">Factions</a>
+  <a href="#npcs">NPCs</a>
+  <a href="#library">Library</a>
+  <a href="#history">History</a>
+  <a href="#backlog">Backlog</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ===== HANDOFF BRIEF ===== -->
+
+<div class="handoff" id="handoff">
+  <h2>Handoff Brief — For New Conversation Context</h2>
+  <p>This is the Engine Codex for <strong>The Chartered Realm</strong>, a TTRPG built for PMI Alaska Chapter members. Single source of truth. GM and Player Rulebooks derived later. To continue: attach this file and say <em>"Continue developing the Chartered Realm Engine Codex. Read the handoff brief."</em></p>
+
+  <div class="hf-section">
+    <div class="hf-label">What This Game Is</div>
+    Six project managers from our world are transported to a fantasy realm where PM skills are literal superpowers — absent for a thousand years. They defend the city of Cornerstone, fix its broken governance, and negotiate with the elven empire. Three arcs: Arc 1 = Crisis Management (siege), Arc 2 = Change Management (guild politics), Arc 3 = Stakeholder Management (elven diplomacy). Target: PMI Alaska Chapter. Long-term ambition: sellable corporate team-building experience.
+  </div>
+
+  <div class="hf-section">
+    <div class="hf-label">Core Mechanic (v0.7 — Revised)</div>
+    2d6 base roll. If the test calls on a character's dominant trait (binary — either you are or you aren't), add a d4. Skill bonuses add flat +1 or +2. 10+ full success, 7–9 partial/complication, 6– failure with consequences. Three stat slots (Conflict, Evidence, Decision), each a binary choice between two traits. No combat. Three scene types: Crisis, Negotiation, Discovery.
+  </div>
+
+  <div class="hf-section">
+    <div class="hf-label">Resolved This Session (v0.6 → v0.7)</div>
+    <ul>
+      <li>Core mechanic revised: stats are now binary identity traits, not numerical. Dominant trait adds a d4 to relevant tests instead of flat +1. Rationale: physical variety at the table, tactile stakes, identity-first framing.</li>
+      <li>NPC roster fully named and developed from CSV intake. Ten characters with personalities, wants, fears, alignments, and GM notes.</li>
+      <li>Orc siege framing revised: Droga Vorak's motivation is territorial (human mines on ancestral land) not "dark power" influenced. The dark one connection removed entirely. Vorak is 14 — full adult by orcish cultural standard.</li>
+      <li>Arc 1 resolution options expanded: negotiation over mining rights, military action, or internal advocacy for orcish land claims against human interests.</li>
+      <li>Ambassador Sylvari Aethon revised: fears "the dark one" removed. Grief is about The Severance, not an external villain. Aethon is cool with orcs.</li>
+      <li>Klaus/Nicole antagonist structure formalized: Klaus (Merchants) schemes through Nicole (Craftsmen's Deputy) to monopolize both guilds. Klaus is conflict-avoidant — schemes, never confronts. Nicole is the operational threat.</li>
+      <li>Factions updated: Craftsmen's Guild Master is now Yuki Wei. Merchants' Guild Master is Wilhelm Klaus. Laborers' Guild Master is Quinn Marley. Scholars' Guild Master is Adelooye Adeyemi.</li>
+      <li>Group terminology: the team is called "the team" in rules text. Character sheet and band sheet will have a dropdown for chosen name at Renown 5+.</li>
+      <li>City name confirmed: Cornerstone.</li>
+      <li>Character sheet built (v1) — dropdowns for job/industry, binary trait selection, general skills checklist. Renown and advancement removed to band sheet.</li>
+      <li>NPC Registry tool built — HTML/React, CSV export functional.</li>
+    </ul>
+  </div>
+
+  <div class="hf-section">
+    <div class="hf-label">Tools Built (Attach as Needed)</div>
+    <ul>
+      <li>CharacterSheet.html — player-facing character sheet</li>
+      <li>NPCRegistry.html — NPC intake form with CSV export</li>
+      <li>CharteredRealm_NPCs.csv — current NPC roster (10 characters)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 1: OVERVIEW ===== -->
+
+<div class="sec" id="overview">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter I</span>Campaign Overview</div>
+    <p><strong>Premise:</strong> Six project managers from our world are transported to a fantasy realm where PM skills have been absent for a thousand years. They are valued not as warriors or wizards — but as people who can make things <em>work.</em></p>
+    <ul>
+      <li><strong>Target Audience:</strong> PMI Alaska Chapter members — 6 players</li>
+      <li><strong>Tone:</strong> Humorous fish-out-of-water meets genuine stakes. PM thinking is a superpower. Story over mechanics.</li>
+      <li><strong>Long-term ambition:</strong> Sellable corporate team-building experience.</li>
+    </ul>
+    <hr>
+    <div class="sh">Designer Philosophy</div>
+    <p>The skills that feel mundane in a conference room are extraordinary in a world where no one has ever heard of a risk register. A spreadsheet is sorcery. A stakeholder matrix is a war map. A retrospective is prophecy.</p>
+    <p>Rules exist to serve the story. When a player applies a real PM concept in a genuinely applicable way, the mechanics reward it.</p>
+    <div class="rule">
+      <p><strong>Core Rule Zero:</strong> If a player uses a real PM concept, framework, or tool in a genuinely applicable way, the GM may grant automatic success or a +2 bonus without a roll — even if the rules don't explicitly cover it.</p>
+    </div>
+  </div>
+  <div class="marg">
+    <div class="ann wb"><div class="at">Design Note</div>The game works best when PM players recognize real professional patterns in the fiction. Every major NPC maps to a workplace archetype. Every arc maps to a PM discipline. Keep this legible.</div>
+    <div class="ann exp"><div class="at">Long-Term Vision</div>Session Zero → Arc 1 → Arc 2 → Arc 3. Each arc is a standalone challenge. A corporate team-building version could run Arc 1 as a single session experience.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 2: LORE ===== -->
+
+<div class="sec" id="lore">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter II</span>The World — Lore Overview</div>
+    <p>The Chartered Realm is a continent whose history has been shaped by the presence and absence of one thing: the ability to organize collective human effort. When humanity had PM knowledge, it built Cornerstone and the Great Compact. When it lost that knowledge in the Severance, everything since has been slow collapse managed with diminishing returns.</p>
+    <hr>
+    <div class="sh">Cornerstone</div>
+    <p>A city of approximately forty thousand people built at the convergence of three river valleys. Named for the PM principle: the foundational piece everything depends on. Currently under partial siege by the Gurach Vel orcish confederation. King Charles Emberson Winterpeg the 33rd is preparing for his birthday.</p>
+    <div class="sh">The Severance</div>
+    <p>Seven hundred years ago, a human faction betrayed the Great Compact from within — opening the gates to a political and spiritual collapse that ended the age of organized governance. Elves were exiled. Dwarves withdrew. The capacity for coordinated human effort was either destroyed or hidden as a consequence — accounts differ. The Severance is the original wound. Everything in the campaign is downstream of it.</p>
+    <div class="sh">The PM Skills</div>
+    <p>In this world, PM knowledge is not merely professional training — it is a form of power that has been absent so long it reads as supernatural. A stakeholder matrix is a war map. A risk register is prophecy. The team's arrival is not incidental. Whether they were summoned, fell through, or were pulled deliberately is a question the campaign may or may not answer.</p>
+  </div>
+  <div class="marg">
+    <div class="ann wb"><div class="at">World-Build Hook</div>The Compact of Guilds failed 400 years ago for documented reasons. If those records survive, the team can reference them in Arc 2: "Here's what broke the last attempt. Here's our mitigation plan." That is extremely PM.</div>
+    <div class="ann wb"><div class="at">World-Build Hook</div>What happened to Varath — the first human coastal settlement, now destroyed? A ruined city with early PM governance records could be an Arc 2 Discovery mission. The team literally excavates an ancient project post-mortem.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 3: ARCS ===== -->
+
+<div class="sec" id="arcs">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter III</span>Arc Structure</div>
+    <p>Three arcs. Each represents a distinct PM discipline and a distinct type of challenge. The team enters Arc 1 with no reputation and no resources. By Arc 3 they are operating at the level of a recognized regional power.</p>
+    <hr>
+    <div class="sh">Arc 1 — The Siege (Crisis Management)</div>
+    <p><strong>Situation:</strong> The Gurach Vel orcish confederation has laid siege to Cornerstone. King Charles Emberson Winterpeg the 33rd is more concerned with his upcoming 33rd birthday than the military situation. The team arrives and must stabilize the crisis.</p>
+    <p><strong>Core PM discipline:</strong> Crisis management. Triage. Stakeholder communication under pressure. Keeping the clock from running out.</p>
+    <div class="ssh">Arc 1 Resolution Paths</div>
+    <ul>
+      <li><strong>Negotiated settlement:</strong> Broker a ceasefire and territorial agreement over the mines. Droga Vorak will negotiate if convinced it's advantageous — not from weakness, from pragmatism. The team must make the case that a deal serves orcish interests better than a siege. This path requires acknowledging the legitimacy of the territorial grievance.</li>
+      <li><strong>Military action:</strong> Support the defense, coordinate Cornerstone's resources, and outlast or repel the siege. Requires Construction and Government skill synergies. Does not resolve the underlying land dispute — sets up future conflict.</li>
+      <li><strong>Internal advocacy:</strong> The team discovers the mines genuinely are on ancestral orcish land. They can advocate internally — to the King, the guilds — for the orcs' legitimate claim. This is the hardest path politically and the most rewarding narratively. Enemies will be made. The right outcome may cost something real.</li>
+    </ul>
+    <p><em>Note on the orcish framing:</em> The non-human people whose land is being taken are not the obstacle to be managed around. Their grievance is legitimate. The team must decide whether to solve the political problem or the ethical one — and whether those are the same thing.</p>
+    <div class="stub">Arc 1 specific scenes, decision points, and encounter structure needed. Key beats: arrival scene, first Vorak contact, King birthday scene (comic relief / political disaster), negotiation or battle climax.</div>
+    <hr>
+    <div class="sh">Arc 2 — The Guild Deadlock (Change Management)</div>
+    <p><strong>Situation:</strong> The siege is resolved. Cornerstone needs functioning governance. The four guilds must be brought into a coherent framework. Wilhelm Klaus is actively working to prevent it. The team has to build something that outlasts their presence.</p>
+    <p><strong>Core PM discipline:</strong> Change management. Stakeholder alignment. Organizational design. Managing resistance that won't announce itself.</p>
+    <p><strong>The Klaus/Nicole dynamic:</strong> Klaus never gets his hands dirty. He is conflict-avoidant — he schemes, he funds, he positions. Nicole Fennigan does the operational betrayal work: undermining Yuki Wei's authority in the Craftsmen's Guild while quietly negotiating cross-guild consolidation with Klaus. The team will identify Nicole as the threat first. Klaus remains obscured until late Arc 2.</p>
+    <div class="stub">Arc 2 specific scenes needed. Key beats: first guild council, Nicole's first move, discovery of the Merchants' old trade records (Severance evidence), Klaus revealed, governance framework vote.</div>
+    <hr>
+    <div class="sh">Arc 3 — The Emissary (Stakeholder Management)</div>
+    <p><strong>Situation:</strong> Ambassador Sylvari Aethon arrives from Aethis Lor. The elves have been watching. They have grievances a thousand years old and questions about whether what the team has built can survive without them. This arc is diplomacy at civilizational scale.</p>
+    <p><strong>Core PM discipline:</strong> Stakeholder management. Long-term relationship building. Managing parties with legitimately incompatible histories.</p>
+    <p><strong>Aethon framing:</strong> Aethon's grief is about The Severance — a betrayal by humans, seven hundred years of exile, and the slow watch as Cornerstone failed to live up to what it once was. This is not about a dark external enemy. It is about whether humans can be trusted again. The team is the evidence either way.</p>
+    <div class="stub">Arc 3 scenes, Aethon personal history, elven political structure, cross-cultural negotiation mechanics, and connection to Letters from the Field author all needed.</div>
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Arc Design Note</div>Each arc should have a "what breaks if the team does nothing" answer ready. Siege: Cornerstone falls. Guild deadlock: Klaus consolidates power and the governance window closes. Elven diplomacy: Aethis Lor withdraws and the dark forces Aethon mentioned gain ground unopposed.</div>
+    <div class="ann wb"><div class="at">World-Build Hook</div>The Compact of Guilds failed 400 years ago. If those records exist in the Merchants' archives, the team can learn exactly how Klaus-style consolidation destroyed governance last time. History as project post-mortem.</div>
+    <div class="ann rev"><div class="at">Design Check</div>The internal advocacy path in Arc 1 is the hardest and most interesting resolution. Build at least one scene that makes this path visible to players who might not think to pursue it.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 4: TESTS ===== -->
+
+<div class="sec" id="tests">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter IV</span>Making Tests</div>
+    <p>Tests are how uncertainty gets resolved at the table. Not every action needs a test — only those with genuine stakes, real opposition, or meaningful uncertainty.</p>
+    <hr>
+    <div class="sh">The Resolution Sequence</div>
+    <div class="rule">
+      <p><strong>1. Describe your action.</strong> Say what you're doing and how.</p>
+      <p><strong>2. GM names the relevant stat.</strong> Which trait category does this call on? (Conflict, Evidence, or Decision)</p>
+      <p><strong>3. Roll 2d6.</strong> This is always the base.</p>
+      <p><strong>4. Check your dominant trait.</strong> If the stat called matches a trait that defines your character — not a skill you have, but something you genuinely <em>are</em> — add a d4 to the roll.</p>
+      <p><strong>5. Add skill bonuses.</strong> If a relevant skill applies, add +1 (or +2 for SME passives).</p>
+      <p><strong>6. Read the total.</strong></p>
+    </div>
+    <table>
+      <thead><tr><th>Total</th><th>Result</th><th>What It Means</th></tr></thead>
+      <tbody>
+        <tr><td><strong>10+</strong></td><td>Full success</td><td>You get what you were going for.</td></tr>
+        <tr><td><strong>7–9</strong></td><td>Partial success</td><td>You succeed, but with a complication, cost, or condition.</td></tr>
+        <tr><td><strong>6–</strong></td><td>Failure</td><td>It doesn't work. The story gets harder — not over.</td></tr>
+      </tbody>
+    </table>
+    <hr>
+    <div class="sh">Dominant Traits — The d4</div>
+    <p>Stats in this game are not numbers. They are identity descriptors. You don't have Assertiveness at level 3 — you <em>are</em> assertive, and that is simply true about your character. If it's true, you roll the d4. If it isn't, you don't.</p>
+    <p>Each character has three stat slots, each a binary choice. Mark one per slot at character creation. That mark doesn't change mid-scene — it's who you are, not a mode you switch into.</p>
+    <div class="rule">
+      <p><strong>The d4 is the mechanical expression of identity.</strong> It adds tactile variety to the roll, rewards character specificity, and creates moments where the right person for the job rolls noticeably different from the wrong one. A d6 is available as an upgrade path for signature traits — see Advancement.</p>
+    </div>
+    <hr>
+    <div class="sh">Example Test</div>
+    <p><em>The team needs to convince Droga Vorak to pause the siege for a negotiation window. Vorak is Hostile. One player declares: "I'm going to tell Vorak directly that his tactical position is strong — and that's exactly why he can afford to negotiate. I'm not asking him to back down, I'm reframing this as his choice."</em></p>
+    <p>GM calls Conflict. The player is Assertive (marked) — rolls 2d6 + d4. Gets 3+5+3 = 11. Full success. Vorak doesn't soften — but he listens. The negotiation opens.</p>
+    <p><em>A different player tries the same approach but is Collaborative, not Assertive. Same Conflict stat, no d4. Rolls 2d6, gets 7. Partial — Vorak agrees to one exchange but sets a condition.</em></p>
+    <hr>
+    <div class="sh">When Not to Roll</div>
+    <p>Do not roll for: automatic success when clever PM tactics apply; busywork; established facts; actions with no failure state worth dramatizing.</p>
+    <div class="rule">
+      <p><strong>Fortune Check:</strong> When external circumstances intervene — weather, timing, a third party's unpredictable action. This roll represents <em>the world</em>, not a player's competence. Name it explicitly before rolling. Advancement skills cannot reroll a Fortune Check.</p>
+    </div>
+    <div class="rule">
+      <p><strong>GM Failure Rule:</strong> When a roll fails, the GM must answer: "What gets harder? What new decision must now be made?" If nothing changes, it wasn't worth rolling.</p>
+    </div>
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Design Note — The d4</div>The d4 is physically weird and fun. Players notice when they pick it up. The upgrade path to d6 for a signature trait (via Advancement) gives long-term players a meaningful marker of character development.</div>
+    <div class="ann rev"><div class="at">Open Question</div>Signature trait d6 upgrade: earned through play (preferred) or chosen at character creation for one trait? Resolve during Advancement system design.</div>
+    <div class="ann exp"><div class="at">Expand — Tests Section</div>This chapter is new in v0.7. Needs a full worked example for each scene type (Crisis, Negotiation, Discovery) with different stat/trait combinations shown. Write when building the Player Rulebook.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 5: STATS ===== -->
+
+<div class="sec" id="stats">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter V</span>Dominant Traits (Stats)</div>
+    <p>Three stat slots. Each is a binary choice — you mark one, and that is who your character is. Marked traits add a d4 when the relevant stat is called in a test.</p>
+    <hr>
+    <div class="ssh">Slot I — Conflict · How you engage with opposition</div>
+    <div class="stat"><div class="sn">Assertive</div><p>You push, hold ground, and direct. When things need to move, you move them. Add d4 to tests involving pressure, direction, or holding a position under opposition.</p></div>
+    <div class="stat"><div class="sn">Collaborative</div><p>You build consensus and shared ownership. When things need to hold together, you hold them. Add d4 to tests involving alignment, trust-building, or getting others to choose the same direction.</p></div>
+    <hr>
+    <div class="ssh">Slot II — Evidence · How you process information</div>
+    <div class="stat"><div class="sn">Data-Minded</div><p>You trust documentation, evidence, and analysis. Add d4 to tests where research, records, or structured reasoning support your position.</p></div>
+    <div class="stat"><div class="sn">Instinct-Driven</div><p>You read patterns and trust field judgment over documentation. Add d4 to tests requiring rapid assessment, reading a room, or acting on incomplete information correctly.</p></div>
+    <hr>
+    <div class="ssh">Slot III — Decision · How you act under pressure</div>
+    <div class="stat"><div class="sn">Pragmatic</div><p>You cut through noise. You identify the critical path and pursue it without sentiment. Add d4 to tests making hard choices, finding efficient solutions, or staying functional when things go sideways.</p></div>
+    <div class="stat"><div class="sn">Conviction</div><p>You make others believe. You commit publicly and pull people into your momentum. Add d4 to tests persuading others to commit, backing decisions publicly, or holding a vision under pressure.</p></div>
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Design Check</div>Each trait should have a featured scene per arc where it clearly shines. Data-Minded: Arc 2 governance design. Instinct-Driven: Arc 1 siege chaos. Collaborative: Arc 3 diplomacy. Build deliberately.</div>
+    <div class="ann rev"><div class="at">Open — Advancement</div>Signature trait upgrade (d4 → d6) is the primary long-term mechanical reward for a trait. Formalize when Advancement system is built.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 6: JOBS ===== -->
+
+<div class="sec" id="jobs">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter VI</span>Jobs (Character Classes)</div>
+    <p>Each job grants a <strong>passive ability</strong> — a narratively powerful truth about how you see the world. Players choose a job and an industry. The combination defines your character's approach.</p>
+
+```
+<div class="job"><div class="jt">Project Manager</div><div class="jp">Passive: Critical Eye</div><p>You identify the single point of failure. Designate one task or resource as "linchpin" — if it fails, everyone at the table understands the cascading consequences before they happen.</p></div>
+
+<div class="job"><div class="jt">Program Manager</div><div class="jp">Passive: Orchestration</div><p>You see how multiple initiatives interconnect. When making decisions involving 3+ moving pieces, gain narrative clarity on dependencies and interactions.</p></div>
+
+<div class="job"><div class="jt">Portfolio Manager</div><div class="jp">Passive: Strategic Horizon</div><p>You see which initiatives should exist and which shouldn't. Once per arc, you may formally recommend that a project, plan, or effort be <em>stopped</em> — and the GM must honestly assess whether that recommendation is correct and what stopping it would free up. Other characters can ignore your recommendation. They cannot ignore its accuracy.</p></div>
+
+<div class="job"><div class="jt">Scrum Master</div><div class="jp">Passive: Retrospective Clarity</div><p>After each failed attempt, name one specific thing that went wrong and how to avoid it. Subsequent attempts targeting that lesson get +1. The bonus persists until used once, then resets.</p></div>
+
+<div class="job"><div class="jt">Product Owner</div><div class="jp">Passive: Roadmap Vision</div><p>You see the endpoint. Ask "If we succeed, what does the city or system look like in three months?" and the GM answers honestly.</p></div>
+
+<div class="job"><div class="jt">Change Manager</div><div class="jp">Passive: Resistance Mapping</div><p>You see not just who is resisting, but <em>why</em> — and what it would actually cost them to change. Once per scene: ask the GM "What is this NPC or faction's specific resistance to this change, and what would genuinely address it?" The GM answers honestly.</p></div>
+
+<div class="job"><div class="jt">Intern</div><div class="jp">Passive: Master of None</div><p>No traditional passive. Instead, pick skills from <em>any</em> industry and start with <strong>+1 additional skill</strong> at character creation. The generalist who covers any gap — this is not a joke option.</p></div>
+
+<div class="job"><div class="jt">Subject Matter Expert</div><div class="jp">Passive: Domain Authority</div><p>Double all roll bonuses from your industry skill. If your skill grants +1, you roll at +2. Simple, universal, scales with your industry choice.</p></div>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Note — Portfolio Manager</div>Strategic Horizon is deliberately non-mechanical. The PM cannot force a stop decision — only make the cost of continuing visible. This mirrors real portfolio management and creates interesting table tension.</div>
+    <div class="ann"><div class="at">Note — Change Manager</div>Resistance Mapping pairs powerfully with Arc 2. A Change Manager in Arc 2 is operating in their home discipline. Consider whether this makes them too strong in that arc — or whether that's the point.</div>
+    <div class="ann exp"><div class="at">Expand — Intern</div>The Intern starts with more skills than anyone else and can cross industries. Call this out explicitly in the Player Rulebook. It is not a joke pick.</div>
+    <div class="ann rev"><div class="at">Open — Passive Tweaks</div>Job passives are in revision stage. Review after first playtest for balance. Change Manager / Change Management general skill overlap needs resolution.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 7: SKILLS ===== -->
+
+<div class="sec" id="skills">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter VII</span>Industries &amp; Skills</div>
+
+```
+<div class="sme-box"><strong>SME Passive — Universal Rule</strong>Subject Matter Expert doubles all roll bonuses from their industry skill. +1 becomes +2. Stacks with stat bonuses. No other change to how the skill functions.</div>
+
+<div class="ssh">Industry Skills (Available at Creation)</div>
+
+<div class="job"><div class="jt">Tech — Rapid Iteration</div><p>Once per scene, reroll one failed roll. Reroll stands. Cannot reroll a reroll. Cannot be used on Fortune Checks.<span class="sme-note">SME: +1 on the reroll.</span></p></div>
+
+<div class="job"><div class="jt">Construction — Something's Not Right Here</div><p>+1 to all perceptive rolls. In Discovery scenes, GM flags any physical integrity risk automatically — no roll required.<span class="sme-note">SME: +2 to perceptive rolls.</span></p></div>
+
+<div class="job"><div class="jt">Government — Executive Authority</div><p>+1 to all assertion rolls during negotiations. Invoking law or formal process as leverage costs NPC political capital to dismiss.<span class="sme-note">SME: +2 to assertion rolls in negotiations.</span></p></div>
+
+<div class="job"><div class="jt">Healthcare — Bedside Manner</div><p>+1 to rolls building trust, reducing fear, or stabilizing a volatile NPC. Once per scene: ask GM to rank competing urgent demands by actual severity — GM answers honestly, no roll.<span class="sme-note">SME: +2 to trust and de-escalation rolls.</span></p></div>
+
+<div class="job"><div class="jt">Communication — Read the Room</div><p>+1 to all rolls involving body language, audience disposition, or message reception. Once per scene: GM reveals where the audience stands and what would move them — no roll.<span class="sme-note">SME: +2 to body language and message reception rolls.</span></p></div>
+
+<div class="job"><div class="jt">Finance — Money Minded</div><p>+1 to all purchase, sale, and resource negotiation rolls. Once per decision point: ask GM what any choice truly costs across all currencies — GM answers honestly, no roll.<span class="sme-note">SME: +2 to purchase, sale, and resource negotiation rolls.</span></p></div>
+
+<div class="job"><div class="jt">Manufacturing — Process Optimization</div><p>+1 to all Pragmatic-based rolls. Once per scene: identify one redundant workflow step — removing it frees time, labor, or resources. GM determines scale. No roll for identification.<span class="sme-note">SME: +2 to Pragmatic-based rolls.</span></p></div>
+
+<div class="job"><div class="jt">Research — Science Minded</div><p>+1 to all Data-Minded rolls. Before any major decision: ask GM if something similar has been tried in this world — GM answers honestly, no roll. Research SME + Data-Minded trait = +3 analytical. This is intended.<span class="sme-note">SME: +2 to Data-Minded rolls.</span></p></div>
+
+<hr>
+<div class="ssh">General Skills (Available to All)</div>
+<ul>
+  <li><strong>Exudes Psychological Safety</strong> — Forces NPC honest engagement, or triggers a roll if actively resistant.</li>
+  <li><strong>Active Listening</strong> — Extract NPC's real underlying concern beneath stated position. GM answers honestly. No roll.</li>
+  <li><strong>Decisive Action</strong> — Commit publicly to one course. +2 to all supporting rolls. Failure is public — no quiet retreat.</li>
+  <li><strong>De-escalation</strong> — Lower scene tension one step on disposition track. Cannot combine with pressure tactics same beat.</li>
+  <li><strong>Data-Driven Argument</strong> — +1 to any roll where documented evidence supports your position. NPCs who dismiss it reveal motivation GM must acknowledge.</li>
+  <li><strong>Delegation</strong> — Assign NPC task ownership. Success: NPC becomes asset. Failure: reluctance reveals useful information.</li>
+  <li><strong>Change Management</strong> — Address stakeholder's specific cost of a transition. Success: moves NPC from resistance to reluctant compliance. +1 to subsequent rolls with that NPC on this change. Once per NPC per arc.</li>
+</ul>
+
+<hr>
+<div class="ssh">Advancement Pool — Earned Through Play, Not Available at Creation</div>
+<p style="font-size:13px; font-style:italic; color:#6a5a40;">One skill unlocked per completed arc. Requires narrative justification. Formal system TBD.</p>
+<ul style="font-size:13px; color:#6a5a40;">
+  <li><strong>Logician</strong> (Tech) — GM reveals hidden logical/systemic pattern. Correctly identifying it unlocks bonus or exclusive information. Once per arc.</li>
+  <li><strong>Value Engineering</strong> (Construction) — Propose redesign preserving essential function at lower cost. GM must honor the trade. Once per scene.</li>
+  <li><strong>Compliance Framework</strong> (Government) — Automatically identify when any action violates law or prior agreement.</li>
+  <li><strong>Casting Vote</strong> (Government) — In any formal vote, your vote counts as two. Once per session. <em>(Parking lot — needs rework.)</em></li>
+  <li><strong>Triage Mindset</strong> (Healthcare) — Correctly rank competing urgent demands by severity. GM confirms. Once per scene.</li>
+  <li><strong>Message Discipline</strong> (Communication) — Define official narrative of a Band decision before secondary audiences hear it.</li>
+  <li><strong>Follow the Money</strong> (Finance) — Ask GM what financial incentive drives any NPC or faction. No roll. Once per scene.</li>
+  <li><strong>Floor Knowledge</strong> (Manufacturing) — Direct conversation with laborers yields honest information, bypassing stakeholder management layers.</li>
+  <li><strong>Hypothesis Engine</strong> (Research) — Formally propose a theory on an unresolved mystery. Correct: +2 Renown. Wrong: GM gives one true piece of the answer. Once per arc.</li>
+</ul>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Note — Power Combos</div>Science Minded + Data-Minded trait = +3 analytical (intended). Executive Authority + Assertive trait = +3 assertion in negotiations (let ride for now). Read the Room + Collaborative = the diplomat archetype.</div>
+    <div class="ann exp"><div class="at">Expand — Advancement</div>Advancement skills should feel earned narratively. A Research PM embedded with the Scholars' Guild earns Hypothesis Engine. A Construction PM who rebuilt the north wall earns Value Engineering. Earned, not purchased.</div>
+    <div class="ann rev"><div class="at">Open — General Skills Pass</div>Change Management as a general skill overlaps with Change Manager passive. Review interaction when job classes are fully playtested. Medium-high priority.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 8: SCENES ===== -->
+
+<div class="sec" id="scenes">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter VIII</span>Scene Structure</div>
+    <p>Three scene types cover the full range of play. Each has different pacing, different roll triggers, and different GM responsibilities.</p>
+    <hr>
+    <div class="sh">Scene Type I — Crisis Scene</div>
+    <p>High stakes, time pressure, round-robin turns. Used for sieges, emergency decisions, system failures, sudden political ruptures.</p>
+    <div class="rule">
+      <p><strong>1. Setup (GM):</strong> Describe crisis and clock. <em>"The breach opens in 30 minutes."</em></p>
+      <p><strong>2. Round-Robin:</strong> Strict timer — <strong>5 min/player</strong> routine, <strong>2 min/player</strong> maximum urgency (GM's call). One clear action or decision per turn.</p>
+      <p><strong>3. GM Adjudication (1–2 min):</strong> Which actions land? What needs a roll? New state?</p>
+      <p><strong>4. Repeat</strong> — typically 2–4 rounds.</p>
+    </div>
+    <hr>
+    <div class="sh">Scene Type II — Negotiation Scene</div>
+    <p>Free-form dialogue with structured stakes. No timer — GM tracks NPC disposition and can close the scene if momentum stalls.</p>
+    <div class="rule">
+      <p><strong>Disposition Track:</strong> GM privately notes NPC starting position: <em>Hostile / Skeptical / Neutral / Receptive / Committed.</em> Player actions move this track.</p>
+      <p><strong>Rolls:</strong> Partial (7–9) moves NPC one step, adds condition. Full (10+) moves further or drops conditions. Failure (6–) moves wrong direction.</p>
+    </div>
+    <hr>
+    <div class="sh">Scene Type III — Discovery Scene</div>
+    <p>Exploratory and investigative. No timer, no negotiation target. Goal: leave knowing something that changes a decision.</p>
+    <div class="rule">
+      <p><strong>The Discovery Rule:</strong> Every Discovery Scene yields at least one piece of information that changes a decision the team thought they had already made. If nothing learned affects future choices, the scene wasn't necessary.</p>
+      <p><strong>Rolls:</strong> Only when information is hidden, guarded, or dangerous to obtain.</p>
+    </div>
+    <hr>
+    <div class="sh">When to Roll</div>
+    <p>Roll only for: genuine uncertainty, real risk, active opposition, or a Fortune Check.</p>
+    <div class="rule"><p><strong>Fortune Check:</strong> External circumstances intervene — weather, timing, a third party's unpredictable action. This roll represents <em>the world</em>, not the player's competence. Always name it explicitly.</p></div>
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Timer Note</div>6 players at 5 min/turn = 30 min/round before adjudication. Intentional for deliberate scenes. 2-min cap is the release valve — use freely. Consider a visible timer at the table.</div>
+    <div class="ann wb"><div class="at">World-Build Hook</div>The Disposition Track maps directly to how elven NPCs run in Arc 3. Aethon starts at Skeptical minimum. Build NPC-specific starting dispositions for all major recurring characters.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 9: RENOWN ===== -->
+
+<div class="sec" id="renown">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter IX</span>The Renown System</div>
+    <p>Renown measures how respected and influential the team has become — not how much they're liked, but how much they <em>matter.</em></p>
+
+```
+<div class="sh">Gaining Renown</div>
+<ul>
+  <li><strong>Arc 1 baseline:</strong> Awarded based on siege defense effectiveness (1–10 scale).</li>
+  <li><strong>Moments of impact:</strong> When a PM decision visibly matters or saves lives, +1.</li>
+  <li><strong>Political moves:</strong> Alliances, faction favor, demonstrable wins.</li>
+</ul>
+
+<div class="sh">Renown Scale</div>
+<table>
+  <thead><tr><th>Renown</th><th>Standing</th><th>Resources</th><th>Risk</th></tr></thead>
+  <tbody>
+    <tr><td class="rs">1–3</td><td>Skepticism. Must prove themselves.</td><td>Limited, constrained.</td><td>Low — not yet worth targeting.</td></tr>
+    <tr><td class="rs">4–7</td><td>Trusted. Factions cooperative.</td><td>Better, more autonomy.</td><td>Medium — more to lose.</td></tr>
+    <tr><td class="rs">8–10</td><td>Essential. King consults directly.</td><td>Substantial.</td><td>High — now a target.</td></tr>
+  </tbody>
+</table>
+
+<div class="sh">Losing Renown</div>
+<table>
+  <thead><tr><th>Trigger</th><th>Loss</th></tr></thead>
+  <tbody>
+    <tr><td>Public decision failure with visible consequences</td><td>−1</td></tr>
+    <tr><td>Breaking a commitment made to a faction</td><td>−1 to −2</td></tr>
+    <tr><td>Team member acts against explicit team consensus publicly</td><td>−1 (individual action, team consequence)</td></tr>
+    <tr><td>Catastrophic arc failure</td><td>−3</td></tr>
+    <tr><td>Losing trust with a major faction entirely</td><td>−2, faction disposition drops to Hostile</td></tr>
+  </tbody>
+</table>
+
+<hr>
+<div class="sh" style="font-style:italic; color:#a07830;">Archival Record: The Scepter Incident</div>
+<p style="font-size:12px; font-style:italic; color:#6a5a40; margin-bottom:10px;">Recovered from the personal journal of Mira Aldstone, Team Scribe. Third Year, Season of the Long Rain.</p>
+<p>It began, as most disasters do in Cornerstone, with Edric.</p>
+<p>"The king," Edric announced at breakfast, with the calm of a man who had already decided, "is incompetent. His scepter is the symbol of his authority. If I held it, I would hold Cornerstone."</p>
+<p>The table went quiet. Aldric set down his quill. Yenna looked at the ceiling. I wrote <em>oh no</em> in the margin of my notes, which I stand by as accurate documentation.</p>
+<p>"You want to steal the king's scepter," said Aldric, "and declare yourself ruler of a city of forty thousand people who do not know you."</p>
+<p>"I want to <em>borrow</em> it. Diplomatically."</p>
+<p>"A vote," said Yenna. "All opposed?" Four hands. Edric's stayed down. The motion failed, four to one.</p>
+<p>Edric nodded pleasantly and excused himself from breakfast.</p>
+<div class="rule" style="text-align:center; background: rgba(122,30,30,0.06); border-color: #7a1e1e;">
+  <p><em>Designer's Note: James (playing Edric) declared his intent to proceed despite the vote. The GM called for a Conviction test — Edric's Slot III trait.</em></p>
+  <p><strong style="color:#7a1e1e;">James rolled a 9. Partial success. The court didn't stop him — but they remembered.</strong></p>
+</div>
+<p>He got the scepter. Suffice to say: Edric walked into the throne room, spoke for eleven minutes without interruption, and walked out holding a gold rod the length of his arm while three advisors applauded and the king looked like a man watching a carriage roll slowly into a river.</p>
+<p>For approximately four hours, Edric was the most famous man in Cornerstone. Then the Merchants' Guild sent a letter. Then the Scholars' Guild sent a letter. Then the Soldiers' Guild sent a man — not a letter, a man — who stood in our doorway and said nothing, which was somehow worse.</p>
+<div class="rule" style="text-align:center; background: rgba(122,30,30,0.06); border-color: #7a1e1e;">
+  <p><em>Designer's Note: The GM assessed the fallout. Edric's Conviction test succeeded at 9 — partial. The team's collective Renown absorbed the consequence.</em></p>
+  <p><strong style="color:#7a1e1e;">Team Renown: −1. Merchants' Guild: Skeptical → Hostile. King's personal trust: reduced.</strong></p>
+</div>
+<p>The scepter was returned. The lesson: you can be right and still cost everyone around you something. Edric was not wrong about the king. He was wrong about the method, the timing, and the assumption that his Conviction was stronger than the team's collective reputation.</p>
+<p style="text-align:right; font-style:italic; color:#6a5a40;">— Mira Aldstone, Team Scribe</p>
+<div class="rule">
+  <p><strong>GM Rule:</strong> Individual brilliance and collective consequence are not the same ledger. A player may succeed on their personal roll and still trigger team Renown loss if the action violated consensus or damaged a faction relationship. Never prevent the attempt. Make the cost real.</p>
+</div>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann exp"><div class="at">Expand — Faction Renown</div>Consider faction-specific standing alongside global Renown. High standing with the Crown, negative with the Merchants' Guild. Build when Arc 2 guild politics are fully developed. Medium-low priority.</div>
+    <div class="ann exp"><div class="at">Expand — Team Identity</div>The team needs a name, a banner, and a charter. At Renown 5+: formal headquarters in Cornerstone — war room, planning hall. Team sheet has a dropdown for name. TBD.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 10: FACTIONS ===== -->
+
+<div class="sec" id="factions">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter X</span>The Four Guilds of Cornerstone</div>
+    <p>Cornerstone's guilds were originally designed to organize civic life. Over a thousand years without functional governance, they became something else: parallel power structures with territorial interests and deep mutual suspicion. They do not cooperate. They coexist, barely.</p>
+    <p>The team's arrival in Arc 2 threatens this balance. The guilds will each attempt to use the team for their own ends before the team can figure out how to use the guilds for the city's.</p>
+    <hr>
+
+```
+<div class="sh">The Craftsmen's Guild — <em>The Honest Workers</em></div>
+<p><strong>What they do:</strong> Builders, engineers, stonemasons, carpenters. The people who actually make things. They built the walls that held during the siege.</p>
+<p><strong>Political position:</strong> Most sympathetic, least powerful. They have labor but not capital. Routinely underpaid by the Merchants' Guild and overcharged by the Soldiers' Guild.</p>
+<p><strong>Relationship to team:</strong> Immediate allies. Construction industry skill resonates naturally with their world. Trust is fast here — and most costly to break.</p>
+<p><strong>Hidden dynamic:</strong> Yuki Wei is old and tired. Nicole Fennigan is her deputy and is actively undermining her while negotiating secretly with Wilhelm Klaus. The Craftsmen's Guild may not be as unified as it appears. The team will likely not see this coming unless they're paying close attention to internal faction dynamics.</p>
+<p><strong>Arc 2 role:</strong> Most likely first to accept the team's governance framework. Their buy-in gives the process legitimacy with the population.</p>
+
+<hr>
+<div class="sh">The Merchants' Guild — <em>The Pragmatists</em></div>
+<p><strong>What they do:</strong> Trade, supply chains, moneylending, information brokerage. During the siege, they were the only faction with a functional supply chain — because they had been quietly maintaining one for their own purposes for decades.</p>
+<p><strong>Political position:</strong> Most flexible, most transactional. They profit from the chaos. A functional governance framework might reduce their leverage.</p>
+<p><strong>Relationship to team:</strong> Hostile after the Scepter Incident. Cautiously interested in the team's competence; actively opposed to their governance agenda.</p>
+<p><strong>The Klaus operation:</strong> Wilhelm Klaus has no interest in open conflict. He schemes. His current play: use Nicole Fennigan to destabilize Yuki Wei's leadership in the Craftsmen's Guild, then position himself to broker a monopolistic merger that gives the Merchants' Guild effective control of both trade and production. This is not a violent plan. It is a project plan — with better resources than the team has.</p>
+<p><strong>Hidden dynamic:</strong> The Merchants' Guild records contain evidence of who funded the political betrayal that caused the Severance. They don't know they know — it's buried in their oldest trade records. A Research PM with the right advancement skill might find it.</p>
+<p><strong>Arc 2 role:</strong> The swing vote. Whichever governance framework wins Merchants' support will pass. They will extract a price for that support.</p>
+
+<hr>
+<div class="sh">The Scholars' Guild — <em>The Gate-Keepers</em></div>
+<p><strong>What they do:</strong> Knowledge, arcane research, education (for a fee), ritual services. They have a monopoly on literacy in large portions of the city.</p>
+<p><strong>Political position:</strong> Deeply threatened by the team. The Scholars' Guild has survived a thousand years by being the only people in the room who could analyze complex problems. The team does this better, faster, and without charging for it.</p>
+<p><strong>Relationship to team:</strong> Hostile by default. They will smile. They will cooperate on the surface. They are working against the team at every step until proven otherwise.</p>
+<p><strong>Hidden dynamic:</strong> The current Guild Master did not ascend through merit. He ascended through a political maneuver that purged his predecessor — who was beginning to rediscover fragments of the old PM knowledge. Those fragments still exist somewhere in the Guild's archives.</p>
+<p><strong>Arc 2 role:</strong> Primary obstacle. Their cooperation is required for any governance framework to be considered legitimate.</p>
+
+<hr>
+<div class="sh">The Soldiers' Guild — <em>The Blunt Instrument</em></div>
+<p><strong>What they do:</strong> Security, protection, enforcement. The closest thing Cornerstone has to a police force.</p>
+<p><strong>Political position:</strong> Comfortable with the status quo. Problems that can't be solved with force make them uneasy.</p>
+<p><strong>Relationship to team:</strong> Skeptical but not hostile. They respected the team's role in the siege defense. Waiting to see whether the team tries to replace their function or complement it.</p>
+<p><strong>Hidden dynamic:</strong> The Soldiers' Guild Commander owes his position to the Merchants' Guild — a favor called in during a succession dispute five years ago. He is not entirely his own faction's man.</p>
+<p><strong>Arc 2 role:</strong> Enforcement arm for whoever wins the governance fight.</p>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann wb"><div class="at">World-Build Hook</div>Each guild maps to a real organizational archetype. Craftsmen = frontline workers. Merchants = finance/strategy. Scholars = IT/knowledge management. Soldiers = security/compliance. Players will recognize their counterparts immediately.</div>
+    <div class="ann rev"><div class="at">Design Note — Klaus</div>Klaus is more dangerous than a hostile NPC because he doesn't look like a threat. He will shake hands with the team and mean it — he genuinely doesn't want confrontation. He just also wants to win. Run him as charming, reasonable, and quietly relentless.</div>
+    <div class="ann wb"><div class="at">World-Build Hook</div>The Merchants' trade records containing Severance evidence is a major Arc 2 discovery. A Research PM finding it changes the political calculus for Arc 3 — the elves will want to know.</div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 11: NPC ROSTER ===== -->
+
+<div class="sec" id="npcs">
+  <div class="main">
+    <div class="ch"><span class="chnum">Chapter XI</span>NPC Roster</div>
+    <p>Named characters with personalities, motivations, and GM notes. Full intake data in <code>CharteredRealm_NPCs.csv</code>. Entries below are the GM-facing summaries.</p>
+    <hr>
+
+```
+<div class="npc-card">
+  <div class="npc-name">Charles Emberson Winterpeg the 33rd</div>
+  <div class="npc-alias">"The King"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 1 · Arc 2 · Arc 3</span>
+    <span class="disp disp-receptive">Receptive</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 32 · Male</div>
+    <div class="npc-field"><strong>Alignment</strong>Variable</div>
+    <div class="npc-field"><strong>Wants</strong>To maintain power</div>
+    <div class="npc-field"><strong>Fears</strong>Losing power</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Currently preparing for his 33rd birthday — a very big deal to him, more interesting to him than the besieging orcs. Sees the team as a useful tool. When he realizes the full scope of what PM knowledge can do, he becomes insecure: will they use it to overthrow him? Not a villain. A sympathetic obstacle whose ego occasionally costs the party resources and whose birthday will absolutely cause a scene.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Yuki Wei</div>
+  <div class="npc-alias">"Master Wei"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 2</span>
+    <span class="disp disp-neutral">Neutral</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 55 · Female</div>
+    <div class="npc-field"><strong>Alignment</strong>Variable</div>
+    <div class="npc-field"><strong>Wants</strong>To produce the greatest crafts in the world</div>
+    <div class="npc-field"><strong>Fears</strong>Being forgotten</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Got where she is through hard competition and genuine competence. Tired and proud. Sympathetic to but jealous of elves and half-elves. Her deputy Nicole is actively undermining her — Yuki doesn't know yet. The team can warn her or use the instability. Either has consequences.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Wilhelm Klaus</div>
+  <div class="npc-alias">"Ironklaus"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 2</span>
+    <span class="disp disp-hostile">Hostile</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 42 · Male</div>
+    <div class="npc-field"><strong>Alignment</strong>Antagonist</div>
+    <div class="npc-field"><strong>Wants</strong>Money. Monopoly. More money.</div>
+    <div class="npc-field"><strong>Fears</strong>Poverty · Being challenged directly</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Conflict-avoidant. Will never confront the team directly — he schemes. Current operation: use Nicole Fennigan to undermine Yuki Wei from inside the Craftsmen's Guild, then position himself to broker a consolidation giving the Merchants' Guild control of both trade and production. Run him as charming, reasonable, and quietly relentless. The team will shake his hand and not see the threat until Arc 2 is half over.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Quinn Marley</div>
+  <div class="npc-alias">"The Hook"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 2</span>
+    <span class="disp disp-receptive">Receptive</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 46 · Nonbinary</div>
+    <div class="npc-field"><strong>Alignment</strong>Variable</div>
+    <div class="npc-field"><strong>Wants</strong>Friends. Entirely about friends.</div>
+    <div class="npc-field"><strong>Fears</strong>Not having enough friends</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Incredible at hiring and bringing people into the labor force. Horrible at maintaining them — no ability to enforce policy, overly friendly, prone to being manipulated by positive reinforcement. Will absolutely not betray the team, but will chase any psychological validation and can be used as a vector by Klaus or anyone else who knows how they work. The team's easiest early win and their most exploitable long-term liability.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Adelooye Adeyemi</div>
+  <div class="npc-alias">"Sage"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 2</span>
+    <span class="disp disp-skeptical">Skeptical</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 22 · Male</div>
+    <div class="npc-field"><strong>Alignment</strong>Neutral</div>
+    <div class="npc-field"><strong>Wants</strong>Respect</div>
+    <div class="npc-field"><strong>Fears</strong>Disappointing</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Lowest respected, highest deserving of respect. A savant. Skeptical that the old PM skills have returned — his caution is epistemic, not political. Cautious to trust the team. If the team earns his trust, he becomes their best internal analytical resource. If they dismiss him because of his age, they lose the Scholars' Guild's most capable mind.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Nicole Fennigan</div>
+  <div class="npc-alias">—</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 2</span>
+    <span class="disp disp-skeptical">Skeptical</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Human · 32 · Female</div>
+    <div class="npc-field"><strong>Alignment</strong>Antagonist</div>
+    <div class="npc-field"><strong>Wants</strong>Power over the Craftsmen's Guild</div>
+    <div class="npc-field"><strong>Fears</strong>Being caught</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Klaus's operational instrument. Doing the actual work of undermining Yuki Wei from inside while Klaus provides cover and resources. The team identifies her as the threat first — Klaus stays obscured until late Arc 2. If caught, she will deal. Whether her information on Klaus is worth her cooperation is a team decision.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Droga Vorak</div>
+  <div class="npc-alias">"The Big One"</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 1</span>
+    <span class="disp disp-hostile">Hostile</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Orc · 14 (full adult) · Orc</div>
+    <div class="npc-field"><strong>Alignment</strong>Variable</div>
+    <div class="npc-field"><strong>Wants</strong>Ancestral lands free of human encroachment</div>
+    <div class="npc-field"><strong>Fears</strong>None stated</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>14 is full adult by orcish cultural standard. Leads the siege because human mines are on ancestral orcish land — they are. The grievance is legitimate. Pragmatic and militarily sophisticated. Not irrational, but angry. Will negotiate if convinced it serves orcish interests. Does not need the team to feel sorry for him — needs them to take the territorial claim seriously. Arc 1 resolution paths: negotiated settlement, military action, or internal advocacy for the orcish claim against human interests.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Ambassador Sylvari Aethon</div>
+  <div class="npc-alias">—</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Major NPC</span>
+    <span class="npc-tag gold">Arc 3</span>
+    <span class="disp disp-skeptical">Skeptical</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age / Gender</strong>Elf · 1,068 · Nonbinary</div>
+    <div class="npc-field"><strong>Alignment</strong>Variable</div>
+    <div class="npc-field"><strong>Wants</strong>Cooperation of races restored · the dark forces held back</div>
+    <div class="npc-field"><strong>Fears</strong>The dark forces (unnamed, not a "Sauron" figure — TBD)</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Carries a thousand years of justified anger from The Severance. The diplomatic mission is real — so is the grief. Disposition floor: Skeptical (cannot be moved below this without catastrophic failure). Cool with orcs — no enmity there. The Severance's cause is political and historical, not supernatural villain-driven. Possibly connected to the Letters from the Field author. Aethon arriving is Arc 3's opening move — the team is the evidence of whether humans can be trusted again.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Drakebane</div>
+  <div class="npc-alias">—</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Lore / Background</span>
+    <span class="npc-tag gold">Background / TBD</span>
+    <span class="disp disp-neutral">Unknown</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age</strong>Dragon · Ancient</div>
+    <div class="npc-field"><strong>Alignment</strong>Unknown</div>
+    <div class="npc-field"><strong>Wants</strong>Operates on timescales humans can't parse</div>
+    <div class="npc-field"><strong>Fears</strong>Same — not legible to human stakeholder analysis</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>Not random destruction. Hoard = reserve fund + political legitimacy. A dragon encounter is a senior executive meeting — with someone who has watched every human governance attempt since Cornerstone was founded and outlived all of them. The team cannot do standard stakeholder analysis on Drakebane. That's the mechanic. What does the team do when they can't map the stakeholder? Named dragons of the Northern Range TBD.</div>
+</div>
+
+<div class="npc-card">
+  <div class="npc-name">Author — Letters from the Field</div>
+  <div class="npc-alias">—</div>
+  <div class="npc-meta">
+    <span class="npc-tag">Lore / Background</span>
+    <span class="npc-tag gold">Background / Arc 3</span>
+    <span class="disp disp-receptive">Receptive</span>
+  </div>
+  <div class="npc-row">
+    <div class="npc-field"><strong>Race / Age</strong>Half-Elf · Unknown</div>
+    <div class="npc-field"><strong>Alignment</strong>Ally</div>
+    <div class="npc-field"><strong>Wants / Fears</strong>TBD — identity not yet revealed</div>
+    <div class="npc-field"><strong>Connection</strong>Possibly Aethon's network</div>
+  </div>
+  <div class="npc-notes"><strong>GM Notes</strong>GM plant. Half-elf explains the sympathy for both sides. Plant the Letters when appropriate to seed Arc 3 intrigue. Likely a dissident embedded in Cornerstone or the Scholars' Guild archives. Identity reveal is an Arc 3 payoff — do not resolve prematurely.</div>
+</div>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Roster Status</div>10 characters named and developed. Full CSV data in CharteredRealm_NPCs.csv. Additional minor NPCs (Soldiers' Commander, Clan Meth'a leader, Clan Urroch speaker) TBD.</div>
+    <div class="ann rev"><div class="at">Open — Orcish Culture</div>Orcish adulthood at 14, orcish governance structure, Clan Meth'a and Clan Urroch development, specific territorial grievance map all needed before Arc 1 scenes can be written.</div>
+    <div class="ann rev"><div class="at">Open — Dark Forces</div>Aethon fears unnamed dark forces — not a single Sauron-type villain. What are they? Political? Supernatural? Systemic? This needs a decision before Arc 3 development begins.</div>
+  </div>
+</div>
+
+<!-- ===== LIBRARY ===== -->
+
+<div id="library">
+<div class="lib-hdr">
+  <h2>The Library Entries</h2>
+  <p>Accumulated knowledge from travelers, scholars, and field reporters — curated for the team of Cornerstone</p>
+</div>
+
+<div class="lib-entry">
+  <div class="et">Library Entry · Peoples of the Realm</div>
+  <div class="en">The Orcish Clans — Gurach Vel</div>
+  <p>The orcs besieging Cornerstone in Arc 1 are not a monolith. They are a confederation of clans united under a single Warchief but fractured by competing loyalties, resource disputes, and generational disagreements about whether humans are an existential threat or a potential trading partner.</p>
+  <div class="ssh">Known Clan Divisions</div>
+  <ul>
+    <li><strong>Clan Vorak (The Iron Jaw):</strong> The siege-driving faction. Warchief Droga Vorak leads the siege. The ancestral land grievance is real and documented. Pragmatic and militarily sophisticated. Will negotiate if convinced it's advantageous.</li>
+    <li><strong>Clan Meth'a (The Still Hand):</strong> Orcish traders and craftspeople. Opposed to the siege — it destroys profitable relationships with human merchants. Politically marginalized. A potential ally for a high-Renown team.</li>
+    <li><strong>Clan Urroch (The Bone Speakers):</strong> Spiritual leaders and historians. Guardians of oral tradition. Neutral on the siege. Will share knowledge in exchange for recognition and respect.</li>
+  </ul>
+  <div class="stub">Further detail needed: orcish governance and cultural structure, adulthood norms (14 confirmed for Vorak), specific mine locations and territorial boundaries, diplomatic path, Clan Meth'a and Urroch named leaders.</div>
+</div>
+
+<div class="lib-entry">
+  <div class="et">Library Entry · Peoples of the Realm</div>
+  <div class="en">The Elven Dominion — Aethis Lor</div>
+  <p>The elves of Aethis Lor are ancient, organized, and deeply unimpressed by everyone else. Their empire has existed for approximately four thousand years. They were exiled from Cornerstone by the Severance — and they remember exactly who opened the gates.</p>
+  <div class="ssh">Cultural Notes for Arc 3</div>
+  <ul>
+    <li><strong>Time horizon:</strong> Elves think in centuries. A crisis that resolves in six months is a rounding error.</li>
+    <li><strong>Process aversion:</strong> Elves have their own oral, hierarchical traditions. They view the team's insistence on documentation as philosophically suspicious — and vaguely familiar.</li>
+    <li><strong>Respect triggers:</strong> Demonstrated competence, historical awareness, patience.</li>
+    <li><strong>Orcish relations:</strong> Elves have no particular enmity with orcs. The Severance grievance is with humans specifically.</li>
+  </ul>
+  <div class="stub">Further detail needed: elven political structure, Arc 3 specific scenes, Aethon's personal history, cross-cultural negotiation mechanics, nature of the "dark forces" Aethon references.</div>
+</div>
+
+<div class="lib-entry">
+  <div class="et">Library Entry · Bestiary</div>
+  <div class="en">The Great Wyrms — Draconics of the Northern Range</div>
+  <p>Dragons in this realm are not random destruction. They are the oldest organized beings in existence — with highly developed territorial governance, resource management, and long-term strategic thinking. A dragon's hoard is not greed; it is a reserve fund, a hedge against scarcity, and a demonstration of political legitimacy.</p>
+  <p><strong>For GMs:</strong> A dragon encounter is never a combat encounter. It is a meeting with a senior executive who has an enormous reserve fund, a bad temper, and the ability to end the meeting permanently. Stakeholder analysis before the meeting is non-optional. Standard stakeholder analysis frameworks may not apply — the team must improvise.</p>
+  <div class="stub">Named dragons of the Northern Range TBD. Dragon relationships with Aethis Lor TBD. Whether any dragon has engaged with Cornerstone's governance structure TBD. Drakebane is the first named dragon — full profile pending.</div>
+</div>
+
+<div class="lib-entry">
+  <div class="et">Library Entry · Primary Source · Correspondence</div>
+  <div class="en">Letter Found in the Cornerstone Archive — Author Unknown</div>
+  <div class="letter">
+    <p>To whoever finds this: I write from the eastern frontier, where the Cornerstone experiment is being watched with great interest by parties you have not yet met. There are those in Aethis Lor who believe what the team has built cannot last — that organizational coherence in a human city is inherently fragile, dependent on the specific people who built it rather than systems that outlast them.</p>
+    <p>They are testing that hypothesis. Do not assume the crises that come to you are random.</p>
+    <p>Build systems, not heroes. That is the only answer.</p>
+    <p style="text-align:right; margin-top:8px;">— Unsigned. Seal: unknown origin.</p>
+  </div>
+  <div class="stub">GM tool — plant when appropriate to seed Arc 3 intrigue. Author is a Half-Elf, likely embedded in Cornerstone or the Scholars' Guild archives. Connected to Aethon's network. Identity reveal is an Arc 3 payoff.</div>
+</div>
+</div>
+
+<!-- ===== WORLD HISTORY ===== -->
+
+<div class="sec" id="history">
+  <div class="main">
+    <div class="ch"><span class="chnum">Appendix A</span>A Brief History of the Chartered Realm</div>
+    <p><em>The following is the commonly accepted human version of history — filtered through a thousand years of selective record-keeping. Elves and dwarves tell it differently. Orcs tell it differently still.</em></p>
+    <hr>
+    <div class="tl"><div class="tly">The Deep Past</div><div class="tle"><p>The Great Wyrms hold dominion. Orcish clans roam the Central Plains freely. The elven Dominion exists but has no interest in the rest of the continent. Humans are nomadic.</p></div></div>
+    <div class="tl"><div class="tly">~1,200 years ago</div><div class="tle"><p>First human settlements. A coastal trading post grows into Varath — now long destroyed. Humans begin expanding inland, following orcish trade routes. This is the beginning of the territorial encroachment.</p></div></div>
+    <div class="tl"><div class="tly">~800 years ago</div><div class="tle"><p>The Age of the Great Compact. Elves, dwarves, and humans build together. Cornerstone founded at the convergence of three river valleys — named for the PM principle of the foundational piece everything depends on. Peak of human PM knowledge.</p></div></div>
+    <div class="tl"><div class="tly">~700 years ago</div><div class="tle"><p>The Severance. A human faction betrays from within — opens the gates for reasons that remain politically contested. Elves exiled. Dwarves withdraw. The capacity for organized human effort is either destroyed or hidden as a consequence — accounts differ. The Great Compact collapses. Orcs lose their most significant diplomatic counterpart.</p></div></div>
+    <div class="tl"><div class="tly">~400 years ago</div><div class="tle"><p>The Compact of Guilds. Cornerstone's first post-Severance governance attempt — five guild masters agreeing to shared trade rules. Works for sixty years before collapsing into the First Guild War. The ghost of this failure is why Arc 2's Guild Deadlock hits so hard: everyone knows it has happened before.</p></div></div>
+    <div class="tl"><div class="tly">~50 years ago</div><div class="tle"><p>The King's Ascension. Current king's father unified Cornerstone through military force and genuine economic reform. The mines expand significantly during this period — directly into orcish territorial claims.</p></div></div>
+    <div class="tl"><div class="tly">Campaign Present</div><div class="tle"><p>The Gurach Vel siege begins. The team arrives. King Charles Emberson Winterpeg the 33rd is turning 33. Everything changes — or doesn't, depending on what they do.</p></div></div>
+  </div>
+  <div class="marg">
+    <div class="ann wb"><div class="at">World-Build Hook</div>The mine expansion 50 years ago is when the current territorial grievance became acute. This is documentable — there are records. A Discovery scene in the royal archives could find them. What happens when the team proves the orcish claim in writing?</div>
+    <div class="ann wb"><div class="at">World-Build Hook</div>What happened to Varath? A ruined city with early PM governance records could be an Arc 2 Discovery mission. The team literally excavates an ancient project post-mortem.</div>
+    <div class="ann exp"><div class="at">Expand — Orcish History</div>The Severance cost the orcs their most significant diplomatic counterpart (the elves). Clan Urroch oral tradition likely preserves the orcish account of the Severance. A Research PM engaging Clan Urroch could find a version of history that changes everything the team thinks they know.</div>
+  </div>
+</div>
+
+<!-- ===== BACKLOG ===== -->
+
+<div class="sec" id="backlog">
+  <div class="main">
+    <div class="ch"><span class="chnum">Development Backlog</span>Open Items, Priority Order</div>
+
+```
+<div class="ssh">Top Priority — Blocking Session Play</div>
+<div class="backlog-item"><span class="bl-pri bl-top">Top</span><div class="bl-text">Session Zero document — player intro, character creation walkthrough, world primer, tone-setting. Needed before first session.<span class="bl-note">Build next. Depends on: character sheet (done), team sheet (pending).</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-top">Top</span><div class="bl-text">Team sheet — group identity, chosen name dropdown, renown track, accolades, charter. Needed alongside Session Zero.<span class="bl-note">Character sheet is done. Team sheet is the companion piece.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-top">Top</span><div class="bl-text">Arc 1 scene structure — specific scenes, decision points, encounter beats. Minimum: arrival, first Vorak contact, King birthday scene, Arc 1 climax.<span class="bl-note">Three resolution paths defined. Need scene-by-scene beats.</span></div></div>
+
+<div class="ssh" style="margin-top:14px;">High Priority</div>
+<div class="backlog-item"><span class="bl-pri bl-high">High</span><div class="bl-text">General skills pass — review all 7 general skills, resolve Change Management overlap with Change Manager job passive.<span class="bl-note">Medium-high. Affects character sheet and Player Rulebook.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-high">High</span><div class="bl-text">Orcish culture development — adulthood norms, governance structure, territorial boundaries, Clan Meth'a and Urroch named leaders.<span class="bl-note">Needed before Arc 1 scenes can be written with specificity.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-high">High</span><div class="bl-text">Arc 1 NPC sheet — Droga Vorak full encounter profile, negotiation triggers, disposition track starting point and movement conditions.<span class="bl-note">Blocking Arc 1 scene writing.</span></div></div>
+
+<div class="ssh" style="margin-top:14px;">Medium Priority</div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Core mechanic revision pass — d4/d6 advancement path, signature trait upgrade rules, edge case handling.<span class="bl-note">Mechanic defined in v0.7. Needs formalization and edge cases.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Job passive tweaks — review all 8 passives for balance after mechanic revision. Intern clarification in Player Rulebook.<span class="bl-note">Revision stage. Hold for playtest data where possible.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Arc 2 scene structure — guild council, Nicole's first move, Merchants' archive discovery, Klaus revealed, governance vote.<span class="bl-note">Key beats identified. Scenes not yet written.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Arc 3 framework — Aethon encounter structure, elven political system, cross-cultural negotiation mechanics, dark forces definition.<span class="bl-note">Dark forces: not a Sauron figure. Nature TBD — needs a decision before Arc 3 can be written.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Faction Renown subsystem — faction-specific standing tracks for all four guilds, starting dispositions post-Scepter Incident.<span class="bl-note">Merchants: Hostile. Others: Neutral/Skeptical. Subsystem design TBD.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-med">Med</span><div class="bl-text">Guild factions revision pass — Arc 2 specific asks from each Guild Master, Soldiers' Commander profile, hidden dynamics playtest check.<span class="bl-note">Klaus/Nicole dynamic documented. Other guilds need specific Arc 2 beats.</span></div></div>
+
+<div class="ssh" style="margin-top:14px;">Low Priority</div>
+<div class="backlog-item"><span class="bl-pri bl-low">Low</span><div class="bl-text">Advancement pool formalization — how skills are earned through play, narrative justification requirements, d4→d6 upgrade path.<span class="bl-note">Pool established. System TBD. Casting Vote parked pending rework.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-low">Low</span><div class="bl-text">Casting Vote (Government advancement skill) — needs rework before use. Currently parked.<span class="bl-note">Goes with advancement system design.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-low">Low</span><div class="bl-text">Named dragons of the Northern Range — Drakebane is named. Full profile and additional wyrms TBD.<span class="bl-note">Dragon encounter mechanics also need design — standard stakeholder analysis doesn't apply.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-low">Low</span><div class="bl-text">Varath Discovery mission — ruined city with early PM governance records. Arc 2 side content.<span class="bl-note">World-build hook. Low priority until Arc 2 scenes are primary.</span></div></div>
+<div class="backlog-item"><span class="bl-pri bl-low">Low</span><div class="bl-text">Letters from the Field author identity — Half-Elf, Aethon connection. Full reveal is Arc 3 payoff. Do not resolve early.</span></div></div>
+
+<div class="ssh" style="margin-top:14px;">Resolved ✓</div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Core mechanic: stats are binary identity traits, dominant trait adds d4. Defined in v0.7.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">NPC roster: all 10 characters named, developed, and documented in CSV.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Character sheet v1: dropdowns, binary trait selection, general skills. Built and delivered.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">NPC Registry tool: HTML/React, CSV export functional.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">City name confirmed: Cornerstone.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Realm name confirmed: The Chartered Realm.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Scene types: Crisis, Negotiation, Discovery. Fortune Check named.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Renown system: gain/loss table, Scepter Incident written.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Four guild factions developed. All Guild Masters now named.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Origin myth: PM skills stripped from humanity by the Severance.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Arc 1 resolution paths: three options defined including internal advocacy for orcish land claims.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Klaus/Nicole antagonist structure formalized.</div></div>
+<div class="backlog-item"><span class="bl-pri bl-done">Done</span><div class="bl-text">Group terminology: "the team" in rules text. Chosen name at Renown 5+ via dropdown on team sheet.</div></div>
+```
+
+  </div>
+  <div class="marg">
+    <div class="ann"><div class="at">Handoff Note</div>This is the Engine Codex — single source of truth. GM and Player Rulebooks curate from here on need-to-know basis. Flag player-facing vs GM-only entries during curation pass.</div>
+    <div class="ann exp"><div class="at">Next Session Focus</div>Recommended start: Session Zero document + team sheet. Both are Top priority and unlock first session. Arc 1 scene structure is the session after that.</div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+</body>
+</html>
