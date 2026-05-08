@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Sheet — The Chartered Realm</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg-main: #2a1f10;
+–bg-dark: #1a0f05;
+–bg-light: #f4ead5;
+–border: #c8a87a;
+–gold: #a07830;
+–text-dark: #3d2b1a;
+–text-light: #7a6040;
+–accent: #7a1e1e;
+}
+
+body {
+background: linear-gradient(135deg, var(–bg-main) 0%, #3a2a18 100%);
+font-family: ‘Georgia’, serif;
+color: var(–text-dark);
+padding: 20px;
+min-height: 100vh;
+}
+
+.container {
+max-width: 900px;
+margin: 0 auto;
+background: var(–bg-light);
+border: 2px solid var(–border);
+box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* HEADER */
+.header {
+background: linear-gradient(to bottom, var(–bg-dark), #2a1a0a);
+border-bottom: 3px solid var(–gold);
+padding: 32px 28px;
+text-align: center;
+}
+
+.header h1 {
+font-family: ‘Palatino Linotype’, Palatino, serif;
+color: var(–gold);
+font-size: 26px;
+margin-bottom: 4px;
+letter-spacing: 2px;
+}
+
+.header .subtitle {
+color: #c8b080;
+font-size: 13px;
+font-style: italic;
+margin-bottom: 8px;
+}
+
+.header .meta {
+color: var(–text-light);
+font-size: 11px;
+letter-spacing: 1px;
+}
+
+/* MAIN CONTENT */
+.content {
+padding: 32px 36px;
+}
+
+/* SECTION */
+.section {
+margin-bottom: 28px;
+}
+
+.section-title {
+font-family: ‘Palatino Linotype’, Palatino, serif;
+color: var(–accent);
+font-size: 18px;
+border-bottom: 2px solid var(–gold);
+padding-bottom: 8px;
+margin-bottom: 16px;
+font-weight: normal;
+}
+
+/* TEAM NAME */
+.team-name-group {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+align-items: flex-start;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+}
+
+.form-group label {
+font-size: 11px;
+letter-spacing: 2px;
+color: var(–accent);
+text-transform: uppercase;
+margin-bottom: 6px;
+font-weight: bold;
+font-family: Georgia, serif;
+}
+
+.form-group input,
+.form-group textarea {
+font-family: ‘Georgia’, serif;
+color: var(–text-dark);
+background: rgba(255,255,255,0.5);
+border: 1px solid var(–border);
+padding: 10px 12px;
+font-size: 14px;
+line-height: 1.5;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+outline: none;
+background: #ffffff;
+border-color: var(–accent);
+box-shadow: 0 0 4px rgba(122, 30, 30, 0.2);
+}
+
+.form-group textarea {
+resize: vertical;
+min-height: 60px;
+grid-column: 1 / -1;
+}
+
+/* RENOWN TRACKER */
+.renown-section {
+background: rgba(122, 30, 30, 0.08);
+border: 1px solid rgba(122, 30, 30, 0.2);
+border-left: 4px solid var(–accent);
+padding: 20px;
+margin: 20px 0;
+}
+
+.renown-display {
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+.renown-current {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+.renown-label {
+font-size: 10px;
+letter-spacing: 2px;
+color: var(–accent);
+text-transform: uppercase;
+margin-bottom: 8px;
+font-family: Georgia, serif;
+font-weight: bold;
+}
+
+.renown-value {
+font-family: ‘Palatino Linotype’, Palatino, serif;
+font-size: 48px;
+color: var(–accent);
+line-height: 1;
+font-weight: normal;
+}
+
+.renown-track {
+display: flex;
+gap: 8px;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.renown-marker {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+position: relative;
+}
+
+.renown-dot {
+width: 16px;
+height: 16px;
+border-radius: 50%;
+border: 2px solid var(–accent);
+background: transparent;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.renown-dot:hover {
+transform: scale(1.2);
+background: rgba(122, 30, 30, 0.2);
+}
+
+.renown-dot.active {
+background: var(–accent);
+}
+
+.renown-fills {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: space-between;
+pointer-events: none;
+}
+
+.renown-fill-dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: transparent;
+transition: all 0.2s ease;
+}
+
+.renown-fill-dot.active {
+background: var(–accent);
+}
+
+.renown-marker-label {
+font-size: 9px;
+color: var(–text-light);
+text-align: center;
+width: 50px;
+line-height: 1.2;
+font-style: italic;
+}
+
+.renown-controls {
+display: flex;
+gap: 8px;
+justify-content: center;
+margin-top: 12px;
+}
+
+.btn-renown {
+background: var(–accent);
+color: white;
+border: none;
+padding: 8px 16px;
+font-family: Georgia, serif;
+font-size: 12px;
+cursor: pointer;
+transition: all 0.2s ease;
+letter-spacing: 1px;
+text-transform: uppercase;
+font-weight: bold;
+}
+
+.btn-renown:hover {
+background: #9a1818;
+transform: translateY(-2px);
+}
+
+.btn-renown:active {
+transform: translateY(0);
+}
+
+/* FACTION STANDING */
+.faction-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 16px;
+}
+
+.faction-card {
+border: 1px solid var(–border);
+background: rgba(255,255,255,0.3);
+padding: 14px;
+}
+
+.faction-header {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 10px;
+}
+
+.faction-name {
+font-size: 12px;
+letter-spacing: 1px;
+color: var(–accent);
+text-transform: uppercase;
+font-family: Georgia, serif;
+font-weight: bold;
+flex: 1;
+}
+
+.faction-emoji-select {
+background: transparent;
+border: 1px solid var(–gold);
+padding: 4px 8px;
+font-size: 16px;
+cursor: pointer;
+border-radius: 2px;
+}
+
+.faction-reason {
+font-size: 13px;
+background: rgba(255,255,255,0.5);
+border: 1px solid rgba(160,120,48,0.3);
+padding: 8px;
+resize: vertical;
+min-height: 48px;
+font-family: Georgia, serif;
+color: var(–text-dark);
+}
+
+.faction-reason::placeholder {
+color: rgba(160,120,48,0.4);
+font-style: italic;
+}
+
+.faction-note {
+font-size: 11px;
+color: var(–text-light);
+margin-top: 8px;
+font-style: italic;
+}
+
+/* ACCOLADES */
+.accolade-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.accolade-item {
+border-left: 3px solid var(–gold);
+background: rgba(160, 120, 48, 0.06);
+padding: 10px 12px;
+font-size: 13px;
+line-height: 1.5;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+gap: 8px;
+}
+
+.accolade-text {
+color: var(–text-dark);
+flex: 1;
+}
+
+.accolade-remove {
+background: none;
+border: none;
+color: var(–accent);
+cursor: pointer;
+font-size: 11px;
+text-decoration: underline;
+white-space: nowrap;
+flex-shrink: 0;
+}
+
+.add-accolade {
+display: flex;
+gap: 8px;
+margin-top: 12px;
+}
+
+.add-accolade input {
+flex: 1;
+font-family: ‘Georgia’, serif;
+color: var(–text-dark);
+background: rgba(255,255,255,0.5);
+border: 1px solid var(–border);
+padding: 8px 10px;
+font-size: 13px;
+}
+
+.add-accolade button {
+background: var(–gold);
+color: white;
+border: none;
+padding: 8px 16px;
+font-family: Georgia, serif;
+font-size: 11px;
+cursor: pointer;
+transition: all 0.2s ease;
+letter-spacing: 1px;
+text-transform: uppercase;
+font-weight: bold;
+}
+
+.add-accolade button:hover {
+background: #8a6820;
+transform: translateY(-2px);
+}
+
+/* EXPORT/SAVE */
+.footer {
+background: var(–bg-light);
+border-top: 2px solid var(–border);
+padding: 20px 36px;
+display: flex;
+gap: 12px;
+justify-content: flex-end;
+}
+
+.btn {
+background: var(–accent);
+color: white;
+border: none;
+padding: 10px 20px;
+font-family: Georgia, serif;
+font-size: 12px;
+cursor: pointer;
+transition: all 0.2s ease;
+letter-spacing: 1px;
+text-transform: uppercase;
+font-weight: bold;
+}
+
+.btn:hover {
+background: #9a1818;
+transform: translateY(-2px);
+}
+
+.btn:active {
+transform: translateY(0);
+}
+
+.btn.secondary {
+background: var(–gold);
+color: white;
+}
+
+.btn.secondary:hover {
+background: #8a6820;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+.team-name-group,
+.faction-grid {
+grid-template-columns: 1fr;
+}
+
+.header {
+padding: 24px 20px;
+}
+
+.content {
+padding: 20px;
+}
+
+.footer {
+flex-direction: column;
+}
+
+.btn, .btn.secondary {
+width: 100%;
+}
+
+.renown-track {
+gap: 4px;
+}
+
+.renown-marker-label {
+width: 40px;
+font-size: 8px;
+}
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Team Sheet</h1>
+    <div class="subtitle">The Chartered Realm</div>
+    <div class="meta">Collaborative Identity & Standing Tracker</div>
+  </div>
+
+  <div class="content">
+    <!-- TEAM IDENTITY -->
+    <div class="section">
+      <h2 class="section-title">Team Identity</h2>
+      <div class="team-name-group">
+        <div class="form-group">
+          <label for="team-name">Team Name</label>
+          <input type="text" id="team-name" placeholder="e.g., The Ironbound Compact, The Scepter Guard...">
+        </div>
+        <div class="form-group">
+          <label for="team-mission">Mission Statement</label>
+          <input type="text" id="team-mission" placeholder="Your battle cry. What drives you?">
+        </div>
+      </div>
+    </div>
+
+```
+<!-- RENOWN TRACKER -->
+<div class="section">
+  <h2 class="section-title">Renown</h2>
+  <div class="renown-section">
+    <div class="renown-current">
+      <div class="renown-label">Current Renown</div>
+      <div class="renown-value" id="renown-display">2</div>
+    </div>
+    <div class="renown-track" id="renown-track">
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="0">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">0</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot active" data-level="1">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">1</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot active" data-level="2">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">2</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="3">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">3</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="4">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">4</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="5">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">5</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="6">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">6</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="7">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">7</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="8">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">8</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="9">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">9</div>
+      </div>
+      <div class="renown-marker">
+        <div class="renown-dot" data-level="10">
+          <div class="renown-fills">
+            <div class="renown-fill-dot"></div>
+          </div>
+        </div>
+        <div class="renown-marker-label">10</div>
+      </div>
+    </div>
+    <div class="renown-controls">
+      <button class="btn-renown" id="renown-minus">— Renown</button>
+      <button class="btn-renown" id="renown-plus">+ Renown</button>
+    </div>
+  </div>
+</div>
+
+<!-- FACTION STANDING -->
+<div class="section">
+  <h2 class="section-title">Faction Standing</h2>
+  <p style="font-size: 13px; color: var(--text-light); margin-bottom: 16px; line-height: 1.6;">
+    Your reputation with the four guilds of Cornerstone. Add more factions as you encounter them (the King's Court, orc clans, elven nobility, etc.).
+  </p>
+  <div class="add-faction" style="margin-bottom: 16px; display: flex; gap: 8px;">
+    <input type="text" id="new-faction-name" placeholder="Add a new faction (e.g., Clan Urroch)..." maxlength="60">
+    <button id="add-faction-btn" style="background: var(--gold); color: white; border: none; padding: 8px 16px; font-family: Georgia, serif; font-size: 11px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-weight: bold;">Add Faction</button>
+  </div>
+  <div class="faction-grid" id="faction-grid">
+    <div class="faction-card">
+      <div class="faction-header">
+        <span class="faction-name">Merchants' Guild</span>
+        <select class="faction-emoji-select" onchange="updateFactionEmoji(this)">
+          <option value="?">?</option>
+          <option value="😊">😊</option>
+          <option value="😐">😐</option>
+          <option value="😠">😠</option>
+          <option value="🤝">🤝</option>
+          <option value="⚔️">⚔️</option>
+        </select>
+      </div>
+      <textarea class="faction-reason" placeholder="Why this standing? (e.g., they see you as useful, you wronged them, they don't know you yet)"></textarea>
+      <div class="faction-note">Start building your reputation through actions.</div>
+    </div>
+    <div class="faction-card">
+      <div class="faction-header">
+        <span class="faction-name">Soldiers' Guild</span>
+        <select class="faction-emoji-select" onchange="updateFactionEmoji(this)">
+          <option value="?">?</option>
+          <option value="😊">😊</option>
+          <option value="😐">😐</option>
+          <option value="😠">😠</option>
+          <option value="🤝">🤝</option>
+          <option value="⚔️">⚔️</option>
+        </select>
+      </div>
+      <textarea class="faction-reason" placeholder="Why this standing? (e.g., they see you as useful, you wronged them, they don't know you yet)"></textarea>
+      <div class="faction-note">Start building your reputation through actions.</div>
+    </div>
+    <div class="faction-card">
+      <div class="faction-header">
+        <span class="faction-name">Scholars' Guild</span>
+        <select class="faction-emoji-select" onchange="updateFactionEmoji(this)">
+          <option value="?">?</option>
+          <option value="😊">😊</option>
+          <option value="😐">😐</option>
+          <option value="😠">😠</option>
+          <option value="🤝">🤝</option>
+          <option value="⚔️">⚔️</option>
+        </select>
+      </div>
+      <textarea class="faction-reason" placeholder="Why this standing? (e.g., they see you as useful, you wronged them, they don't know you yet)"></textarea>
+      <div class="faction-note">Start building your reputation through actions.</div>
+    </div>
+    <div class="faction-card">
+      <div class="faction-header">
+        <span class="faction-name">Crafters' Guild</span>
+        <select class="faction-emoji-select" onchange="updateFactionEmoji(this)">
+          <option value="?">?</option>
+          <option value="😊">😊</option>
+          <option value="😐">😐</option>
+          <option value="😠">😠</option>
+          <option value="🤝">🤝</option>
+          <option value="⚔️">⚔️</option>
+        </select>
+      </div>
+      <textarea class="faction-reason" placeholder="Why this standing? (e.g., they see you as useful, you wronged them, they don't know you yet)"></textarea>
+      <div class="faction-note">Start building your reputation through actions.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOLADES -->
+<div class="section">
+  <h2 class="section-title">Moments & Accolades</h2>
+  <p style="font-size: 13px; color: var(--text-light); margin-bottom: 16px; line-height: 1.6;">
+    Record the defining moments, victories, and challenges that have shaped your team's reputation.
+  </p>
+  <div class="accolade-list" id="accolade-list">
+  </div>
+  <div class="add-accolade">
+    <input type="text" id="new-accolade" placeholder="Add a moment or accolade..." maxlength="120">
+    <button id="add-accolade-btn">Add</button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="footer">
+    <button class="btn secondary" id="export-btn">Export as JSON</button>
+    <button class="btn" id="save-btn">Save to Browser</button>
+  </div>
+</div>
+
+<script>
+// STATE
+let teamState = {
+  name: localStorage.getItem('team_name') || '',
+  mission: localStorage.getItem('team_mission') || '',
+  renown: parseInt(localStorage.getItem('team_renown') || '2'),
+  factions: JSON.parse(localStorage.getItem('team_factions') || '{}'),
+  accolades: JSON.parse(localStorage.getItem('team_accolades') || '[]')
+};
+
+// LOAD STATE
+function loadState() {
+  document.getElementById('team-name').value = teamState.name;
+  document.getElementById('team-mission').value = teamState.mission;
+  updateRenownDisplay();
+  updateAccolades();
+  loadFactionStanding();
+}
+
+// RENOWN FUNCTIONS
+function updateRenownDisplay() {
+  document.getElementById('renown-display').textContent = teamState.renown;
+  const dots = document.querySelectorAll('.renown-dot');
+  dots.forEach((dot) => {
+    const level = parseInt(dot.getAttribute('data-level'));
+    if (level <= teamState.renown) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
+document.getElementById('renown-plus').addEventListener('click', () => {
+  if (teamState.renown < 10) {
+    teamState.renown += 1;
+    updateRenownDisplay();
+  }
+});
+
+document.getElementById('renown-minus').addEventListener('click', () => {
+  if (teamState.renown > 0) {
+    teamState.renown -= 1;
+    updateRenownDisplay();
+  }
+});
+
+document.querySelectorAll('.renown-dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    teamState.renown = parseInt(dot.getAttribute('data-level'));
+    updateRenownDisplay();
+  });
+});
+
+// FACTION FUNCTIONS
+function loadFactionStanding() {
+  const cards = document.querySelectorAll('.faction-card');
+  cards.forEach((card, idx) => {
+    const name = card.querySelector('.faction-name').textContent;
+    if (teamState.factions[name]) {
+      const data = teamState.factions[name];
+      card.querySelector('.faction-emoji-select').value = data.emoji || '?';
+      card.querySelector('.faction-reason').value = data.reason || '';
+    }
+  });
+}
+
+function createFactionCard(factionName) {
+  const card = document.createElement('div');
+  card.className = 'faction-card';
+  card.innerHTML = `
+    <div class="faction-header">
+      <span class="faction-name">${factionName}</span>
+      <select class="faction-emoji-select" onchange="updateFactionEmoji(this)">
+        <option value="?">?</option>
+        <option value="😊">😊</option>
+        <option value="😐">😐</option>
+        <option value="😠">😠</option>
+        <option value="🤝">🤝</option>
+        <option value="⚔️">⚔️</option>
+      </select>
+      <button style="background: none; border: none; color: #7a1e1e; cursor: pointer; font-size: 12px; margin-left: 8px;" onclick="removeFaction(this)">✕</button>
+    </div>
+    <textarea class="faction-reason" placeholder="Why this standing? (e.g., they see you as useful, you wronged them, they don't know you yet)"></textarea>
+
+```
+<div class="faction-note">Start building your reputation through actions.</div>
+```
+
+`;
+return card;
+}
+
+function removeFaction(button) {
+const card = button.closest(’.faction-card’);
+const name = card.querySelector(’.faction-name’).textContent;
+delete teamState.factions[name];
+card.remove();
+}
+
+document.getElementById(‘add-faction-btn’).addEventListener(‘click’, () => {
+const input = document.getElementById(‘new-faction-name’);
+const name = input.value.trim();
+if (name && name.length > 0) {
+const grid = document.getElementById(‘faction-grid’);
+const newCard = createFactionCard(name);
+grid.appendChild(newCard);
+teamState.factions[name] = { emoji: ‘?’, reason: ‘’ };
+input.value = ‘’;
+}
+});
+
+document.getElementById(‘new-faction-name’).addEventListener(‘keypress’, (e) => {
+if (e.key === ‘Enter’) {
+document.getElementById(‘add-faction-btn’).click();
+}
+});
+
+function updateFactionEmoji(select) {
+const card = select.closest(’.faction-card’);
+const name = card.querySelector(’.faction-name’).textContent;
+const reason = card.querySelector(’.faction-reason’).value;
+if (!teamState.factions[name]) teamState.factions[name] = {};
+teamState.factions[name].emoji = select.value;
+teamState.factions[name].reason = reason;
+}
+
+// ACCOLADES
+function updateAccolades() {
+const list = document.getElementById(‘accolade-list’);
+list.innerHTML = ‘’;
+teamState.accolades.forEach((acc, idx) => {
+const div = document.createElement(‘div’);
+div.className = ‘accolade-item’;
+div.innerHTML = `<div class="accolade-text">${acc}</div> <button class="accolade-remove" onclick="removeAccolade(${idx})">remove</button>`;
+list.appendChild(div);
+});
+}
+
+function removeAccolade(idx) {
+teamState.accolades.splice(idx, 1);
+updateAccolades();
+}
+
+document.getElementById(‘add-accolade-btn’).addEventListener(‘click’, () => {
+const input = document.getElementById(‘new-accolade’);
+if (input.value.trim()) {
+teamState.accolades.push(input.value.trim());
+input.value = ‘’;
+updateAccolades();
+}
+});
+
+document.getElementById(‘new-accolade’).addEventListener(‘keypress’, (e) => {
+if (e.key === ‘Enter’) {
+document.getElementById(‘add-accolade-btn’).click();
+}
+});
+
+// SAVE & EXPORT
+document.getElementById(‘save-btn’).addEventListener(‘click’, () => {
+teamState.name = document.getElementById(‘team-name’).value;
+teamState.mission = document.getElementById(‘team-mission’).value;
+
+// Save factions
+const cards = document.querySelectorAll(’.faction-card’);
+cards.forEach(card => {
+const name = card.querySelector(’.faction-name’).textContent;
+const emoji = card.querySelector(’.faction-emoji-select’).value;
+const reason = card.querySelector(’.faction-reason’).value;
+teamState.factions[name] = { emoji, reason };
+});
+
+localStorage.setItem(‘team_name’, teamState.name);
+localStorage.setItem(‘team_mission’, teamState.mission);
+localStorage.setItem(‘team_renown’, teamState.renown);
+localStorage.setItem(‘team_factions’, JSON.stringify(teamState.factions));
+localStorage.setItem(‘team_accolades’, JSON.stringify(teamState.accolades));
+
+alert(‘Team sheet saved!’);
+});
+
+document.getElementById(‘export-btn’).addEventListener(‘click’, () => {
+teamState.name = document.getElementById(‘team-name’).value;
+teamState.mission = document.getElementById(‘team-mission’).value;
+
+// Save factions to state
+const cards = document.querySelectorAll(’.faction-card’);
+cards.forEach(card => {
+const name = card.querySelector(’.faction-name’).textContent;
+const emoji = card.querySelector(’.faction-emoji-select’).value;
+const reason = card.querySelector(’.faction-reason’).value;
+teamState.factions[name] = { emoji, reason };
+});
+
+const json = JSON.stringify(teamState, null, 2);
+const blob = new Blob([json], { type: ‘application/json’ });
+const url = URL.createObjectURL(blob);
+const a = document.createElement(‘a’);
+a.href = url;
+a.download = `team_sheet_${teamState.name.replace(/\s+/g, '_') || 'unnamed'}.json`;
+a.click();
+});
+
+// INIT
+loadState();
+</script>
+
+</body>
+</html>
