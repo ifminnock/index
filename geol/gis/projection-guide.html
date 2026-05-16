@@ -23,17 +23,17 @@
 
 html, body {
 height: 100%;
-background: var(–page-bg);
-color: var(–text-1);
-font-family: var(–font);
+background: var(--page-bg);
+color: var(--text-1);
+font-family: var(--font);
 font-size: 0.92rem;
 line-height: 1.55;
 }
 
 /* ── HEADER ── */
 header {
-background: var(–page-bg);
-border-bottom: 2px solid var(–accent);
+background: var(--page-bg);
+border-bottom: 2px solid var(--accent);
 padding: 0.75rem 1.5rem;
 display: flex;
 align-items: baseline;
@@ -41,23 +41,23 @@ gap: 1.5rem;
 flex-wrap: wrap;
 }
 header a.back {
-color: var(–text-2);
+color: var(--text-2);
 text-decoration: none;
 font-size: 0.82rem;
 white-space: nowrap;
 transition: color 0.15s;
 }
-header a.back:hover { color: var(–accent); }
+header a.back:hover { color: var(--accent); }
 header .title-block { flex: 1; }
 header .module-label {
 font-size: 0.72rem;
-color: var(–text-2);
+color: var(--text-2);
 letter-spacing: 0.08em;
 text-transform: uppercase;
 }
 header h1 {
 font-size: 1.25rem;
-color: var(–accent);
+color: var(--accent);
 font-weight: 700;
 line-height: 1.2;
 }
@@ -72,19 +72,19 @@ overflow: hidden;
 
 /* ── LEFT COLUMN — projection list ── */
 .col-list {
-background: var(–card-bg);
-border-right: 1px solid var(–grey-blue);
+background: var(--card-bg);
+border-right: 1px solid var(--grey-blue);
 overflow-y: auto;
 padding: 0;
 }
 .family-header {
-background: var(–page-bg);
-color: var(–text-2);
+background: var(--page-bg);
+color: var(--text-2);
 font-size: 0.68rem;
 letter-spacing: 0.1em;
 text-transform: uppercase;
 padding: 0.55rem 0.9rem 0.35rem;
-border-bottom: 1px solid var(–grey-blue);
+border-bottom: 1px solid var(--grey-blue);
 position: sticky;
 top: 0;
 z-index: 1;
@@ -93,7 +93,7 @@ z-index: 1;
 padding: 0.6rem 0.9rem;
 cursor: pointer;
 border-bottom: 1px solid rgba(74,96,112,0.35);
-color: var(–text-1);
+color: var(--text-1);
 font-size: 0.82rem;
 line-height: 1.3;
 transition: background 0.12s, color 0.12s;
@@ -101,17 +101,17 @@ user-select: none;
 }
 .proj-item:hover {
 background: rgba(212,101,26,0.15);
-color: var(–text-1);
+color: var(--text-1);
 }
 .proj-item.active {
 background: rgba(212,101,26,0.22);
-color: var(–accent);
-border-left: 3px solid var(–accent);
+color: var(--accent);
+border-left: 3px solid var(--accent);
 padding-left: calc(0.9rem - 3px);
 }
 .proj-item .proj-tag {
 font-size: 0.65rem;
-color: var(–text-2);
+color: var(--text-2);
 display: block;
 margin-top: 0.1rem;
 }
@@ -121,15 +121,15 @@ margin-top: 0.1rem;
 .col-detail {
 overflow-y: auto;
 padding: 1.5rem;
-background: var(–page-bg);
+background: var(--page-bg);
 }
 .col-detail h2 {
-color: var(–accent);
+color: var(--accent);
 font-size: 1.2rem;
 margin-bottom: 0.35rem;
 }
 .col-detail .proj-subtitle {
-color: var(–text-2);
+color: var(--text-2);
 font-size: 0.78rem;
 margin-bottom: 1.1rem;
 letter-spacing: 0.04em;
@@ -137,18 +137,18 @@ letter-spacing: 0.04em;
 .thumbnail-wrap {
 display: inline-block;
 cursor: zoom-in;
-border: 1px solid var(–grey-blue);
+border: 1px solid var(--grey-blue);
 border-radius: 3px;
 overflow: hidden;
 margin-bottom: 1.2rem;
 transition: border-color 0.15s;
 background: #1e2a35;
 }
-.thumbnail-wrap:hover { border-color: var(–accent); }
+.thumbnail-wrap:hover { border-color: var(--accent); }
 .thumbnail-wrap svg { display: block; }
 .zoom-hint {
 font-size: 0.68rem;
-color: var(–text-2);
+color: var(--text-2);
 margin-bottom: 1.2rem;
 margin-top: -0.8rem;
 }
@@ -158,21 +158,21 @@ margin-top: -0.8rem;
 font-size: 0.78rem;
 text-transform: uppercase;
 letter-spacing: 0.08em;
-color: var(–accent);
+color: var(--accent);
 margin-bottom: 0.4rem;
-border-bottom: 1px solid var(–grey-blue);
+border-bottom: 1px solid var(--grey-blue);
 padding-bottom: 0.2rem;
 }
 .section-block p {
-color: var(–text-1);
+color: var(--text-1);
 font-size: 0.87rem;
 line-height: 1.6;
 }
 
 /* ── RIGHT COLUMN — metadata card ── */
 .col-meta {
-background: var(–card-bg);
-border-left: 1px solid var(–grey-blue);
+background: var(--card-bg);
+border-left: 1px solid var(--grey-blue);
 overflow-y: auto;
 padding: 1.2rem 1rem;
 }
@@ -180,9 +180,9 @@ padding: 1.2rem 1rem;
 font-size: 0.72rem;
 text-transform: uppercase;
 letter-spacing: 0.1em;
-color: var(–accent);
+color: var(--accent);
 margin-bottom: 0.8rem;
-border-bottom: 1px solid var(–grey-blue);
+border-bottom: 1px solid var(--grey-blue);
 padding-bottom: 0.3rem;
 }
 .meta-row {
@@ -194,7 +194,7 @@ align-items: start;
 }
 .meta-label {
 font-size: 0.7rem;
-color: var(–text-2);
+color: var(--text-2);
 text-transform: uppercase;
 letter-spacing: 0.06em;
 white-space: nowrap;
@@ -202,12 +202,12 @@ padding-top: 0.05rem;
 }
 .meta-value {
 font-size: 0.82rem;
-color: var(–text-1);
+color: var(--text-1);
 line-height: 1.4;
 }
 .meta-value.epsg code {
-background: var(–page-bg);
-color: var(–accent);
+background: var(--page-bg);
+color: var(--accent);
 padding: 0.05em 0.3em;
 border-radius: 2px;
 font-size: 0.78rem;
@@ -217,7 +217,7 @@ margin: 0.1em 0.15em 0.1em 0;
 .alaska-note {
 margin-top: 1rem;
 background: rgba(212,101,26,0.1);
-border-left: 3px solid var(–accent);
+border-left: 3px solid var(--accent);
 padding: 0.6rem 0.75rem;
 border-radius: 0 3px 3px 0;
 }
@@ -225,12 +225,12 @@ border-radius: 0 3px 3px 0;
 font-size: 0.68rem;
 text-transform: uppercase;
 letter-spacing: 0.08em;
-color: var(–accent);
+color: var(--accent);
 margin-bottom: 0.3rem;
 }
 .alaska-note p {
 font-size: 0.8rem;
-color: var(–text-1);
+color: var(--text-1);
 line-height: 1.5;
 }
 .distortion-bar {
@@ -238,15 +238,15 @@ margin-top: 0.5rem;
 }
 .distort-label {
 font-size: 0.68rem;
-color: var(–text-2);
+color: var(--text-2);
 text-transform: uppercase;
 letter-spacing: 0.06em;
 margin-bottom: 0.3rem;
 }
 .distort-pill {
 display: inline-block;
-background: var(–grey-blue);
-color: var(–text-1);
+background: var(--grey-blue);
+color: var(--text-1);
 font-size: 0.7rem;
 padding: 0.15em 0.5em;
 border-radius: 2px;
@@ -271,7 +271,7 @@ justify-content: center;
 .lightbox-inner {
 position: relative;
 background: #1e2a35;
-border: 1px solid var(–grey-blue);
+border: 1px solid var(--grey-blue);
 border-radius: 4px;
 padding: 0.5rem;
 }
@@ -282,7 +282,7 @@ top: -0.6rem;
 right: -0.6rem;
 width: 1.5rem;
 height: 1.5rem;
-background: var(–accent);
+background: var(--accent);
 color: #fff;
 border: none;
 border-radius: 50%;
@@ -292,18 +292,18 @@ line-height: 1;
 display: flex;
 align-items: center;
 justify-content: center;
-font-family: var(–font);
+font-family: var(--font);
 font-weight: 700;
 }
 .lb-close:hover { background: #b5541a; }
 
 /* ── FOOTER ── */
 footer {
-background: var(–page-bg);
-border-top: 1px solid var(–grey-blue);
+background: var(--page-bg);
+border-top: 1px solid var(--grey-blue);
 padding: 0.55rem 1.5rem;
 font-size: 0.7rem;
-color: var(–text-2);
+color: var(--text-2);
 display: flex;
 gap: 2rem;
 flex-wrap: wrap;
@@ -311,9 +311,9 @@ flex-wrap: wrap;
 
 /* ── SCROLLBAR STYLING ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(–page-bg); }
-::-webkit-scrollbar-thumb { background: var(–grey-blue); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(–accent); }
+::-webkit-scrollbar-track { background: var(--page-bg); }
+::-webkit-scrollbar-thumb { background: var(--grey-blue); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 860px) {
@@ -323,9 +323,9 @@ grid-template-rows: auto auto auto;
 height: auto;
 overflow: visible;
 }
-.col-list  { max-height: 280px; border-right: none; border-bottom: 1px solid var(–grey-blue); }
+.col-list  { max-height: 280px; border-right: none; border-bottom: 1px solid var(--grey-blue); }
 .col-detail { height: auto; }
-.col-meta  { border-left: none; border-top: 1px solid var(–grey-blue); }
+.col-meta  { border-left: none; border-top: 1px solid var(--grey-blue); }
 }
 </style>
 
@@ -334,6 +334,7 @@ overflow: visible;
 
 <header>
   <a href="../../geol.html" class="back">&#8592; Index</a>
+  <a href="../../index.html" class="back" style="margin-left:6px">Home</a>
   <div class="title-block">
     <div class="module-label">GIS Tools &mdash; Alaska Geotechnical Tools</div>
     <h1>Map Projection Reference Guide</h1>

@@ -30,9 +30,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background: var(–page-bg);
-color: var(–text-primary);
-font-family: var(–font-mono);
+background: var(--page-bg);
+color: var(--text-primary);
+font-family: var(--font-mono);
 font-size: 0.95rem;
 line-height: 1.55;
 min-height: 100vh;
@@ -43,7 +43,7 @@ HEADER
 ============================================================ */
 .site-header {
 background: #1E2830;
-border-bottom: 2px solid var(–accent-orange);
+border-bottom: 2px solid var(--accent-orange);
 padding: 0.75rem 1.5rem;
 display: flex;
 align-items: center;
@@ -52,14 +52,14 @@ flex-wrap: wrap;
 }
 
 .header-nav a {
-color: var(–text-secondary);
+color: var(--text-secondary);
 text-decoration: none;
 font-size: 0.8rem;
 letter-spacing: 0.05em;
 transition: color 0.2s;
 }
 
-.header-nav a:hover { color: var(–accent-orange); }
+.header-nav a:hover { color: var(--accent-orange); }
 
 .header-title {
 flex: 1;
@@ -67,7 +67,7 @@ flex: 1;
 
 .header-module-id {
 font-size: 0.7rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 letter-spacing: 0.1em;
 text-transform: uppercase;
 }
@@ -75,7 +75,7 @@ text-transform: uppercase;
 .header-module-name {
 font-size: 1.15rem;
 font-weight: 700;
-color: var(–accent-orange);
+color: var(--accent-orange);
 letter-spacing: 0.02em;
 }
 
@@ -99,18 +99,18 @@ border-bottom: 1px solid rgba(0,0,0,0.3);
 }
 
 #status-banner.status-go {
-background: var(–go-green);
-color: var(–go-green-text);
+background: var(--go-green);
+color: var(--go-green-text);
 }
 
 #status-banner.status-caution {
-background: var(–caution-amber);
-color: var(–caution-text);
+background: var(--caution-amber);
+color: var(--caution-text);
 }
 
 #status-banner.status-nogo {
-background: var(–nogo-red);
-color: var(–nogo-text);
+background: var(--nogo-red);
+color: var(--nogo-text);
 }
 
 .banner-dot {
@@ -147,7 +147,7 @@ gap: 1rem;
 }
 
 .phase-label {
-background: var(–accent-orange);
+background: var(--accent-orange);
 color: #fff;
 font-size: 0.7rem;
 font-weight: 700;
@@ -161,15 +161,15 @@ white-space: nowrap;
 .phase-title {
 font-size: 1.1rem;
 font-weight: 700;
-color: var(–text-primary);
+color: var(--text-primary);
 }
 
 /* ============================================================
 DECISION TREE CARDS (Phase 1)
 ============================================================ */
 .step-card {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
+background: var(--card-bg);
+border: 1px solid var(--accent-grey);
 border-radius: 4px;
 margin-bottom: 1rem;
 overflow: hidden;
@@ -190,11 +190,11 @@ padding: 0.65rem 1rem;
 display: flex;
 align-items: center;
 gap: 0.75rem;
-border-bottom: 1px solid var(–accent-grey);
+border-bottom: 1px solid var(--accent-grey);
 }
 
 .step-number {
-background: var(–accent-orange);
+background: var(--accent-orange);
 color: #fff;
 font-size: 0.7rem;
 font-weight: 700;
@@ -209,19 +209,19 @@ letter-spacing: 0.05em;
 }
 
 .step-number.done {
-background: var(–accent-grey);
+background: var(--accent-grey);
 }
 
 .step-title {
 font-size: 0.9rem;
 font-weight: 700;
-color: var(–accent-orange);
+color: var(--accent-orange);
 letter-spacing: 0.04em;
 }
 
 .step-subtitle {
 font-size: 0.75rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 margin-left: auto;
 white-space: nowrap;
 }
@@ -232,7 +232,7 @@ padding: 1rem 1rem 1.25rem;
 
 .step-instruction {
 font-size: 0.8rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 margin-bottom: 0.75rem;
 }
 
@@ -247,10 +247,10 @@ margin-bottom: 0.75rem;
 }
 
 .option-btn {
-background: var(–page-bg);
-border: 1px solid var(–accent-grey);
-color: var(–text-secondary);
-font-family: var(–font-mono);
+background: var(--page-bg);
+border: 1px solid var(--accent-grey);
+color: var(--text-secondary);
+font-family: var(--font-mono);
 font-size: 0.78rem;
 padding: 0.4rem 0.75rem;
 border-radius: 3px;
@@ -260,13 +260,13 @@ text-align: left;
 }
 
 .option-btn:hover {
-border-color: var(–accent-orange);
-color: var(–text-primary);
+border-color: var(--accent-orange);
+color: var(--text-primary);
 }
 
 .option-btn.selected {
-background: var(–accent-orange);
-border-color: var(–accent-orange);
+background: var(--accent-orange);
+border-color: var(--accent-orange);
 color: #fff;
 }
 
@@ -298,19 +298,19 @@ background: rgba(255,255,255,0.04);
 width: 16px;
 height: 16px;
 min-width: 16px;
-border: 2px solid var(–accent-grey);
+border: 2px solid var(--accent-grey);
 border-radius: 2px;
 margin-top: 2px;
 display: flex;
 align-items: center;
 justify-content: center;
 transition: all 0.15s;
-background: var(–page-bg);
+background: var(--page-bg);
 }
 
 .custom-checkbox.checked .cb-box {
-background: var(–accent-orange);
-border-color: var(–accent-orange);
+background: var(--accent-orange);
+border-color: var(--accent-orange);
 }
 
 .cb-check {
@@ -325,7 +325,7 @@ line-height: 1;
 
 .cb-label {
 font-size: 0.82rem;
-color: var(–text-primary);
+color: var(--text-primary);
 line-height: 1.4;
 }
 
@@ -345,20 +345,20 @@ display: none;
 
 .flag-box.soft {
 background: rgba(122,90,26,0.35);
-border-left: 3px solid var(–caution-text);
-color: var(–caution-text);
+border-left: 3px solid var(--caution-text);
+color: var(--caution-text);
 }
 
 .flag-box.hard {
 background: rgba(122,32,32,0.35);
-border-left: 3px solid var(–nogo-text);
-color: var(–nogo-text);
+border-left: 3px solid var(--nogo-text);
+color: var(--nogo-text);
 }
 
 .flag-box.clear {
 background: rgba(42,122,74,0.25);
-border-left: 3px solid var(–go-green-text);
-color: var(–go-green-text);
+border-left: 3px solid var(--go-green-text);
+color: var(--go-green-text);
 }
 
 .flag-label {
@@ -380,10 +380,10 @@ flex-wrap: wrap;
 }
 
 .btn-primary {
-background: var(–accent-orange);
+background: var(--accent-orange);
 color: #fff;
 border: none;
-font-family: var(–font-mono);
+font-family: var(--font-mono);
 font-size: 0.8rem;
 font-weight: 700;
 letter-spacing: 0.06em;
@@ -398,10 +398,10 @@ transition: opacity 0.15s;
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-secondary {
-background: var(–accent-grey);
+background: var(--accent-grey);
 color: #fff;
 border: none;
-font-family: var(–font-mono);
+font-family: var(--font-mono);
 font-size: 0.8rem;
 font-weight: 700;
 letter-spacing: 0.06em;
@@ -422,7 +422,7 @@ display: none;
 margin-top: 0.75rem;
 padding: 0.75rem;
 background: rgba(0,0,0,0.2);
-border: 1px solid var(–nogo-text);
+border: 1px solid var(--nogo-text);
 border-radius: 3px;
 }
 
@@ -430,7 +430,7 @@ border-radius: 3px;
 
 .override-prompt p {
 font-size: 0.78rem;
-color: var(–nogo-text);
+color: var(--nogo-text);
 margin-bottom: 0.6rem;
 }
 
@@ -444,21 +444,21 @@ display: none;
 #phase1-summary.active { display: block; }
 
 .summary-card {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
+background: var(--card-bg);
+border: 1px solid var(--accent-grey);
 border-radius: 4px;
 padding: 1.25rem;
 margin-bottom: 1rem;
 }
 
 .summary-card h3 {
-color: var(–accent-orange);
+color: var(--accent-orange);
 font-size: 0.9rem;
 letter-spacing: 0.06em;
 text-transform: uppercase;
 margin-bottom: 0.75rem;
 padding-bottom: 0.4rem;
-border-bottom: 1px solid var(–accent-grey);
+border-bottom: 1px solid var(--accent-grey);
 }
 
 .summary-section {
@@ -467,7 +467,7 @@ margin-bottom: 0.75rem;
 
 .summary-section-label {
 font-size: 0.72rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 letter-spacing: 0.08em;
 text-transform: uppercase;
 margin-bottom: 0.35rem;
@@ -485,20 +485,20 @@ letter-spacing: 0.04em;
 
 .pill-soft {
 background: rgba(122,90,26,0.45);
-color: var(–caution-text);
-border: 1px solid var(–caution-text);
+color: var(--caution-text);
+border: 1px solid var(--caution-text);
 }
 
 .pill-clear {
 background: rgba(42,122,74,0.3);
-color: var(–go-green-text);
-border: 1px solid var(–go-green-text);
+color: var(--go-green-text);
+border: 1px solid var(--go-green-text);
 }
 
 .pill-hard {
 background: rgba(122,32,32,0.45);
-color: var(–nogo-text);
-border: 1px solid var(–nogo-text);
+color: var(--nogo-text);
+border: 1px solid var(--nogo-text);
 }
 
 /* ============================================================
@@ -520,7 +520,7 @@ overflow: hidden;
 
 .progress-bar-fill {
 height: 100%;
-background: var(–accent-orange);
+background: var(--accent-orange);
 border-radius: 2px;
 transition: width 0.3s ease;
 width: 0%;
@@ -528,14 +528,14 @@ width: 0%;
 
 .progress-label {
 font-size: 0.72rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 text-align: right;
 margin-bottom: 1rem;
 }
 
 .checklist-section {
-background: var(–card-bg);
-border: 1px solid var(–accent-grey);
+background: var(--card-bg);
+border: 1px solid var(--accent-grey);
 border-radius: 4px;
 margin-bottom: 0.75rem;
 overflow: hidden;
@@ -550,8 +550,8 @@ display: flex;
 align-items: center;
 gap: 0.75rem;
 cursor: pointer;
-border-bottom: 1px solid var(–accent-grey);
-font-family: var(–font-mono);
+border-bottom: 1px solid var(--accent-grey);
+font-family: var(--font-mono);
 transition: background 0.15s;
 text-align: left;
 }
@@ -559,7 +559,7 @@ text-align: left;
 .section-toggle:hover { background: rgba(0,0,0,0.3); }
 
 .section-toggle-title {
-color: var(–accent-orange);
+color: var(--accent-orange);
 font-size: 0.85rem;
 font-weight: 700;
 letter-spacing: 0.04em;
@@ -568,13 +568,13 @@ flex: 1;
 
 .section-progress-badge {
 font-size: 0.7rem;
-color: var(–text-secondary);
-font-family: var(–font-mono);
+color: var(--text-secondary);
+font-family: var(--font-mono);
 white-space: nowrap;
 }
 
 .section-toggle-arrow {
-color: var(–text-secondary);
+color: var(--text-secondary);
 font-size: 0.8rem;
 transition: transform 0.2s;
 }
@@ -603,13 +603,13 @@ margin-bottom: 0.15rem;
 .checklist-item:hover { background: rgba(255,255,255,0.04); }
 
 .checklist-item.checked .cb-box {
-background: var(–accent-orange);
-border-color: var(–accent-orange);
+background: var(--accent-orange);
+border-color: var(--accent-orange);
 }
 
 .checklist-item.checked .cb-check { display: block; }
 
-.checklist-item.checked .cb-label { color: var(–text-secondary); }
+.checklist-item.checked .cb-label { color: var(--text-secondary); }
 
 /* ============================================================
 MISSION SUMMARY
@@ -623,20 +623,20 @@ display: block;
 }
 
 .mission-summary-card {
-background: var(–card-bg);
-border: 2px solid var(–accent-orange);
+background: var(--card-bg);
+border: 2px solid var(--accent-orange);
 border-radius: 4px;
 padding: 1.5rem;
 }
 
 .mission-summary-card h2 {
-color: var(–accent-orange);
+color: var(--accent-orange);
 font-size: 1rem;
 letter-spacing: 0.08em;
 text-transform: uppercase;
 margin-bottom: 1rem;
 padding-bottom: 0.5rem;
-border-bottom: 1px solid var(–accent-grey);
+border-bottom: 1px solid var(--accent-grey);
 }
 
 .summary-grid {
@@ -648,7 +648,7 @@ margin-bottom: 1rem;
 
 .summary-item label {
 font-size: 0.7rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 text-transform: uppercase;
 letter-spacing: 0.08em;
 display: block;
@@ -657,21 +657,21 @@ margin-bottom: 0.2rem;
 
 .summary-item .summary-value {
 font-size: 0.85rem;
-color: var(–text-primary);
+color: var(--text-primary);
 font-weight: 700;
 }
 
-#timestamp { font-size: 0.78rem; color: var(–text-secondary); margin-bottom: 1rem; }
+#timestamp { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1rem; }
 
 /* ============================================================
 FOOTER
 ============================================================ */
 .site-footer {
 background: #1E2830;
-border-top: 1px solid var(–accent-grey);
+border-top: 1px solid var(--accent-grey);
 padding: 1rem 1.5rem;
 font-size: 0.72rem;
-color: var(–text-secondary);
+color: var(--text-secondary);
 line-height: 1.6;
 text-align: center;
 }
@@ -683,7 +683,7 @@ UTILITY
 
 .divider {
 border: none;
-border-top: 1px solid var(–accent-grey);
+border-top: 1px solid var(--accent-grey);
 margin: 1rem 0;
 opacity: 0.4;
 }
@@ -716,6 +716,7 @@ body { background: #fff; color: #111; font-size: 10pt; }
 <header class="site-header">
   <nav class="header-nav">
     <a href="../../geol.html">&#8592; Index</a>
+    <a href="../../index.html" style="margin-left:6px">Home</a>
   </nav>
   <div class="header-title">
     <div class="header-module-id">GIS Tools &mdash; Alaska Geotechnical Tools</div>
